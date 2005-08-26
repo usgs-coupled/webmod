@@ -1,0 +1,18 @@
+SOLUTION 1
+	-units mol/kgw
+	Cl 5e-3
+	Na 2e-3
+	K  3e-3
+SOLUTION 2
+	-units mol/kgw
+	Cl 50e-3
+	Na 20e-3
+	K  30e-3
+SOLUTION 3
+	-units mol/kgw
+	Cl 500e-3
+	Na 200e-3
+	K  300e-3
+SELECTED_OUTPUT
+	-reset false
+	-totals Cl Na K

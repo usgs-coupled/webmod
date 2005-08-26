@@ -1,0 +1,55 @@
+solution 1
+selected_output
+	-file sel1
+	-reset false
+user_punch
+	-head pH pH
+	-start
+	10 punch 7.1
+	20 punch 7.2
+	-end
+end
+solution 2
+selected_output
+	-file sel2
+	-pH true
+user_punch
+	-head pH pH
+	-start
+	10 punch 7.3
+	20 punch 7.4
+	-end
+	
+# sel1 contains
+#          pH              pH
+# 7.1000e+000     7.2000e+000
+
+# sel2 contains
+#          pH              pH              pH
+#           7     7.3000e+000     7.4000e+000
+
+
+# dictionary1 (last supercedes)
+#          pH
+#         7.2
+#         7.4
+
+# dictionary2 (first supercedes)
+#          pH
+#         7.1
+#           7
+
+# dictionary3 (differentiate user_punch w/ user_punch right justified)
+#          pH              pH             pH
+#     (empty)             7.1            7.2
+#           7             7.3            7.4
+
+# dictionary4 (differentiate user_punch w/o justification FIFO)
+#          pH             pH             pH
+#         7.1            7.2         (empty)
+#         7.3            7.4              7
+
+# dictionary5 (order only)
+#          pH             pH             pH
+#         7.1            7.2         (empty)
+#           7            7.3            7.4

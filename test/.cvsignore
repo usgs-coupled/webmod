@@ -1,0 +1,11 @@
+test.dep
+test.mak
+test.plg
+Debug
+Release
+phreeqc.err
+phreeqc.log
+phreeqc.out
+sel1
+sel2
+selected.out
