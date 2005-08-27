@@ -40,6 +40,7 @@ POBJS =	\
 		isotopes.o \
 		kinetics.o \
 		mainsubs.o \
+		message.o \
 		model.o \
 		nvector.o \
 		nvector_serial.o \
@@ -55,6 +56,7 @@ POBJS =	\
 		step.o \
 		structures.o \
 		sundialsmath.o \
+		tally.o \
 		tidy.o \
 		transport.o \
 		utilities.o
@@ -135,6 +137,8 @@ kinetics.o: src/phreeqc/kinetics.c src/phreeqc/global.h \
   src/phreeqc/kinetics.h
 mainsubs.o: src/phreeqc/mainsubs.c src/phreeqc/global.h \
   src/phreeqc/phqalloc.h
+message.o: src/phreeqc/message.c src/phreeqc/global.h \
+  src/phreeqc/phqalloc.h src/phreeqc/message.h
 model.o: src/phreeqc/model.c src/phreeqc/global.h src/phreeqc/phqalloc.h
 nvector.o: src/phreeqc/nvector.c src/phreeqc/nvector.h \
   src/phreeqc/sundialstypes.h
@@ -158,8 +162,12 @@ structures.o: src/phreeqc/structures.c src/phreeqc/global.h \
   src/phreeqc/phqalloc.h
 sundialsmath.o: src/phreeqc/sundialsmath.c src/phreeqc/sundialsmath.h \
   src/phreeqc/sundialstypes.h
+tally.o: src/phreeqc/tally.c src/phreeqc/global.h src/phreeqc/phqalloc.h \
+  src/phreeqc/message.h
 tidy.o: src/phreeqc/tidy.c src/phreeqc/global.h src/phreeqc/phqalloc.h
 transport.o: src/phreeqc/transport.c src/phreeqc/global.h \
   src/phreeqc/phqalloc.h
 utilities.o: src/phreeqc/utilities.c src/phreeqc/global.h \
   src/phreeqc/phqalloc.h
+
+

@@ -146,6 +146,10 @@ SOURCE=.\src\phreeqc\mainsubs.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\src\phreeqc\message.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\src\phreeqc\model.c
 # End Source File
 # Begin Source File
@@ -203,6 +207,10 @@ SOURCE=.\src\phreeqc\structures.c
 # Begin Source File
 
 SOURCE=.\src\phreeqc\sundialsmath.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\src\phreeqc\tally.c
 # End Source File
 # Begin Source File
 

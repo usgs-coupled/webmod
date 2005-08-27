@@ -293,6 +293,9 @@ int CPhreeqc::Run(std::istream& is, bool output_on, bool error_on, bool log_on, 
 			std::cerr << str.c_str() << std::endl;
 		}
 	}
+	catch (PhreeqcStop /*exc*/)
+	{
+	}
 	catch (...)
 	{
 		const char err_msg[] = "phreeqc: Unhandled exception occured.\n";
@@ -552,6 +555,9 @@ int CPhreeqc::RunWithCallback(PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK 
 			std::cerr << str.c_str() << std::endl;
 		}
 	}
+	catch (PhreeqcStop /*exc*/)
+	{
+	}
 	catch (...)
 	{
 		const char err_msg[] = "phreeqc: Unhandled exception occured.\n";
@@ -593,6 +599,9 @@ int CPhreeqc::CatchErrors(PFN_CATCH_CALLBACK pfn, void *cookie, IErrorReporter* 
 			rvalue = pfn(cookie);
 		}
 
+	}
+	catch (PhreeqcStop /*exc*/)
+	{
 	}
 	catch (...)
 	{
