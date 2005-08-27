@@ -23,6 +23,7 @@ struct MixVars {
   double  *array;
   int	   row_dim;
   int	   col_dim;
+  int      files_on;
 };
 
 struct TallyVars {
@@ -238,12 +239,12 @@ int PreMixCallback(void* cookie)
 		&&
 		pvars->n_user[Temperature] < 0)
 	{
-		OutputLines();
+	  if(pvars->files_on)	OutputLines();
 
-		zero_tally_table();
-		fill_tally_table(pvars->n_user, pvars->index_conserv, 0); /* initial */
+	  zero_tally_table();
+	  fill_tally_table(pvars->n_user, pvars->index_conserv, 0); /* initial */
 
-		return OK;
+	  return OK;
 	}
 
 
@@ -468,6 +469,7 @@ RunMixF(int *count, int *solutions, double *fracs, int *index_conserv,
 	vars.array         = array;
 	vars.row_dim       = *row_dim;
 	vars.col_dim       = *col_dim;	
+	vars.files_on      = *files_on;	
 
 	n_user[Solution] = *index_rxn;
 

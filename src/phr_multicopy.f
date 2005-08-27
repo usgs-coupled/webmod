@@ -11,11 +11,15 @@
       CHARACTER(80) line
       INTEGER       phr_multicopy
 
+      phr_multicopy = 0
       DO 10 i=1,count
         IF (srcarray(i).GE.0.AND.targetarray(i).GE.0) THEN
 
           WRITE (line,100),'COPY ', keyword, srcarray(i), targetarray(i)
-          iresult = AccumulateLine(line)
+          phr_multicopy = AccumulateLine(line)
+          IF (phr_multicopy.NE.0) THEN
+            RETURN
+          ENDIF
 
           !!!CALL OutputLines
           phr_multicopy = Run(.FALSE., .FALSE., .FALSE., .FALSE.)
@@ -23,7 +27,7 @@
             !!!CALL OutputLastError
             RETURN
           ENDIF
-        ENDIF
+       ENDIF
 10    CONTINUE
 100   FORMAT(A,A,1X,2I10)
       END FUNCTION phr_multicopy
