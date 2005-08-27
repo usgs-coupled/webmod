@@ -16,7 +16,6 @@ struct MixVars {
   double  *fracs;
   int      index_conserv;
   double   fill_factor;
-// COMMENT: {3/3/2004 2:53:23 PM}  int      index_rxn;
   int     *n_user;
   double   rxnmols;
   double   tempc;
@@ -187,6 +186,12 @@ int PreMixCallback(void* cookie)
 
 	pvars = (struct MixVars *)cookie;
 
+	if (pvars->fill_factor <= 0.0) 
+	{
+		char buffer[80];
+		sprintf(buffer, "Bad fill_factor in phr_mix for box %d %f.\n", pvars->n_user[Solution], pvars->fill_factor);
+		error_msg(buffer, CONTINUE);
+	}
 
 	/* MIX */
 	if (AccumulateLine("MIX") != VR_OK) {
@@ -456,7 +461,6 @@ RunMixF(int *count, int *solutions, double *fracs, int *index_conserv,
 	vars.fracs         = fracs;
 	vars.index_conserv = *index_conserv;
 	vars.fill_factor   = *fill_factor;
-// COMMENT: {3/3/2004 2:53:18 PM}	vars.index_rxn     = *index_rxn;
 	vars.n_user        = n_user;
 	vars.rxnmols       = *rxnmols;	
 	vars.tempc         = *tempc;
@@ -466,13 +470,6 @@ RunMixF(int *count, int *solutions, double *fracs, int *index_conserv,
 	vars.col_dim       = *col_dim;	
 
 	n_user[Solution] = *index_rxn;
-
-	if (*fill_factor <= 0.0) 
-	{
-		char buffer[80];
-		sprintf(buffer, "bad fill_factor in phr_mix for box %d %f.\n", *index_rxn, *fill_factor);
-		error_msg(buffer, CONTINUE);
-	}
 
 	result = RunWithCallback(PreMixCallback, PostMixCallback, &vars, *files_on, *files_on, *files_on, *files_on);
 

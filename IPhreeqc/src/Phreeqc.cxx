@@ -198,12 +198,19 @@ int CPhreeqc::Run(std::istream& is, bool output_on, bool error_on, bool log_on, 
 			{
 				if (phreeqc::pr.punch == FALSE || !selected_output_on)
 				{
-					ASSERT(phreeqc::punch_file == NULL);
-					phreeqc::punch_file = ::fopen(NULL_DEVICE, "w");
 					if (phreeqc::punch_file == NULL)
 					{
-						++phreeqc::input_error;
-						this->ErrorMsg("phreeqc: Unable to open null file.\n", CONTINUE);
+						phreeqc::punch_file = ::fopen(NULL_DEVICE, "w");
+						if (phreeqc::punch_file == NULL)
+						{
+							++phreeqc::input_error;
+							this->ErrorMsg("phreeqc: Unable to open null file.\n", CONTINUE);
+						}
+					}
+					else
+					{
+						// verify that punch_file is an actual FILE*
+						ASSERT(::fprintf(phreeqc::punch_file, "\n") > 0);
 					}
 				}
 				else 
@@ -456,12 +463,19 @@ int CPhreeqc::RunWithCallback(PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK 
 			{
 				if (phreeqc::pr.punch == FALSE || !selected_output_on)
 				{
-					ASSERT(phreeqc::punch_file == NULL);
-					phreeqc::punch_file = ::fopen(NULL_DEVICE, "w");
 					if (phreeqc::punch_file == NULL)
 					{
-						++phreeqc::input_error;
-						this->ErrorMsg("phreeqc: Unable to open null file.\n", CONTINUE);
+						phreeqc::punch_file = ::fopen(NULL_DEVICE, "w");
+						if (phreeqc::punch_file == NULL)
+						{
+							++phreeqc::input_error;
+							this->ErrorMsg("phreeqc: Unable to open null file.\n", CONTINUE);
+						}
+					}
+					else
+					{
+						// verify that punch_file is an actual FILE*
+						ASSERT(::fprintf(phreeqc::punch_file, "\n") > 0);
 					}
 				}
 				else 

@@ -51,6 +51,13 @@
         STOP
       ENDIF
 
+      iresult = RunFile('test.pqi', .FALSE., .FALSE., .FALSE., .FALSE.)
+      IF (iresult.NE.0) THEN
+        PRINT *, 'Errors running test.pqi:'
+        CALL OutputLastError
+        STOP
+      ENDIF
+
 
       cols = GetSelectedOutputColumnCount()
 
@@ -204,7 +211,7 @@
       fracs(4) = 0.30
       
       n_user(ET_SOLUTION)    = -1
-      n_user(ET_REACTION)    = 0
+      n_user(ET_REACTION)    = 1
       n_user(ET_EXCHANGE)    = -1
       n_user(ET_SURFACE)     = -1
       n_user(ET_GAS_PHASE)   = -1
@@ -219,6 +226,8 @@
       iresult = AccumulateLine("-ph")
       iresult = AccumulateLine("-temperature")
       iresult = AccumulateLine("-totals Cl K Na")
+
+      rxnmols = 1e-6
 
       iresult = phr_mix(4,solutions,fracs,200,
      &                1.5d0,100,conc_conserv,.TRUE.,

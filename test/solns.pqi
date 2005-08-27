@@ -16,3 +16,7 @@ SOLUTION 3
 SELECTED_OUTPUT
 	-reset false
 	-totals Cl Na K
+REACTION 1
+Doc	1
+.001 mmol
+
