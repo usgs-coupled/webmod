@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "Release"
 # PROP Target_Dir ""
 # ADD BASE F90 /compile_only /nologo /warn:nofileopt
-# ADD F90 /compile_only /nologo /warn:nofileopt
+# ADD F90 /compile_only /include:"IPhreeqc/include" /nologo /warn:nofileopt
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
 # ADD CPP /nologo /W3 /GX /O2 /I "include" /D "NDEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "SWIG_SHARED_OBJ" /YX /FD /c
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
@@ -67,7 +67,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE F90 /check:bounds /compile_only /debug:full /nologo /traceback /warn:argument_checking /warn:nofileopt
-# ADD F90 /browser /check:bounds /compile_only /debug:full /nologo /traceback /warn:argument_checking /warn:nofileopt
+# ADD F90 /browser /check:bounds /compile_only /debug:full /include:"IPhreeqc/include" /nologo /traceback /warn:argument_checking /warn:nofileopt
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
 # ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "./../include" /D "_DEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "SWIG_SHARED_OBJ" /FR /YX /FD /GZ /c
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -263,17 +263,7 @@ SOURCE=.\IPhreeqc\src\SelectedOutput.cxx
 # Begin Source File
 
 SOURCE=.\IPhreeqc\src\TallyF.F
-
-!IF  "$(CFG)" == "IPhreeqcMMS - Win32 Release"
-
 # ADD F90 /fpp
-
-!ELSEIF  "$(CFG)" == "IPhreeqcMMS - Win32 Debug"
-
-# ADD F90 /fpp
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -287,20 +277,10 @@ SOURCE=.\src\phr_cmix.c
 # Begin Source File
 
 SOURCE=.\src\phr_mix.F
-DEP_F90_PHR_M=\
-	".\IPhreeqc\include\IPhreeqc.f.inc"\
+NODEP_F90_PHR_M=\
+	".\Release\IPhreeqc.f.inc"\
 	
-
-!IF  "$(CFG)" == "IPhreeqcMMS - Win32 Release"
-
 # ADD F90 /fpp
-
-!ELSEIF  "$(CFG)" == "IPhreeqcMMS - Win32 Debug"
-
-# ADD F90 /fpp
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
