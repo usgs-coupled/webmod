@@ -5,6 +5,8 @@ CXX        = g++
 CPPFLAGS   = -g -Wall -DSWIG_SHARED_OBJ
 TARGET     = lib/libphreeqcmms.a
 
+TARGET_ARCH = -IIPhreeqc/include
+
 VPATH=src:IPhreeqc/src/phreeqc:IPhreeqc/src
 
 %.o: %.f

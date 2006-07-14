@@ -4,7 +4,7 @@
      &                n_user,rxnmols,tempc,ph,tsec,array,
      &                arr_rows,arr_cols)
       IMPLICIT NONE
-      INCLUDE       '../IPhreeqc/include/IPhreeqc.f.inc'
+      INCLUDE       'IPhreeqc.f.inc'
       INTEGER       count           ! solution count
       INTEGER       solutions(*)    ! solution #'s
       REAL*8        fracs(*)        ! mixing fractions
