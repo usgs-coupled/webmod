@@ -44,7 +44,7 @@ RSC=rc.exe
 # ADD BASE F90 /compile_only /nologo /warn:nofileopt
 # ADD F90 /compile_only /include:"IPhreeqc/include" /nologo /warn:nofileopt
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /YX /FD /c
-# ADD CPP /nologo /W3 /GX /O2 /I "include" /D "NDEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "SWIG_SHARED_OBJ" /YX /FD /c
+# ADD CPP /nologo /W3 /GX /O2 /I "$(DEV_GMP_INC)" /I "include" /D "NDEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "SWIG_SHARED_OBJ" /YX /FD /c
 # ADD BASE RSC /l 0x409 /d "NDEBUG"
 # ADD RSC /l 0x409 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -69,7 +69,7 @@ LIB32=link.exe -lib
 # ADD BASE F90 /check:bounds /compile_only /debug:full /nologo /traceback /warn:argument_checking /warn:nofileopt
 # ADD F90 /browser /check:bounds /compile_only /debug:full /include:"IPhreeqc/include" /nologo /traceback /warn:argument_checking /warn:nofileopt
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
-# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "./../include" /D "_DEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "SWIG_SHARED_OBJ" /FR /YX /FD /GZ /c
+# ADD CPP /nologo /W3 /Gm /GX /ZI /Od /I "$(DEV_GMP_INC)" /I "include" /D "_DEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "SWIG_SHARED_OBJ" /FR /YX /FD /GZ /c
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
 BSC32=bscmake.exe
@@ -91,137 +91,172 @@ LIB32=link.exe -lib
 # Begin Group "IPhreeqc"
 
 # PROP Default_Filter ""
+# Begin Group "phreeqcpp"
+
+# PROP Default_Filter ""
 # Begin Group "phreeqc"
 
 # PROP Default_Filter ""
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\advection.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\advection.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\basic.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\basic.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\basicsubs.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\basicsubs.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\cl1.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\cl1.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\cvdense.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\cl1mp.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\cvode.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\cvdense.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\dense.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\cvode.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\integrate.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\dense.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\inverse.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\dw.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\isotopes.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\input.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\kinetics.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\integrate.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\mainsubs.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\inverse.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\message.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\isotopes.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\model.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\kinetics.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\nvector.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\main.c
+# PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\nvector_serial.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\mainsubs.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\p2clib.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\model.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\parse.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\nvector.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\phqalloc.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\nvector_serial.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\prep.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\output.c
+# PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\print.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\p2clib.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\read.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\parse.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\readtr.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\phqalloc.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\smalldense.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\phreeqc_files.c
+# PROP Exclude_From_Build 1
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\spread.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\pitzer.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\step.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\pitzer_structures.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\structures.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\prep.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\sundialsmath.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\print.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\tally.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\read.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\tidy.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\readtr.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\transport.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\smalldense.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\phreeqc\utilities.c
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\spread.c
 # End Source File
+# Begin Source File
+
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\step.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\structures.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\sundialsmath.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\tally.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\tidy.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\transport.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\IPhreeqc\src\phreeqcpp\phreeqc\utilities.c
+# End Source File
+# End Group
 # End Group
 # Begin Source File
 
@@ -237,24 +272,15 @@ SOURCE=.\IPhreeqc\src\IPhreeqc.cxx
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\IPhreeqcF.F
-# ADD F90 /fpp
+SOURCE=.\IPhreeqc\src\module_files.c
 # End Source File
 # Begin Source File
 
-SOURCE=.\IPhreeqc\src\Output.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=.\IPhreeqc\src\Overrides.cxx
+SOURCE=.\IPhreeqc\src\module_output.c
 # End Source File
 # Begin Source File
 
 SOURCE=.\IPhreeqc\src\Phreeqc.cxx
-# End Source File
-# Begin Source File
-
-SOURCE=.\IPhreeqc\src\PhreeqcParser.cxx
 # End Source File
 # Begin Source File
 
@@ -277,8 +303,8 @@ SOURCE=.\src\phr_cmix.c
 # Begin Source File
 
 SOURCE=.\src\phr_mix.F
-NODEP_F90_PHR_M=\
-	".\Release\IPhreeqc.f.inc"\
+DEP_F90_PHR_M=\
+	".\IPhreeqc\include\IPhreeqc.f.inc"\
 	
 # ADD F90 /fpp
 # End Source File

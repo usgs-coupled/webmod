@@ -16,13 +16,16 @@
 #include "CVar.hxx"
 
 // TODO: templatize
-class CSelectedOutput  
+class CSelectedOutput
 {
 protected:
 	CSelectedOutput(void);
 public:
-	static CSelectedOutput singleton;
+	static CSelectedOutput* Instance();
+	static void Release();
+
 	virtual ~CSelectedOutput(void);
+
 
 	int EndRow(void);
 	void Clear(void);
@@ -31,7 +34,7 @@ public:
 	size_t GetColCount(void)const;
 
 	CVar Get(int nRow, int nCol)const;
-	VRESULT CSelectedOutput::Get(int nRow, int nCol, VAR* pVAR)const;
+	VRESULT Get(int nRow, int nCol, VAR* pVAR)const;
 
 	int PushBack(const char* key, const CVar& var);
 
@@ -47,19 +50,15 @@ public:
 
 protected:
 	friend std::ostream& operator<< (std::ostream &os, const CSelectedOutput &a);
-// COMMENT: {12/8/2003 6:20:55 PM}	size_t m_nColIndex;
-// COMMENT: {12/8/2003 6:22:17 PM}	size_t m_nRowIndex;
 
-// COMMENT: {12/8/2003 6:18:00 PM}	size_t m_nColCount;
 	size_t m_nRowCount;
 
-	//std::map< std::string, std::vector<CVar> > m_mapHeadingToVarVector;
-	//std::map< size_t, std::string > m_mapColToHeading;
 	std::vector< std::vector<CVar> > m_arrayVar;
 	std::vector<CVar> m_vecVarHeadings;
 	std::map< std::string, size_t > m_mapHeadingToCol;
 
-	//std::map< std::string, size_t > m_mapHeadingToColumn;
+private:
+	static CSelectedOutput* s_instance;
 };
 
 #endif // !defined(_INC_SELECTEDOUTPUT_H)

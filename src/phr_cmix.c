@@ -5,7 +5,7 @@
 #include <stdio.h>   /* printf */
 
 #define EXTERNAL
-#include "../IPhreeqc/src/phreeqc/global.h"
+#include "../IPhreeqc/src/phreeqcpp/phreeqc/global.h"
 #undef EXTERNAL
 
 #include "../IPhreeqc/include/IPhreeqc.h"

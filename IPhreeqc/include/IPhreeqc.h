@@ -7,11 +7,13 @@
 extern "C" {
 #endif
 /**
- *  Load the specified database into phreeqc.
+ *  Load the specified database file into phreeqc.
  *  @param filename The name of the phreeqc database to load.
  *         The full path will be required if the file is not
  *         in the current working directory.
  *  @return The number of errors encountered.
+ *  @remarks
+ *  Any previous database definitions are cleared.
  *  @par Fortran90 Interface:
  *  @htmlonly
  *  <CODE>
@@ -25,6 +27,22 @@ extern "C" {
  *  @endhtmlonly
  */
 int     LoadDatabase(const char *filename);
+
+/**
+ *  Load the specified string as a database into phreeqc.
+ *  @param input String containing data to be used as the phreeqc database.
+ *  @return The number of errors encountered.
+ *  @remarks
+ *  Any previous database definitions are cleared.
+ */
+int     LoadDatabaseString(const char *input);
+
+/**
+ *  Unload any database currently loaded into phreeqc.
+ *  @remarks
+ *  Any previous database definitions are cleared.
+ */
+void    UnLoadDatabase(void);
 
 /** 
  *  Output the error messages normally stored in the phreeqc.err file to stdout.
@@ -68,7 +86,7 @@ VRESULT AccumulateLine(const char *line);
  *  @return The number of errors encountered.
  *  @remarks
  *  The accumulated input is cleared upon completion.
- *  @pre LoadDatabase must have been called and returned 0 (zero) errors.
+ *  @pre LoadDatabase/LoadDatabaseString must have been called and returned 0 (zero) errors.
  *  @par Fortran90 Interface:
  *  @htmlonly
  *  <CODE>
@@ -94,7 +112,7 @@ int     Run(int output_on, int error_on, int log_on, int selected_output_on);
  *  @param log_on             If non-zero turns on output to the <B>phreeqc.log</B> file.
  *  @param selected_output_on If non-zero turns on output to the <B>SELECTED_OUTPUT</B> (<B>selected.out</B> if unspecified) file.
  *  @return The number of errors encountered during the run.
- *  @pre LoadDatabase must have been called and returned 0 (zero) errors.
+ *  @pre LoadDatabase/LoadDatabaseString must have been called and returned 0 (zero) errors.
  *  @par Fortran90 Interface:
  *  @htmlonly
  *  <CODE>
@@ -112,6 +130,19 @@ int     Run(int output_on, int error_on, int log_on, int selected_output_on);
  *  @endhtmlonly
  */
 int     RunFile(const char *filename, int output_on, int error_on, int log_on, int selected_output_on);
+
+/**
+ *  Runs the specified phreeqc input file.
+ *  @param input              String containing phreeqc input.
+ *  @param output_on          If non-zero turns on output to the <B>phreeqc.out</B> file.
+ *  @param error_on           If non-zero turns on output to the <B>phreeqc.err</B> file.
+ *  @param log_on             If non-zero turns on output to the <B>phreeqc.log</B> file.
+ *  @param selected_output_on If non-zero turns on output to the <B>SELECTED_OUTPUT</B> (<B>selected.out</B> if unspecified) file.
+ *  @return The number of errors encountered during the run.
+ *  @pre LoadDatabase/LoadDatabaseString must have been called and returned 0 (zero) errors.
+ */
+int     RunString(const char *input, int output_on, int error_on, int log_on, int selected_output_on);
+
 
 /**
  *  Returns the number of rows currently contained within selected_output.
@@ -317,6 +348,15 @@ VRESULT GetSelectedOutputValue(int row, int col, VAR* pVAR);
  */
 size_t  AddError(const char* error_msg);
 
+/**
+ *  TODO
+ *  @internal
+ */
+/*
+void ClearErrors(void);
+*/
+
+
 /** 
  *  Send the accumulated input to stdout. 
  *  This is the input that will be used for the next call to Run.
@@ -340,6 +380,12 @@ typedef int (*PFN_CATCH_CALLBACK)(void *cookie);
 int RunWithCallback(PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK pfn_post, void *cookie, int output_on, int error_on, int log_on, int selected_output_on);
 
 int CatchErrors(PFN_CATCH_CALLBACK pfn, void *cookie);
+
+const char* GetLastErrorString(void);
+
+#if defined(WIN32)
+void DebugOutputLines(void);
+#endif
 
 #if defined(__cplusplus)
 }

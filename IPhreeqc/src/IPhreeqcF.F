@@ -184,3 +184,11 @@
      &                     adjcol,VTYPE,DVALUE,SVALUE)
 #endif
       END FUNCTION GetSelectedOutputValue
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      FUNCTION System(COMMAND)
+        IMPLICIT NONE
+        CHARACTER(LEN=*) :: COMMAND
+        INTEGER          :: System
+        INTEGER          :: SystemF
+        System = SystemF(COMMAND)
+      END FUNCTION System

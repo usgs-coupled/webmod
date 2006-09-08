@@ -13,5 +13,5 @@ void TestVar::TestVarInit()
 {
 	VAR v;
 	::VarInit(&v);
-	CPPUNIT_ASSERT(v.type == TT_EMPTY);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, v.type);
 }

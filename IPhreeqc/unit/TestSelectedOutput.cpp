@@ -1,28 +1,14 @@
 #include "TestSelectedOutput.h"
 
 
-// TODO remove these dependencies
-extern "C" {
-int warning_msg (const char *err_str);
-extern int n_user_punch_index;
-extern char **user_punch_headings;
-extern int user_punch_count_headings;
-}
+#include "../src/phreeqcns.hxx"
+#undef free
 
-extern "C" {
+#if defined(_WIN32)
+#define strdup _strdup
+#endif
+
 int EndRow(void);
-}
-
-
-int 
-warning_msg(const char *err_str)
-{
-	return 0;
-}
-
-int n_user_punch_index;
-char **user_punch_headings;
-int user_punch_count_headings;
 
 
 TestSelectedOutput::TestSelectedOutput()
@@ -36,356 +22,357 @@ TestSelectedOutput::~TestSelectedOutput()
 void
 TestSelectedOutput::TestEmpty()
 {
-	CSelectedOutput::singleton.Clear();
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 0);
+	CSelectedOutput::Instance()->Clear();
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetRowCount());
 }
 
 void
 TestSelectedOutput::TestSinglePushBack()
 {
-	CSelectedOutput::singleton.Clear();
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 0);
+	CSelectedOutput::Instance()->Clear();
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetRowCount());
 
 	CVar v(7.0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBack("pH", v) == 0);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBack("pH", v));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
 	// row count doesn't change until EndRow is called
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetRowCount());
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->EndRow());
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 2);
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
 #if defined(_DEBUG)
-	CSelectedOutput::singleton.Dump("TestSinglePushBack");
+	CSelectedOutput::Instance()->Dump("TestSinglePushBack");
 #endif
 }
 
 void
 TestSelectedOutput::TestMultiplePushBack()
 {
-	CSelectedOutput::singleton.Clear();
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 0);
+	CSelectedOutput::Instance()->Clear();
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetRowCount());
 
 	CVar v1(7.0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBack("pH", v1) == 0);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBack("pH", v1));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 1);
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetRowCount());
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 2);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
 
 	CVar v2(8.0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBack("pH", v2) == 0);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBack("pH", v2));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 2);
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 3);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(3u, CSelectedOutput::Instance()->GetRowCount());
 #if defined(_DEBUG)
-	CSelectedOutput::singleton.Dump("TestMultiplePushBack");
+	CSelectedOutput::Instance()->Dump("TestMultiplePushBack");
 #endif
 }
 
 void 
 TestSelectedOutput::TestNewHeadingsPushBack()
 {
-	CSelectedOutput::singleton.Clear();
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 0);
+	CSelectedOutput::Instance()->Clear();
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetRowCount());
 
 	CVar v1(7.0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBack("pH", v1) == 0);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBack("pH", v1));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 1);
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetRowCount());
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 2);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
 
 	CVar v2(8.0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBack("pH", v2) == 0);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBack("pH", v2));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 2);
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
 
 	CVar v3(9.0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBack("user_pH", v3) == 0);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBack("user_pH", v3));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 2);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 2);
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
 
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 2);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 3);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(3u, CSelectedOutput::Instance()->GetRowCount());
 #if defined(_DEBUG)
-	CSelectedOutput::singleton.Dump("TestNewHeadingsPushBack");
+	CSelectedOutput::Instance()->Dump("TestNewHeadingsPushBack");
 #endif
 }
 
 void
 TestSelectedOutput::TestPushBackDouble()
 {
-	CSelectedOutput::singleton.Clear();
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 0);
+	CSelectedOutput::Instance()->Clear();
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetRowCount());
 
 	
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 0);
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetRowCount());
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackDouble("pH", 7.0) == 0);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackDouble("pH", 7.0));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 1); // heading
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetRowCount()); // heading
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 2);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
 
 	CVar v;
-	CPPUNIT_ASSERT(v.type == TT_EMPTY);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 0, &v) == VR_OK);
-	CPPUNIT_ASSERT(v.type == TT_STRING);
-	CPPUNIT_ASSERT(::strcmp(v.sVal, "pH") == 0);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, v.type);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(0, 0, &v) );
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, v.type);
+	CPPUNIT_ASSERT_EQUAL(std::string("pH"), std::string(v.sVal));
 
 	CVar vval;
-	CPPUNIT_ASSERT(vval.type == TT_EMPTY);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 0, &vval) == VR_OK);
-	CPPUNIT_ASSERT(vval.type == TT_DOUBLE);
-	CPPUNIT_ASSERT(vval.dVal == 7.0);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, vval.type);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 0, &vval));
+	CPPUNIT_ASSERT_EQUAL(TT_DOUBLE, vval.type);
+	CPPUNIT_ASSERT_EQUAL(7.0, vval.dVal);
 }
 
 void
 TestSelectedOutput::TestPushBackLong()
 {
-	CSelectedOutput::singleton.Clear();
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 0);
+	CSelectedOutput::Instance()->Clear();
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetRowCount());
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackLong("Sim", 2) == 0);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackLong("Sim", 2));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 1); // heading plus first row
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetRowCount()); // heading plus first row
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 2);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
 
 	CVar v;
-	CPPUNIT_ASSERT(v.type == TT_EMPTY);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 0, &v) == VR_OK);
-	CPPUNIT_ASSERT(v.type == TT_STRING);
-	CPPUNIT_ASSERT(::strcmp(v.sVal, "Sim") == 0);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, v.type);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(0, 0, &v));
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, v.type);
+	CPPUNIT_ASSERT_EQUAL(std::string("Sim"), std::string(v.sVal));
 
 	CVar vval;
-	CPPUNIT_ASSERT(vval.type == TT_EMPTY);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 0, &vval) == VR_OK);
-	CPPUNIT_ASSERT(vval.type == TT_LONG);
-	CPPUNIT_ASSERT(vval.lVal == 2);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, vval.type);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 0, &vval));
+	CPPUNIT_ASSERT_EQUAL(TT_LONG, vval.type);
+	CPPUNIT_ASSERT_EQUAL(2l, vval.lVal);
 }
 
 void
 TestSelectedOutput::TestPushBackString()
 {
-	CSelectedOutput::singleton.Clear();
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 0);
+	CSelectedOutput::Instance()->Clear();
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetRowCount());
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackString("state", "i_soln") == 0);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackString("state", "i_soln"));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 1); // heading
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetRowCount()); // heading
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 2);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
 
 	CVar v;
-	CPPUNIT_ASSERT(v.type == TT_EMPTY);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 0, &v) == VR_OK);
-	CPPUNIT_ASSERT(v.type == TT_STRING);
-	CPPUNIT_ASSERT(::strcmp(v.sVal, "state") == 0);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, v.type);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(0, 0, &v) );
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, v.type);
+	CPPUNIT_ASSERT_EQUAL(std::string("state"), std::string(v.sVal));
 
 	CVar vval;
-	CPPUNIT_ASSERT(vval.type == TT_EMPTY);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 0, &vval) == VR_OK);
-	CPPUNIT_ASSERT(vval.type == TT_STRING);
-	CPPUNIT_ASSERT(::strcmp(vval.sVal, "i_soln") == 0);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, vval.type);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 0, &vval));
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, vval.type);
+	CPPUNIT_ASSERT_EQUAL(std::string("i_soln"), std::string(vval.sVal));
 }
 
 void
 TestSelectedOutput::TestPushBackEmpty()
 {
-	CSelectedOutput::singleton.Clear();
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 0);
+	CSelectedOutput::Instance()->Clear();
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetRowCount());
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackEmpty("Empty") == 0);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackEmpty("Empty"));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 1); // heading
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetRowCount()); // heading
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 2);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
 
 	CVar v;
-	CPPUNIT_ASSERT(v.type == TT_EMPTY);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 0, &v) == VR_OK);
-	CPPUNIT_ASSERT(v.type == TT_STRING);
-	CPPUNIT_ASSERT(::strcmp(v.sVal, "Empty") == 0);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, v.type);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(0, 0, &v) );
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, v.type);
+	CPPUNIT_ASSERT_EQUAL(std::string("Empty"), std::string(v.sVal));
 
 	CVar vval;
-	CPPUNIT_ASSERT(vval.type == TT_EMPTY);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 0, &vval) == VR_OK);
-	CPPUNIT_ASSERT(vval.type == TT_EMPTY);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, vval.type);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 0, &vval));
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, vval.type);
 }
 
 void
 TestSelectedOutput::TestDuplicateHeadings()
 {
-	CSelectedOutput::singleton.Clear();
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 0);
+	CSelectedOutput::Instance()->Clear();
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetRowCount());
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackDouble("pH", 7.0) == 0);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackDouble("pH", 7.0));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 1); // heading
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetRowCount()); // heading
 
 	// overwrite pH with 8.0
 	//
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackDouble("pH", 8.0) == 0);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackDouble("pH", 8.0));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 1); // heading
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetRowCount()); // heading
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 2);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
 
 	CVar v;
-	CPPUNIT_ASSERT(v.type == TT_EMPTY);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 0, &v) == VR_OK);
-	CPPUNIT_ASSERT(v.type == TT_STRING);
-	CPPUNIT_ASSERT(::strcmp(v.sVal, "pH") == 0);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, v.type);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(0, 0, &v) );
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, v.type);
+	CPPUNIT_ASSERT_EQUAL(std::string("pH"), std::string(v.sVal));
+
 
 	CVar vval;
-	CPPUNIT_ASSERT(vval.type == TT_EMPTY);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 0, &vval) == VR_OK);
-	CPPUNIT_ASSERT(vval.type == TT_DOUBLE);
-	CPPUNIT_ASSERT(vval.dVal == 8.0);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, vval.type);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 0, &vval));
+	CPPUNIT_ASSERT_EQUAL(TT_DOUBLE, vval.type);
+	CPPUNIT_ASSERT_EQUAL(8.0, vval.dVal);
 }
 
 void
 TestSelectedOutput::TestEndRow()
 {
-	CSelectedOutput::singleton.Clear();
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 0);
+	CSelectedOutput::Instance()->Clear();
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetRowCount());
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackDouble("pH", 7.0) == 0);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackDouble("pH", 7.0));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 1); // heading
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetRowCount()); // heading
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 2);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
 
 	CVar v;
-	CPPUNIT_ASSERT(v.type == TT_EMPTY);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 0, &v) == VR_OK);
-	CPPUNIT_ASSERT(v.type == TT_STRING);
-	CPPUNIT_ASSERT(::strcmp(v.sVal, "pH") == 0);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, v.type);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(0, 0, &v) );
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, v.type);
+	CPPUNIT_ASSERT_EQUAL(std::string("pH"), std::string(v.sVal));
 
 	CVar vval;
-	CPPUNIT_ASSERT(vval.type == TT_EMPTY);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 0, &vval) == VR_OK);
-	CPPUNIT_ASSERT(vval.type == TT_DOUBLE);
-	CPPUNIT_ASSERT(vval.dVal == 7.0);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, vval.type);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 0, &vval));
+	CPPUNIT_ASSERT_EQUAL(TT_DOUBLE, vval.type);
+	CPPUNIT_ASSERT_EQUAL(7.0, vval.dVal);
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackDouble("pH", 8.0) == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 3);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackDouble("pH", 8.0));
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(3u, CSelectedOutput::Instance()->GetRowCount());
 
 	CVar vval3;
-	CPPUNIT_ASSERT(vval3.type == TT_EMPTY);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 0, &vval3) == VR_OK);
-	CPPUNIT_ASSERT(vval3.type == TT_DOUBLE);
-	CPPUNIT_ASSERT(vval3.dVal == 7.0);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, vval3.type);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 0, &vval3));
+	CPPUNIT_ASSERT_EQUAL(TT_DOUBLE, vval3.type);
+	CPPUNIT_ASSERT_EQUAL(7.0, vval3.dVal);
 
 	CVar vval2;
-	CPPUNIT_ASSERT(vval2.type == TT_EMPTY);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(2, 0, &vval2) == VR_OK);
-	CPPUNIT_ASSERT(vval2.type == TT_DOUBLE);
-	CPPUNIT_ASSERT(vval2.dVal == 8.0);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, vval2.type);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(2, 0, &vval2));
+	CPPUNIT_ASSERT_EQUAL(TT_DOUBLE, vval2.type);
+	CPPUNIT_ASSERT_EQUAL(8.0, vval2.dVal);
 }
 
 void
 TestSelectedOutput::TestEndRow2()
 {
-	CSelectedOutput::singleton.Clear();
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 0);
+	CSelectedOutput::Instance()->Clear();
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetRowCount());
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackDouble("pH", 6.0) == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackDouble("pH", 7.0) == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackDouble("pH", 8.0) == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackDouble("pH", 9.0) == 0);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackDouble("pH", 6.0));
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackDouble("pH", 7.0));
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackDouble("pH", 8.0));
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackDouble("pH", 9.0));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 2);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
 
-// COMMENT: {12/8/2003 6:06:03 PM}	CVar v;
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(v.type == TT_EMPTY);
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 0, &v) == VR_OK);
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(v.type == TT_STRING);
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(::strcmp(v.sVal, "pH") == 0);
-// COMMENT: {12/8/2003 6:06:03 PM}
-// COMMENT: {12/8/2003 6:06:03 PM}	CVar vval;
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(vval.type == TT_EMPTY);
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 0, &vval) == VR_OK);
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(vval.type == TT_DOUBLE);
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(vval.dVal == 7.0);
-// COMMENT: {12/8/2003 6:06:03 PM}
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackDouble("pH", 8.0) == 0);
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 3);
-// COMMENT: {12/8/2003 6:06:03 PM}
-// COMMENT: {12/8/2003 6:06:03 PM}	CVar vval3;
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(vval3.type == TT_EMPTY);
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 0, &vval3) == VR_OK);
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(vval3.type == TT_DOUBLE);
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(vval3.dVal == 7.0);
-// COMMENT: {12/8/2003 6:06:03 PM}
-// COMMENT: {12/8/2003 6:06:03 PM}	CVar vval2;
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(vval2.type == TT_EMPTY);
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(2, 0, &vval2) == VR_OK);
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(vval2.type == TT_DOUBLE);
-// COMMENT: {12/8/2003 6:06:03 PM}	CPPUNIT_ASSERT(vval2.dVal == 8.0);
+	CVar v;
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, v.type);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(0, 0, &v) );
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, v.type);
+	CPPUNIT_ASSERT_EQUAL(std::string("pH"), std::string(v.sVal));
+
+	CVar vval;
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, vval.type);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 0, &vval));
+	CPPUNIT_ASSERT_EQUAL(TT_DOUBLE, vval.type);
+	CPPUNIT_ASSERT_EQUAL(9.0, vval.dVal);   // dups get overwritten
+
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackDouble("pH", 8.0));
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(3u, CSelectedOutput::Instance()->GetRowCount());
+
+	CVar vval3;
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, vval3.type);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 0, &vval3));
+	CPPUNIT_ASSERT_EQUAL(TT_DOUBLE, vval3.type);
+	CPPUNIT_ASSERT_EQUAL(9.0, vval3.dVal);
+
+	CVar vval2;
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, vval2.type);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(2, 0, &vval2));
+	CPPUNIT_ASSERT_EQUAL(TT_DOUBLE, vval2.type);
+	CPPUNIT_ASSERT_EQUAL(8.0, vval2.dVal);
 }
 
 
 void
 TestSelectedOutput::TestTooManyHeadings()
 {
-	CSelectedOutput::singleton.Clear();
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 0);
+	CSelectedOutput::Instance()->Clear();
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetRowCount());
 
 	// USER_PUNCH
 	// -headings 1.name 1.type 1.moles
@@ -406,11 +393,11 @@ TestSelectedOutput::TestTooManyHeadings()
 	user_punch_headings[user_punch_count_headings] = ::strdup("1.moles");
 	user_punch_count_headings++;
 
-	CPPUNIT_ASSERT(::EndRow() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 3);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 2);
+	CPPUNIT_ASSERT_EQUAL(0, ::EndRow());
+	CPPUNIT_ASSERT_EQUAL(3u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
 #if defined(_DEBUG)
-	CSelectedOutput::singleton.Dump("TestTooManyHeadings");
+	CSelectedOutput::Instance()->Dump("TestTooManyHeadings");
 #endif
 
 	// clean up headings
@@ -425,44 +412,45 @@ TestSelectedOutput::TestTooManyHeadings()
 	CVar head0, head1, head2;
 	CVar val0, val1, val2;
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 0, &head0) == VR_OK);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 1, &head1) == VR_OK);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 2, &head2) == VR_OK);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(0, 0, &head0));
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(0, 1, &head1));
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(0, 2, &head2));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 0, &val0) == VR_OK);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 1, &val1) == VR_OK);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 2, &val2) == VR_OK);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 0, &val0));
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 1, &val1));
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 2, &val2));
 
-	CPPUNIT_ASSERT(head0.type == TT_STRING);
-	CPPUNIT_ASSERT(head1.type == TT_STRING);
-	CPPUNIT_ASSERT(head2.type == TT_STRING);
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, head0.type);
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, head1.type);
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, head2.type);
 
-	CPPUNIT_ASSERT(val0.type == TT_EMPTY);
-	CPPUNIT_ASSERT(val1.type == TT_EMPTY);
-	CPPUNIT_ASSERT(val2.type == TT_EMPTY);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, val0.type);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, val1.type);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, val2.type);
 
-	CPPUNIT_ASSERT(::strcmp(head0.sVal, "1.name") == 0);
-	CPPUNIT_ASSERT(::strcmp(head1.sVal, "1.type") == 0);
-	CPPUNIT_ASSERT(::strcmp(head2.sVal, "1.moles") == 0);
+	CPPUNIT_ASSERT_EQUAL(std::string("1.name"), std::string(head0.sVal));
+	CPPUNIT_ASSERT_EQUAL(std::string("1.type"), std::string(head1.sVal));
+	CPPUNIT_ASSERT_EQUAL(std::string("1.moles"), std::string(head2.sVal));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackLong("sim", 1)            == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackString("state", "i_soln") == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackLong("soln", 22)          == 0);
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 6);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 3);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackLong("sim", 1));
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackString("state", "i_soln"));
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackLong("soln", 22));
+
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(6u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(3u, CSelectedOutput::Instance()->GetRowCount());
 #if defined(_DEBUG)
-	CSelectedOutput::singleton.Dump("TestTooManyHeadings");
+	CSelectedOutput::Instance()->Dump("TestTooManyHeadings");
 #endif
 }
 
 void
 TestSelectedOutput::TestNotEnoughHeadings()
 {
-	CSelectedOutput::singleton.Clear();
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 0);
+	CSelectedOutput::Instance()->Clear();
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetRowCount());
 
 	// USER_PUNCH
 	// -headings 1.name 1.type 1.moles
@@ -471,167 +459,168 @@ TestSelectedOutput::TestNotEnoughHeadings()
 	user_punch_headings = NULL;
 	user_punch_count_headings = 0;
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackLong("sim", 1)            == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackString("state", "i_soln") == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackLong("soln", 22)          == 0);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackLong("sim", 1));
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackString("state", "i_soln"));
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackLong("soln", 22));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow()      == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 3);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 2);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(3u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
 #if defined(_DEBUG)
-	CSelectedOutput::singleton.Dump("TestNotEnoughHeadings");
+	CSelectedOutput::Instance()->Dump("TestNotEnoughHeadings");
 #endif
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackLong("sim", 2)           == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackString("state", "react") == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackLong("soln", 23)         == 0);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackLong("sim", 2));
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackString("state", "react"));
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackLong("soln", 23));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackEmpty("no_heading_1") == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackEmpty("no_heading_2") == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackEmpty("no_heading_3") == 0);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackEmpty("no_heading_1"));
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackEmpty("no_heading_2"));
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->PushBackEmpty("no_heading_3"));
 
 #if defined(_DEBUG)
-	CSelectedOutput::singleton.Dump("TestNotEnoughHeadings");
+	CSelectedOutput::Instance()->Dump("TestNotEnoughHeadings");
 #endif
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 6);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 3);
+	CPPUNIT_ASSERT_EQUAL(0, CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(6u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(3u, CSelectedOutput::Instance()->GetRowCount());
 
 	CVar head0, head1, head2, head3, head4, head5;
 	CVar val0, val1, val2, val3, val4, val5;
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 0, &head0) == VR_OK);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 1, &head1) == VR_OK);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 2, &head2) == VR_OK);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 3, &head3) == VR_OK);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 4, &head4) == VR_OK);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 5, &head5) == VR_OK);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(0, 0, &head0));
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(0, 1, &head1));
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(0, 2, &head2));
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(0, 3, &head3));
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(0, 4, &head4));
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(0, 5, &head5));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 0, &val0) == VR_OK);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 1, &val1) == VR_OK);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 2, &val2) == VR_OK);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 3, &val3) == VR_OK);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 4, &val4) == VR_OK);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 5, &val5) == VR_OK);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 0, &val0));
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 1, &val1));
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 2, &val2));
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 3, &val3));
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 4, &val4));
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 5, &val5));
 
-	CPPUNIT_ASSERT(head0.type == TT_STRING);
-	CPPUNIT_ASSERT(head1.type == TT_STRING);
-	CPPUNIT_ASSERT(head2.type == TT_STRING);
-	CPPUNIT_ASSERT(head3.type == TT_STRING);
-	CPPUNIT_ASSERT(head4.type == TT_STRING);
-	CPPUNIT_ASSERT(head5.type == TT_STRING);
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, head0.type);
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, head1.type);
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, head2.type);
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, head3.type);
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, head4.type);
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, head5.type);
 
-	CPPUNIT_ASSERT(val0.type == TT_LONG);
-	CPPUNIT_ASSERT(val1.type == TT_STRING);
-	CPPUNIT_ASSERT(val2.type == TT_LONG);
-	CPPUNIT_ASSERT(val3.type == TT_EMPTY);
-	CPPUNIT_ASSERT(val4.type == TT_EMPTY);
-	CPPUNIT_ASSERT(val5.type == TT_EMPTY);
+	CPPUNIT_ASSERT_EQUAL(TT_LONG,   val0.type);
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, val1.type);
+	CPPUNIT_ASSERT_EQUAL(TT_LONG,   val2.type);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY,  val3.type);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY,  val4.type);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY,  val5.type);
 
-	CPPUNIT_ASSERT(::strcmp(head0.sVal, "sim") == 0);
-	CPPUNIT_ASSERT(::strcmp(head1.sVal, "state") == 0);
-	CPPUNIT_ASSERT(::strcmp(head2.sVal, "soln") == 0);
-	CPPUNIT_ASSERT(::strcmp(head3.sVal, "no_heading_1") == 0);
-	CPPUNIT_ASSERT(::strcmp(head4.sVal, "no_heading_2") == 0);
-	CPPUNIT_ASSERT(::strcmp(head5.sVal, "no_heading_3") == 0);
+	CPPUNIT_ASSERT_EQUAL(std::string("sim"),          std::string(head0.sVal));
+	CPPUNIT_ASSERT_EQUAL(std::string("state"),        std::string(head1.sVal));
+	CPPUNIT_ASSERT_EQUAL(std::string("soln"),         std::string(head2.sVal));
+	CPPUNIT_ASSERT_EQUAL(std::string("no_heading_1"), std::string(head3.sVal));
+	CPPUNIT_ASSERT_EQUAL(std::string("no_heading_2"), std::string(head4.sVal));
+	CPPUNIT_ASSERT_EQUAL(std::string("no_heading_3"), std::string(head5.sVal));
 
-	CPPUNIT_ASSERT(val0.lVal == 1);
-	CPPUNIT_ASSERT(::strcmp(val1.sVal, "i_soln") == 0);
-	CPPUNIT_ASSERT(val2.lVal == 22);
+
+	CPPUNIT_ASSERT_EQUAL(1l, val0.lVal);
+	CPPUNIT_ASSERT_EQUAL(std::string("i_soln"), std::string(val1.sVal));
+	CPPUNIT_ASSERT_EQUAL(22l, val2.lVal);
 }
 
 void
 TestSelectedOutput::TestInvalidRow()
 {
-	CSelectedOutput::singleton.Clear();
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 0);
+	CSelectedOutput::Instance()->Clear();
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetRowCount());
 
 	CVar v;
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 0, &v) == VR_INVALIDROW);
-	CPPUNIT_ASSERT(v.type == TT_ERROR);
-	CPPUNIT_ASSERT(v.vresult == VR_INVALIDROW);
+	CPPUNIT_ASSERT_EQUAL(VR_INVALIDROW, CSelectedOutput::Instance()->Get(0, 0, &v));
+	CPPUNIT_ASSERT_EQUAL(TT_ERROR, v.type);
+	CPPUNIT_ASSERT_EQUAL(VR_INVALIDROW, v.vresult);
 
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(-1, -1, &v) == VR_INVALIDROW);
-	CPPUNIT_ASSERT(v.type == TT_ERROR);
-	CPPUNIT_ASSERT(v.vresult == VR_INVALIDROW);
+	CPPUNIT_ASSERT_EQUAL(VR_INVALIDROW, CSelectedOutput::Instance()->Get(-1, -1, &v));
+	CPPUNIT_ASSERT_EQUAL(TT_ERROR, v.type);
+	CPPUNIT_ASSERT_EQUAL(VR_INVALIDROW, v.vresult);
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackEmpty("heading") == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 2);
+	CPPUNIT_ASSERT_EQUAL(0,  CSelectedOutput::Instance()->PushBackEmpty("heading"));
+	CPPUNIT_ASSERT_EQUAL(0,  CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 0, &v) == VR_OK);
-	CPPUNIT_ASSERT(v.type == TT_STRING);
-	CPPUNIT_ASSERT(::strcmp(v.sVal, "heading") == 0);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(0, 0, &v) );
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, v.type);
+	CPPUNIT_ASSERT_EQUAL(std::string("heading"), std::string(v.sVal));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 0, &v) == VR_OK);
-	CPPUNIT_ASSERT(v.type == TT_EMPTY);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 0, &v));
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, v.type);
 
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(2, 0, &v) == VR_INVALIDROW);
-	CPPUNIT_ASSERT(v.type == TT_ERROR);
-	CPPUNIT_ASSERT(v.vresult == VR_INVALIDROW);
+	CPPUNIT_ASSERT_EQUAL(VR_INVALIDROW, CSelectedOutput::Instance()->Get(2, 0, &v));
+	CPPUNIT_ASSERT_EQUAL(TT_ERROR, v.type);
+	CPPUNIT_ASSERT_EQUAL(VR_INVALIDROW, v.vresult);
 }
 
 void
 TestSelectedOutput::TestInvalidCol()
 {
-	CSelectedOutput::singleton.Clear();
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 0);
+	CSelectedOutput::Instance()->Clear();
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetRowCount());
 
 	CVar v;
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 0, &v) == VR_INVALIDROW);
-	CPPUNIT_ASSERT(v.type == TT_ERROR);
-	CPPUNIT_ASSERT(v.vresult == VR_INVALIDROW);
+	CPPUNIT_ASSERT_EQUAL(VR_INVALIDROW, CSelectedOutput::Instance()->Get(0, 0, &v));
+	CPPUNIT_ASSERT_EQUAL(TT_ERROR, v.type);
+	CPPUNIT_ASSERT_EQUAL(VR_INVALIDROW, v.vresult);
 
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(-1, -1, &v) == VR_INVALIDROW);
-	CPPUNIT_ASSERT(v.type == TT_ERROR);
-	CPPUNIT_ASSERT(v.vresult == VR_INVALIDROW);
+	CPPUNIT_ASSERT_EQUAL(VR_INVALIDROW, CSelectedOutput::Instance()->Get(-1, -1, &v));
+	CPPUNIT_ASSERT_EQUAL(TT_ERROR, v.type);
+	CPPUNIT_ASSERT_EQUAL(VR_INVALIDROW, v.vresult);
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackEmpty("heading") == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 2);
+	CPPUNIT_ASSERT_EQUAL(0,  CSelectedOutput::Instance()->PushBackEmpty("heading"));
+	CPPUNIT_ASSERT_EQUAL(0,  CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 0, &v) == VR_OK);
-	CPPUNIT_ASSERT(v.type == TT_STRING);
-	CPPUNIT_ASSERT(::strcmp(v.sVal, "heading") == 0);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(0, 0, &v) );
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, v.type);
+	CPPUNIT_ASSERT_EQUAL(std::string("heading"), std::string(v.sVal));
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(1, 0, &v) == VR_OK);
-	CPPUNIT_ASSERT(v.type == TT_EMPTY);
+	CPPUNIT_ASSERT_EQUAL(VR_OK, CSelectedOutput::Instance()->Get(1, 0, &v));
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, v.type);
 
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, 1, &v) == VR_INVALIDCOL);
-	CPPUNIT_ASSERT(v.type == TT_ERROR);
-	CPPUNIT_ASSERT(v.vresult == VR_INVALIDCOL);
+	CPPUNIT_ASSERT_EQUAL(VR_INVALIDCOL, CSelectedOutput::Instance()->Get(0, 1, &v));
+	CPPUNIT_ASSERT_EQUAL(TT_ERROR, v.type);
+	CPPUNIT_ASSERT_EQUAL(VR_INVALIDCOL, v.vresult);
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.Get(0, -1, &v) == VR_INVALIDCOL);
-	CPPUNIT_ASSERT(v.type == TT_ERROR);
-	CPPUNIT_ASSERT(v.vresult == VR_INVALIDCOL);
+	CPPUNIT_ASSERT_EQUAL(VR_INVALIDCOL, CSelectedOutput::Instance()->Get(0, -1, &v));
+	CPPUNIT_ASSERT_EQUAL(TT_ERROR, v.type);
+	CPPUNIT_ASSERT_EQUAL(VR_INVALIDCOL, v.vresult);
 }
 
 void
 TestSelectedOutput::TestGet()
 {
-	CSelectedOutput::singleton.Clear();
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 0);
+	CSelectedOutput::Instance()->Clear();
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetRowCount());
 
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.PushBackEmpty("heading") == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.EndRow() == 0);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetColCount() == 1);
-	CPPUNIT_ASSERT(CSelectedOutput::singleton.GetRowCount() == 2);
+	CPPUNIT_ASSERT_EQUAL(0,  CSelectedOutput::Instance()->PushBackEmpty("heading"));
+	CPPUNIT_ASSERT_EQUAL(0,  CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
 
 
-	CVar v0 = CSelectedOutput::singleton.Get(0, 0);
-	CPPUNIT_ASSERT(v0.type == TT_STRING);
-	CPPUNIT_ASSERT(::strcmp(v0.sVal, "heading") == 0);
+	CVar v0 = CSelectedOutput::Instance()->Get(0, 0);
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, v0.type);
+	CPPUNIT_ASSERT_EQUAL(std::string("heading"), std::string(v0.sVal));
 
-	CVar v1 = CSelectedOutput::singleton.Get(1, 0);
-	CPPUNIT_ASSERT(v1.type == TT_EMPTY);
+	CVar v1 = CSelectedOutput::Instance()->Get(1, 0);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, v1.type);
 }

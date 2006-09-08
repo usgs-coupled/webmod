@@ -1,7 +1,7 @@
 #ifndef _INC_DEBUG_H
 #define _INC_DEBUG_H
 
-#if defined(_WIN32)
+#if defined(_MSC_VER)
 #include <crtdbg.h>
 #define ASSERT _ASSERT
 #else

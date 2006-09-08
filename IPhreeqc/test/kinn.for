@@ -17,13 +17,13 @@
         STOP
       ENDIF
 
-!!	DO 45 k=1,1000
+!!!!	DO 45 k=1,10
 
       CALL SOLUTION(1.0, 1.0, 1.0)
       CALL EQUILIBRIUM_PHASES('calcite', 0.0, 0.010)
       CALL USER_PUNCH('Ca', 10)
-      CALL OutputLines
-      iresult = Run(.TRUE., .TRUE., .TRUE., .TRUE.)
+!!!!      CALL OutputLines
+      iresult = Run(.FALSE., .FALSE., .FALSE., .TRUE.)
       IF (iresult.NE.VR_OK) THEN
         CALL OutputLastError
         STOP
@@ -32,8 +32,8 @@
       rows = GetSelectedOutputRowCount()
       cols = GetSelectedOutputColumnCount()
 
-      PRINT 10, 'Rows = ', rows
-      PRINT 10, 'Cols = ', cols
+!!!!      PRINT 10, 'Rows = ', rows
+!!!!      PRINT 10, 'Cols = ', cols
 10    FORMAT(A,I3)
 
 !
@@ -72,7 +72,7 @@
 30      CONTINUE
         PRINT *
 40    CONTINUE
-!!45	CONTINUE
+!!!!45	CONTINUE
 
 50    FORMAT(A15,A,$)
 60    FORMAT(1PG15.7E2,A,$)

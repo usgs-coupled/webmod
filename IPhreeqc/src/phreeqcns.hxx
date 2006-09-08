@@ -10,37 +10,18 @@
 
 #include <math.h>
 
-namespace phreeqc {
-extern "C" {
 
 #define EXTERNAL extern
-#include "phreeqc/global.h"
-#include "phreeqc/phqalloc.h"
-#include "phreeqc/message.h"
 
-void malloc_error(void);
-int check_key (char *str);
-int copy_entities(void);
-int copy_token (char *token_ptr, char **ptr, int *l);
+#include "global.h"
+#include "phqalloc.h"
+#include "input.h"
+#include "output.h"
+#include "phrqproto.h"
+EXTERNAL int n_user_punch_index;
 
-int clean_up(void);
-void initialize(void);
-int initial_exchangers(int print);
-int initial_gas_phases(int print);
-int initial_solutions(int print);
-int initial_surfaces(int print);
-int inverse_models(void);
-int reactions(void);
-int read_input(void);
-int tidy_model(void);
-int string_trim_right(char *str);
-int tidy_punch(void);
-int dup_print(const char *ptr, int emphasis);
+#undef EXTERNAL
 
-extern int n_user_punch_index;
-}
-
-}
 
 #endif /* _INC_GLOBALNS */
 

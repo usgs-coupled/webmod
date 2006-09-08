@@ -7,7 +7,7 @@ TARGET     = lib/libphreeqcmms.a
 
 TARGET_ARCH = -IIPhreeqc/include
 
-VPATH=src:IPhreeqc/src/phreeqc:IPhreeqc/src
+VPATH=src:IPhreeqc/src/phreeqcpp/phreeqc:IPhreeqc/src
 
 %.o: %.f
 	$(FC) $(FFLAGS) $(TARGET_ARCH) -c -o $@ $<
@@ -21,7 +21,7 @@ VPATH=src:IPhreeqc/src/phreeqc:IPhreeqc/src
 %.o: %.cxx
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -o $@ $<
 
-PDIR = 	IPhreeqc/src/phreeqc
+
 POBJS =	\
 		advection.o \
 		basic.o \
@@ -30,18 +30,21 @@ POBJS =	\
 		cvdense.o \
 		cvode.o \
 		dense.o \
+		dw.o \
 		integrate.o \
+		input.o \
 		inverse.o \
 		isotopes.o \
 		kinetics.o \
 		mainsubs.o \
-		message.o \
 		model.o \
 		nvector.o \
 		nvector_serial.o \
 		p2clib.o \
 		parse.o \
 		phqalloc.o \
+		pitzer.o \
+		pitzer_structures.o \
 		prep.o \
 		print.o \
 		read.o \
@@ -60,15 +63,14 @@ POBJS =	\
 SOBJS =	\
 		IPhreeqc.o \
 		IPhreeqcF.o \
-		Output.o \
-		Overrides.o \
 		Phreeqc.o \
-		PhreeqcParser.o \
 		SelectedOutput.o \
 		TallyF.o \
 		Var.o \
 		fwrap.o \
-		global.o
+		global.o \
+		module_files.o \
+		module_output.o
 
 
 MOBJS =	\
@@ -91,146 +93,284 @@ clean:
 	$(RM) $(POBJS) $(SOBJS) $(MOBJS)
 
 
+# POBJS
+advection.o: IPhreeqc/src/phreeqcpp/phreeqc/advection.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
+basic.o: IPhreeqc/src/phreeqcpp/phreeqc/basic.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/p2c.h
+basicsubs.o: IPhreeqc/src/phreeqcpp/phreeqc/basicsubs.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
+cl1.o: IPhreeqc/src/phreeqcpp/phreeqc/cl1.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h
+cvdense.o: IPhreeqc/src/phreeqcpp/phreeqc/cvdense.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/cvdense.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/cvode.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/sundialstypes.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/nvector.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/dense.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/smalldense.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/sundialsmath.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h
+cvode.o: IPhreeqc/src/phreeqcpp/phreeqc/cvode.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/cvode.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/sundialstypes.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/nvector.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/sundialsmath.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/kinetics.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h
+dense.o: IPhreeqc/src/phreeqcpp/phreeqc/dense.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/sundialstypes.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/sundialsmath.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/dense.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/smalldense.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h
+dw.o: IPhreeqc/src/phreeqcpp/phreeqc/dw.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/pitzer.h
+integrate.o: IPhreeqc/src/phreeqcpp/phreeqc/integrate.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
+input.o: IPhreeqc/src/phreeqcpp/phreeqc/input.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/input.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h
+inverse.o: IPhreeqc/src/phreeqcpp/phreeqc/inverse.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
+isotopes.o: IPhreeqc/src/phreeqcpp/phreeqc/isotopes.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
+kinetics.o: IPhreeqc/src/phreeqcpp/phreeqc/kinetics.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/sundialstypes.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/cvode.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/nvector.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/cvdense.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/dense.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/smalldense.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/nvector_serial.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/kinetics.h
+mainsubs.o: IPhreeqc/src/phreeqcpp/phreeqc/mainsubs.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/input.h
+model.o: IPhreeqc/src/phreeqcpp/phreeqc/model.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
+nvector.o: IPhreeqc/src/phreeqcpp/phreeqc/nvector.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/nvector.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/sundialstypes.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h
+nvector_serial.o: IPhreeqc/src/phreeqcpp/phreeqc/nvector_serial.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/nvector_serial.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/nvector.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/sundialstypes.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/sundialsmath.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h
+p2clib.o: IPhreeqc/src/phreeqcpp/phreeqc/p2clib.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/p2c.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h
+parse.o: IPhreeqc/src/phreeqcpp/phreeqc/parse.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
+phqalloc.o: IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h
+pitzer.o: IPhreeqc/src/phreeqcpp/phreeqc/pitzer.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/pitzer.h
+pitzer_structures.o: IPhreeqc/src/phreeqcpp/phreeqc/pitzer_structures.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/pitzer.h
+prep.o: IPhreeqc/src/phreeqcpp/phreeqc/prep.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
+print.o: IPhreeqc/src/phreeqcpp/phreeqc/print.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/pitzer.h
+read.o: IPhreeqc/src/phreeqcpp/phreeqc/read.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
+readtr.o: IPhreeqc/src/phreeqcpp/phreeqc/readtr.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
+smalldense.o: IPhreeqc/src/phreeqcpp/phreeqc/smalldense.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/smalldense.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/sundialstypes.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/sundialsmath.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h
+spread.o: IPhreeqc/src/phreeqcpp/phreeqc/spread.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
+step.o: IPhreeqc/src/phreeqcpp/phreeqc/step.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
+structures.o: IPhreeqc/src/phreeqcpp/phreeqc/structures.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
+sundialsmath.o: IPhreeqc/src/phreeqcpp/phreeqc/sundialsmath.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/sundialsmath.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/sundialstypes.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h
+tally.o: IPhreeqc/src/phreeqcpp/phreeqc/tally.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
+tidy.o: IPhreeqc/src/phreeqcpp/phreeqc/tidy.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
+transport.o: IPhreeqc/src/phreeqcpp/phreeqc/transport.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
+utilities.o: IPhreeqc/src/phreeqcpp/phreeqc/utilities.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
 
-# iphreeqcmms (MOBJS)
-phr_cmix.o: src/phr_cmix.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/include/IPhreeqc.h IPhreeqc/include/Var.h
-phr_mix.o: src/phr_mix.F IPhreeqc/include/IPhreeqc.f.inc
-phr_multicopy.o: src/phr_multicopy.f  IPhreeqc/include/IPhreeqc.f.inc
-phr_precip.o: src/phr_precip.f  IPhreeqc/include/IPhreeqc.f.inc
-
-# iphreeqc (SOBJS)
-# C++
+# SOBJS
 IPhreeqc.o: IPhreeqc/src/IPhreeqc.cxx IPhreeqc/src/phreeqcns.hxx \
-  IPhreeqc/src/phreeqc/global.h IPhreeqc/src/phreeqc/phqalloc.h \
-  IPhreeqc/src/phreeqc/message.h IPhreeqc/src/Phreeqc.hxx \
-  IPhreeqc/include/IPhreeqc.h IPhreeqc/include/Var.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/input.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h IPhreeqc/src/Phreeqc.hxx \
   IPhreeqc/src/ErrorReporter.hxx IPhreeqc/src/SelectedOutput.hxx \
-  IPhreeqc/src/CVar.hxx IPhreeqc/src/Debug.h
-Output.o: IPhreeqc/src/Output.cxx IPhreeqc/src/Output.hxx \
-  IPhreeqc/src/Debug.h IPhreeqc/src/phreeqcns.hxx \
-  IPhreeqc/src/phreeqc/global.h IPhreeqc/src/phreeqc/phqalloc.h \
-  IPhreeqc/src/phreeqc/message.h IPhreeqc/src/ErrorReporter.hxx
-Overrides.o: IPhreeqc/src/Overrides.cxx IPhreeqc/src/Debug.h \
-  IPhreeqc/src/Phreeqc.hxx IPhreeqc/include/IPhreeqc.h \
-  IPhreeqc/include/Var.h IPhreeqc/src/PhreeqcParser.hxx
-Phreeqc.o: IPhreeqc/src/Phreeqc.cxx IPhreeqc/src/Debug.h \
-  IPhreeqc/src/Phreeqc.hxx IPhreeqc/include/IPhreeqc.h \
-  IPhreeqc/include/Var.h IPhreeqc/src/phreeqcns.hxx \
-  IPhreeqc/src/phreeqc/global.h IPhreeqc/src/phreeqc/phqalloc.h \
-  IPhreeqc/src/phreeqc/message.h IPhreeqc/src/PhreeqcParser.hxx \
-  IPhreeqc/src/Output.hxx IPhreeqc/src/ErrorReporter.hxx
-PhreeqcParser.o: IPhreeqc/src/PhreeqcParser.cxx \
-  IPhreeqc/src/PhreeqcParser.hxx IPhreeqc/src/phreeqcns.hxx \
-  IPhreeqc/src/phreeqc/global.h IPhreeqc/src/phreeqc/phqalloc.h \
-  IPhreeqc/src/phreeqc/message.h IPhreeqc/src/Debug.h
+  IPhreeqc/src/CVar.hxx IPhreeqc/src/Debug.h \
+  IPhreeqc/src/../include/Var.h IPhreeqc/src/../include/IPhreeqc.h \
+  IPhreeqc/src/../include/Var.h IPhreeqc/src/module_files.h
+IPhreeqcF.o: IPhreeqc/src/IPhreeqcF.F
+Phreeqc.o: IPhreeqc/src/Phreeqc.cxx
 SelectedOutput.o: IPhreeqc/src/SelectedOutput.cxx \
   IPhreeqc/src/SelectedOutput.hxx IPhreeqc/src/CVar.hxx \
-  IPhreeqc/src/Debug.h IPhreeqc/include/Var.h IPhreeqc/src/phreeqcns.hxx \
-  IPhreeqc/src/phreeqc/global.h IPhreeqc/src/phreeqc/phqalloc.h \
-  IPhreeqc/src/phreeqc/message.h
-# Fortran
-IPhreeqcF.o: IPhreeqc/src/IPhreeqcF.F
+  IPhreeqc/src/Debug.h IPhreeqc/src/../include/Var.h \
+  IPhreeqc/src/phreeqcns.hxx IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/input.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
 TallyF.o: IPhreeqc/src/TallyF.F
-# C
-Var.o: IPhreeqc/src/Var.c IPhreeqc/include/Var.h
-fwrap.o: IPhreeqc/src/fwrap.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/include/IPhreeqc.h IPhreeqc/include/Var.h
-global.o: IPhreeqc/src/global.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h
+Var.o: IPhreeqc/src/Var.c IPhreeqc/src/../include/Var.h
+fwrap.o: IPhreeqc/src/fwrap.c IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/../include/IPhreeqc.h IPhreeqc/src/../include/Var.h
+module_files.o: IPhreeqc/src/module_files.c IPhreeqc/src/module_files.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phreeqc_files.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/input.h
+module_output.o: IPhreeqc/src/module_output.c IPhreeqc/src/module_files.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.c \
+  IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/output.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h \
+  IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h
 
-Var.o: IPhreeqc/src/Var.c IPhreeqc/include/Var.h
-fwrap.o: IPhreeqc/src/fwrap.c IPhreeqc/include/IPhreeqc.h \
-  IPhreeqc/include/Var.h
-global.o: IPhreeqc/src/global.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h
-
-# phreeqc (POBJS)
-advection.o: IPhreeqc/src/phreeqc/advection.c \
-  IPhreeqc/src/phreeqc/global.h IPhreeqc/src/phreeqc/phqalloc.h \
-  IPhreeqc/src/phreeqc/message.h
-basic.o: IPhreeqc/src/phreeqc/basic.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h IPhreeqc/src/phreeqc/message.h \
-  IPhreeqc/src/phreeqc/p2c.h
-basicsubs.o: IPhreeqc/src/phreeqc/basicsubs.c \
-  IPhreeqc/src/phreeqc/global.h IPhreeqc/src/phreeqc/phqalloc.h \
-  IPhreeqc/src/phreeqc/message.h
-cl1.o: IPhreeqc/src/phreeqc/cl1.c IPhreeqc/src/phreeqc/phqalloc.h \
-  IPhreeqc/src/phreeqc/message.h
-cvdense.o: IPhreeqc/src/phreeqc/cvdense.c IPhreeqc/src/phreeqc/cvdense.h \
-  IPhreeqc/src/phreeqc/cvode.h IPhreeqc/src/phreeqc/sundialstypes.h \
-  IPhreeqc/src/phreeqc/nvector.h IPhreeqc/src/phreeqc/dense.h \
-  IPhreeqc/src/phreeqc/smalldense.h IPhreeqc/src/phreeqc/sundialsmath.h \
-  IPhreeqc/src/phreeqc/message.h
-cvode.o: IPhreeqc/src/phreeqc/cvode.c IPhreeqc/src/phreeqc/cvode.h \
-  IPhreeqc/src/phreeqc/sundialstypes.h IPhreeqc/src/phreeqc/nvector.h \
-  IPhreeqc/src/phreeqc/sundialsmath.h IPhreeqc/src/phreeqc/message.h \
-  IPhreeqc/src/phreeqc/kinetics.h
-dense.o: IPhreeqc/src/phreeqc/dense.c \
-  IPhreeqc/src/phreeqc/sundialstypes.h \
-  IPhreeqc/src/phreeqc/sundialsmath.h IPhreeqc/src/phreeqc/dense.h \
-  IPhreeqc/src/phreeqc/smalldense.h IPhreeqc/src/phreeqc/message.h
-integrate.o: IPhreeqc/src/phreeqc/integrate.c \
-  IPhreeqc/src/phreeqc/global.h IPhreeqc/src/phreeqc/phqalloc.h \
-  IPhreeqc/src/phreeqc/message.h
-inverse.o: IPhreeqc/src/phreeqc/inverse.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h IPhreeqc/src/phreeqc/message.h
-isotopes.o: IPhreeqc/src/phreeqc/isotopes.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h IPhreeqc/src/phreeqc/message.h
-kinetics.o: IPhreeqc/src/phreeqc/kinetics.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h IPhreeqc/src/phreeqc/message.h \
-  IPhreeqc/src/phreeqc/sundialstypes.h IPhreeqc/src/phreeqc/cvode.h \
-  IPhreeqc/src/phreeqc/nvector.h IPhreeqc/src/phreeqc/cvdense.h \
-  IPhreeqc/src/phreeqc/dense.h IPhreeqc/src/phreeqc/smalldense.h \
-  IPhreeqc/src/phreeqc/nvector_serial.h IPhreeqc/src/phreeqc/kinetics.h
-main.o: IPhreeqc/src/phreeqc/main.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h IPhreeqc/src/phreeqc/message.h
-mainsubs.o: IPhreeqc/src/phreeqc/mainsubs.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h IPhreeqc/src/phreeqc/message.h
-message.o: IPhreeqc/src/phreeqc/message.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h IPhreeqc/src/phreeqc/message.h
-model.o: IPhreeqc/src/phreeqc/model.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h IPhreeqc/src/phreeqc/message.h
-nvector.o: IPhreeqc/src/phreeqc/nvector.c IPhreeqc/src/phreeqc/nvector.h \
-  IPhreeqc/src/phreeqc/sundialstypes.h IPhreeqc/src/phreeqc/message.h
-nvector_serial.o: IPhreeqc/src/phreeqc/nvector_serial.c \
-  IPhreeqc/src/phreeqc/nvector_serial.h IPhreeqc/src/phreeqc/nvector.h \
-  IPhreeqc/src/phreeqc/sundialstypes.h \
-  IPhreeqc/src/phreeqc/sundialsmath.h IPhreeqc/src/phreeqc/message.h
-p2clib.o: IPhreeqc/src/phreeqc/p2clib.c IPhreeqc/src/phreeqc/p2c.h \
-  IPhreeqc/src/phreeqc/message.h
-parse.o: IPhreeqc/src/phreeqc/parse.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h IPhreeqc/src/phreeqc/message.h
-phqalloc.o: IPhreeqc/src/phreeqc/phqalloc.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/message.h
-prep.o: IPhreeqc/src/phreeqc/prep.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h IPhreeqc/src/phreeqc/message.h
-print.o: IPhreeqc/src/phreeqc/print.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h IPhreeqc/src/phreeqc/message.h
-read.o: IPhreeqc/src/phreeqc/read.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h IPhreeqc/src/phreeqc/message.h
-readtr.o: IPhreeqc/src/phreeqc/readtr.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h IPhreeqc/src/phreeqc/message.h
-smalldense.o: IPhreeqc/src/phreeqc/smalldense.c \
-  IPhreeqc/src/phreeqc/smalldense.h IPhreeqc/src/phreeqc/sundialstypes.h \
-  IPhreeqc/src/phreeqc/sundialsmath.h IPhreeqc/src/phreeqc/message.h
-spread.o: IPhreeqc/src/phreeqc/spread.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h IPhreeqc/src/phreeqc/message.h
-step.o: IPhreeqc/src/phreeqc/step.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h IPhreeqc/src/phreeqc/message.h
-structures.o: IPhreeqc/src/phreeqc/structures.c \
-  IPhreeqc/src/phreeqc/global.h IPhreeqc/src/phreeqc/phqalloc.h \
-  IPhreeqc/src/phreeqc/message.h
-sundialsmath.o: IPhreeqc/src/phreeqc/sundialsmath.c \
-  IPhreeqc/src/phreeqc/sundialsmath.h \
-  IPhreeqc/src/phreeqc/sundialstypes.h IPhreeqc/src/phreeqc/message.h
-tally.o: IPhreeqc/src/phreeqc/tally.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h IPhreeqc/src/phreeqc/message.h
-tidy.o: IPhreeqc/src/phreeqc/tidy.c IPhreeqc/src/phreeqc/global.h \
-  IPhreeqc/src/phreeqc/phqalloc.h IPhreeqc/src/phreeqc/message.h
-transport.o: IPhreeqc/src/phreeqc/transport.c \
-  IPhreeqc/src/phreeqc/global.h IPhreeqc/src/phreeqc/phqalloc.h \
-  IPhreeqc/src/phreeqc/message.h
-utilities.o: IPhreeqc/src/phreeqc/utilities.c \
-  IPhreeqc/src/phreeqc/global.h IPhreeqc/src/phreeqc/phqalloc.h \
-  IPhreeqc/src/phreeqc/message.h
+# MOBJS
+phr_cmix.o: src/phr_cmix.c src/../IPhreeqc/src/phreeqcpp/phreeqc/global.h \
+  src/../IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
+  src/../IPhreeqc/include/IPhreeqc.h src/../IPhreeqc/include/Var.h
+phr_mix.o: src/phr_mix.F
+phr_multicopy.o: src/phr_multicopy.f
+phr_precip.o: src/phr_precip.f

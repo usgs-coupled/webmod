@@ -4,9 +4,16 @@
 #include <assert.h>  /* assert */
 #include <stdio.h>   /* printf */
 
-#define EXTERNAL
-#include "phreeqc/global.h"
+#define EXTERNAL extern
+#include "phreeqcpp/phreeqc/global.h"
 #undef EXTERNAL
+
+struct buffer {
+	char *name;
+	struct master *master;
+	LDBLE moles;
+	LDBLE gfw;
+};
 
 /*
  *  Routines
@@ -47,7 +54,10 @@ compile fortran with:
 #define GetSelectedOutputRowCountF     getselectedoutputrowcountf_
 #define GetSelectedOutputColumnCountF  getselectedoutputcolumncountf_
 #define GetSelectedOutputValueF        getselectedoutputvaluef_
+#define SystemF                        systemf_
 #endif
+
+#include "fwrap.h"
 
 char *
 f2cstring(char* fstring, int len)
@@ -59,7 +69,7 @@ f2cstring(char* fstring, int len)
     for (i = len - 1; i >= 0 && !isgraph((int)str[i]); i--);
     cstr = (char *) malloc((size_t) (i + 2));
     if (!cstr) return 0;
-	
+
     cstr[i + 1] = '\0';
     memcpy(cstr,str,i+1);
     return cstr;
@@ -77,7 +87,7 @@ padfstring(char *dest, char *src, unsigned int len)
         *dest++ = ' ';
 }
 
-int 
+int
 LoadDatabaseF(char* filename, unsigned int filename_length)
 {
 	int n;
@@ -101,7 +111,7 @@ AccumulateLineF(char *line, unsigned int line_length)
 {
 	VRESULT n;
 	char* cline;
-	
+
 	cline = f2cstring(line, line_length);
 	if (!cline) {
 		AddError("AccumulateLine: Out of memory.\n");
@@ -111,7 +121,7 @@ AccumulateLineF(char *line, unsigned int line_length)
 	n = AccumulateLine(cline);
 
 	free(cline);
-	
+
 	return n;
 }
 
@@ -125,7 +135,7 @@ int
 RunFileF(int* output_on, int* error_on, int* log_on, int* selected_output_on, char* filename, unsigned int filename_length)
 {
 	char* cline;
-	
+
 	cline = f2cstring(filename, filename_length);
 	if (!cline) {
 		AddError("RunFile: Out of memory.\n");
@@ -184,13 +194,88 @@ GetSelectedOutputValueF(int *row, int *col, int *vtype, double* dvalue, char* sv
 void
 OutputLastErrorF(void)
 {
-	OutputLastError();	
+	OutputLastError();
 }
 
 void
 OutputLinesF(void)
 {
-	OutputLines();	
+	OutputLines();
 }
 
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+int
+SystemF(char* command, unsigned int command_length)
+{
+	char* cline;
+
+	cline = f2cstring(command, command_length);
+	if (!cline) {
+		AddError("System: Out of memory.\n");
+		return (int)VR_OUTOFMEMORY;
+	}
+
+	return system(cline);
+}
+
+#if defined(__cplusplus)
+}
+#endif
+
+
+
+#if defined(_WIN32)
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+//
+// Intel Fortran compiler 9.1 /iface:cvf
+//
+int __stdcall LOADDATABASE(char *filename, unsigned int len)
+{
+	return LoadDatabaseF(filename, len);
+}
+void __stdcall OUTPUTLASTERROR(void)
+{
+	OutputLastErrorF();
+}
+int __stdcall ACCUMULATELINE(char *line, unsigned int len)
+{
+	return AccumulateLineF(line, len);
+}
+int __stdcall RUN(int *output_on, int *error_on, int *log_on, int *selected_on)
+{
+	return RunF(output_on, error_on, log_on, selected_on);
+}
+int __stdcall RUNFILE(char *filename, unsigned int len, int *output_on, int *error_on, int *log_on, int *selected_on)
+{
+	return RunFileF(output_on, error_on, log_on, selected_on, filename, len);
+}
+void __stdcall OUTPUTLINES(void)
+{
+	OutputLinesF();
+}
+int __stdcall GETSELECTEDOUTPUTROWCOUNT(void)
+{
+	return GetSelectedOutputRowCountF() - 1;
+}
+int __stdcall GETSELECTEDOUTPUTCOLUMNCOUNT(void)
+{
+	return GetSelectedOutputColumnCountF();
+}
+int __stdcall GETSELECTEDOUTPUTVALUE(int *row, int *col, int *vtype, double* dvalue, char* svalue, unsigned int svalue_length)
+{
+	int adjcol = *col - 1;
+	return GetSelectedOutputValueF(row, &adjcol, vtype, dvalue, svalue, svalue_length);
+}
+#if defined(__cplusplus)
+}
+#endif
+
+#endif
 

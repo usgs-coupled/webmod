@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioProject ProjectCreator="Intel Fortran" Keyword="Console Application - Converted from CVF" Version="9.10" ProjectIdGuid="{95777E03-30B0-477E-92FA-75E150B2CBDC}">
+	<Platforms>
+		<Platform Name="Win32"/></Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)" Command="c:\cygwin\home\charlton\programs\IPhreeqcMMS\test\$(OUTDIR)\test.exe">
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TypeLibraryName="$(OUTDIR)/test.tlb"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" WarnArgMismatch="true" CallingConvention="callConventionCVF" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" AssemblerListingLocation="$(INTDIR)/" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebug" CompileOnly="true"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFLinkerTool" AdditionalOptions="/MACHINE:I386" OutputFile="$(OUTDIR)/test.exe" LinkIncremental="linkIncrementalYes" SuppressStartupBanner="true" AdditionalLibraryDirectories="../lib" GenerateDebugInformation="true" ProgramDatabaseFile="$(OUTDIR)/test.pdb" SubSystem="subSystemConsole" AdditionalDependencies="IPhreeqcMMSd.lib"/>
+				<Tool Name="VFResourceCompilerTool" PreprocessorDefinitions="_DEBUG" Culture="rcEnglishUS" ResourceOutputFileName="$(INTDIR)/$(InputName).res"/>
+				<Tool Name="VFPreLinkEventTool"/></Configuration>
+		<Configuration Name="Release|Win32" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)" Command="c:\cygwin\home\charlton\programs\IPhreeqcMMS\test\$(OUTDIR)\test.exe">
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TypeLibraryName="$(OUTDIR)/test.tlb"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" CallingConvention="callConventionCVF" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" AssemblerListingLocation="$(INTDIR)/" RuntimeLibrary="rtMultiThreaded" CompileOnly="true"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFLinkerTool" AdditionalOptions="/MACHINE:I386" OutputFile="$(OUTDIR)/test.exe" LinkIncremental="linkIncrementalYes" SuppressStartupBanner="true" AdditionalLibraryDirectories="../lib" ProgramDatabaseFile="$(OUTDIR)/test.pdb" SubSystem="subSystemConsole" AdditionalDependencies="IPhreeqcMMS.lib"/>
+				<Tool Name="VFResourceCompilerTool" PreprocessorDefinitions="NDEBUG" Culture="rcEnglishUS" ResourceOutputFileName="$(INTDIR)/$(InputName).res"/>
+				<Tool Name="VFPreLinkEventTool"/></Configuration></Configurations>
+	<Files>
+		<Filter Name="Source Files" Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat;f90;for;f;fpp">
+		<File RelativePath="webb.f"/></Filter>
+		<Filter Name="Header Files" Filter="h;hpp;hxx;hm;inl;fi;fd"/>
+		<Filter Name="Resource Files" Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/></Files>
+	<Globals/></VisualStudioProject>

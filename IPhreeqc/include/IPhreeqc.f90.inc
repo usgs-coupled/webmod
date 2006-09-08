@@ -66,14 +66,14 @@
 
 
           INTERFACE
-            FUNCTION GetSelectedOutputRowCount
+            FUNCTION GetSelectedOutputRowCount()
               INTEGER(KIND=4) :: GetSelectedOutputRowCount
             END FUNCTION GetSelectedOutputRowCount
           END INTERFACE
 
 
           INTERFACE
-            FUNCTION GetSelectedOutputColumnCount
+            FUNCTION GetSelectedOutputColumnCount()
               INTEGER(KIND=4) :: GetSelectedOutputColumnCount
             END FUNCTION GetSelectedOutputColumnCount
           END INTERFACE

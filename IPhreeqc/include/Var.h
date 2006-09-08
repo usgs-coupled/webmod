@@ -79,4 +79,64 @@ void VarFreeString(char* pSrc);
 }
 #endif
 
+#if defined(__cplusplus)
+
+#include <ostream> // std::ostream
+
+inline std::ostream& operator<< (std::ostream &os, const VAR_TYPE& vt)
+{
+	switch(vt)
+	{
+	case TT_EMPTY:
+		os << "TT_EMPTY";
+		break;
+	case TT_ERROR:
+		os << "TT_ERROR";
+		break;
+	case TT_LONG:
+		os << "TT_LONG";
+		break;
+	case TT_DOUBLE:
+		os << "TT_DOUBLE";
+		break;
+	case TT_STRING:
+		os << "TT_STRING";
+		break;
+	default:
+		os << (int)vt;
+		break;
+	}
+	return os;
+}
+
+inline std::ostream& operator<< (std::ostream &os, const VRESULT& vr)
+{
+	switch(vr)
+	{
+	case VR_OK:
+		os << "VR_OK";
+		break;
+	case VR_OUTOFMEMORY:
+		os << "VR_OUTOFMEMORY";
+		break;
+	case VR_BADVARTYPE:
+		os << "VR_BADVARTYPE";
+		break;
+	case VR_INVALIDARG:
+		os << "VR_INVALIDARG";
+		break;
+	case VR_INVALIDROW:
+		os << "VR_INVALIDROW";
+		break;
+	case VR_INVALIDCOL:
+		os << "VR_INVALIDCOL";
+		break;
+	default:
+		os << (int)vr;
+		break;
+	}
+	return os;
+}
+#endif /* __cplusplus */
+
 #endif /* __VAR_H_INC */

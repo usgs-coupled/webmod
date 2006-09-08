@@ -46,20 +46,6 @@ size_t CErrorReporter<OS>::AddError(const char* error_msg)
 {
 	++this->m_error_count;
 	(*this->m_pOS) << error_msg;
-	if (phreeqc::error_file != NULL) {
-		if (phreeqc::status_on == TRUE) {
-			::fprintf(phreeqc::error_file,"\n");
-#ifndef DOS
-			phreeqc::status_on = FALSE;
-#endif
-		}
-		::fprintf(phreeqc::error_file, "ERROR: %s\n", error_msg);
-		::fflush(phreeqc::error_file);
-	}
-	if (phreeqc::output != NULL) {
-		::fprintf(phreeqc::output, "ERROR: %s\n", error_msg);
-		::fflush(phreeqc::output);
-	}
 	return this->m_error_count;
 }
 

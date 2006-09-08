@@ -3,7 +3,7 @@
 
 
 #include "Debug.h"          // ASSERT
-#include "../include/Var.h"
+#include "Var.h"
 #include <ostream>          // std::ostream
 
 class CVar : public VAR
