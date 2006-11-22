@@ -4,7 +4,7 @@
 #include <assert.h>  /* assert */
 #include <stdio.h>   /* printf */
 
-#define EXTERNAL
+#define EXTERNAL extern
 #include "../IPhreeqc/src/phreeqcpp/phreeqc/global.h"
 #undef EXTERNAL
 
@@ -42,19 +42,19 @@ extern int build_tally_table(void);
 extern int calc_dummy_kinetic_reaction(struct kinetics *kinetics_ptr);
 extern int diff_tally_table(void);
 extern int entity_exists (char *name, int n_user);
-extern int error_msg (const char *err_str, const int stop);
+extern int error_msg (const char *err_str, const int stop, ...);
 extern int extend_tally_table(void);
 extern int free_tally_table(void);
 extern int fill_tally_table(int *n_user, int index_conservative, int n_buffer);
 extern int get_tally_table_rows_columns(int *rows, int *columns);
-extern int get_tally_table_column_heading(int column, int *type, char *string, size_t string_length);
-extern int get_tally_table_row_heading(int column, char *string, size_t string_length);
+extern int get_tally_table_column_heading (int column, int *type, char *string);
+extern int get_tally_table_row_heading(int column, char *string);
 extern void malloc_error(void);
 extern int set_reaction_moles(int n_user, LDBLE moles);
 extern int set_reaction_temperature(int n_user, LDBLE tc);
 extern int set_kinetics_time(int n_user, LDBLE step);
 extern int store_tally_table(double *array, int row_dim, int col_dim, double fill_factor);
-extern int warning_msg (const char *err_str);
+extern int warning_msg (const char *err_str, ...);
 extern int zero_tally_table(void);
 
 
@@ -73,6 +73,22 @@ compile fortran with:
 #define get_tally_table_row_headingF    get_tally_table_row_headingf_
 #define get_tally_table_rows_columnsF   get_tally_table_rows_columnsf_
 #define RunMixF                         runmixf_
+#endif
+
+#if defined(__cplusplus)
+extern "C"
+{
+#endif
+int build_tally_tableF(void);
+int get_tally_table_column_headingF(int* column, int *type, char *string, unsigned int string_length);
+int get_tally_table_row_headingF(int* row, char *string, unsigned int string_length);
+int get_tally_table_rows_columnsF(int *rows, int *columns);
+int RunMixF(int *count, int *solutions, double *fracs, int *index_conserv,
+			double *fill_factor, int *index_rxn, double *conc_conserv, int *files_on,
+			int *n_user, double *rxnmols, double *tempc, double *ph, double *tsec, 
+			double *array, int *row_dim, int *col_dim);
+#if defined(__cplusplus)
+}
 #endif
 
 int BuildTallyCallback(void* cookie)
@@ -114,7 +130,7 @@ int ColumnHeadingCallback(void* cookie)
 
 	pvars = (struct TallyVars *)cookie;
 
-	return get_tally_table_column_heading(pvars->column, pvars->type, pvars->string, pvars->string_length);
+	return get_tally_table_column_heading(pvars->column, pvars->type, pvars->string);
 }
 
 int 
@@ -150,7 +166,7 @@ int RowHeadingCallback(void* cookie)
 
 	pvars = (struct TallyVars *)cookie;
 
-	return get_tally_table_row_heading(pvars->row, pvars->string, pvars->string_length);
+	return get_tally_table_row_heading(pvars->row, pvars->string);
 }
 
 int

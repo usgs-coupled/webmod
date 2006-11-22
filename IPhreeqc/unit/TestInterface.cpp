@@ -78,11 +78,18 @@ void TestInterface::TestLoadDatabaseWithErrors()
 		"ERROR: No master species for element e.\n"
 		"ERROR: Could not find primary master species for e.\n"
 		"ERROR: No master species for element e.\n"
-		"ERROR: Could not reduce equation to secondary master species, H+.\n"
-		"ERROR: Could not reduce equation to secondary master species, H+.\n"
-		"ERROR: Could not reduce equation to secondary master species, Fe+2.\n"
-		"ERROR: Could not reduce equation to secondary master species, H+.\n"
-		"ERROR: Could not reduce equation to secondary master species, H+.\n"
+		//{{
+// COMMENT: {11/21/2006 7:21:50 PM}		"ERROR: Could not reduce equation to secondary master species, H+.\n"
+// COMMENT: {11/21/2006 7:21:50 PM}		"ERROR: Could not reduce equation to secondary master species, H+.\n"
+// COMMENT: {11/21/2006 7:21:50 PM}		"ERROR: Could not reduce equation to secondary master species, Fe+2.\n"
+// COMMENT: {11/21/2006 7:21:50 PM}		"ERROR: Could not reduce equation to secondary master species, H+.\n"
+// COMMENT: {11/21/2006 7:21:50 PM}		"ERROR: Could not reduce equation to secondary master species, H+.\n"
+		"ERROR: Could not reduce equation to secondary master species, Hausmannite.\n"
+		"ERROR: Could not reduce equation to secondary master species, Manganite.\n"
+		"ERROR: Could not reduce equation to secondary master species, Pyrite.\n"
+		"ERROR: Could not reduce equation to secondary master species, Pyrolusite.\n"
+		"ERROR: Could not reduce equation to secondary master species, Sulfur.\n"
+		//}}
 		"ERROR: e-, primary master species for E-, not defined.\n"
 		"ERROR: Calculations terminating due to input errors.\n"
 		"Stopping.\n";

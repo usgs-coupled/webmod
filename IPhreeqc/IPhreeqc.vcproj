@@ -1102,7 +1102,7 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="src\phreeqcpp\phreeqc\output.c"
+						RelativePath=".\src\phreeqcpp\phreeqc\output.c"
 						>
 						<FileConfiguration
 							Name="Release|Win32"
@@ -1110,9 +1110,6 @@
 							>
 							<Tool
 								Name="VCCLCompilerTool"
-								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								CompileAs="2"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -1121,9 +1118,6 @@
 							>
 							<Tool
 								Name="VCCLCompilerTool"
-								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								CompileAs="2"
 							/>
 						</FileConfiguration>
 						<FileConfiguration
@@ -1132,9 +1126,6 @@
 							>
 							<Tool
 								Name="VCCLCompilerTool"
-								AdditionalIncludeDirectories=""
-								PreprocessorDefinitions=""
-								CompileAs="2"
 							/>
 						</FileConfiguration>
 					</File>
