@@ -328,9 +328,9 @@ int CSelectedOutput::EndRow(void)
 			}
 		}
 	}
-#if defined(_DEBUG)
-	this->AssertValid();
-#endif
+// COMMENT: {11/27/2006 7:22:37 PM}#if defined(_DEBUG)
+// COMMENT: {11/27/2006 7:22:37 PM}	this->AssertValid();
+// COMMENT: {11/27/2006 7:22:37 PM}#endif
 	return 0;
 }
 
@@ -408,32 +408,32 @@ int CSelectedOutput::PushBackEmpty(const char* key)
 	return this->PushBack(key, v);
 }
 
-#if defined(_DEBUG)
-void CSelectedOutput::Dump(const char* heading)
-{
-	::OutputDebugString(heading);
-	std::ostringstream oss;
-	oss << *this;
-	std::istringstream iss(oss.str());
-	std::string line;
-	while (std::getline(iss, line)) {
-		::OutputDebugString(line.c_str());
-		::OutputDebugString("\n");
-	}
-}
-
-void CSelectedOutput::AssertValid(void)const
-{
-	if (size_t cols = this->GetColCount())
-	{
-		size_t rows = this->m_arrayVar[0].size();
-		for (size_t col = 0; col < cols; ++col)
-		{
-			ASSERT(rows == this->m_arrayVar[col].size());
-		}
-	}
-}
-#endif
+// COMMENT: {11/27/2006 7:00:33 PM}#if defined(_DEBUG)
+// COMMENT: {11/27/2006 7:00:33 PM}void CSelectedOutput::Dump(const char* heading)
+// COMMENT: {11/27/2006 7:00:33 PM}{
+// COMMENT: {11/27/2006 7:00:33 PM}	::OutputDebugString(heading);
+// COMMENT: {11/27/2006 7:00:33 PM}	std::ostringstream oss;
+// COMMENT: {11/27/2006 7:00:33 PM}	oss << *this;
+// COMMENT: {11/27/2006 7:00:33 PM}	std::istringstream iss(oss.str());
+// COMMENT: {11/27/2006 7:00:33 PM}	std::string line;
+// COMMENT: {11/27/2006 7:00:33 PM}	while (std::getline(iss, line)) {
+// COMMENT: {11/27/2006 7:00:33 PM}		::OutputDebugString(line.c_str());
+// COMMENT: {11/27/2006 7:00:33 PM}		::OutputDebugString("\n");
+// COMMENT: {11/27/2006 7:00:33 PM}	}
+// COMMENT: {11/27/2006 7:00:33 PM}}
+// COMMENT: {11/27/2006 7:00:33 PM}
+// COMMENT: {11/27/2006 7:00:33 PM}void CSelectedOutput::AssertValid(void)const
+// COMMENT: {11/27/2006 7:00:33 PM}{
+// COMMENT: {11/27/2006 7:00:33 PM}	if (size_t cols = this->GetColCount())
+// COMMENT: {11/27/2006 7:00:33 PM}	{
+// COMMENT: {11/27/2006 7:00:33 PM}		size_t rows = this->m_arrayVar[0].size();
+// COMMENT: {11/27/2006 7:00:33 PM}		for (size_t col = 0; col < cols; ++col)
+// COMMENT: {11/27/2006 7:00:33 PM}		{
+// COMMENT: {11/27/2006 7:00:33 PM}			ASSERT(rows == this->m_arrayVar[col].size());
+// COMMENT: {11/27/2006 7:00:33 PM}		}
+// COMMENT: {11/27/2006 7:00:33 PM}	}
+// COMMENT: {11/27/2006 7:00:33 PM}}
+// COMMENT: {11/27/2006 7:00:33 PM}#endif
 
 std::ostream& operator<< (std::ostream &os, const CSelectedOutput &a)
 {

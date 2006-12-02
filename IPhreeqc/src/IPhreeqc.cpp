@@ -318,18 +318,18 @@ GetLastErrorString(void)
 	return str.c_str();
 }
 
-#if defined(_WIN32)
-void
-DebugOutputLastError(void)
-{
-	std::istringstream iss(s_errorReporter.GetOS()->str());
-	std::string line;
-	while (std::getline(iss, line)) {
-		::OutputDebugString(line.c_str());
-		::OutputDebugString("\n");
-	}
-}
-#endif
+// COMMENT: {11/27/2006 7:00:49 PM}#if defined(_WIN32)
+// COMMENT: {11/27/2006 7:00:49 PM}void
+// COMMENT: {11/27/2006 7:00:49 PM}DebugOutputLastError(void)
+// COMMENT: {11/27/2006 7:00:49 PM}{
+// COMMENT: {11/27/2006 7:00:49 PM}	std::istringstream iss(s_errorReporter.GetOS()->str());
+// COMMENT: {11/27/2006 7:00:49 PM}	std::string line;
+// COMMENT: {11/27/2006 7:00:49 PM}	while (std::getline(iss, line)) {
+// COMMENT: {11/27/2006 7:00:49 PM}		::OutputDebugString(line.c_str());
+// COMMENT: {11/27/2006 7:00:49 PM}		::OutputDebugString("\n");
+// COMMENT: {11/27/2006 7:00:49 PM}	}
+// COMMENT: {11/27/2006 7:00:49 PM}}
+// COMMENT: {11/27/2006 7:00:49 PM}#endif
 
 
 VRESULT
@@ -492,13 +492,13 @@ RunString(const char* input, int output_on, int error_on, int log_on, int select
 int
 GetSelectedOutputRowCount(void)
 {
-	return CSelectedOutput::Instance()->GetRowCount();
+	return (int)CSelectedOutput::Instance()->GetRowCount();
 }
 
 int
 GetSelectedOutputColumnCount(void)
 {
-	return CSelectedOutput::Instance()->GetColCount();
+	return (int)CSelectedOutput::Instance()->GetColCount();
 }
 
 VRESULT
@@ -545,18 +545,18 @@ OutputLines(void)
 	std::cout << s_string_input.c_str() << std::endl;
 }
 
-#if defined(WIN32)
-void
-DebugOutputLines(void)
-{
-	std::istringstream iss(s_string_input);
-	std::string line;
-	while (std::getline(iss, line)) {
-		::OutputDebugString(line.c_str());
-		::OutputDebugString("\n");
-	}
-}
-#endif
+// COMMENT: {11/27/2006 7:01:16 PM}#if defined(WIN32)
+// COMMENT: {11/27/2006 7:01:16 PM}void
+// COMMENT: {11/27/2006 7:01:16 PM}DebugOutputLines(void)
+// COMMENT: {11/27/2006 7:01:16 PM}{
+// COMMENT: {11/27/2006 7:01:16 PM}	std::istringstream iss(s_string_input);
+// COMMENT: {11/27/2006 7:01:16 PM}	std::string line;
+// COMMENT: {11/27/2006 7:01:16 PM}	while (std::getline(iss, line)) {
+// COMMENT: {11/27/2006 7:01:16 PM}		::OutputDebugString(line.c_str());
+// COMMENT: {11/27/2006 7:01:16 PM}		::OutputDebugString("\n");
+// COMMENT: {11/27/2006 7:01:16 PM}	}
+// COMMENT: {11/27/2006 7:01:16 PM}}
+// COMMENT: {11/27/2006 7:01:16 PM}#endif
 
 const std::string&
 GetAccumulatedLines(void)
