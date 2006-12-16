@@ -263,7 +263,7 @@ LoadDatabaseString(const char* input)
 	}
 	catch(...)
 	{
-		const char *errmsg = "LoadDatabase: An unhandled exception occured.\n";
+		const char *errmsg = "LoadDatabaseString: An unhandled exception occured.\n";
 		try
 		{
 			error_msg(errmsg, STOP); // throws PhreeqcStop
