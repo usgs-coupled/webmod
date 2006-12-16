@@ -1,23 +1,22 @@
 # $Id: Makefile 1452 2006-11-04 04:18:32Z charlton $
 
-DEVENV := /cygdrive/c/Program\ Files/Microsoft\ Visual\ Studio\ 8/Common7/IDE/devenv
+PHREEQC_COM_DIR  := ../PhreeqcCOM
 
-SLN := ../WPhast.sln
-
-PHREEQC_COM_DIR := ../PhreeqcCOM/Release
-PHREEQC_COM := $(PHREEQC_COM_DIR)/PhreeqcCOM.dll
+PHREEQC_COM_DLL  := $(PHREEQC_COM_DIR)/Release/PhreeqcCOM.dll
+PHREEQC_COM_TLB  := $(PHREEQC_COM_DIR)/Release/PhreeqcCOM.tlb
+PHREEQC_COM_CHM  := $(PHREEQC_COM_DIR)/help/PhreeqcCOM.chm
 
 CANDLE = candle
 CANDLE_FLAGS=\
 	-nologo \
 	-dMergeDir=$(MERGE_DIR) \
-	-dPhreeqcCOMDir=$(PHREEQC_COM_DIR)
+	-dPhreeqcCOM_DLL=$(PHREEQC_COM_DLL) \
+	-dPhreeqcCOM_TLB=$(PHREEQC_COM_TLB) \
+	-dPhreeqcCOM_CHM=$(PHREEQC_COM_CHM)
 
 LIGHT = light
 LIGHT_FLAGS=\
 	-nologo
-
-CSCRIPT = cscript
 
 MERGE_DIR := "C:\Program Files\Common Files\Merge Modules"
 
@@ -42,7 +41,7 @@ BINARIES=\
 	
 all : PhreeqcCOM.msi
 
-PhreeqcCOM.msi : PhreeqcCOM.wixobj regsvr.wixobj $(PHREEQC_COM) $(BINARIES)
+PhreeqcCOM.msi : PhreeqcCOM.wixobj regsvr.wixobj $(PHREEQC_COM_DLL) $(PHREEQC_COM_TLB) $(PHREEQC_COM_CHM) $(BINARIES)
 	$(LIGHT) $(LIGHT_FLAGS) PhreeqcCOM.wixobj regsvr.wixobj -out PhreeqcCOM.msi
 
 PhreeqcCOM.wixobj : PhreeqcCOM.wxs Version.wxs
@@ -51,11 +50,6 @@ PhreeqcCOM.wixobj : PhreeqcCOM.wxs Version.wxs
 regsvr.wixobj : regsvr.wxs
 	$(CANDLE) $(CANDLE_FLAGS) -out $@ regsvr.wxs
 
-##$(WPHAST_EXE) : $(SLN)
-##	@rm -rf Release.log
-##	$(DEVENV) /out Release.log /build Release $(SLN)
-##	@cat Release.log
-	
 install :
 	$(MSIEXEC) /i PhreeqcCOM.msi /qn+ INSTALLLOCATION=C:\DOCUME~1\charlton\PROGRA~1\PhreeqcCOM /log PhreeqcCOM.log
 	

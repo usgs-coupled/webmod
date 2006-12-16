@@ -2,7 +2,7 @@
   <Fragment>
     <DirectoryRef Id="INSTALLDIR">
       <Component Id="C_PhreeqcCOM_DLL" DiskId="1" Guid="CAE6A602-D87C-4822-9659-573D130C8407">
-        <File Id="file0" Name="PHREEQ_1.DLL" LongName="PhreeqcCOM.dll" src="..\PhreeqcCOM\Release\PhreeqcCOM.dll" />
+        <File Id="file0" Name="PHREEQ_1.DLL" LongName="PhreeqcCOM.dll" src="$(var.PhreeqcCOM_DLL)" />
         <Registry Root="HKCR" Key="AppID\PhreeqcCOM.DLL" Name="AppID" Value="{5EA2A828-7EAB-4E8A-9FEA-96D9DE684A9E}" Type="string" />
         <Registry Root="HKCR" Key="AppID\{5EA2A828-7EAB-4E8A-9FEA-96D9DE684A9E}" Value="PhreeqcCOM" Type="string" />
         <Registry Root="HKCR" Key="CLSID\{6F59EA62-F726-4008-A61C-039ACB860F44}" Value="Phreeqc Class" Type="string" />

@@ -22,7 +22,10 @@
         <Directory Id='D__USGS' Name='USGS'>
           <Directory Id='INSTALLDIR' Name='$(var.ShortName)' LongName="$(var.Name)">
 			  <Component Id="C_PhreeqcCOM_TLB" DiskId="1" Guid="CAE6A602-D87C-4822-9659-573D130C8407">
-				<File Id="file1" Name="PHREEQ_1.TLB" LongName="PhreeqcCOM.tlb" src="..\PhreeqcCOM\Release\PhreeqcCOM.tlb" />
+				<File Id="file1" Name="PHREEQ_1.TLB" LongName="PhreeqcCOM.tlb" src="$(var.PhreeqcCOM_TLB)" />
+			  </Component>
+			  <Component Id="C_PhreeqcCOM_CHM" DiskId="1" Guid="8755EB1B-41EB-4aef-87DD-A6057F437BC2">
+				<File Id="file2" Name="PHREEQ_1.CHM" LongName="PhreeqcCOM.chm" src="$(var.PhreeqcCOM_CHM)" />
 			  </Component>
               <Merge Id="CRT" Language="1033" src="$(var.MergeDir)\microsoft_vc80_crt_x86.msm" DiskId="1" />
               <Merge Id="CRT Policy" Language="1033" src="$(var.MergeDir)\policy_8_0_Microsoft_VC80_CRT_x86.msm" DiskId="1" />
@@ -38,6 +41,7 @@
       <Feature Id='F__MainProgram' Title='Program' Description='The main executable.' TypicalDefault='install' Level='1'>
         <ComponentRef Id='C_PhreeqcCOM_DLL' />
         <ComponentRef Id='C_PhreeqcCOM_TLB' />
+        <ComponentRef Id='C_PhreeqcCOM_CHM' />
         <MergeRef Id='CRT' />
         <MergeRef Id='CRT Policy' />
         <MergeRef Id='ATL' />
