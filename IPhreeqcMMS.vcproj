@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="IPhreeqcMMS"
 	ProjectGUID="{D172264F-9E20-4E2F-98E1-DAB8F2B88771}"
+	RootNamespace="IPhreeqcMMS"
 	>
 	<Platforms>
 		<Platform
@@ -53,7 +54,7 @@
 				BrowseInformation="1"
 				WarningLevel="3"
 				SuppressStartupBanner="true"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -244,6 +245,10 @@
 							CompileAs="2"
 						/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\IPhreeqc\src\fwrap3.c"
+					>
 				</File>
 				<File
 					RelativePath="IPhreeqc\src\global.c"
