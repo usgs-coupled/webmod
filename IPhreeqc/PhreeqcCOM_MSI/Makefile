@@ -2,17 +2,17 @@
 
 PHREEQC_COM_DIR  := ../PhreeqcCOM
 
-PHREEQC_COM_DLL  := $(PHREEQC_COM_DIR)/Release/PhreeqcCOM.dll
-PHREEQC_COM_TLB  := $(PHREEQC_COM_DIR)/Release/PhreeqcCOM.tlb
-PHREEQC_COM_CHM  := $(PHREEQC_COM_DIR)/help/PhreeqcCOM.chm
+PHREEQC_COM_DLL_SRC := $(PHREEQC_COM_DIR)/Release/PhreeqcCOM.dll
+PHREEQC_COM_TLB_SRC := $(PHREEQC_COM_DIR)/Release/PhreeqcCOM.tlb
+PHREEQC_COM_CHM_SRC := $(PHREEQC_COM_DIR)/help/PhreeqcCOM.chm
 
 CANDLE = candle
 CANDLE_FLAGS=\
 	-nologo \
 	-dMergeDir=$(MERGE_DIR) \
-	-dPhreeqcCOM_DLL=$(PHREEQC_COM_DLL) \
-	-dPhreeqcCOM_TLB=$(PHREEQC_COM_TLB) \
-	-dPhreeqcCOM_CHM=$(PHREEQC_COM_CHM)
+	-dPhreeqcCOM_DLL_SRC=$(PHREEQC_COM_DLL_SRC) \
+	-dPhreeqcCOM_TLB_SRC=$(PHREEQC_COM_TLB_SRC) \
+	-dPhreeqcCOM_CHM_SRC=$(PHREEQC_COM_CHM_SRC)
 
 LIGHT = light
 LIGHT_FLAGS=\
@@ -41,17 +41,21 @@ BINARIES=\
 	
 all : PhreeqcCOM.msi
 
-PhreeqcCOM.msi : PhreeqcCOM.wixobj regsvr.wixobj $(PHREEQC_COM_DLL) $(PHREEQC_COM_TLB) $(PHREEQC_COM_CHM) $(BINARIES)
-	$(LIGHT) $(LIGHT_FLAGS) PhreeqcCOM.wixobj regsvr.wixobj -out PhreeqcCOM.msi
+#PhreeqcCOM.msi : PhreeqcCOM.wixobj regsvr.wixobj  $(PHREEQC_COM_DLL) $(PHREEQC_COM_TLB) $(PHREEQC_COM_CHM) $(BINARIES)
+PhreeqcCOM.msi : PhreeqcCOM.wixobj Registry.wixobj UIFragment.wixobj $(PHREEQC_COM_DLL) $(PHREEQC_COM_TLB) $(PHREEQC_COM_CHM)
+	$(LIGHT) $(LIGHT_FLAGS) PhreeqcCOM.wixobj Registry.wixobj UIFragment.wixobj -out $@
 
 PhreeqcCOM.wixobj : PhreeqcCOM.wxs Version.wxs
 	$(CANDLE) $(CANDLE_FLAGS) -out $@ PhreeqcCOM.wxs
 
-regsvr.wixobj : regsvr.wxs
-	$(CANDLE) $(CANDLE_FLAGS) -out $@ regsvr.wxs
+Registry.wixobj : Registry.wxs
+	$(CANDLE) $(CANDLE_FLAGS) -out $@ Registry.wxs
+	
+UIFragment.wixobj : UIFragment.wxs
+	$(CANDLE) $(CANDLE_FLAGS) -out $@ UIFragment.wxs
 
 install :
-	$(MSIEXEC) /i PhreeqcCOM.msi /qn+ INSTALLLOCATION=C:\DOCUME~1\charlton\PROGRA~1\PhreeqcCOM /log PhreeqcCOM.log
+	$(MSIEXEC) /i PhreeqcCOM.msi /qn+ /log PhreeqcCOM.log
 	
 uninstall :
 	$(MSIEXEC) /x PhreeqcCOM.msi /qn+
