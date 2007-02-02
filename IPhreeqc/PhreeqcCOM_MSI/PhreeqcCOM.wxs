@@ -21,17 +21,24 @@
       <Directory Id="ProgramFilesFolder" Name="PFILES" LongName="Program Files">
         <Directory Id='D__USGS' Name='USGS'>
           <Directory Id='INSTALLDIR' Name='$(var.ShortName)' LongName="$(var.Name)">
-			  <Component Id="C_PhreeqcCOM_TLB" DiskId="1" Guid="CAE6A602-D87C-4822-9659-573D130C8407">
+			  <Component Id="C_PhreeqcCOM_TLB" DiskId="1" Guid="B4B02D28-A203-4d12-8D24-38B0ECB74AB3">
 				<File Id="file1" Name="PHREEQ_1.TLB" LongName="PhreeqcCOM.tlb" src="$(var.PhreeqcCOM_TLB)" />
 			  </Component>
 			  <Component Id="C_PhreeqcCOM_CHM" DiskId="1" Guid="8755EB1B-41EB-4aef-87DD-A6057F437BC2">
-				<File Id="file2" Name="PHREEQ_1.CHM" LongName="PhreeqcCOM.chm" src="$(var.PhreeqcCOM_CHM)" />
+				<File Id="file2" Name="PHREEQ_1.CHM" LongName="PhreeqcCOM.chm" src="$(var.PhreeqcCOM_CHM)">
+                  <Shortcut Id="S__PHREEQ_1.CHM" Directory="D_PrgMenu.E5AFBEC1_83EA_4855_9AA2_168119F1E93E" Name="PHREEQ_1.CHM" LongName='$(var.Shortcut)' />
+				</File>
 			  </Component>
               <Merge Id="CRT" Language="1033" src="$(var.MergeDir)\microsoft_vc80_crt_x86.msm" DiskId="1" />
               <Merge Id="CRT Policy" Language="1033" src="$(var.MergeDir)\policy_8_0_Microsoft_VC80_CRT_x86.msm" DiskId="1" />
               <Merge Id="ATL" Language="1033" src="$(var.MergeDir)\Microsoft_VC80_ATL_x86.msm" DiskId="1" />
               <Merge Id="ATL Policy" Language="1033" src="$(var.MergeDir)\policy_8_0_Microsoft_VC80_ATL_x86.msm" DiskId="1" />
           </Directory>
+        </Directory>
+      </Directory>
+      <Directory Id="StartMenuFolder.E5AFBEC1_83EA_4855_9AA2_168119F1E93E" Name="StrtFldr">
+        <Directory Id="ProgramMenuFolder.E5AFBEC1_83EA_4855_9AA2_168119F1E93E" Name="PrgFldr">
+          <Directory Id="D_PrgMenu.E5AFBEC1_83EA_4855_9AA2_168119F1E93E" Name='$(var.ShortName)' LongName='$(var.PrgMenu)' />
         </Directory>
       </Directory>
     </Directory>
@@ -51,6 +58,9 @@
     </Feature>
 
 	<!-- Custom Actions -->
+    <CustomAction Id="ProgramMenuFolder.E5AFBEC1_83EA_4855_9AA2_168119F1E93E" Return="check" Property="ProgramMenuFolder.E5AFBEC1_83EA_4855_9AA2_168119F1E93E" Value="[ProgramMenuFolder]" />
+    <CustomAction Id="StartMenuFolder.E5AFBEC1_83EA_4855_9AA2_168119F1E93E" Return="check" Property="StartMenuFolder.E5AFBEC1_83EA_4855_9AA2_168119F1E93E" Value="[StartMenuFolder]" />
+    <CustomAction Id="ERRCA_CANCELNEWERVERSION" Return="check" Error="[VSDVERSIONMSG]" />
 
     <UI>
       <Property Id="DefaultUIFont">DlgFont8</Property>
@@ -1115,6 +1125,8 @@
         <Show Dialog="PrepareDlg" Before="CostInitialize"></Show>
         <Show Dialog="AdminWelcomeDlg" After="CostFinalize" />
         <Show Dialog="ProgressDlg" After="AdminWelcomeDlg" />
+        <Custom Action="StartMenuFolder.E5AFBEC1_83EA_4855_9AA2_168119F1E93E" Before="ProgramMenuFolder.E5AFBEC1_83EA_4855_9AA2_168119F1E93E" />
+        <Custom Action="ProgramMenuFolder.E5AFBEC1_83EA_4855_9AA2_168119F1E93E" Before="PrepareDlg" />
       </AdminUISequence>
 
       <InstallUISequence>
@@ -1126,6 +1138,8 @@
         <Show Dialog="ResumeDlg" After="WelcomeDlg">Installed AND (RESUME OR Preselected)</Show>
         <Show Dialog="MaintenanceWelcomeDlg" After="ResumeDlg">Installed AND NOT RESUME AND NOT Preselected</Show>
         <Show Dialog="ProgressDlg" After="MaintenanceWelcomeDlg" />
+        <Custom Action="StartMenuFolder.E5AFBEC1_83EA_4855_9AA2_168119F1E93E" Before="ProgramMenuFolder.E5AFBEC1_83EA_4855_9AA2_168119F1E93E" />
+        <Custom Action="ProgramMenuFolder.E5AFBEC1_83EA_4855_9AA2_168119F1E93E" Before="PrepareDlg" />
       </InstallUISequence>
     </UI>
 
@@ -1172,6 +1186,8 @@
     <Property Id="VSDVERSIONMSG"><![CDATA[Unable to install because a newer version of this product is already installed.]]></Property>
 
     <AdminExecuteSequence>
+      <Custom Action="ProgramMenuFolder.E5AFBEC1_83EA_4855_9AA2_168119F1E93E" Before="CostInitialize" />
+      <Custom Action="StartMenuFolder.E5AFBEC1_83EA_4855_9AA2_168119F1E93E" Before="ProgramMenuFolder.E5AFBEC1_83EA_4855_9AA2_168119F1E93E" />
     </AdminExecuteSequence>
 
     <InstallExecuteSequence>

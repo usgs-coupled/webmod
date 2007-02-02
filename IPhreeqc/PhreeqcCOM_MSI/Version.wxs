@@ -1,10 +1,10 @@
 <Include>
-<?define Name="Phreeqc COM"?>
+<?define Name="PhreeqcCOM"?>
 <?define ShortName=PHRQCCOM?>
 
 <?define Major=2?>
 <?define Minor=13?>
-<?define Build=1531?>
+<?define Build=1595?>
 <?define Manufacturer="U.S. Geological Survey"?>
 <?define UpgradeCode=C538A9C2-E470-495b-BD4D-95E5EC7FC043?>
 
@@ -12,7 +12,7 @@
 <?define Description="USGS $(var.Name) $(var.Major).$(var.Minor).$(var.Build) Installer"?>
 <?define DiskPrompt="USGS $(var.Name) $(var.Major).$(var.Minor).$(var.Build) Installation [1]"?>
 <?define PrgMenu="$(var.Name) $(var.Major).$(var.Minor)"?>
-<?define Shortcut="$(var.Name) $(var.Major).$(var.Minor)"?>
+<?define Shortcut="PhreeqcCOM Reference"?>
 <?define FeatureTitle="$(var.Name) $(var.Major).$(var.Minor).$(var.Build)"?>
 <?define Cabinet=$(var.Name).cab?>
 
