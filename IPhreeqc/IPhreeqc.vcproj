@@ -309,6 +309,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\src\fwrap3.c"
+				>
+			</File>
+			<File
 				RelativePath="src\global.c"
 				>
 				<FileConfiguration
