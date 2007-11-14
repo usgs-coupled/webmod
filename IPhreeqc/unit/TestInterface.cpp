@@ -1245,3 +1245,43 @@ void TestOnOff(const char* FILENAME, int output_on, int error_on, int log_on, in
 	CPPUNIT_ASSERT_EQUAL( true, ::FileExists(FILENAME) );
 	CPPUNIT_ASSERT( ::DeleteFile(FILENAME) );
 }
+
+void
+TestInterface::TestLongHeadings()
+{
+	char long_header[] = "this_is_a_long_header_0123456789012345678901234567890123456789";
+	char long_value[]  = "this_is_a_long_value_01234567890123456789012345678901234567890";
+
+	CPPUNIT_ASSERT_EQUAL(0, ::LoadDatabase("phreeqc.dat"));
+
+	std::ostringstream oss;
+	oss << "SOLUTION" << "\n";
+
+	oss << "SELECTED_OUTPUT" << "\n";
+	oss << "-reset false" << "\n";
+
+	oss << "USER_PUNCH" << "\n";
+	oss << "-head " <<  long_header << "\n";
+	oss << "-start" << "\n";
+	oss << "10 PUNCH \"" << long_value << "\"\n";
+	oss << "-end" << "\n";
+	CPPUNIT_ASSERT_EQUAL( VR_OK, ::AccumulateLine(oss.str().c_str()) );
+
+	CPPUNIT_ASSERT_EQUAL( 0, ::Run(0, 0, 0, 0) );
+
+	CPPUNIT_ASSERT_EQUAL(2, ::GetSelectedOutputRowCount());
+	CPPUNIT_ASSERT_EQUAL(1, ::GetSelectedOutputColumnCount());
+
+	CVar v;
+	CPPUNIT_ASSERT( ::GetSelectedOutputValue(0, 0, &v) == VR_OK );
+	CPPUNIT_ASSERT( v.type == TT_STRING );
+	CPPUNIT_ASSERT_EQUAL( std::string(long_header), std::string(v.sVal));
+
+	CVar v1;
+	CPPUNIT_ASSERT( ::GetSelectedOutputValue(1, 0, &v1) == VR_OK );
+	CPPUNIT_ASSERT( v1.type == TT_STRING );
+	CPPUNIT_ASSERT_EQUAL( std::string(long_value), std::string(v1.sVal));
+
+	CPPUNIT_ASSERT( ::GetSelectedOutputValue(1, 1, &v1) == VR_INVALIDCOL );
+	CPPUNIT_ASSERT( ::GetSelectedOutputValue(2, 0, &v1) == VR_INVALIDROW );
+}

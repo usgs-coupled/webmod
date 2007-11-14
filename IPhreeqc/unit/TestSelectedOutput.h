@@ -30,6 +30,7 @@ class TestSelectedOutput :
 	CPPUNIT_TEST( TestInvalidRow );
 	CPPUNIT_TEST( TestInvalidCol );
 	CPPUNIT_TEST( TestGet );
+	CPPUNIT_TEST( TestLongHeadings );
 	CPPUNIT_TEST_SUITE_END();
 
 public:
@@ -53,6 +54,7 @@ public:
 	void TestInvalidRow();
 	void TestInvalidCol();
 	void TestGet();
+	void TestLongHeadings();
 };
 
 #endif // TESTSELECTEDOUTPUT_H_INCLUDED

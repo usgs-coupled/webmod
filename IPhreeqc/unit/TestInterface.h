@@ -30,7 +30,8 @@ class TestInterface :
 	CPPUNIT_TEST( TestOutputOnOff );
 	CPPUNIT_TEST( TestErrorOnOff );
 	CPPUNIT_TEST( TestLogOnOff );
-	CPPUNIT_TEST( TestSelOutOnOff );
+	CPPUNIT_TEST( TestSelOutOnOff );	
+	CPPUNIT_TEST( TestLongHeadings );
 
 	CPPUNIT_TEST_SUITE_END();
 
@@ -61,6 +62,7 @@ public:
 	void TestErrorOnOff();
 	void TestLogOnOff();
 	void TestSelOutOnOff();
+	void TestLongHeadings();
 
 };
 

@@ -624,3 +624,23 @@ TestSelectedOutput::TestGet()
 	CVar v1 = CSelectedOutput::Instance()->Get(1, 0);
 	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, v1.type);
 }
+
+void
+TestSelectedOutput::TestLongHeadings()
+{
+	CSelectedOutput::Instance()->Clear();
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(0u, CSelectedOutput::Instance()->GetRowCount());
+
+	CPPUNIT_ASSERT_EQUAL(0,  CSelectedOutput::Instance()->PushBackEmpty("heading890123456789012345678901234567890123456789"));
+	CPPUNIT_ASSERT_EQUAL(0,  CSelectedOutput::Instance()->EndRow());
+	CPPUNIT_ASSERT_EQUAL(1u, CSelectedOutput::Instance()->GetColCount());
+	CPPUNIT_ASSERT_EQUAL(2u, CSelectedOutput::Instance()->GetRowCount());
+
+	CVar v0 = CSelectedOutput::Instance()->Get(0, 0);
+	CPPUNIT_ASSERT_EQUAL(TT_STRING, v0.type);
+	CPPUNIT_ASSERT_EQUAL(std::string("heading890123456789012345678901234567890123456789"), std::string(v0.sVal));
+
+	CVar v1 = CSelectedOutput::Instance()->Get(1, 0);
+	CPPUNIT_ASSERT_EQUAL(TT_EMPTY, v1.type);
+}
