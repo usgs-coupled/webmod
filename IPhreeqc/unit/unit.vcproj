@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="unit"
 	ProjectGUID="{270BB952-FCB2-4FA8-821E-BB750E83C902}"
+	RootNamespace="unit"
 	>
 	<Platforms>
 		<Platform
@@ -15,8 +16,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\Debug"
-			IntermediateDirectory=".\Debug"
+			OutputDirectory="$(ProjectDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -68,7 +69,6 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="cppunitd.lib odbc32.lib odbccp32.lib Shlwapi.lib"
-				OutputFile=".\Debug/unit.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="$(DEV_CPPUNIT_1.10)/lib"
@@ -106,8 +106,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\Release"
-			IntermediateDirectory=".\Release"
+			OutputDirectory="$(ProjectDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
 			UseOfMFC="0"
@@ -159,7 +159,6 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="cppunit.lib odbc32.lib odbccp32.lib"
-				OutputFile=".\Release/unit.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="$(DEV_CPPUNIT_1.10)/lib"
@@ -196,7 +195,7 @@
 		</Configuration>
 		<Configuration
 			Name="MemDebug|Win32"
-			OutputDirectory="$(ConfigurationName)"
+			OutputDirectory="$(ProjectDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			InheritedPropertySheets="$(VCInstallDir)VCProjectDefaults\UpgradeFromVC60.vsprops"
@@ -249,7 +248,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="cppunitd.lib odbc32.lib odbccp32.lib Shlwapi.lib"
-				OutputFile=".\Debug/unit.exe"
+				OutputFile="$(OutDir)\$(ProjectName).exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="true"
 				AdditionalLibraryDirectories="$(DEV_CPPUNIT_1.10)/lib"
