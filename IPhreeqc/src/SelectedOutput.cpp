@@ -411,14 +411,14 @@ int CSelectedOutput::PushBackEmpty(const char* key)
 #if defined(_DEBUG)
 void CSelectedOutput::Dump(const char* heading)
 {
-	::OutputDebugString(heading);
+	::OutputDebugStringA(heading);
 	std::ostringstream oss;
 	oss << *this;
 	std::istringstream iss(oss.str());
 	std::string line;
 	while (std::getline(iss, line)) {
-		::OutputDebugString(line.c_str());
-		::OutputDebugString("\n");
+		::OutputDebugStringA(line.c_str());
+		::OutputDebugStringA("\n");
 	}
 }
 
