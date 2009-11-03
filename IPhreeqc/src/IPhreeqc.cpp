@@ -18,6 +18,12 @@
 #include "IPhreeqc.h"
 #include "module_files.h"
 
+#ifdef PHREEQC_CPP
+extern int dump_entities(void);
+extern int delete_entities(void);
+extern int run_as_cells(void);
+#endif
+
 
 const char OUTPUT_FILENAME[] = "phreeqc.out";
 const char ERROR_FILENAME[]  = "phreeqc.err";
@@ -904,10 +910,30 @@ do_run(const char* sz_routine, std::istream* pis, FILE* fp, int output_on, int e
 			dup_print ("Beginning of transport calculations.", TRUE);
 			transport();
 		}
+
+#ifdef PHREEQC_CPP
+/*
+ *   run
+ */
+			run_as_cells();
+#endif
+
 /*
  *   Copy
  */
 		if (new_copy) copy_entities();
+#ifdef PHREEQC_CPP
+
+/*
+ *   dump
+ */
+			dump_entities();
+/*
+ *   delete
+ */
+			delete_entities();
+#endif
+
 /*
  *   End of simulation
  */
