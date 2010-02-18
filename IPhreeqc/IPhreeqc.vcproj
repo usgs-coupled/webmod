@@ -4,6 +4,7 @@
 	Version="8.00"
 	Name="IPhreeqc"
 	ProjectGUID="{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}"
+	RootNamespace="IPhreeqc"
 	>
 	<Platforms>
 		<Platform
@@ -1472,6 +1473,34 @@
 								Name="VCCLCompilerTool"
 								AdditionalIncludeDirectories=""
 								PreprocessorDefinitions=""
+								CompileAs="2"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath=".\src\phreeqcpp\phreeqc\sit.c"
+						>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								CompileAs="2"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								CompileAs="2"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="MemDebug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
 								CompileAs="2"
 							/>
 						</FileConfiguration>
