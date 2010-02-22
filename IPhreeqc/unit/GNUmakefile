@@ -1,7 +1,7 @@
-CPPUNIT             = /z/srv2rcolkr/home/charlton
+CPPUNIT             = /z/parkplace/home/charlton
 CC                  = g++
 CFLAGS              = -Wall -O3
-	CPPFLAGS            = -DSWIG_SHARED_OBJ -I$(CPPUNIT)/include -I../include -I../src/phreeqcpp -I../src/phreeqcpp/phreeqc
+CPPFLAGS            = -DSWIG_SHARED_OBJ -I$(CPPUNIT)/include -I../include -I../src/phreeqcpp -I../src/phreeqcpp/phreeqc
 TARGET_ARCH         =
 FC                  = f95
 FFLAGS              = -fno-second-underscore
@@ -77,6 +77,7 @@ POBJS =	\
 		print.o \
 		read.o \
 		readtr.o \
+		sit.o \
 		smalldense.o \
 		spread.o \
 		step.o \
