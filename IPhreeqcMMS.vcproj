@@ -1099,6 +1099,26 @@
 							</FileConfiguration>
 						</File>
 						<File
+							RelativePath=".\IPhreeqc\src\phreeqcpp\phreeqc\sit.c"
+							>
+							<FileConfiguration
+								Name="Debug|Win32"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+									CompileAs="2"
+								/>
+							</FileConfiguration>
+							<FileConfiguration
+								Name="Release|Win32"
+								>
+								<Tool
+									Name="VCCLCompilerTool"
+									CompileAs="2"
+								/>
+							</FileConfiguration>
+						</File>
+						<File
 							RelativePath="IPhreeqc\src\phreeqcpp\phreeqc\smalldense.c"
 							>
 							<FileConfiguration
