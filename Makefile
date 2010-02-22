@@ -49,6 +49,7 @@ POBJS =	\
 		print.o \
 		read.o \
 		readtr.o \
+		sit.o \
 		smalldense.o \
 		spread.o \
 		step.o \
@@ -324,7 +325,7 @@ utilities.o: IPhreeqc/src/phreeqcpp/phreeqc/utilities.c \
   IPhreeqc/src/phreeqcpp/phreeqc/phrqproto.h
 
 # SOBJS
-IPhreeqc.o: IPhreeqc/src/IPhreeqc.cxx IPhreeqc/src/phreeqcns.hxx \
+IPhreeqc.o: IPhreeqc/src/IPhreeqc.cpp IPhreeqc/src/phreeqcns.hxx \
   IPhreeqc/src/phreeqcpp/phreeqc/global.h \
   IPhreeqc/src/phreeqcpp/phreeqc/phrqtype.h \
   IPhreeqc/src/phreeqcpp/phreeqc/phqalloc.h \
