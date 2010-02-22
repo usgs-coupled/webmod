@@ -68,6 +68,7 @@ POBJS =	\
 		print.o \
 		read.o \
 		readtr.o \
+		sit.o \
 		smalldense.o \
 		spread.o \
 		step.o \
