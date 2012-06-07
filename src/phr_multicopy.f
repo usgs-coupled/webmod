@@ -1,7 +1,8 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION phr_multicopy(keyword, srcarray, targetarray, count)
+      FUNCTION phr_multicopy(id, keyword, srcarray, targetarray, count)
       IMPLICIT NONE
-      INCLUDE       '../IPhreeqc/include/IPhreeqc.f.inc'
+      INCLUDE       '../IPhreeqc/src/IPhreeqc.f.inc'
+      INTEGER       id
       CHARACTER(*)  keyword
       INTEGER       srcarray(*)
       INTEGER       targetarray(*)
@@ -16,15 +17,14 @@
         IF (srcarray(i).GE.0.AND.targetarray(i).GE.0) THEN
 
           WRITE (line,100),'COPY ', keyword, srcarray(i), targetarray(i)
-          phr_multicopy = AccumulateLine(line)
+          phr_multicopy = AccumulateLine(id, line)
           IF (phr_multicopy.NE.0) THEN
             RETURN
           ENDIF
 
-          !!!CALL OutputLines
-          phr_multicopy = Run(.FALSE., .FALSE., .FALSE., .FALSE.)
+          phr_multicopy = RunAccumulated(id)
           IF (phr_multicopy.NE.0) THEN
-            !!!CALL OutputLastError
+            !!!CALL OutputErrorString(id)
             RETURN
           ENDIF
        ENDIF

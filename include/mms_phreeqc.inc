@@ -1,4 +1,8 @@
       !PHREEQC_MMS prototypes
+      
+      INTEGER(KIND=4) CreateIPhreeqcMMS
+      INTEGER(KIND=4) DestroyIPhreeqcMMS
+      
       INTEGER phr_multicopy !!(keyword, srcarray, targetarray, count)
       INTEGER phr_precip    !!(soln_id, count, aspecies, aconc)
       INTEGER phr_mix       !!(count, solutions, fracs, dest)

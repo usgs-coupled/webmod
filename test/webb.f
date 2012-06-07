@@ -1,7 +1,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       PROGRAM DRIVER
       IMPLICIT NONE
-      INCLUDE '../IPhreeqc/include/IPhreeqc.f.inc'
+      INCLUDE '../IPhreeqc/src/IPhreeqc.f.inc'
       INCLUDE '../include/mms_phreeqc.inc'
       INTEGER iresult
       INTEGER      rows
@@ -33,48 +33,61 @@
       REAL*8        tsec
       REAL*8        ph
       REAL*8        array(50,50)
+      
+      INTEGER       id      
+      
+      id = CreateIPhreeqcMMS()
 
       !! load phreeqc.dat
 
-      iresult = LoadDatabase('phreeqc.dat')
+      iresult = LoadDatabase(id, 'phreeqc.dat')
       IF (iresult.NE.0) THEN
         PRINT *, 'Errors loading database:'
-        CALL OutputLastError
+        CALL OutputErrorString(id)
         STOP
       ENDIF
 
-
-      iresult = RunFile('test.pqi', .TRUE., .TRUE., .TRUE., .TRUE.)
+      iresult = SetOutputFileOn(id, .TRUE.)
+      iresult = SetErrorFileOn(id, .TRUE.)
+      iresult = SetLogFileOn(id, .TRUE.)
+      iresult = SetSelectedOutputFileOn(id, .TRUE.)
+      iresult = RunFile(id, 'test.pqi')
       IF (iresult.NE.0) THEN
         PRINT *, 'Errors running test.pqi:'
-        CALL OutputLastError
+        CALL OutputErrorString(id)
         STOP
       ENDIF
 
-      iresult = RunFile('test.pqi', .FALSE., .FALSE., .FALSE., .FALSE.)
+      iresult = SetOutputFileOn(id, .FALSE.)
+      iresult = SetErrorFileOn(id, .FALSE.)
+      iresult = SetLogFileOn(id, .FALSE.)
+      iresult = SetSelectedOutputFileOn(id, .FALSE.)
+      iresult = RunFile(id, 'test.pqi')
       IF (iresult.NE.0) THEN
         PRINT *, 'Errors running test.pqi:'
-        CALL OutputLastError
+        CALL OutputErrorString(id)
         STOP
       ENDIF
 
 
-      cols = GetSelectedOutputColumnCount()
+      cols = GetSelectedOutputColumnCount(id)
 
       ! headings
       DO 20 j=1,cols
-        iresult = GetSelectedOutputValue(0, j, vtype, dvalue, svalue)
+        iresult = GetSelectedOutputValue(id, 0, j,
+     &            vtype, dvalue, svalue)
         len = INDEX(svalue, ' ')
         PRINT 50, svalue(1:len-1), ACHAR(9)
 20    CONTINUE
       PRINT *
 
-      rows = GetSelectedOutputRowCount()
+      rows = GetSelectedOutputRowCount(id)
       ! values
       DO 40 i=1,rows
         DO 30 j=1,cols
-          iresult = GetSelectedOutputValue(i, j, vtype, dvalue, svalue)
-          IF (iresult.EQ.VR_OK) THEN
+          iresult = GetSelectedOutputValue(id, i, j, vtype, dvalue,
+     &                                     svalue)
+          IF (iresult.EQ.IPQ_OK) THEN
             IF (vtype.eq.TT_EMPTY) THEN
               PRINT 50, ' ', ACHAR(9)
             ELSEIF(vtype.eq.TT_DOUBLE) THEN
@@ -84,9 +97,9 @@
               PRINT 50, svalue(1:len-1), ACHAR(9)
             ENDIF
           ELSE
-            IF (iresult.eq.VR_INVALIDROW) THEN
+            IF (iresult.eq.IPQ_INVALIDROW) THEN
               PRINT 50, 'INVROW', ACHAR(9)
-            ELSEIF (iresult.eq.VR_INVALIDCOL) THEN
+            ELSEIF (iresult.eq.IPQ_INVALIDCOL) THEN
               PRINT 50, 'INVCOL', ACHAR(9)
             ELSE
               PRINT 50, 'ERROR', ACHAR(9)
@@ -102,26 +115,30 @@
       !!}}
       
       !! run solns.pqi creating solutions 1-3
-      iresult = RunFile('solns.pqi', .FALSE., .FALSE., .FALSE., .TRUE.)
+      iresult = SetOutputFileOn(id, .FALSE.)
+      iresult = SetErrorFileOn(id, .FALSE.)
+      iresult = SetLogFileOn(id, .FALSE.)
+      iresult = SetSelectedOutputFileOn(id, .TRUE.)
+      iresult = RunFile(id, 'solns.pqi')
       IF (iresult.NE.0) THEN
         PRINT *, 'Errors running solns.pqi:'
-        CALL OutputLastError
+        CALL OutputErrorString(id)
         STOP
       ENDIF     
 
 
-      iresult = build_tally_table()
+      iresult = build_tally_table(id)
       IF (iresult.NE.1) THEN
         PRINT *, 'Errors calling build_tally_table:'
-        CALL OutputLastError
+        CALL OutputErrorString(id)
         STOP
       ENDIF
       PRINT *, "build_tally_table OK"
 
-      iresult = get_tally_table_rows_columns(rows, cols)
+      iresult = get_tally_table_rows_columns(id, rows, cols)
       IF (iresult.NE.1) THEN
         PRINT *, 'Errors calling get_tally_table_rows_columns:'
-        CALL OutputLastError
+        CALL OutputErrorString(id)
         STOP
       ENDIF
       PRINT *, "get_tally_table_rows_columns OK"
@@ -129,10 +146,10 @@
       PRINT *, "get_tally_table_rows_columns cols = ", cols
 
       DO 65 i = 1,cols
-        iresult = get_tally_table_column_heading(i, etype, heading)
+        iresult = get_tally_table_column_heading(id, i, etype, heading)
         IF (iresult.NE.1) THEN
           PRINT *, 'Errors during get_tally_table_column_heading:'
-          CALL OutputLastError
+          CALL OutputErrorString(id)
           STOP
         ENDIF
         IF (etype.EQ.ET_SOLUTION) THEN
@@ -160,10 +177,10 @@
         WRITE(*, '(A,I1,A,A)'),'col_head(',i,')=',heading(1:len-1)
 65    CONTINUE
       DO 68 i = 1,rows
-        iresult = get_tally_table_row_heading(i, heading)
+        iresult = get_tally_table_row_heading(id, i, heading)
         IF (iresult.NE.1) THEN
           PRINT *, 'Errors during get_tally_table_row_heading:'
-          CALL OutputLastError
+          CALL OutputErrorString(id)
           STOP
         ENDIF
         len = INDEX(heading, ' ')
@@ -183,19 +200,19 @@
       species(2) = 'Na'
       concs(1) = 1.0E-5
       concs(2) = 2.0E-5
-      iresult = phr_precip(5, 2, species, concs)
+      iresult = phr_precip(id, 5, 2, species, concs)
       IF (iresult.NE.0) THEN
         PRINT *, 'Errors during phr_precip:'
-        CALL OutputLastError
+        CALL OutputErrorString(id)
         STOP
       ENDIF
 
       do 1000 p=1,10
 
-      iresult = phr_multicopy('solution', src, dest, 3)
+      iresult = phr_multicopy(id, 'solution', src, dest, 3)
       IF (iresult.NE.0) THEN
         PRINT *, 'Errors during phr_multicopy:'
-        CALL OutputLastError
+        CALL OutputErrorString(id)
         STOP
       ENDIF
 
@@ -221,21 +238,28 @@
       n_user(ET_MIX)         = -1
       n_user(ET_TEMPERATURE) = -1
 
-      iresult = AccumulateLine("SELECTED_OUTPUT")
-      iresult = AccumulateLine("-reset false")
-      iresult = AccumulateLine("-ph")
-      iresult = AccumulateLine("-temperature")
-      iresult = AccumulateLine("-totals Cl K Na")
+      iresult = AccumulateLine(id, "SELECTED_OUTPUT")
+      iresult = AccumulateLine(id, "-reset false")
+      iresult = AccumulateLine(id, "-ph")
+      iresult = AccumulateLine(id, "-temperature")
+      iresult = AccumulateLine(id, "-totals Cl K Na")
 
       rxnmols = 1e-6
-
-      iresult = phr_mix(4,solutions,fracs,200,
+      
+      !{{
+      iresult = SetOutputFileOn(id, .TRUE.)
+      iresult = SetErrorFileOn(id, .TRUE.)
+      iresult = SetLogFileOn(id, .TRUE.)
+      iresult = SetSelectedOutputFileOn(id, .TRUE.)      
+      !}}
+     
+      iresult = phr_mix(id,4,solutions,fracs,200,
      &                1.5d0,100,conc_conserv,.TRUE.,
      &                n_user,rxnmols,tempc,ph,tsec,array,
      &                50,50)
       IF (iresult.NE.0) THEN
         PRINT *, 'Errors during phr_mix:'
-        CALL OutputLastError
+        CALL OutputErrorString(id)
         STOP
       ENDIF
 1000  CONTINUE
@@ -245,13 +269,13 @@
       !}}
       
       !! output solution 100
-      cols = GetSelectedOutputColumnCount()
+      cols = GetSelectedOutputColumnCount(id)
       PRINT *, 'Solution 100'
       DO 80 i = 3,cols
-        iresult = GetSelectedOutputValue(0, i, vtype, dvalue, heading)
+        iresult = GetSelectedOutputValue(id,0,i,vtype,dvalue,heading)
         IF (iresult.NE.0) THEN
           PRINT *, 'Errors during GetSelectedOutputValue:'
-          CALL OutputLastError
+          CALL OutputErrorString(id)
           STOP
         ENDIF
         len = INDEX(heading, ' ')
@@ -321,6 +345,12 @@
 ! COMMENT: {3/3/2004 9:32:11 PM}        WRITE(*, '(A,I1,A,A)'),'row_head(',i,')=',heading(1:len-1)
 ! COMMENT: {3/3/2004 9:32:11 PM}88    CONTINUE
 
+      iresult = DestroyIPhreeqcMMS(id)
+      IF (iresult.NE.0) THEN
+        PRINT *, 'Errors DestroyIPhreeqcMMS:'
+        CALL OutputErrorString(id)
+        STOP
+      ENDIF
       
       PRINT *, 'All OK'      
 

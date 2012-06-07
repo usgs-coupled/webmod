@@ -1,7 +1,8 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION phr_precip(soln_id,count,aspecies,aconc)
+      FUNCTION phr_precip(id,soln_id,count,aspecies,aconc)
       IMPLICIT NONE
-      INCLUDE       '../IPhreeqc/include/IPhreeqc.f.inc'
+      INCLUDE       '../IPhreeqc/src/IPhreeqc.f.inc'
+      INTEGER       id
       INTEGER       soln_id
       INTEGER       count
       CHARACTER*(*) aspecies(*)
@@ -12,18 +13,17 @@
       INTEGER       phr_precip
 
       WRITE (line,100),'SOLUTION ', soln_id
-      iresult = AccumulateLine(line)
+      iresult = AccumulateLine(id, line)
 
       WRITE (line,110),'-units  mol/kgw'
-      iresult = AccumulateLine(line)
+      iresult = AccumulateLine(id, line)
 
       DO 10 i=1,count
         WRITE (line,120), aspecies(i), aconc(i)
-        iresult = AccumulateLine(line)
+        iresult = AccumulateLine(id, line)
 10    CONTINUE
 
-      !!!CALL OutputLines
-      phr_precip = Run(.FALSE., .FALSE., .FALSE., .FALSE.)
+      phr_precip = RunAccumulated(id)
 
 100   FORMAT(A,I10)
 110   FORMAT(A)
