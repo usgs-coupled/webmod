@@ -72,7 +72,6 @@ IPQ_DLL_EXPORT IPQ_RESULT destroyiphreeqcmms_(int *id)
 	return DestroyIPhreeqcMMSF(id);
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 //
 // build_tally_table
@@ -135,12 +134,29 @@ IPQ_DLL_EXPORT int get_tally_table_rows_columns_(int *id, int *rows, int *column
 	return get_tally_table_rows_columnsF(id, rows, columns);
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 //
 // get_tally_table_column_heading
 //
 ///////////////////////////////////////////////////////////////////////////////
+
+// /iface:default /names:default
+IPQ_DLL_EXPORT int GET_TALLY_TABLE_COLUMN_HEADING(int *id, int *column, int *type, char *string, unsigned int string_length)
+{
+	return get_tally_table_column_headingF(id, column, type, string, string_length);
+}
+
+// /iface:default /names:default /assume:underscore
+IPQ_DLL_EXPORT int GET_TALLY_TABLE_COLUMN_HEADING_(int *id, int *column, int *type, char *string, unsigned int string_length)
+{
+	return get_tally_table_column_headingF(id, column, type, string, string_length);
+}
+
+// /iface:default /names:lowercase
+IPQ_DLL_EXPORT int get_tally_table_column_heading(int *id, int *column, int *type, char *string, unsigned int string_length)
+{
+	return get_tally_table_column_headingF(id, column, type, string, string_length);
+}
 
 // /iface:default /names:lowercase /assume:underscore
 // /iface:cref /assume:underscore
@@ -149,11 +165,30 @@ IPQ_DLL_EXPORT int get_tally_table_column_heading_(int *id, int *column, int *ty
 	return get_tally_table_column_headingF(id, column, type, string, string_length);
 }
 
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // get_tally_table_row_heading
 //
 ///////////////////////////////////////////////////////////////////////////////
+
+// /iface:default /names:default
+IPQ_DLL_EXPORT int GET_TALLY_TABLE_ROW_HEADING(int *id, int *row, char *string, unsigned int string_length)
+{
+	return get_tally_table_row_headingF(id, row, string, string_length);
+}
+
+// /iface:default /names:default /assume:underscore
+IPQ_DLL_EXPORT int GET_TALLY_TABLE_ROW_HEADING_(int *id, int *row, char *string, unsigned int string_length)
+{
+	return get_tally_table_row_headingF(id, row, string, string_length);
+}
+
+// /iface:default /names:lowercase
+IPQ_DLL_EXPORT int get_tally_table_row_heading(int *id, int *row, char *string, unsigned int string_length)
+{
+	return get_tally_table_row_headingF(id, row, string, string_length);
+}
 
 // /iface:default /names:lowercase /assume:underscore
 // /iface:cref /assume:underscore
@@ -162,12 +197,47 @@ IPQ_DLL_EXPORT int get_tally_table_row_heading_(int *id, int *row, char *string,
 	return get_tally_table_row_headingF(id, row, string, string_length);
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
 //
 // RunMix
 //
 ///////////////////////////////////////////////////////////////////////////////
+
+// /iface:default /names:default
+IPQ_DLL_EXPORT int RUNMIXF(int *id, int *count, int *solutions, double *fracs, int *index_conserv,
+		double *fill_factor, int *index_rxn, double *conc_conserv, int *files_on,
+		int *n_user, double *rxnmols, double *tempc, double *ph, double *tsec, double *array,
+		int *row_dim, int *col_dim)
+{
+	return RunMixF(id, count, solutions, fracs, index_conserv,
+		fill_factor, index_rxn, conc_conserv, files_on,
+		n_user, rxnmols, tempc, ph, tsec, array,
+		row_dim, col_dim);
+}
+
+// /iface:default /names:default /assume:underscore
+IPQ_DLL_EXPORT int RUNMIXF_(int *id, int *count, int *solutions, double *fracs, int *index_conserv,
+		double *fill_factor, int *index_rxn, double *conc_conserv, int *files_on,
+		int *n_user, double *rxnmols, double *tempc, double *ph, double *tsec, double *array,
+		int *row_dim, int *col_dim)
+{
+	return RunMixF(id, count, solutions, fracs, index_conserv,
+		fill_factor, index_rxn, conc_conserv, files_on,
+		n_user, rxnmols, tempc, ph, tsec, array,
+		row_dim, col_dim);
+}
+
+// /iface:default /names:lowercase
+IPQ_DLL_EXPORT int runmixf(int *id, int *count, int *solutions, double *fracs, int *index_conserv,
+		double *fill_factor, int *index_rxn, double *conc_conserv, int *files_on,
+		int *n_user, double *rxnmols, double *tempc, double *ph, double *tsec, double *array,
+		int *row_dim, int *col_dim)
+{
+	return RunMixF(id, count, solutions, fracs, index_conserv,
+		fill_factor, index_rxn, conc_conserv, files_on,
+		n_user, rxnmols, tempc, ph, tsec, array,
+		row_dim, col_dim);
+}
 
 // /iface:default /names:lowercase /assume:underscore
 // /iface:cref /assume:underscore

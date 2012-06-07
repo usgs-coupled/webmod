@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <VisualStudioProject ProjectCreator="Intel Fortran" Keyword="Console Application - Converted from CVF" Version="11.0" ProjectIdGuid="{95777E03-30B0-477E-92FA-75E150B2CBDC}">
 	<Platforms>
-		<Platform Name="Win32"/></Platforms>
+		<Platform Name="Win32"/>
+		<Platform Name="x64"/></Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
-				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" ExternalNameInterpretation="extNameLowerCase" ExternalNameUnderscore="true" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" AssemblerListingLocation="$(INTDIR)/" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebug" WarnArgMismatch="true"/>
-				<Tool Name="VFLinkerTool" AdditionalOptions="/MACHINE:I386" OutputFile="$(OUTDIR)/test.exe" LinkIncremental="linkIncrementalYes" SuppressStartupBanner="true" AdditionalLibraryDirectories="../lib;../IPhreeqc/lib" GenerateDebugInformation="true" ProgramDatabaseFile="$(OUTDIR)/test.pdb" SubSystem="subSystemConsole" AdditionalDependencies="IPhreeqcMMSd.lib IPhreeqcd.lib"/>
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" CallingConvention="callConventionStdRef" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" AssemblerListingLocation="$(INTDIR)/" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebug" WarnArgMismatch="true"/>
+				<Tool Name="VFLinkerTool" OutputFile="$(OUTDIR)/test.exe" LinkIncremental="linkIncrementalYes" SuppressStartupBanner="true" AdditionalLibraryDirectories="../lib;../IPhreeqc/lib" GenerateDebugInformation="true" ProgramDatabaseFile="$(OUTDIR)/test.pdb" SubSystem="subSystemConsole" AdditionalDependencies="IPhreeqcMMSd.lib IPhreeqcd.lib"/>
 				<Tool Name="VFResourceCompilerTool" PreprocessorDefinitions="_DEBUG" Culture="rcEnglishUS" ResourceOutputFileName="$(INTDIR)/$(InputName).res"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TypeLibraryName="$(OUTDIR)/test.tlb"/>
 				<Tool Name="VFCustomBuildTool"/>
@@ -15,13 +16,34 @@
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
 		<Configuration Name="Release|Win32" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
 				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" CallingConvention="callConventionCVF" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" AssemblerListingLocation="$(INTDIR)/"/>
-				<Tool Name="VFLinkerTool" AdditionalOptions="/MACHINE:I386" OutputFile="$(OUTDIR)/test.exe" LinkIncremental="linkIncrementalYes" SuppressStartupBanner="true" AdditionalLibraryDirectories="../lib" ProgramDatabaseFile="$(OUTDIR)/test.pdb" SubSystem="subSystemConsole" AdditionalDependencies="IPhreeqcMMS.lib"/>
+				<Tool Name="VFLinkerTool" OutputFile="$(OUTDIR)/test.exe" LinkIncremental="linkIncrementalYes" SuppressStartupBanner="true" AdditionalLibraryDirectories="../lib;../IPhreeqc/lib" ProgramDatabaseFile="$(OUTDIR)/test.pdb" SubSystem="subSystemConsole" AdditionalDependencies="IPhreeqcMMS.lib  IPhreeqc.lib"/>
 				<Tool Name="VFResourceCompilerTool" PreprocessorDefinitions="NDEBUG" Culture="rcEnglishUS" ResourceOutputFileName="$(INTDIR)/$(InputName).res"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TypeLibraryName="$(OUTDIR)/test.tlb"/>
 				<Tool Name="VFCustomBuildTool"/>
 				<Tool Name="VFPreLinkEventTool"/>
 				<Tool Name="VFPreBuildEventTool"/>
-				<Tool Name="VFPostBuildEventTool"/></Configuration></Configurations>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Debug|x64" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" ExternalNameInterpretation="extNameLowerCase" CallingConvention="callConventionStdRef" ExternalNameUnderscore="true" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" AssemblerListingLocation="$(INTDIR)/" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebug" WarnArgMismatch="true"/>
+				<Tool Name="VFLinkerTool" OutputFile="$(OUTDIR)/test.exe" LinkIncremental="linkIncrementalYes" SuppressStartupBanner="true" AdditionalLibraryDirectories="../libx64;../IPhreeqc/libx64" GenerateDebugInformation="true" ProgramDatabaseFile="$(OUTDIR)/test.pdb" SubSystem="subSystemConsole"/>
+				<Tool Name="VFResourceCompilerTool" PreprocessorDefinitions="_DEBUG" Culture="rcEnglishUS" ResourceOutputFileName="$(INTDIR)/$(InputName).res"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64" TypeLibraryName="$(OUTDIR)/test.tlb"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Release|x64" DeleteExtensionsOnClean="*.obj;*.mod;*.pdb;*.asm;*.map;*.dyn;*.dpi;*.tmp;*.log;*.ilk;*.exe;$(TargetPath)">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" ModulePath="$(INTDIR)/" ObjectFile="$(INTDIR)/" AssemblerListingLocation="$(INTDIR)/"/>
+				<Tool Name="VFLinkerTool" OutputFile="$(OUTDIR)/test.exe" LinkIncremental="linkIncrementalYes" SuppressStartupBanner="true" AdditionalLibraryDirectories="../libx64;../IPhreeqc/libx64" ProgramDatabaseFile="$(OUTDIR)/test.pdb" SubSystem="subSystemConsole" AdditionalDependencies="IPhreeqcMMS.lib  IPhreeqc.lib"/>
+				<Tool Name="VFResourceCompilerTool" PreprocessorDefinitions="NDEBUG" Culture="rcEnglishUS" ResourceOutputFileName="$(INTDIR)/$(InputName).res"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64" TypeLibraryName="$(OUTDIR)/test.tlb"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration></Configurations>
 	<Files>
 		<Filter Name="Header Files" Filter="h;hpp;hxx;hm;inl;fi;fd"/>
 		<Filter Name="Resource Files" Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
