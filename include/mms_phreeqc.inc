@@ -1,19 +1,19 @@
       !PHREEQC_MMS prototypes
       
-      INTEGER(KIND=4) CreateIPhreeqcMMS
-      INTEGER(KIND=4) DestroyIPhreeqcMMS
+      INTEGER, EXTERNAL :: CreateIPhreeqcMMS
+      INTEGER, EXTERNAL :: DestroyIPhreeqcMMS
       
-      INTEGER phr_multicopy !!(keyword, srcarray, targetarray, count)
-      INTEGER phr_precip    !!(soln_id, count, aspecies, aconc)
-      INTEGER phr_mix       !!(count, solutions, fracs, dest)
+      INTEGER, EXTERNAL :: phr_multicopy !!(keyword, srcarray, targetarray, count)
+      INTEGER, EXTERNAL :: phr_precip    !!(soln_id, count, aspecies, aconc)
+      INTEGER, EXTERNAL :: phr_mix       !!(count, solutions, fracs, dest)
 
-      INTEGER build_tally_table
-      INTEGER get_tally_table_rows_columns   !!(rows, cols)
-      INTEGER get_tally_table_column_heading !!(col,etype,string)	  
-      INTEGER get_tally_table_row_heading    !!(row,string)
+      INTEGER, EXTERNAL :: build_tally_table
+      INTEGER, EXTERNAL :: get_tally_table_rows_columns   !!(rows, cols)
+      INTEGER, EXTERNAL :: get_tally_table_column_heading !!(col,etype,string)	  
+      INTEGER, EXTERNAL :: get_tally_table_row_heading    !!(row,string)
 
       ! get_tally_table_column_heading
-	  ! Entity types
+      ! Entity types
 
       INTEGER    ET_SOLUTION
       PARAMETER (ET_SOLUTION=1)
