@@ -1,8 +1,11 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION phr_mix(id,count,solutions,fracs,index_conserv,
-     &                fill_factor,index_rxn,conc_conserv,files_on,
-     &                n_user,rxnmols,tempc,ph,tsec,array,
-     &                arr_rows,arr_cols)
+      FUNCTION phr_mix(id,count,solutions,fracs,index_conserv, &
+                     fill_factor,index_rxn,conc_conserv,files_on, &
+                     n_user,rxnmols,tempc,ph,tsec,array, &
+                     arr_rows,arr_cols)
+#if defined(_WIN32)
+      USE IFPORT   ! to enable 'SYSTEM' calls
+#endif
       IMPLICIT NONE
       INCLUDE       'IPhreeqc.f.inc'
       INTEGER       id              ! 
@@ -34,10 +37,31 @@
 
       INTEGER RunMixF
 
-      phr_mix = RunMixF(id,count,solutions,fracs,index_conserv,
-     &                fill_factor,index_rxn,conc_conserv,files_on,
-     &                n_user,rxnmols,tempc,ph,tsec,array,
-     &                arr_rows,arr_cols)
+! Rick's debug/
+!      integer          startmix(3), endmix(3), nstep, j, et_hyd, et_mix
+!      integer, external  ::  getstep, elapsed_time
+!      integer, save      ::  et_hold
+!      LOGICAL          fil_temp, step1
+!
+!      data step1/.true./
+!      save step1
+!
+!      fil_temp = files_on
+!      startmix(1) = elapsed_time(2)
+!      nstep=getstep()  !  Serial day number of run
+!
+!      if(step1) then
+!        et_hold = 0
+!        step1=.false.
+!      endif
+!      et_hyd = startmix(1) - et_hold
+
+!      if(index_rxn.gt.208000000.and.index_rxn.lt.209000000) files_on = .true.
+! /debug
+      phr_mix = RunMixF(id,count,solutions,fracs,index_conserv, &
+                     fill_factor,index_rxn,conc_conserv,files_on, &
+                     n_user,rxnmols,tempc,ph,tsec,array, &
+                     arr_rows,arr_cols)
 
 
       rows = GetSelectedOutputRowCount(id)
@@ -97,7 +121,20 @@
         ELSE
           RETURN
         ENDIF
-20    CONTINUE      
+20    CONTINUE
+! Debug
+!      files_on = fil_temp
+!      endmix(1) = elapsed_time(2)
+!      et_mix = endmix(1) - startmix(1)  
+!      write(25,1000)nstep, et_hyd, et_mix, startmix(1), endmix(1), &
+!         ' Rxn soln: ',index_rxn, &
+!         ' # of inputs/solns: ',count, (solutions(j),j=1,count)
+!      if(index_rxn.gt.208000000.and.index_rxn.lt.209000000) then
+!        I = SYSTEM('type .\phreeqc.0.out >> .\output\select_mixes')
+!      endif
+!1000  format(I5,' ', 4(I8.8," "),A, I10, A, I3, 20I10) 
+!      et_hold = endmix(1)
+! /Debug            
 
 100   FORMAT(A)
 110   FORMAT(TR4,I10,1PG15.7E2)
