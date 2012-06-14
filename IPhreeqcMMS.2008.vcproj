@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9.00"
 	Name="IPhreeqcMMS"
-	ProjectGUID="{D172264F-9E20-4E2F-98E1-DAB8F2B88771}"
+	ProjectGUID="{B03BAF31-B8E5-4E6B-9495-6F36503F4B0A}"
 	RootNamespace="IPhreeqcMMS"
 	TargetFrameworkVersion="131072"
 	>
