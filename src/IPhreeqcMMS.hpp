@@ -25,6 +25,7 @@ struct MixVars
   int	       row_dim;
   int	       col_dim;
   int          files_on;
+  int          orig_out;
 };
 
 

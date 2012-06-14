@@ -529,7 +529,7 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 	if (::AccumulateLine(pvars->id, "END") != VR_OK) {
 		return ERROR;
 	}
-
+// #ifdef SKIP
 	/* MIX */
 	if (::AccumulateLine(pvars->id, "MIX") != VR_OK) {
 		return ERROR;
@@ -544,23 +544,31 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 	if (::AccumulateLine(pvars->id, line) != VR_OK) {
 		return ERROR;
 	}
-
+// #endif
 
 	/* OutputLines(); */
 
 	this->PhreeqcPtr->zero_tally_table();
 	this->PhreeqcPtr->fill_tally_table(pvars->n_user, pvars->index_conserv, 0); /* initial */
 
+	if (pvars->files_on)
+	{
+		pvars->orig_out = ::GetOutputFileOn(pvars->id);
+		::SetOutputFileOn(pvars->id, 1);
+	}
+
 	return OK;
 }
 
 int IPhreeqcMMS::PostMixCallback(struct MixVars* pvars)
 {
-	//struct MixVars *pvars;
-
 	if (!pvars) return ERROR;
 
-// COMMENT: {6/6/2012 5:14:54 PM}	pvars = (struct MixVars *)cookie;
+	if (pvars->files_on)
+	{
+		::SetOutputFileOn(pvars->id, pvars->orig_out);
+	}
+
 
 	this->PhreeqcPtr->fill_tally_table(pvars->n_user, pvars->index_conserv, 1); /* final */
 	this->PhreeqcPtr->store_tally_table(pvars->array, pvars->row_dim, pvars->col_dim, pvars->fill_factor);
