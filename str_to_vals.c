@@ -62,7 +62,7 @@ long str_to_vals (char *encoded_string, long size, long type, char *store_addr) 
   char tcopy[MAXDATALNLEN];
   double dvalue, *dval;
   float fvalue, *fval;
-  long lvalue, *lval;
+  int lvalue, *lval;
 
   /*
    * set up pointer for data type
@@ -79,7 +79,7 @@ long str_to_vals (char *encoded_string, long size, long type, char *store_addr) 
     fval = (float *) store_addr;
     break;
   case M_LONG:
-    lval = (long *) store_addr;
+    lval = (int *) store_addr;
     break;
   }
 
@@ -136,7 +136,7 @@ long str_to_vals (char *encoded_string, long size, long type, char *store_addr) 
       fvalue = (float) strtod(valstr, &end_point);
       break;
     case M_LONG:
-      lvalue = strtol(valstr, &end_point, 10);
+      lvalue = (int)strtol(valstr, &end_point, 10);
       break;
     }
 
