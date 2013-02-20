@@ -6,7 +6,7 @@
 	<Configurations>
 		<Configuration Name="Debug|Win32">
 				<Tool Name="VFFortranCompilerTool" AdditionalOptions="/MP" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" Preprocess="preprocessYes" AdditionalIncludeDirectories="$(IntDir)\;..\IPhreeqcMMS\include;..\IPhreeqcMMS\IPhreeqc\src" Interfaces="true" StandardWarnings="standardWarningsF90" DisableSpecificDiagnostics="6033" WarnDeclarations="true" WarnUnusedVariables="true" SuppressUsageMessages="true" WarnInterfaces="true" ExternalNameInterpretation="extNameLowerCase" ExternalNameUnderscore="true" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebug"/>
-				<Tool Name="VFLinkerTool" OutputFile="$(OutDir)\webmod2008.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories="../IPhreeqcMMS/lib;../IPhreeqcMMS/IPhreeqc/lib;../mmf_c/Debug;../IPhreeqcMMS/Debug" GenerateDebugInformation="true" SubSystem="subSystemConsole" AdditionalDependencies="IPhreeqcMMSd.lib IPhreeqcd.lib mmf_c.lib Flib.lib"/>
+				<Tool Name="VFLinkerTool" OutputFile="$(OutDir)\webmod2008.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories="../IPhreeqcMMS/lib;../IPhreeqcMMS/IPhreeqc/lib;../mmf_c/Debug;../IPhreeqcMMS/Debug" GenerateDebugInformation="true" SubSystem="subSystemConsole" AdditionalDependencies="IPhreeqcMMSd.lib IPhreeqcd.lib mmf_c.lib"/>
 				<Tool Name="VFResourceCompilerTool"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
 				<Tool Name="VFCustomBuildTool"/>
