@@ -529,7 +529,7 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 	if (::AccumulateLine(pvars->id, "END") != VR_OK) {
 		return ERROR;
 	}
-#ifdef SKIP
+
 	/* MIX */
 	if (::AccumulateLine(pvars->id, "MIX") != VR_OK) {
 		return ERROR;
@@ -544,7 +544,8 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 	if (::AccumulateLine(pvars->id, line) != VR_OK) {
 		return ERROR;
 	}
-#endif
+
+#ifdef SKIP
 	/* MIX */
 	
 	sprintf(line, "SOLUTION_MIX %d", pvars->n_user[Solution]);
@@ -555,7 +556,7 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 	if (::AccumulateLine(pvars->id, line) != VR_OK) {
 		return ERROR;
 	}
-
+#endif
 	/* END */
 	if (::AccumulateLine(pvars->id, "END") != VR_OK) {
 		return ERROR;
