@@ -4,7 +4,7 @@
       INTEGER, EXTERNAL :: DestroyIPhreeqcMMS
       
       INTEGER, EXTERNAL :: phr_multicopy !!(keyword, srcarray, targetarray, count)
-      INTEGER, EXTERNAL :: phr_precip    !!(soln_id, count, aspecies, aconc)
+      INTEGER, EXTERNAL :: phr_precip    !!(soln_id, count, aspecies, aconc, tempc, ph)
       INTEGER, EXTERNAL :: phr_mix       !!(count, solutions, fracs, dest)
 
       INTEGER, EXTERNAL :: build_tally_table

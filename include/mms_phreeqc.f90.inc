@@ -17,7 +17,7 @@
        INTERFACE
         FUNCTION phr_mix(id,count,solutions,fracs,index_conserv, &
                      fill_factor,index_rxn,conc_conserv,files_on, &
-                     n_user,rxnmols,tempc,ph,tsec,array, &
+                     n_user,rxnmols,tempc,ph,ph_final,tsec,array, &
                      arr_rows,arr_cols)
          INTEGER(KIND=4), INTENT(IN)    :: id              ! 
          INTEGER(KIND=4), INTENT(IN)    :: count           ! solution count
@@ -30,8 +30,9 @@
          LOGICAL(KIND=4), INTENT(IN)    :: files_on        ! write to files
          INTEGER(KIND=4), INTENT(IN)    :: n_user(*)       !
          REAL(KIND=8),    INTENT(IN)    :: rxnmols         !
-         REAL(KIND=8),    INTENT(IN)    :: tempc           !
+         REAL(KIND=8),    INTENT(INOUT) :: tempc           !
          REAL(KIND=8),    INTENT(INOUT) :: ph              !
+         REAL(KIND=8),    INTENT(INOUT) :: ph_final              !
          REAL(KIND=8),    INTENT(IN)    :: tsec            !
          REAL(KIND=8),    INTENT(INOUT) :: array(*)        !
          INTEGER(KIND=4), INTENT(IN)    :: arr_rows        ! 
@@ -52,12 +53,14 @@
        END INTERFACE
 
        INTERFACE
-        FUNCTION phr_precip(id,soln_id,count,aspecies,aconc)
+        FUNCTION phr_precip(id,soln_id,count,aspecies,aconc,tempc,ph)
          INTEGER(KIND=4), intent(IN) ::       id
          INTEGER(KIND=4), intent(IN) ::       soln_id
          INTEGER(KIND=4), intent(IN) ::       count
          CHARACTER*(*),   intent(IN) ::       aspecies(*)
          REAL*8,          intent(IN) ::       aconc(*)
+         REAL*8,          intent(IN) ::       tempc
+         REAL*8,          intent(IN) ::       ph
          INTEGER(KIND=4)             ::     phr_precip
         END FUNCTION phr_precip
        END INTERFACE

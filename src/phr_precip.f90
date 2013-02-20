@@ -1,5 +1,5 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      FUNCTION phr_precip(id,soln_id,count,aspecies,aconc)
+      FUNCTION phr_precip(id,soln_id,count,aspecies,aconc,tempc,pH)
       IMPLICIT NONE
       INCLUDE       '../IPhreeqc/src/IPhreeqc.f.inc'
       INTEGER       id
@@ -7,6 +7,8 @@
       INTEGER       count
       CHARACTER*(*) aspecies(*)
       REAL*8        aconc(*)
+      REAL*8        tempc
+      REAL*8        pH
       CHARACTER(80) line
       INTEGER       iresult
       INTEGER       i
@@ -16,6 +18,12 @@
       iresult = AccumulateLine(id, line)
 
       WRITE (line,110),'-units  mol/kgw'
+      iresult = AccumulateLine(id, line)
+
+      WRITE (line,120),'-temp ', tempc
+      iresult = AccumulateLine(id, line)
+
+      WRITE (line,120),'-pH ', pH
       iresult = AccumulateLine(id, line)
 
       DO 10 i=1,count
