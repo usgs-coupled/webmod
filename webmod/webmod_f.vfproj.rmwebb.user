@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioUserFile ProjectCreator="Intel Fortran" Keyword="Console Application" Version="11.0" ProjectIdGuid="{BD619FDF-A27D-4CCC-9542-C9E7BFD10DAE}">
+	<Configurations>
+		<Configuration Name="Debug|Win32" CommandArguments="-Ccontrol/dr2.control" WorkingDirectory="D:\System\Users\rmwebb\Desktop\WEBWIN_Beta\projects\dr2"/>
+		<Configuration Name="Release|Win32" CommandArguments="-C.\control\dr2.control &gt; test.out" WorkingDirectory="D:\System\Users\rmwebb\Desktop\WEBWIN_beta\projects\dr2"/>
+		<Configuration Name="Debug|x64" CommandArguments="-Ccontrol/blanco.control" WorkingDirectory="D:\System\Users\rmwebb\Desktop\WEBWIN_beta\projects\Blanco"/>
+		<Configuration Name="Release|x64" CommandArguments="-C.\control\loch.control &gt; test.out" WorkingDirectory="C:\Documents and Settings\rmwebb\Desktop\WEBWIN_beta\projects\LochVale_iso"/></Configurations></VisualStudioUserFile>
