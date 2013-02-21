@@ -38,7 +38,7 @@ IPhreeqcMMSLib::CreateIPhreeqcMMS(void)
 	try
 	{
 		IPhreeqcMMS* IPhreeqcPtr = new IPhreeqcMMS;
-		n = IPhreeqcPtr->Index;
+		n = static_cast<int>(IPhreeqcPtr->Index);
 	}
 	catch(...)
 	{
