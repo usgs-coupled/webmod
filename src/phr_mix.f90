@@ -7,25 +7,26 @@
       USE IFPORT   ! to enable 'SYSTEM' calls
 #endif
       USE WEBMOD_IO, ONLY: nowtime
-      USE WEBMOD_PHREEQ_MMS, ONLY: xdebug_start, xdebug_stop
+      USE WEBMOD_PHREEQ_MMS, ONLY: xdebug_start, xdebug_stop, nsolute 
+      USE WEBMOD_OBSCHEM, ONLY : n_iso
       IMPLICIT NONE
       INCLUDE       'IPhreeqc.f90.inc'
       INTEGER       id              ! 
       INTEGER       count           ! solution count
       INTEGER       solutions(*)    ! solution #'s
-      REAL*8        fracs(*)        ! mixing fractions
+      DOUBLE PRECISION        fracs(*)        ! mixing fractions
       INTEGER       index_conserv   ! 
-      REAL*8        fill_factor     ! 
+      DOUBLE PRECISION        fill_factor     ! 
       INTEGER       index_rxn       ! 
-      REAL*8        conc_conserv(*) ! 
+      DOUBLE PRECISION        conc_conserv(*) ! 
       LOGICAL       files_on        ! write to files
       INTEGER       n_user(*)       !
-      REAL*8        rxnmols         !
-      REAL*8        tempc           !
-      REAL*8        ph              !
-      REAL*8        ph_final        !
-      REAL*8        tsec            !
-      REAL*8        array(*)        !
+      DOUBLE PRECISION        rxnmols         !
+      DOUBLE PRECISION        tempc           !
+      DOUBLE PRECISION        ph              !
+      DOUBLE PRECISION        ph_final        !
+      DOUBLE PRECISION        tsec            !
+      DOUBLE PRECISION        array(*)        !
       INTEGER       arr_rows        ! 
       INTEGER       arr_cols        ! 
 
@@ -34,7 +35,7 @@
       INTEGER       i
       INTEGER       cols
       INTEGER       vtype
-      REAL*8        dvalue
+      DOUBLE PRECISION        dvalue
       INTEGER       rows
       INTEGER       phr_mix
 
@@ -51,6 +52,16 @@
       data step1/.true./
       save step1
 !
+      ! Initialize output variables
+      do i = 1, nsolute+n_iso*3
+        conc_conserv(i) = -987654321.
+      enddo
+      tempc = -987654321.
+      ph = -987654321.
+      ph_final = -987654321.
+      
+           
+!      
       fil_temp = files_on
       phr_print = .false.
       startmix(1) = elapsed_time(2)

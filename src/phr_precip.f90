@@ -6,9 +6,9 @@
       INTEGER       soln_id
       INTEGER       count
       CHARACTER*(*) aspecies(*)
-      REAL*8        aconc(*)
-      REAL*8        tempc
-      REAL*8        pH
+      DOUBLE PRECISION        aconc(*)
+      DOUBLE PRECISION        tempc
+      DOUBLE PRECISION        pH
       CHARACTER(80) line
       INTEGER       iresult
       INTEGER       i
