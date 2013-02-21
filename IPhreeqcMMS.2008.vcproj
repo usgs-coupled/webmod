@@ -70,7 +70,6 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="lib/IPhreeqcMMSd.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -142,7 +141,6 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="libx64/IPhreeqcMMSd.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -213,7 +211,6 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="lib/IPhreeqcMMS.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
@@ -284,7 +281,6 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="libx64/IPhreeqcMMS.lib"
 				SuppressStartupBanner="true"
 			/>
 			<Tool
