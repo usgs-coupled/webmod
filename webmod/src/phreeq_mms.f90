@@ -501,7 +501,7 @@
       USE IFPORT
 #endif
 !      include 'fmodules.inc'
-!      INCLUDE 'IPhreeqc.f.inc'
+!      INCLUDE 'IPhreeqc.f90.inc'
 !      INCLUDE 'mms_phreeqc.inc'
 
       phreeqmms_decl = 1
