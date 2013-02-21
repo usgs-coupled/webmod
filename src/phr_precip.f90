@@ -1,7 +1,7 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION phr_precip(id,soln_id,count,aspecies,aconc,tempc,pH)
       IMPLICIT NONE
-      INCLUDE       '../IPhreeqc/src/IPhreeqc.f.inc'
+      INCLUDE       '../IPhreeqc/src/IPhreeqc.f90.inc'
       INTEGER       id
       INTEGER       soln_id
       INTEGER       count
