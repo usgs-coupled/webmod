@@ -5,7 +5,7 @@
 		<Platform Name="x64"/></Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" OutputDirectory="$(SolutionDir)\$(ConfigurationName)\">
-				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" MultiProcessorCompilation="true" Optimization="optimizeDisabled" Preprocess="preprocessYes" AdditionalIncludeDirectories="$(IntDir)\;..\IPhreeqcMMS\include;..\IPhreeqcMMS\IPhreeqc\src" StandardWarnings="standardWarningsF90" DisableSpecificDiagnostics="6033" WarnDeclarations="true" WarnUnusedVariables="true" SuppressUsageMessages="true" WarnInterfaces="true" ExternalNameInterpretation="extNameLowerCase" ExternalNameUnderscore="true" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebug" Interfaces="true"/>
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" Preprocess="preprocessYes" AdditionalIncludeDirectories="$(IntDir)\;..\IPhreeqcMMS\include;..\IPhreeqcMMS\IPhreeqc\src" Interfaces="true" StandardWarnings="standardWarningsF90" DisableSpecificDiagnostics="6033" WarnDeclarations="true" WarnUnusedVariables="true" SuppressUsageMessages="true" WarnInterfaces="true" ExternalNameInterpretation="extNameLowerCase" ExternalNameUnderscore="true" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebug" MultiProcessorCompilation="true"/>
 				<Tool Name="VFLinkerTool" OutputFile="$(OutDir)\webmod32d.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories="$(OutDir)" GenerateDebugInformation="true" SubSystem="subSystemConsole" AdditionalDependencies="IPhreeqcMMS.lib IPhreeqc.lib mmf_c.lib"/>
 				<Tool Name="VFResourceCompilerTool"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
@@ -15,7 +15,7 @@
 				<Tool Name="VFPostBuildEventTool" CommandLine="copy &quot;$(TargetPath)&quot; ..\WEBWIN_beta\bin\"/>
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
 		<Configuration Name="Release|Win32" OutputDirectory="$(SolutionDir)\$(ConfigurationName)\">
-				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" MultiProcessorCompilation="true" Preprocess="preprocessYes" AdditionalIncludeDirectories="$(IntDir)\;..\IPhreeqcMMS\include;..\IPhreeqcMMS\IPhreeqc\src" ExternalNameInterpretation="extNameLowerCase" ExternalNameUnderscore="true"/>
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" Preprocess="preprocessYes" AdditionalIncludeDirectories="$(IntDir)\;..\IPhreeqcMMS\include;..\IPhreeqcMMS\IPhreeqc\src" ExternalNameInterpretation="extNameLowerCase" ExternalNameUnderscore="true" MultiProcessorCompilation="true"/>
 				<Tool Name="VFLinkerTool" OutputFile="$(OutDir)\webmod32.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories="$(OutDir)" SubSystem="subSystemConsole" AdditionalDependencies="IPhreeqcMMS.lib IPhreeqc.lib mmf_c.lib"/>
 				<Tool Name="VFResourceCompilerTool"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
@@ -24,8 +24,8 @@
 				<Tool Name="VFPreBuildEventTool"/>
 				<Tool Name="VFPostBuildEventTool" CommandLine="copy &quot;$(TargetPath)&quot; ..\WEBWIN_beta\bin\"/>
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
-		<Configuration Name="Debug|x64" OutputDirectory="$(SolutionDir)$(Platform)\$(ConfigurationName)\">
-				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" MultiProcessorCompilation="true" Optimization="optimizeDisabled" Preprocess="preprocessYes" AdditionalIncludeDirectories="$(IntDir)\;..\IPhreeqcMMS\include;..\IPhreeqcMMS\IPhreeqc\src" StandardWarnings="standardWarningsF90" DisableSpecificDiagnostics="6033" WarnDeclarations="true" WarnUnusedVariables="true" SuppressUsageMessages="true" ExternalNameInterpretation="extNameLowerCase" ExternalNameUnderscore="true" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebug" Interfaces="true"/>
+		<Configuration Name="Debug|x64" OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)\">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" Preprocess="preprocessYes" AdditionalIncludeDirectories="$(IntDir)\;..\IPhreeqcMMS\include;..\IPhreeqcMMS\IPhreeqc\src" Interfaces="true" StandardWarnings="standardWarningsF90" DisableSpecificDiagnostics="6033" WarnDeclarations="true" WarnUnusedVariables="true" SuppressUsageMessages="true" ExternalNameInterpretation="extNameLowerCase" ExternalNameUnderscore="true" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebug" MultiProcessorCompilation="true"/>
 				<Tool Name="VFLinkerTool" OutputFile="$(OutDir)\webmod2008d.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories="$(OutDir)" GenerateDebugInformation="true" SubSystem="subSystemConsole" AdditionalDependencies="IPhreeqc.lib IPhreeqcMMS.lib mmf_c.lib"/>
 				<Tool Name="VFResourceCompilerTool"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
@@ -34,8 +34,8 @@
 				<Tool Name="VFPreBuildEventTool"/>
 				<Tool Name="VFPostBuildEventTool" CommandLine="copy &quot;$(TargetPath)&quot; ..\WEBWIN_beta\bin\"/>
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
-		<Configuration Name="Release|x64" OutputDirectory="$(SolutionDir)$(Platform)\$(ConfigurationName)\">
-				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" MultiProcessorCompilation="true" Preprocess="preprocessYes" AdditionalIncludeDirectories="$(IntDir)\;..\IPhreeqcMMS\include;..\IPhreeqcMMS\IPhreeqc\src" ExternalNameInterpretation="extNameLowerCase" ExternalNameUnderscore="true"/>
+		<Configuration Name="Release|x64" OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)\">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" Preprocess="preprocessYes" AdditionalIncludeDirectories="$(IntDir)\;..\IPhreeqcMMS\include;..\IPhreeqcMMS\IPhreeqc\src" ExternalNameInterpretation="extNameLowerCase" ExternalNameUnderscore="true" MultiProcessorCompilation="true"/>
 				<Tool Name="VFLinkerTool" OutputFile="$(OutDir)\webmod2008.exe" LinkIncremental="linkIncrementalNo" SuppressStartupBanner="true" AdditionalLibraryDirectories="$(OutDir)" SubSystem="subSystemConsole" AdditionalDependencies="IPhreeqcMMS.lib IPhreeqc.lib mmf_c.lib"/>
 				<Tool Name="VFResourceCompilerTool"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
