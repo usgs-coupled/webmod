@@ -3932,7 +3932,8 @@
 !     metric 2 (inputs) so that the final volumes and masses in
 !     the c_chem matrix serve as accumulators.
 !
-            totvol = mru_dep(is)
+!            totvol = mru_dep(is)
+            totvol = depvol
             indx = isoln(dest(1),nchemdat,nmru,nac,clark_segs,&
                  ires,ichemdat,imru,inac,ihydro)
             iresult = update_chem(indx,totvol,2,conc,pH,tempc,&
