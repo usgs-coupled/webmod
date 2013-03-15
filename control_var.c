@@ -161,3 +161,28 @@ long control_integer_ (int *retval, char *key, ftnlen len) {
 	*retval = *control_var(foo);
 	return 0;
 }
+
+/*--------------------------------------------------------------------*\
+ | FUNCTION     : control_integer_array_
+ | COMMENT		: called from fortran
+ | PARAMETERS   :
+ | RETURN VALUE : 
+ | RESTRICTIONS :
+\*--------------------------------------------------------------------*/
+long control_integer_array_ (int *retval, char *tag, int *index, ftnlen len, ftnlen tlen) {
+	char *foo;
+    long **longs;
+	int *intVal;
+    int i;
+
+	foo = (char *) umalloc(tlen + 1);
+	strncpy(foo, tag, tlen);
+	foo[tlen] = '\0';
+
+    longs = (long **) control_var(foo);
+    i = *index - 1;
+	intVal = (int *)umalloc(sizeof (int));
+	*intVal = (int)longs+i;
+	retval = intVal;
+	return 0;
+}
