@@ -1,12 +1,5 @@
 /*+
  * United States Geological Survey
- *
- * PROJECT  : Modular Modeling System (MMS)
- * NAME     : readvar.c
- * AUTHOR   : Steve Markstrom (markstro)
- * DATE     : Mon 08 Apr 1996
- * FUNCTION :
- * COMMENT  :
  * readvar.c: reads the values associated with a key from an input file,
  * and stores it in the data base
  *
@@ -14,35 +7,8 @@
  *                        readvar_() to be called from Fortran
  *
  * returns 0 if success, 1 if failure
-
- * REF      :
- * REVIEW   :
- * PR NRS   :
  *
  * $Id$
- *
-   $Revision$
-        $Log: readvar.c,v $
-        Revision 1.8  1996/04/09 21:04:14  markstro
-        (1) Work on control files
-        (2) Runtime graphs
-
- * Revision 1.7  1996/02/19  20:00:46  markstro
- * Now lints pretty clean
- *
-        Revision 1.6  1994/11/22 17:20:15  markstro
-        (1) Cleaned up dimensions and parameters.
-        (2) Some changes due to use of malloc_dbg.
-
- * Revision 1.5  1994/09/30  14:55:00  markstro
- * Initial work on function prototypes.
- *
- * Revision 1.4  1994/06/16  16:47:15  markstro
- * Worked over runcontrol.c
- *
- * Revision 1.3  1994/01/31  20:17:17  markstro
- * Make sure that all source files have CVS log.
- *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -56,13 +22,6 @@
 /**2************************* LOCAL MACROS ****************************/
 #define MISSING_VAR -999
 
-/**3************************ LOCAL TYPEDEFS ***************************/
-
-/**4***************** DECLARATION LOCAL FUNCTIONS *********************/
-
-/**5*********************** LOCAL VARIABLES ***************************/
-
-/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : readvar_
  | COMMENT		: called from Fortran, sorts out args and calls readvar()
@@ -202,8 +161,3 @@ long readvar (char *module, char *name) {
   return(0);
 
 }
-
-
-/**7****************** LOCAL FUNCTION DEFINITIONS *********************/
-
-/**8************************** TEST DRIVER ****************************/

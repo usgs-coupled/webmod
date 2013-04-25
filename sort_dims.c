@@ -1,23 +1,8 @@
 /**************************************************************************
+ * United States Geological Survey
  * sort_dims.c: sorts the dimen array so that the key for each
  * structure is in increasing alphabetical order
- *
  * $Id$
- *
-   $Revision$
-        $Log: sort_dims.c,v $
-        Revision 1.5  1996/04/29 16:23:25  markstro
-        Unknown
-
- * Revision 1.4  1996/02/19  20:01:11  markstro
- * Now lints pretty clean
- *
-        Revision 1.3  1994/09/30 14:55:19  markstro
-        Initial work on function prototypes.
-
- * Revision 1.2  1994/01/31  20:17:32  markstro
- * Make sure that all source files have CVS log.
- *
  **************************************************************************/
 #define SORT_DIMS_C
 #include <stdio.h>

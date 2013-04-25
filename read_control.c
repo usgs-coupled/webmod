@@ -1,35 +1,9 @@
 /*+
  * United States Geological Survey
- *
- * PROJECT  : Modular Modeling System (MMS)
- * NAME     : read_control.c
- * AUTHOR   : CADSWES
- * DATE     : Mon 08 Apr 1996
- * FUNCTION :
- * COMMENT  :
  * read_control.c: reads the control data base from a file
  * File name is obtained from the environment variable "mms_control_file"
- * REF      :
- * REVIEW   :
- * PR NRS   :
  *
  * $Id$
- *
-   $Revision$
-        $Log: read_control.c,v $
-        Revision 1.21  1996/08/28 15:24:10  markstro
-        Unknown
-
- * Revision 1.20  1996/05/14  02:42:05  msbrewer
- * Cleaned up cvs conflicts. Bug fixes in dump_to_db.
- *
-        Revision 1.19  1996/04/29 16:23:09  markstro
-        Unknown
-
- * Revision 1.18  1996/04/09  21:04:09  markstro
- * (1) Work on control files
- * (2) Runtime graphs
- *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -40,17 +14,10 @@
 #include <stdlib.h>
 #include "mms.h"
 
-/**2************************* LOCAL MACROS ****************************/
-
-/**3************************ LOCAL TYPEDEFS ***************************/
-
 /**4***************** DECLARATION LOCAL FUNCTIONS *********************/
 static char *rc (char *);
 char *fgets_rc (char *, int , FILE *);
 
-/**5*********************** LOCAL VARIABLES ***************************/
-
-/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : read_control
  | COMMENT      :
@@ -289,8 +256,3 @@ char *fgets_rc (char *str, int num, FILE *stream) {
          return ptr;
       }
 }
-
-/**7****************** LOCAL FUNCTION DEFINITIONS *********************/
-
-/**8************************** TEST DRIVER ****************************/
-

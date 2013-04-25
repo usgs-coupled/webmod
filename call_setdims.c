@@ -1,6 +1,6 @@
 /*************************************************
- * call_setdims.c: created by 'mbuild'.
- * Creation time: Tue May 23 11:13:30 2006
+ * United States Geological Survey
+ * $Id$
  *************************************************/
 
 #include <stdio.h>

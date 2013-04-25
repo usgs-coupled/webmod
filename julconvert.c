@@ -9,27 +9,6 @@
  * to noon the next Gregorian day.
  *
  * $Id$
- *
-   $Revision$
-		$Log: julconvert.c,v $
-		Revision 1.6  2001/04/03 18:18:06  markstro
-		Unknown
-
-		Revision 1.5  2001/01/22 22:26:41  markstro
-		unknown
-
-		Revision 1.4  1999/08/24 16:34:09  markstro
-		Version 1.1.1
-
-		Revision 1.3  1996/02/19 20:00:14  markstro
-		Now lints pretty clean
-
-		Revision 1.2  1994/09/30 14:54:33  markstro
-		Initial work on function prototypes.
-
- * Revision 1.1  1994/03/24  22:46:20  markstro
- * Initial version from TERRA
- *
  */
 
 #define JULCONVERT_C

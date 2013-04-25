@@ -1,4 +1,5 @@
 /**************************************************************************
+ * United States Geological Survey
  * str_to_vals.c: decodes a string into values, and loads memory addresses
  *
  * Examples of legal strings for this routine:
@@ -13,29 +14,6 @@
  * is repeated.
  *
  * $Id$
- *
-   $Revision$
-        $Log: str_to_vals.c,v $
-        Revision 1.7  1996/02/19 20:01:17  markstro
-        Now lints pretty clean
-
-        Revision 1.6  1994/11/23 20:12:59  markstro
-        More malloc_dbg changes
-
- * Revision 1.5  1994/11/22  17:20:37  markstro
- * (1) Cleaned up dimensions and parameters.
- * (2) Some changes due to use of malloc_dbg.
- *
- * Revision 1.4  1994/11/08  16:17:51  markstro
- * (1) More proto type fine tuning
- * (2) fixed up data file reading
- *
- * Revision 1.3  1994/09/30  14:55:25  markstro
- * Initial work on function prototypes.
- *
- * Revision 1.2  1994/01/31  20:17:39  markstro
- * Make sure that all source files have CVS log.
- *
  **************************************************************************/
 #define STR_TO_VALS_C
 #include <stdio.h>
@@ -226,7 +204,6 @@ long str_to_vals (char *encoded_string, long size, long type, char *store_addr) 
 
   }
 
-//ufree(scopy);
   return S2V_SUCCESS;
 
 }

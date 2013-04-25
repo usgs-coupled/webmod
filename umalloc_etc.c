@@ -1,10 +1,6 @@
 /**********************************************************************
  * umalloc_etc.c : memory allocation routines with error handling
  *
- * utility routine
- *
- * Mike Dixon CADSWES CU July 1990
- *
  * $Id$
  *
  **********************************************************************/

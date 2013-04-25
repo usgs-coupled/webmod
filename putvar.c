@@ -1,49 +1,19 @@
 /**************************************************************************
- * putvar.c: gets the value associated with a module and name, and copies
+ * United States Geological Survey
+ * gets the value associated with a module and name, and copies
  * it into the variable provided by the calling routine.
  *
  * There are 2 functions: putvar() to be called from C
  *                        putvar_() to be called from Fortran
- *
  * Returns 0 if successful, 1 otherwise.
  *
  * $Id$
- *
-   $Revision$
-        $Log: putvar.c,v $
-        Revision 1.7  1996/02/19 20:00:38  markstro
-        Now lints pretty clean
-
-        Revision 1.6  1995/05/25 14:26:34  markstro
-        (1) Added batch mode
-        (2) Replaced "b" functions with "mem" versions
-
- * Revision 1.5  1994/11/22  17:20:07  markstro
- * (1) Cleaned up dimensions and parameters.
- * (2) Some changes due to use of malloc_dbg.
- *
- * Revision 1.4  1994/09/30  14:54:52  markstro
- * Initial work on function prototypes.
- *
- * Revision 1.3  1994/08/01  16:35:58  markstro
- * Took module name out of key
- *
- * Revision 1.2  1994/01/31  20:17:09  markstro
- * Make sure that all source files have CVS log.
- *
  **************************************************************************/
 #define PUTVAR_C
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "mms.h"
-/*
- **	OBJECTCENTER: Memory fault
- **		problem:  char *type was passed as a parameter to getparam
- **					realloced, and then freed in the calling procedure.
- **					for this action, the pointer of type must be passed.
- **		solution: change putvar to use local integer variable to avoid realloc
- */
 
 /*--------------------------------------------------------------------*\
  | FUNCTION     : putvar_
@@ -97,13 +67,6 @@ long putvar_ (char *mname, char *vname, ftnint *vmaxsize, char *vtype, double *v
 
   retval =  putvar(module, name, maxsize, type, value);
 
-  /*
-   * ufree up arrays
-   */
-
-//ufree(module);
-//ufree(name);
-//ufree(type);
   return retval;
 
 }
@@ -255,10 +218,6 @@ long putvar (char *module, char *name, long maxsize, char *type, double *value) 
 	  }
 	}
     }
-  /*
-   * free up arrays
-   */
-//ufree(vkey);
   
   return(0);
   

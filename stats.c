@@ -1,55 +1,7 @@
 /*+
  * United States Geological Survey
- *
- * PROJECT  : Modular Modeling System (MMS)
- * NAME     : stats.c
- * AUTHOR   : Mike Dixon, Pedro Restrepo CADSWES, University of Colorado,
- *             Boulder
- * DATE     : May 1990   
- * FUNCTION : stats
  * COMMENT  : statistical analysis postprocessor
- * REF      :
- * REVIEW   :
- * PR NRS   :
- *
  * $Id$
- *
-   $Revision$
-        $Log: stats.c,v $
-        Revision 1.13  1998/11/10 15:17:44  markstro
-        unknown
-
-        Revision 1.12  1996/03/25 21:58:12  markstro
-        Unknown
-
- * Revision 1.11  1996/02/19  20:01:15  markstro
- * Now lints pretty clean
- *
-        Revision 1.10  1995/02/01 17:47:50  markstro
-        Addition of Rosenbrock optimization.  Start of sensitivity.  Many bug fixes.
-
- * Revision 1.9  1994/11/22  17:20:35  markstro
- * (1) Cleaned up dimensions and parameters.
- * (2) Some changes due to use of malloc_dbg.
- *
- * Revision 1.8  1994/10/24  14:19:06  markstro
- * (1)  Integration of CADSWES's work on GIS.
- * (2)  Prototypes were added to the files referenced in "mms_proto.h".
- *
- * Revision 1.7  1994/09/30  14:55:23  markstro
- * Initial work on function prototypes.
- *
- * Revision 1.6  1994/05/18  17:16:10  markstro
- * TERRA changed mhms to mms
- *
- * Revision 1.5  1994/03/07  21:20:00  markstro
- * Changes from TERRA
- *
- * Revision 1.4  1994/02/01  21:17:18  markstro
- * Unknown
- *
- * Revision 1.3  1994/01/31  20:17:36  markstro
- * Make sure that all source files have CVS log.
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -86,11 +38,6 @@
     float histog[MAXCELLS];  /* histogram                      */
   }STATS;
 
-/**4***************** DECLARATION LOCAL FUNCTIONS *********************/
-
-/**5*********************** LOCAL VARIABLES ***************************/
-
-/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : stats
  | COMMENT		:
@@ -103,11 +50,9 @@ int stats (void) {
   int     nvars;                 /* number of variables in the file*/
   STATS   st[MAXSTATVARS];            /* array of statistics structures */
   FILE    *statvar_file;
-  //FILE    *stats_file;
   char    path[MAXDATALNLEN];
   char    line[MAXDATALNLEN];
   int     i,nvals;
-  //int     j;
   int     recNo;
   int     year;
   int     month;
@@ -118,7 +63,6 @@ int stats (void) {
   char    elem_number[MAXDATALNLEN];
   double  x[MAXSTATVARS];
   float   squared;
-  //float   cumul,comp;
 
   /*
    * Open statvar file, and store number of variables and variable names 
@@ -142,7 +86,6 @@ int stats (void) {
   fscanf(statvar_file,"%d",&nvars);
 
 	if (!nvars) {
-		//fclose(stats_file);
 		return(0);
 	}
 
@@ -257,58 +200,6 @@ int stats (void) {
 
   fclose(statvar_file);
 
-  /*
-   * Open output file
-   */
-
-//  (void)sprintf(path, "%s", *control_svar("stats_output_file"));
-//  
-//  if ((stats_file = fopen(path, "w")) == NULL)
-//    {
-//      (void)fprintf(stderr, "ERROR - stats - ");
-//      (void)fprintf(stderr, "Could not create statistics output file\n");
-//      perror(path);
-//      return(1);
-//    }
-//
-//  for (i=0;i<nvars;i++) 
-//    {
-//      for (j = 0;j < st[i].ncells;j++)
-//	st[i].histog[j] /= nvals;
-//  
-//      (void)fprintf(stats_file,"\n");
-//      (void)fprintf(stats_file,"Variable:  %s\n",st[i].varName);
-//      (void)fprintf(stats_file,"Elem #     %s\n",st[i].elem_number);
-//      (void)fprintf(stats_file,"Mean       %f\n",st[i].mx);
-//      (void)fprintf(stats_file,"Std Dev    %f\n",st[i].sdev);
-//      (void)fprintf(stats_file,"Skewness   %f\n",st[i].skew);
-//      (void)fprintf(stats_file,"Minimum    %f\n",st[i].min);
-//      (void)fprintf(stats_file,"Maximum    %f\n",st[i].max);
-//      (void)fprintf(stats_file,"#. Cells   %d\n",st[i].ncells);
-//      (void)fprintf(stats_file,"Cell width %f\n",st[i].width);
-//      (void)fprintf(stats_file,
-//	      "\nHistogram\nCellNo. Lower Limit   Upper Limit   Frequency   Cumulative Complementary\n");
-//  
-//      cumul = 0.0;
-//      comp = 1.0;
-//      for (j = 0;j < st[i].ncells;j++){
-//	cumul += st[i].histog[j];
-//	comp = 1.0-cumul;
-//	(void)fprintf(stats_file,"%4d %11f %13f %13f %13f %13f\n", j,
-//		st[i].histmin+j*st[i].width,
-//		st[i].histmin+(j+1)*st[i].width,
-//		st[i].histog[j],cumul,comp);
-//      }
-////    free((char *)st[i].elem_number);
-//    }
-//
-//  fclose(stats_file);
-
   return(0);
 
 }
-
-/**7****************** LOCAL FUNCTION DEFINITIONS *********************/
-
-/**8************************** TEST DRIVER ****************************/
-

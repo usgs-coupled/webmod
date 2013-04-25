@@ -1,13 +1,7 @@
 /**********************************************************************
  * julday() - computes julian day, puts it into the jd slot in the
  *            datetime structure
- *
- * utility routine
- *
- * Mike Dixon CADSWES CU July 1990
- *
  * $Id$
- *
  **********************************************************************/
 #define JULDAY_C
 #include <math.h>

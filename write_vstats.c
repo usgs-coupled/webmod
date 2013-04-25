@@ -1,31 +1,8 @@
 /*+
  * United States Geological Survey
- *
- * PROJECT  : Modular Modeling System (MMS)
- * NAME     : write_vstats.c
- * AUTHOR   : Pedro Restrepo CADSWES
- * DATE     : June 1990
- * FUNCTION : write_vstats
  * COMMENT  : saves values of stat variables into a temporary file.
  *            The temporary file was open in user_input
- * REF      :
- * REVIEW   :
- * PR NRS   :
- *
  * $Id$
- *
-   $Revision$
-        $Log: write_vstats.c,v $
-        Revision 1.4  1996/02/19 20:01:24  markstro
-        Now lints pretty clean
-
-        Revision 1.3  1994/10/24 14:19:09  markstro
-        (1)  Integration of CADSWES's work on GIS.
-        (2)  Prototypes were added to the files referenced in "mms_proto.h".
-
- * Revision 1.2  1994/01/31  20:17:56  markstro
- * Make sure that all source files have CVS log.
- *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -33,15 +10,6 @@
 #include <stdio.h>
 #include "mms.h"
 
-/**2************************* LOCAL MACROS ****************************/
-
-/**3************************ LOCAL TYPEDEFS ***************************/
-
-/**4***************** DECLARATION LOCAL FUNCTIONS *********************/
-
-/**5*********************** LOCAL VARIABLES ***************************/
-
-/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : write_vstats
  | COMMENT		:
@@ -108,8 +76,3 @@ void write_vstats (FILE *statvar_file) {
   (void)fprintf(statvar_file,"\n");
 
 }
-
-/**7****************** LOCAL FUNCTION DEFINITIONS *********************/
-
-/**8************************** TEST DRIVER ****************************/
-

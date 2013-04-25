@@ -1,129 +1,10 @@
 /*+
  * United States Geological Survey
- *
- * PROJECT  : Modular Modeling System (MMS)
- * NAME     : read_params.c
- * AUTHOR   : CADSWES, modified by Steve Markstrom (markstro)
- * DATE     : Wed 12 Oct 1994
- * FUNCTION :
- * COMMENT  :
- * REF      :
- * REVIEW   :
- * PR NRS   :
- *
- * read_params.c: reads the params data base from a file
+ * reads the params data base from a file
  * File name is passed in as an argument
  *
  * $Id$
- *
-   $Revision$
-        $Log: read_params.c,v $
-        Revision 1.30  1998/10/20 15:53:02  markstro
-        Fixed "blank" format.
-
-        Revision 1.29  1997/09/22 14:07:09  markstro
-        Unknown
-
-        Revision 1.28  1996/08/28 15:24:12  markstro
-        Unknown
-
- * Revision 1.27  1996/06/28  19:32:24  markstro
- * (1) Fixed 3d control window.
- * (2) Fixed stats.
- *
- * Revision 1.26  1996/04/29  16:23:12  markstro
- * Unknown
- *
- * Revision 1.25  1996/02/19  20:00:44  markstro
- * Now lints pretty clean
- *
-        Revision 1.24  1995/05/25 14:26:38  markstro
-        (1) Added batch mode
-        (2) Replaced "b" functions with "mem" versions
-
- * Revision 1.23  1995/05/17  19:20:22  markstro
- * Bug fixes
- *
- * Revision 1.22  1995/02/10  23:58:30  markstro
- * Bug fixes for class
- *
- * Revision 1.21  1995/02/01  17:47:36  markstro
- * Addition of Rosenbrock optimization.  Start of sensitivity.  Many bug fixes.
- *
- * Revision 1.20  1994/12/21  21:36:19  markstro
- * (1) Fixed ESP to work with multiple data files.
- * (2) Fixed Optimization to work with multiple data files.
- * (3) Fixed Sensitivity to work with multiple data files.
- *
- * Revision 1.19  1994/11/22  17:20:12  markstro
- * (1) Cleaned up dimensions and parameters.
- * (2) Some changes due to use of malloc_dbg.
- *
- * Revision 1.18  1994/11/09  22:10:46  markstro
- * GIS stuff out
- *
- * Revision 1.17  1994/11/08  16:17:39  markstro
- * (1) More proto type fine tuning
- * (2) fixed up data file reading
- *
- * Revision 1.16  1994/10/24  14:18:53  markstro
- * (1)  Integration of CADSWES's work on GIS.
- * (2)  Prototypes were added to the files referenced in "mms_proto.h".
- *
- * Revision 1.15  1994/10/13  17:53:36  markstro
- * (1) Added annotation to parameter values through the spreadsheet
- * (2) Included <string.h> in a few more files that needed it.
- *
- * Revision 1.14  1994/09/30  14:54:57  markstro
- * Initial work on function prototypes.
- *
- * Revision 1.13  1994/09/13  15:59:18  markstro
- * (1)  Version of save_params is now written into parameter file.
- * (2)  Took out min and max values for parameters -- these were not necessary.
- *
- * Revision 1.12  1994/09/09  14:56:27  markstro
- * (1)  Fixed up main edit menu.
- * (2)  Added a "notes" field to dimension indicies
- * (3)  A little more Rosenbrock work.
- * (4)  Fixed the list selector -- changed button names & first item
- *      selected by default.
- * (5)  Modified spread sheet help to be able to display dimension notes
- * (6)  Ran some source through "cb"
- *
- * Revision 1.11  1994/08/02  17:46:38  markstro
- * Split data file capabilities
- *
- * Revision 1.10  1994/07/25  17:06:39  markstro
- * Fixed message for when param file DNE.
- *
- * Revision 1.9  1994/05/18  17:15:56  markstro
- * TERRA changed mhms to mms
- *
- * Revision 1.8  1994/04/19  19:11:17  markstro
- * Unknown
- *
- * Revision 1.7  1994/04/08  16:04:11  markstro
- * Changes from TERRA
- *
- * Revision 1.6  1994/04/01  22:03:53  markstro
- * (1)  Error strings go back through return values.
- *
- * Revision 1.5  1994/03/25  22:07:33  markstro
- * Unknown
- *
- * Revision 1.3  1994/01/31  20:17:14  markstro
- * Make sure that all source files have CVS log.
--*/
-
-/**1************************ INCLUDE FILES ****************************/
-
-/**2************************* LOCAL MACROS ****************************/
-
-/**3************************ LOCAL TYPEDEFS ***************************/
-
-/**4***************** DECLARATION LOCAL FUNCTIONS *********************/
-
-/**5*********************** LOCAL VARIABLES ***************************/
+-*/ 
 
 /**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 #define READ_PARAMS_C
@@ -138,7 +19,6 @@
 static char *READ_param_head (PARAM **, FILE **, char *, char[]);
 static char *READ_param_values (PARAM *, FILE *, char []);
 static char *rp (char *, int);
-//static int ver = 0, rev = 0;
 
 int nComments;
 char **Comments;
@@ -236,21 +116,6 @@ char *read_dims (char *param_file_name) {
 		(void)sprintf (buf, "ERROR: problems reading version number in Parameter File");
 		return (buf);
 	}
-
-  //if (!strncmp (line, "Version:", 8)) {
-  //  nch = (char *)strchr (line, ' ');
-  //  if (nch) {
-  //    *nch = '\0';
-  //    nch++;
-  //    ver = atoi (nch);
-  //  }
-
-  //  nch = (char *)strchr (nch, '.');
-  //  if (nch) {
-  //    *nch = '\0';
-  //    nch++;
-  //    rev = atoi (nch);
-  //  }
 
 	if (!fgets (line, MAXDATALNLEN, param_file)) {
 		if (param_file != NULL) {
@@ -436,7 +301,6 @@ char *read_dims (char *param_file_name) {
 			}
 		} else {
 			(void)fprintf (stderr,"\nWARNING: dimension '%s' is not required; set in parameter file:\n         %s\n", key, param_file_name);
-//			(void)fprintf (stderr,"\nMMS Warning -- from read_dims:\ndimension '%s' is set in parameter file:\n%s\nbut has never been declared.\n\n", key, param_file_name);
 			fgets (line, MAXDATALNLEN, param_file);
 			fgets (line, MAXDATALNLEN, param_file);
 		}
@@ -713,8 +577,6 @@ static char *READ_param_head (PARAM **param_ptr, FILE **param_file, char *param_
 		}
   
 	} else {
-//		(void)printf ("WARNING: parameter %s is included in the Parameter File (%s) and is not required.\n", key, param_file_name);
-//		(void)printf ("         This parameter is read and ignored.\n\n");
 		(void)printf ("\nWARNING: parameter %s is ignored as it is not required.\n", key);
 		(void)printf ("         Read from Parameter File: %s\n", param_file_name);
 	}
@@ -745,9 +607,7 @@ static char *READ_param_values (PARAM *param, FILE *param_file, char line[]) {
 	char *endp;
 	long l;
 
-	//if (!strncmp (param->name, "imperv_stor_max", 15)) {
-	//	printf ("imperv_stor_max\n");
-	//}
+
 /*
 **  Space for the values and value_desc are allocated in declparam
 */
@@ -782,7 +642,6 @@ static char *READ_param_values (PARAM *param, FILE *param_file, char line[]) {
 					param->value_desc[i] = strdup (&(line[1]));
 				}
 			} else {
-//				if (param->value_desc[i]) free (param->value_desc[i]);
 
 				param->value_desc[i] = strdup (&(line[1]));
 			}
@@ -885,4 +744,3 @@ static char *READ_param_values (PARAM *param, FILE *param_file, char line[]) {
 	}
 	return (NULL);
 }
-/***************************** TEST DRIVER ****************************/

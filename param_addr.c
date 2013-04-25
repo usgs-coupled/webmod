@@ -1,22 +1,8 @@
 /**************************************************************************
- * param_addr.c: 
- *
+ * United States Geological Survey
  * returns a pointer to a PARAM struct which contains the given key
  * returns NULL if key not found
- *
-   $Revision$
-        $Log: param_addr.c,v $
-        Revision 1.4  1996/02/19 20:00:33  markstro
-        Now lints pretty clean
-
-        Revision 1.3  1994/09/30 14:54:49  markstro
-        Initial work on function prototypes.
-
- * Revision 1.2  1994/01/31  20:17:02  markstro
- * Make sure that all source files have CVS log.
- *
  * $Id$
- *
  **************************************************************************/
 #define PARAM_ADDR_C
 #include <string.h>

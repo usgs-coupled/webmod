@@ -1,8 +1,7 @@
 /*********************************************************
- * call_modules.c: to replace the one created by 'mbuild',
- * used to call a Fortran version, such as for GSFLOW
- * Creation time: Wed Jan 18 15:52:21 2007
- * Creation time: Thu May 26 10:54:21 2005
+ * United States Geological Survey
+ * used to call a Fortran version
+ * $Id$
  *********************************************************/
 
 #include <stdlib.h>

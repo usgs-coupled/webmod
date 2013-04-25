@@ -1,4 +1,5 @@
 /**************************************************************************
+ * United States Geological Survey
  * getdim.c: gets the dimension associated with a name, and
  * returns it as a long int. Returns -1 if error.
  *
@@ -6,22 +7,6 @@
  *                        getdim_() to be called from Fortran
  *
  * $Id$
- *
-   $Revision$
-        $Log: getdim.c,v $
-        Revision 1.5  1996/02/19 20:00:03  markstro
-        Now lints pretty clean
-
-        Revision 1.4  1994/11/22 17:19:38  markstro
-        (1) Cleaned up dimensions and parameters.
-        (2) Some changes due to use of malloc_dbg.
-
- * Revision 1.3  1994/09/30  14:54:21  markstro
- * Initial work on function prototypes.
- *
- * Revision 1.2  1994/01/31  20:16:28  markstro
- * Make sure that all source files have CVS log.
- *
  **************************************************************************/
 #define GETDIM_C
 #include <stdio.h>
@@ -55,12 +40,6 @@ long getdim_ (char *dname, ftnlen namelen) {
    */
 
   retval =  getdim(name);
-
-  /*
-   * free up array
-   */
-
-//ufree(name);
 
   return retval;
 

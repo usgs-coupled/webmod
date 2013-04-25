@@ -1,78 +1,7 @@
 /*+
  * United States Geological Survey
- *
- * PROJECT  : Modular Modeling System (MMS)
- * NAME     : save_params.c
- * AUTHOR   : CADSWES; modified by Markstrom
- * DATE     :
- * FUNCTION : save_params
  * COMMENT  : saves the param data base to a file. File name is passed in.
- * REF      :
- * REVIEW   :
- * PR NRS   :
-   $Revision$
-        $Log: save_params.c,v $
-        Revision 1.17  1998/03/04 17:20:20  markstro
-        Added seperate runcontrol functions for each run type.
-
-        Revision 1.16  1996/06/28 19:32:29  markstro
-        (1) Fixed 3d control window.
-        (2) Fixed stats.
-
- * Revision 1.15  1996/04/29  16:23:19  markstro
- * Unknown
- *
- * Revision 1.14  1996/02/19  20:00:58  markstro
- * Now lints pretty clean
- *
-        Revision 1.13  1994/12/21 21:36:22  markstro
-        (1) Fixed ESP to work with multiple data files.
-        (2) Fixed Optimization to work with multiple data files.
-        (3) Fixed Sensitivity to work with multiple data files.
-
- * Revision 1.12  1994/11/25  18:13:43  markstro
- * unknown
- *
- * Revision 1.11  1994/11/22  17:20:23  markstro
- * (1) Cleaned up dimensions and parameters.
- * (2) Some changes due to use of malloc_dbg.
- *
- * Revision 1.10  1994/11/08  16:17:45  markstro
- * (1) More proto type fine tuning
- * (2) fixed up data file reading
- *
- * Revision 1.9  1994/10/13  17:53:38  markstro
- * (1) Added annotation to parameter values through the spreadsheet
- * (2) Included <string.h> in a few more files that needed it.
- *
- * Revision 1.8  1994/09/30  14:55:08  markstro
- * Initial work on function prototypes.
- *
- * Revision 1.7  1994/09/13  15:59:20  markstro
- * (1)  Version of save_params is now written into parameter file.
- * (2)  Took out min and max values for parameters -- these were not necessary.
- *
- * Revision 1.6  1994/09/09  14:56:32  markstro
- * (1)  Fixed up main edit menu.
- * (2)  Added a "notes" field to dimension indicies
- * (3)  A little more Rosenbrock work.
- * (4)  Fixed the list selector -- changed button names & first item
- *      selected by default.
- * (5)  Modified spread sheet help to be able to display dimension notes
- * (6)  Ran some source through "cb"
- *
- * Revision 1.5  1994/05/18  17:16:03  markstro
- * TERRA changed mhms to mms
- *
- * Revision 1.4  1994/03/29  19:07:53  markstro
- * Save parameter file selector now comes up in exit sequence (if necessary).
- *
- * Revision 1.3  1994/03/11  21:16:41  markstro
- * Got rid of client_data data types.
- *
- * Revision 1.2  1994/01/31  20:17:24  markstro
- * Make sure that all source files have CVS log.
- *
+ * $Id$
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -294,8 +223,4 @@ static void write_parameters (FILE *param_file, int writeAllParams) {
 		}
 	}
 }
-
-/**7****************** LOCAL FUNCTION DEFINITIONS *********************/
-
-/**8************************** TEST DRIVER ****************************/
 

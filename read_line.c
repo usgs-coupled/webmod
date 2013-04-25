@@ -1,13 +1,5 @@
 /*+
  * United States Geological Survey
- *
- * PROJECT  : Modular Modeling System (MMS)
- * NAME     : read_line.c
- * AUTHOR   : Mike Dixon CADSWES March 1990
- *            Pedro Restrepo CADSWES April 1992
- *            Steve Markstrom July 1994
- * DATE     : Tue 19 Jul 1994
- * FUNCTION : read_line
  * COMMENT  :    Reads one line from data file into a string,
  *               decodes date and time, and returns if the time
  *               is within start and end limits.
@@ -16,121 +8,9 @@
  *                  
  *               Returns 1l if end of data, 0l if more data to be read,
  *               and 2l if end of file
- * REF      :
- * REVIEW   :
- * PR NRS   :
  *
  * $Id$
- *
-   $Revision$
-        $Log: read_line.c,v $
-        Revision 1.35  2001/01/22 22:26:41  markstro
-        unknown
-
-        Revision 1.34  2000/07/27 18:18:59  markstro
-        Storm mode hacks
-
-        Revision 1.33  2000/07/25 14:18:35  markstro
-        Took out debugging print statements.
-
-        Revision 1.32  2000/07/24 23:12:56  markstro
-        Storm hack
-
-        Revision 1.31  2000/02/18 18:27:05  markstro
-        Made previous Julian time a global.  It is set to -1.0 before the run
-        so that read_line knows to recalculate it.
-
-        Revision 1.30  1999/09/13 15:44:47  markstro
-        Fixed multiple close of data file
-
-        Revision 1.29  1999/09/10 22:43:25  markstro
-        Fixed multiple closing of data files.
-
-        Revision 1.28  1999/08/24 16:34:15  markstro
-        Version 1.1.1
-
-        Revision 1.27  1998/03/04 17:20:17  markstro
-        Added seperate runcontrol functions for each run type.
-
-        Revision 1.26  1996/09/10 15:49:07  markstro
-        Fixed the "day before the end" problem in DATA_find_end.
-
- * Revision 1.25  1996/02/19  20:00:42  markstro
- * Now lints pretty clean
- *
- * Revision 1.24  1995/11/25  23:05:07  markstro
- * Put in hack to get around delta time = 0 when coming out of storm mode.
- *
- * Revision 1.23  1995/11/25  02:42:14  markstro
- * Reading unit vs. daily data files.
- *
- * Revision 1.22  1995/11/24  14:35:36  markstro
- * Initial Purify work.
- * This is the version for Watershed Systems Modeling class 11/27 - 12/1, 1995
- *
- * Revision 1.21  1995/06/21  18:07:18  markstro
- * Scenario stuff
- *
- * Revision 1.20  1995/05/25  14:26:37  markstro
- * (1) Added batch mode
- * (2) Replaced "b" functions with "mem" versions
- *
- * Revision 1.19  1995/01/23  22:03:24  markstro
- * Fixed getting end date of data.
- *
- * Revision 1.18  1995/01/06  20:26:30  markstro
- * Argument list fixes
- *
- * Revision 1.17  1994/12/21  21:36:16  markstro
- * (1) Fixed ESP to work with multiple data files.
- * (2) Fixed Optimization to work with multiple data files.
- * (3) Fixed Sensitivity to work with multiple data files.
- *
- * Revision 1.16  1994/12/15  19:12:31  markstro
- * Changes for Christoph:  (1) More work on setting data file labels;
- * and (2) Fixed problems with empty display variable lists.
- *
- * Revision 1.15  1994/12/09  16:17:38  markstro
- * (1)  More work on selection of data files.
- * (2)  Work on display variable windows.
- *
- * Revision 1.14  1994/11/25  18:13:41  markstro
- * unknown
- *
- * Revision 1.13  1994/11/22  17:20:11  markstro
- * (1) Cleaned up dimensions and parameters.
- * (2) Some changes due to use of malloc_dbg.
- *
- * Revision 1.12  1994/11/09  22:10:45  markstro
- * GIS stuff out
- *
- * Revision 1.11  1994/11/08  16:17:38  markstro
- * (1) More proto type fine tuning
- * (2) fixed up data file reading
- *
- * Revision 1.10  1994/10/24  14:18:51  markstro
- * (1)  Integration of CADSWES's work on GIS.
- * (2)  Prototypes were added to the files referenced in "mms_proto.h".
- *
- * Revision 1.9  1994/10/03  19:38:19  markstro
- * prevjt now static -- big bug fix !!
- *
- * Revision 1.8  1994/09/30  14:54:56  markstro
- * Initial work on function prototypes.
- *
- * Revision 1.7  1994/09/06  19:16:44  markstro
- * Fixed the day "off by one" problem.
- *
- * Revision 1.6  1994/08/31  21:50:39  markstro
- * Unknown
- *
- * Revision 1.5  1994/08/02  17:46:37  markstro
- * Split data file capabilities
- *
- * Revision 1.4  1994/01/31  20:17:13  markstro
- * Make sure that all source files have CVS log.
- *
--*/
+ -*/
 
 /**1************************ INCLUDE FILES ****************************/
 #define READ_LINE_C
@@ -143,19 +23,9 @@
 #include <stdlib.h>
 #include "mms.h"
 
-/**2************************* LOCAL MACROS ****************************/
-
-/**3************************ LOCAL TYPEDEFS ***************************/
-
 /**4***************** DECLARATION LOCAL FUNCTIONS *********************/
 static void INSERT_time (char *, DATETIME *);
 
-/**5*********************** LOCAL VARIABLES ***************************/
-/*
-static double   prevjt = -1.0;
-*/
-
-/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : read_line
  | COMMENT      :
@@ -164,8 +34,6 @@ static double   prevjt = -1.0;
  | RESTRICTIONS :
 \*--------------------------------------------------------------------*/
 long read_line (void) {
-
-   /*static char err[80];*/
 
    char   *start_point, *end_point;
    float   initial_deltat;
@@ -184,9 +52,6 @@ long read_line (void) {
    if (Mnsteps == 0) {
       start_of_data = TRUE;
       Mprevjt = 1.0;
-/*
-      prevjt = -1.0;
-*/
    }
 
    prevtime = *Mnowtime;
@@ -204,25 +69,9 @@ long read_line (void) {
       if (cur_fd->time.year == 9999)
          return ENDOFFILE;
 
-/*
-**   DANGER -- This "if" is a hack to get delta time back after storm mode
-**            This is the situation :
-
-cur_fd->time = {year = 1956, month = 2, day = 19, hour = 0, min = 0, sec = 0, 
-  jd = 2435523, jt = 2435523}
-
-*Mnowtime = {year = 1956, month = 2, day = 18, hour = 24, min = 0, sec = 0, 
-  jd = 2435522, jt = 2435523}
-
-*/
-
       if ((Mprevjt < 0.0) && (cur_fd->time.jt - Mprevjt <= 0.000001)) {
          Mprevjt = (double)(Mnowtime->jd);
       }
-
-/*
-**  End of DANGER
-*/
 
 /*
 **   Copy time from current file into global time structure
@@ -252,18 +101,6 @@ cur_fd->time = {year = 1956, month = 2, day = 19, hour = 0, min = 0, sec = 0,
 
          (void)strcpy (line, cur_fd->start_of_data);
          Mnsteps++;
-/*
-**  DANGER -- Mprevjt must be hacked if starting from var init file.
-**            It is computed based on current time and Mdeltat (which
-**            is read from var init file.
-*/
-
-/*
-         (void)fprintf (stderr,"\n\n read_line Mprevjt = %f Mnowtime->jt = %f\n", Mprevjt, Mnowtime->jt);
-         (void)fprintf (stderr,"     read_line dt = %f\n", Mnowtime->jt - Mprevjt );
-         (void)fprintf (stderr,"          year, mon, day = %d %d %d %d %d\n", Mnowtime->year, Mnowtime->month, Mnowtime->day, Mnowtime->hour, Mnowtime->min);
-*/
-
 		 if (Mnowtime->jt < Mprevjt) {
 			(void)fprintf (stderr,"\n\n read_line Mprevjt = %f Mnowtime->jt = %f\n", Mprevjt, Mnowtime->jt);
 			(void)fprintf (stderr,"Current time step is before previous time step.\n");
@@ -286,13 +123,6 @@ cur_fd->time = {year = 1956, month = 2, day = 19, hour = 0, min = 0, sec = 0,
                Mdeltat = Mnowtime->jt - Mprevjt;
             }
          }
-/*
-         (void)fprintf (stderr,"read_line Mdeltat = %f\n", Mdeltat );
-*/
-
-/*
-**  End DANGER
-*/
 
          Minpptr = end_point = line;
 
@@ -412,9 +242,6 @@ char *DATA_read_init (void) {
                fclose ((fd[i])->fp);
             fd[i]->fp = NULL;
             }
-/*
-      free (fd);
-*/
    }
 
    fname =   control_svar ("data_file");
@@ -450,9 +277,7 @@ char *DATA_read_init (void) {
      */
        (fd[i])->time.year = 0;
       fgets ((fd[i])->line, MAXDATALNLEN, (fd[i])->fp);
-/* DANGER
-      if (err_ptr = EXTRACT_time (&(fd[i])))
-*/
+
       err_ptr = EXTRACT_time (fd[i]);
       if (err_ptr) return (err_ptr);
     
@@ -505,9 +330,7 @@ char *READ_data_info (void) {
       }
       err_ptr = read_datainfo (&lfd);
       if (err_ptr) return (err_ptr);
-/*
-      free (lfd.name);
-*/
+
       fclose (lfd.fp);
    }
    return (NULL);
@@ -556,9 +379,6 @@ void DATA_close (void) {
         }
     }
 
-/*
-   free (fd);
-*/
    fd = NULL;
 }
 
@@ -753,9 +573,6 @@ char * EXTRACT_time (FILE_DATA *data) {
    start_point = end_point;
    errno = 0;
    data->time.sec = (int)(strtod(start_point, &end_point));
-/*
-   data->time.sec = strtod(start_point, &end_point, 10);
-*/
 
    if (data->time.sec < 0 || data->time.min > 59) {
       (void)sprintf (err_buf, "EXTRACT_time - second %ld out of range.\nline:%s",
@@ -897,6 +714,3 @@ static void INSERT_time (char *line, DATETIME *ptr) {
 
    julday (ptr);
 }
-
-/**8************************** TEST DRIVER ****************************/
-

@@ -1,18 +1,8 @@
 /*+
  * United States Geological Survey
- *
- * PROJECT  : Modular Modeling System (MMS)
- * NAME     : xmms.c
- * AUTHOR   : CADSWES; reworked by Markstrom
- * DATE     : 
- * FUNCTION : xmms - main driver for xmms
- * COMMENT  : Main driver for xmms system.
- * REF      :
- * REVIEW   :
- * PR NRS   :
+ * COMMENT  : Main driver for PRMS/GSFLOW models.
  * $Id$
- *
- -*/
+-*/
 
 /**1************************ INCLUDE FILES ****************************/
 #define MAIN
@@ -25,17 +15,10 @@
 #include "mms.h"
 
 
-/**2************************* LOCAL MACROS ****************************/
-
-/**3************************ LOCAL TYPEDEFS ***************************/
-
 /**4***************** DECLARATION LOCAL FUNCTIONS *********************/
 extern int call_modules(char *);
 extern int call_setdims(void);
 
-/**5*********************** LOCAL VARIABLES ***************************/
-
-/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
   | FUNCTION     : main
   | COMMENT		: Main source for xmms
@@ -68,8 +51,6 @@ int main (int argc, char *argv[]) {
 	**  determined by calls to declmodule
 	*/
 	module_db = ALLOC_list ("Module Data Base", 0, 100);
-
-   //declmodule("PRMS system library", "$Id$");
 
   /*
   **	parse the command-line arguments
@@ -210,22 +191,12 @@ int main (int argc, char *argv[]) {
       print_model_info();
 	  (void)sprintf (pathname, "%s.param", MAltContFile);
 	  save_params (pathname);
-/*
-    } else if (esp_mode) {
-      ESP_batch_run ();
-    } else if (rosenbrock_mode) {
-      ROSENBROCK_batch_run ();
-*/
+
     } else {
 
-//      exit(BATCH_run ());
       BATCH_run ();
       ;
     }
 
     exit (0);
 }
-
-
-/**8************************** TEST DRIVER ****************************/
-
