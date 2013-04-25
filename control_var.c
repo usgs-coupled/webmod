@@ -182,7 +182,7 @@ long control_integer_array_ (int *retval, char *tag, int *index, ftnlen len, ftn
     longs = (long **) control_var(foo);
     i = *index - 1;
 	intVal = (int *)umalloc(sizeof (int));
-	*intVal = (int)longs+i;
+	intVal = (int *)*(longs+i);
 	retval = intVal;
 	return 0;
 }

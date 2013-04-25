@@ -20,9 +20,8 @@
   static char **aniVar_names;
   static char statvar_path[MAXDATALNLEN];
   static char ani_path[MAXDATALNLEN];
-  static char output_path[MAXDATALNLEN];
   static char buf[256];
-  static long i, j, init_flag, stats_flag, ani_out_flag;
+  static long i, j, stats_flag, ani_out_flag;
   static char  *err_message, *c;
   static char   err[256];
   static int       started;
@@ -30,9 +29,6 @@
   static DIMEN **ani_out_dims, *dim;
   static FILE **ani_var_files;
   static int num_ani_dims, found, k;
-  static char *pathname, *endptr;
-  static FILE *var_file;
-  static char line[MAXDATALNLEN];
   static DATETIME start_of_data, end_of_data;
 
 /*--------------------------------------------------------------------*\
