@@ -43,6 +43,7 @@ void setup_cont (void) {
         decl_control_string ("et_module", "potet_jh");
         decl_control_string ("srunoff_module", "srunoff_smidx");
         decl_control_string ("solrad_module", "ddsolrad");
+		decl_control_string ("soilzone_module", "soilzone");
 		decl_control_string ("strmflow_module", "strmflow");
         decl_control_string ("transp_module", "transp_tindex");
         decl_control_string ("gsflow_output_file", "gsflow.out");
