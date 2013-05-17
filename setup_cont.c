@@ -179,6 +179,9 @@ void setup_cont (void) {
 		lval[0] = 0;
 		decl_control_int_array ("orad_flag", 1, lval);
 
+		lval = (long *)umalloc (sizeof (long));
+		lval[0] = 0;
+		decl_control_int_array ("snow_cbh_flag", 1, lval);
 /*
 **	file names
 */
@@ -197,7 +200,11 @@ void setup_cont (void) {
         decl_control_string ("swrad_day", "swrad.day");
         decl_control_string ("potet_day", "potet.day");
         decl_control_string ("transp_day", "transp.day");
-        decl_control_string ("covden_dynamic", "dyncovden");
+		decl_control_string ("pkwater_equiv_day", "pkwater_equiv.day");
+        decl_control_string ("pk_depth_day", "pk_depth.day");
+        decl_control_string ("snow_evap_day", "snow_evap.day");
+        decl_control_string ("snowcov_area_day", "snowcov_area.day");
+        decl_control_string ("snowmelt_day", "snowmelt.day");
         decl_control_string ("dprst_area_dynamic", "dyndprst");
         decl_control_string ("dprst_depth_dynamic", "dyndprst");
 		decl_control_string ("snow_intcp_dynamic", "dynsnowintcp");
