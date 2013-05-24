@@ -3,6 +3,7 @@
 #include "Phreeqc.h"                // Phreeqc
 #include "global_structures.h"      // OK, STOP
 #include "IPhreeqc.h"
+#include "Solution.h"
 
 void padfstring(char *dest, const char *src, unsigned int len);
 
@@ -326,12 +327,47 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 		this->PhreeqcPtr->error_msg(buffer, CONTINUE);
 	}
 
+	double pos_mix_h2o = 0.0;
+	double pos_h2o_frac_sum = 0;
+	double neg_mix_h2o = 0.0;
+	double neg_factor = 1.0;
+	for (i = 0; i < pvars->count; ++i) 
+	{
+		std::map<int, cxxSolution>::const_iterator it = this->PhreeqcPtr->Rxn_solution_map.find(pvars->solutions[i]);
+		if (it != this->PhreeqcPtr->Rxn_solution_map.end())
+		{
+			// need to find mass of water for pvars->solutions[i]
+			double h2o = it->second.Get_mass_water();
+			if (pvars->fracs[i] >= 0.0)
+			{
+				pos_mix_h2o += pvars->fracs[i] * h2o;
+				pos_h2o_frac_sum += pvars->fracs[i];
+			}
+			else
+			{
+				neg_mix_h2o = h2o;
+			}
+		}
+		else
+		{
+			std::cerr << "Did not find solution " << pvars->solutions[i] << std::endl;
+			return ERROR;
+		}
+	}
+	if (neg_mix_h2o > 0.0)
+	{
+		double avg_h2o = pos_mix_h2o / pos_h2o_frac_sum;
+		neg_factor = fabs(avg_h2o / neg_mix_h2o);
+	}
+
+
 	/* MIX */
 	if (::AccumulateLine(pvars->id, "MIX") != VR_OK) {
 		return ERROR;
 	}
 	for (i = 0; i < pvars->count; ++i) {
-		sprintf(line, "\t%d %g", pvars->solutions[i], pvars->fracs[i]);
+		double factor = pvars->fracs[i] < 0.0 ? neg_factor : 1.0;
+		sprintf(line, "\t%d %g", pvars->solutions[i], pvars->fracs[i]*factor);
 		if (::AccumulateLine(pvars->id, line) != VR_OK) {
 			return ERROR;
 		}
