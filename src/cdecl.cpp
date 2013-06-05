@@ -252,6 +252,36 @@ IPQ_DLL_EXPORT int runmixf_(int *id, int *count, int *solutions, double *fracs, 
 		row_dim, col_dim);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+//
+// MeltPack
+//
+///////////////////////////////////////////////////////////////////////////////
+
+// /iface:default /names:default
+IPQ_DLL_EXPORT int MELTPACK(int *id, int *ipack, int *imelt, double *eps, double *ipf, double *fmelt, double *rstd)
+{
+	return MeltPackF(id, ipack, imelt, eps, ipf, fmelt, rstd);
+}
+
+// /iface:default /names:default /assume:underscore
+IPQ_DLL_EXPORT int MELTPACK_(int *id, int *ipack, int *imelt, double *eps, double *ipf, double *fmelt, double *rstd)
+{
+	return MeltPackF(id, ipack, imelt, eps, ipf, fmelt, rstd);
+}
+
+// /iface:default /names:lowercase
+IPQ_DLL_EXPORT int meltpack(int *id, int *ipack, int *imelt, double *eps, double *ipf, double *fmelt, double *rstd)
+{
+	return MeltPackF(id, ipack, imelt, eps, ipf, fmelt, rstd);
+}
+
+// /iface:default /names:lowercase /assume:underscore
+// /iface:cref /assume:underscore
+IPQ_DLL_EXPORT int meltpack_(int *id, int *ipack, int *imelt, double *eps, double *ipf, double *fmelt, double *rstd)
+{
+	return MeltPackF(id, ipack, imelt, eps, ipf, fmelt, rstd);
+}
 #if defined(__cplusplus)
 }
 #endif

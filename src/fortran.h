@@ -19,5 +19,6 @@ int RunMixF(int *id, int *count, int *solutions, double *fracs, int *index_conse
 			int *n_user, double *rxnmols, double *tempc, double *ph, double *tsec, double *array,
 			int *row_dim, int *col_dim);
 
+int MeltPackF(int *id, int *ipack, int *imelt, double *eps, double *ipf, double *fmelt, double *rstd);
 
 

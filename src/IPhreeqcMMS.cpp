@@ -315,6 +315,7 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 // COMMENT: {6/6/2012 5:18:37 PM}	struct MixVars *pvars;
 	int i;
 	char line[80];
+	bool evap_or_sublimation;
 
 	if (!pvars) return ERROR;
 
@@ -331,42 +332,62 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 	double pos_h2o_frac_sum = 0;
 	double neg_mix_h2o = 0.0;
 	double neg_factor = 1.0;
+
+	evap_or_sublimation = false;
 	for (i = 0; i < pvars->count; ++i) 
 	{
-		std::map<int, cxxSolution>::const_iterator it = this->PhreeqcPtr->Rxn_solution_map.find(pvars->solutions[i]);
-		if (it != this->PhreeqcPtr->Rxn_solution_map.end())
+		if (pvars->solutions[i] == 1 && pvars->fracs[i] < 0)
 		{
-			// need to find mass of water for pvars->solutions[i]
-			double h2o = it->second.Get_mass_water();
-			if (pvars->fracs[i] >= 0.0)
+			evap_or_sublimation = true;
+			break;
+		}
+	}
+	if (evap_or_sublimation )
+	{
+		for (i = 0; i < pvars->count; ++i) 
+		{
+			std::map<int, cxxSolution>::const_iterator it = this->PhreeqcPtr->Rxn_solution_map.find(pvars->solutions[i]);
+			if (it != this->PhreeqcPtr->Rxn_solution_map.end())
 			{
-				pos_mix_h2o += pvars->fracs[i] * h2o;
-				pos_h2o_frac_sum += pvars->fracs[i];
+				// need to find mass of water for pvars->solutions[i]
+				double h2o = it->second.Get_mass_water();
+				if (pvars->fracs[i] >= 0.0)
+				{
+					pos_mix_h2o += pvars->fracs[i] * h2o;
+					pos_h2o_frac_sum += pvars->fracs[i];
+				}
+				else
+				{
+					neg_mix_h2o = h2o;
+				}
 			}
 			else
 			{
-				neg_mix_h2o = h2o;
+				std::cerr << "Did not find solution " << pvars->solutions[i] << std::endl;
+				return ERROR;
 			}
 		}
-		else
+		if (neg_mix_h2o > 0.0)
 		{
-			std::cerr << "Did not find solution " << pvars->solutions[i] << std::endl;
-			return ERROR;
+			double avg_h2o = pos_mix_h2o / pos_h2o_frac_sum;
+			neg_factor = fabs(avg_h2o / neg_mix_h2o);
 		}
 	}
-	if (neg_mix_h2o > 0.0)
-	{
-		double avg_h2o = pos_mix_h2o / pos_h2o_frac_sum;
-		neg_factor = fabs(avg_h2o / neg_mix_h2o);
-	}
-
 
 	/* MIX */
 	if (::AccumulateLine(pvars->id, "MIX") != VR_OK) {
 		return ERROR;
 	}
 	for (i = 0; i < pvars->count; ++i) {
-		double factor = pvars->fracs[i] < 0.0 ? neg_factor : 1.0;
+		double factor;
+		if (evap_or_sublimation)
+		{
+			factor = pvars->fracs[i] < 0.0 ? neg_factor : 1.0;
+		}
+		else
+		{
+			factor = 1.0;
+		}
 		sprintf(line, "\t%d %g", pvars->solutions[i], pvars->fracs[i]*factor);
 		if (::AccumulateLine(pvars->id, line) != VR_OK) {
 			return ERROR;
@@ -627,3 +648,86 @@ int IPhreeqcMMS::PostMixCallback(struct MixVars* pvars)
 	return OK;
 }
 
+int IPhreeqcMMS::Melt_pack(int ipack, int imelt, double eps, double ipf, double fmelt, double rstd)
+{
+	std::ostringstream strm;
+	strm << "USE solution " << ipack << "\n";
+	strm << "REACTION 1" << "\n";
+	strm << "SELECTED_OUTPUT" << "\n";
+	strm << "-reset false; -high\n";
+	strm << "USER_PUNCH; -start\n";
+	strm << "10 eps = " << -eps << "\n"; 
+	strm << "20 rstd = " << rstd << "\n";
+	strm << "30 fm = " << fmelt << "\n";
+	strm << "40 ipf = " << ipf << "\n";
+	strm << "50 fracp = 1/(1+ipf*fm/(1-fm))\n";
+	strm << "60 fracm = 1-fracp\n";
+	strm << "70 xfer_p = TOT(\"water\")*((1-fm)-fracp)/(0.001*GFW(\"H2O\"))\n";
+	strm << "80 xfer_m = TOT(\"water\")*(fm-fracm)/(0.001*GFW(\"H2O\"))\n";
+	strm << "90 PUNCH \"TITLE Makes melt water\", EOL$\n";
+	strm << "100 PUNCH \"MIX\", EOL$\n";
+	strm << "110 PUNCH " << "\"" << ipack <<"\"" <<" fracm, EOL$\n";
+	strm << "120 PUNCH \"REACTION 1\", EOL$\n";
+	strm << "130 PUNCH \"H2O \", xfer_m, EOL$\n";
+	strm << "140 o_p = fracp*TOTMOLE(\"O\")+xfer_p\n";
+	strm << "150 o_m = fracm*TOTMOLE(\"O\")+xfer_m\n";
+	strm << "160 o18_m = (TOTMOLE(\"[18O]\")/o_p-eps/1000*rstd)/(1/o_m+1/o_p)\n";
+	strm << "170 o18_p = (TOTMOLE(\"[18O]\")/o_m+eps/1000*rstd)/(1/o_p+1/o_m)\n";
+	strm << "180 diff = o18_m-fracm*TOTMOLE(\"[18O]\")\n";
+	strm << "190 PUNCH \"[18O] \", diff, EOL$\n";
+	strm << "200 PUNCH 1, EOL$\n";
+	strm << "210 PUNCH \"SAVE solution \" " << "\"" << imelt <<"\"" << ", EOL$\n";
+	strm << "220 PUNCH \"END\", EOL$\n";
+	strm << "-end\n";
+	strm << "SAVE solution " << imelt  << "\n";
+	strm << "END\n";
+
+	this->SetSelectedOutputStringOn(true);
+	this->SetOutputStringOn(true);	
+	std::cerr << strm.str().c_str() << std::endl;
+	this->RunString(strm.str().c_str());
+	std::string selout = this->GetSelectedOutputString();
+	std::cerr << this->GetSelectedOutputString() << std::endl;
+	std::cerr << this->GetOutputString() << std::endl;
+	this->RunString("PRINT;-selected_output false");
+
+	// Make melt
+	this->RunString(selout.c_str());
+	std::cerr << this->GetOutputString() << std::endl;
+
+	// Make snowpack
+	std::ostringstream strm0;
+	strm0 << "MIX\n";
+	strm0 << ipack << " 1\n";
+	strm0 << imelt << " -1\n";
+	strm0 << "SAVE solution " << ipack  << "\n";
+	this->RunString(strm0.str().c_str());
+	std::cerr << this->GetOutputString() << std::endl;
+
+
+	std::ostringstream strm1;
+	strm1 << "PRINT;-selected_output true\n";
+	strm1 << "RUN_CELLS ; -cell " << imelt << " " << ipack << "\n";
+	strm1 << "SELECTED_OUTPUT; -reset false\n";
+	strm1 << "USER_PUNCH; -heading mass_water\n";
+	strm1 << "10 PUNCH TOT(\"water\") / (.001 * GFW(\"H2O\"))\n";
+	VAR pvar1, pvar2;
+	VarInit(&pvar1);
+	VarInit(&pvar2);
+	this->RunString(strm1.str().c_str());
+	std::cerr << this->GetOutputString() << std::endl;
+	this->GetSelectedOutputValue(1,0, &pvar1);
+	this->GetSelectedOutputValue(2,0, &pvar2);
+
+	std::ostringstream strm2;
+	strm2 << "MIX\n";
+	strm2 << imelt << 1./pvar1.dVal;
+	strm2 << "SAVE solution " << imelt << "\n";
+	strm2 << "END\n";
+	strm2 << "MIX\n";
+	strm2 << ipack << 1./pvar2.dVal;
+	strm2 << "SAVE solution " << ipack << "\n";
+	this->RunString(strm2.str().c_str());
+	std::cerr << this->GetOutputString() << std::endl;
+	return 1;
+}

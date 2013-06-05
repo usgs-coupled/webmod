@@ -99,3 +99,14 @@ RunMixF(int *id, int *count, int *solutions, double *fracs, int *index_conserv,
 	}
 	return IPQ_BADINSTANCE;
 }
+int
+MeltPackF(int *id, int *ipack, int *imelt, double *eps, double *ipf, double *fmelt, double *rstd)
+{
+	IPhreeqcMMS* IPhreeqcMMSPtr = IPhreeqcMMSLib::GetInstance(*id);
+	if (IPhreeqcMMSPtr)
+	{
+		IPhreeqcMMSPtr->Melt_pack(*ipack, *imelt, *eps, *ipf, *fmelt, *rstd);
+		return 1;
+	}
+	return IPQ_BADINSTANCE;
+}

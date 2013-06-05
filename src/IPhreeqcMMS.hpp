@@ -58,6 +58,7 @@ public:
 	int PreMixCallback(struct MixVars* pvars);
 	/*static*/
 	int PostMixCallback(struct MixVars* pvars);
+	int Melt_pack(int ipack, int imelt, double eps, double ipf, double fmelt, double rstd);
 
 // COMMENT: {6/6/2012 5:01:22 PM}protected:
 // COMMENT: {6/6/2012 5:01:22 PM}	virtual void do_run(const char* sz_routine, std::istream* pis, PFN_PRERUN_CALLBACK pfn_pre, PFN_POSTRUN_CALLBACK pfn_post, void *cookie);

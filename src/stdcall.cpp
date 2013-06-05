@@ -258,7 +258,36 @@ IPQ_DLL_EXPORT int __stdcall runmixf_(int *id, int *count, int *solutions, doubl
 		n_user, rxnmols, tempc, ph, tsec, array,
 		row_dim, col_dim);
 }
+///////////////////////////////////////////////////////////////////////////////
+//
+// MeltPack
+//
+///////////////////////////////////////////////////////////////////////////////
 
+// /iface:default /names:default
+IPQ_DLL_EXPORT int __stdcall MELTPACK(int *id, int *ipack, int *imelt, double *eps, double *ipf, double *fmelt, double *rstd)
+{
+	return MeltPackF(id, ipack, imelt, eps, ipf, fmelt, rstd);
+}
+
+// /iface:default /names:default /assume:underscore
+IPQ_DLL_EXPORT int __stdcall MELTPACK_(int *id, int *ipack, int *imelt, double *eps, double *ipf, double *fmelt, double *rstd)
+{
+	return MeltPackF(id, ipack, imelt, eps, ipf, fmelt, rstd);
+}
+
+// /iface:default /names:lowercase
+IPQ_DLL_EXPORT int __stdcall meltpack(int *id, int *ipack, int *imelt, double *eps, double *ipf, double *fmelt, double *rstd)
+{
+	return MeltPackF(id, ipack, imelt, eps, ipf, fmelt, rstd);
+}
+
+// /iface:default /names:lowercase /assume:underscore
+// /iface:cref /assume:underscore
+IPQ_DLL_EXPORT int __stdcall meltpack_(int *id, int *ipack, int *imelt, double *eps, double *ipf, double *fmelt, double *rstd)
+{
+	return MeltPackF(id, ipack, imelt, eps, ipf, fmelt, rstd);
+}
 #if defined(__cplusplus)
 }
 #endif
