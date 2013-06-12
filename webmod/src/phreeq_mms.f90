@@ -92,6 +92,13 @@
          END FUNCTION fill_ent
        END INTERFACE
 
+      INTERFACE 
+         FUNCTION wetbulb(pres,ta,rh)
+           REAL, INTENT(IN) :: pres, ta, rh
+           REAL :: wetbulb
+         END FUNCTION wetbulb
+       END INTERFACE
+
       INTERFACE
          FUNCTION checkfracs(count,solns,fracs,mixture)
            INTEGER :: count,solns(:),mixture
@@ -149,17 +156,27 @@
 !      INTEGER, EXTERNAL ::  chem2var, phreeq_id, length
       INTEGER, EXTERNAL ::  phreeq_id !!SRC, RunString
 
+! strings to construct custom header in pqi file      
+      integer, save :: isoh1_len, isoh2_len, isogl_len, isogs_len, sol_h2_len
+      character*60, save :: isogs, isogl
+      character*256 :: aline
 
-! Basin geometry
+      character*3000, save :: sol_header1, sol_header2, iso_header1,iso_header2
+      character*3000, save :: inp_dir, phreeqmms_pqi
+      character*3000, save :: cheminit_file, readline, phreeq_database
+
+
+
+! Basin geometry - kPa is Air pressure in kiloPascals needed to derive wetbulb temperature for precip
       real, save :: basin_area
       real, save, allocatable :: ar_fill(:,:), mru_area(:),qdffrac(:)
-      real, save, allocatable :: riparian_thresh(:)  ! used distribute geochemistry to riparian/upland
+      real, save, allocatable :: mru_elev(:), kPa(:)
       real, save, allocatable :: covden_sum(:), covden_win(:)
       real, save, allocatable :: snowcov_area(:),ac(:,:)
       real :: covden, acf
 
 !  Dimensions, indices, and counters
-      integer ::  i,j,ia,ires,imru,inac,ihydro
+      integer ::  i,j,ia,ires,imru,inac,ihydro,irip
       integer :: ichemdat,iunit,imet,unit_type
       integer, save :: nchem_ext, chem_ext,ppt_chem, nchem_sets
       integer, save ::  nmru, nac, nsolute, nchemobs,nchemdat
@@ -202,7 +219,7 @@
 !  7) desired model response unit (c_mru)
 !  8) desired topographic index bin (c_stindx)
 !  9) desired drainage segment (c_hyd_indx)
-! 10) statistic index (for riparian or other stat: Implement later)
+! 10) riparian index (for hillslope, riparian, or upland)
 
       integer, save, allocatable :: chvar_lut(:,:)
 !
@@ -252,12 +269,15 @@
       TYPE :: geochem
          double precision, allocatable :: M(:,:)   ! Moles of each solute for init, in, out, rxn, and final
          double precision :: vol(5)   ! volumes for init, in, out, ET, and final
-         double precision, allocatable :: del(:) ! final del values for any of nsolutes that are isotopes
-         double precision :: Temp   ! final temperature of reservoir
-         double precision :: pH   ! final pH of reservoir
+         double precision, allocatable :: delta(:,:) ! delta values for any of nsolutes that are isotopes
+         double precision :: Temp(5)   ! Temperature of reservoir inputs and outputs
+         double precision :: pH(5)   ! pH of reservoir inputs and outputs
       END TYPE geochem
      
       TYPE(geochem), save, allocatable :: c_chem(:) ! to be allocated by the total number of solutions, nphrsolns
+      TYPE(geochem), save, allocatable :: c_chem_uzgen(:) ! additional rows of c_chem to hold uz composite mass and fluxes
+      TYPE(geochem), save, allocatable :: c_chem_uzrip(:) ! additional rows of c_chem to hold uz composite mass and fluxes
+      TYPE(geochem), save, allocatable :: c_chem_uzup(:) ! additional rows of c_chem to hold uz composite mass and fluxes
 ! These parameters enable better understanding of fluxes recorded in c_chem%M and c_chem_vol; index 4 is rxn for Moles or et for volumes.
       integer, PARAMETER :: init = 1
       integer, PARAMETER :: in = 2
@@ -306,7 +326,7 @@
 ! statistical reporting not possible with the multidimensioned
 ! model space (nmru, nac, nsolute, nmru_res, in, out, etc), The
 ! content of each ch_var is defined by the variables c_ires,
-! c_metric,c_mru, c_stindx, c_hyd_indx, c_units, and c_obs_indx
+! c_metric,c_mru, c_stindx, c_hyd_indx, c_units, and c_rip
 ! all of which are dimensioned by nchemvar.
 
       double precision, save, allocatable :: ch_var_01_sol(:), ch_var_02_sol(:)
@@ -335,7 +355,7 @@
 
 
       integer, save, allocatable :: c_ires(:),c_metric(:)
-      integer, save, allocatable :: c_mru(:), c_stindx(:)
+      integer, save, allocatable :: c_mru(:), c_stindx(:), c_rip(:)
       integer, save, allocatable :: c_hyd_indx(:), c_units(:)
       integer, save, allocatable :: c_obs_indx(:)
       integer, save :: chemdat_flag ! indicates if file of time series of chem obs is available.
@@ -344,12 +364,11 @@
 ! chmru_soln indicates the index, or row number for each pseudo-solution
 ! that summarizes fluxes into and out of each MRU. Ditto for chbas_soln,
 ! the basin pseudo reservoir. These are reflected as indxm and indxm
-! at any function call. indxuz is the pseudo solution for tracking
-! the composite of all unsaturated zone solutions (res-id 5, 
-! inac=1,nasc). indxuz corresponds to res-id 6, inac=0.
+! at any function call. indxuz will reference the riparian pseudosolution, ch_rip_solution,
+! or the upland pseudosolution, ch_upland_soln as distinguised by riparian_thresh.
 !
 
-      integer, save, allocatable :: chmru_soln(:),chuz_soln(:)
+      integer, save, allocatable :: chmru_soln(:), chuz_soln(:), ch_rip_soln(:), ch_upland_soln(:)
       integer, save :: chbas_soln, indxm, indxb, indxuz
 
       double precision, save, allocatable ::&
@@ -442,6 +461,7 @@
       double precision dvalue
       integer vtype, leng, id_len, ID
       character(15) heading
+      character(60) line
       integer  nstep, datetime(6),xdebug_start,xdebug_stop
 
 
@@ -1062,14 +1082,6 @@
          'Simulate solute fluxes (0=no; 1=yes)',&
          'integer').ne.0) return
 
-      allocate(riparian_thresh(nmru))
-      if(declparam('phreeqmms', 'riparian_thresh', 'nmru',&
-         'real','10.0', '1.0', '40.0',&
-         'UZ bins wetter than this are riparian',&
-         'UZ bins wetter than this are riparian; '//&
-         'UZ bins drier than this are upslope.',&
-         'lambda').ne.0) return
-
       allocate(solnset_table(nmru_res,nchem_sets))
       if(declparam('phreeqmms','solnset_table', 'nmru_res,nchem_sets',&
          'integer', '1', '1', '100',&
@@ -1327,12 +1339,13 @@
          'MRU for ch_var, 0 for basin sum for that reservoir',&
          'none') .ne.0) return
 
-!$$$      if(decl*param('phreeqmms','c_rip', 'nchemvar', 'integer',
-!$$$     +   '0', '0', '1',
-!$$$     +   'Hillslope(0) or Riparian(1) for ch_var',
-!$$$     +   'Hillslope(0) or Riparian(1) for ch_var',
-!$$$     +   'none') .ne.0) return
-!$$$
+      allocate(c_rip(nchemvar))
+      if(declparam('phreeqmms','c_rip', 'nchemvar', 'integer',&
+         '0', '0', '2',&
+         'Hillslope(0), Riparian(1), or Upland(2) for ch_var',&
+         'Hillslope(0), Riparian(1), or Upland(2) for ch_var',&
+         'none') .ne.0) return
+
       allocate(c_stindx(nchemvar))
       if(declparam('phreeqmms','c_stindx', 'nchemvar', 'integer',&
          '1', '0', '99',&
@@ -1417,6 +1430,13 @@
          'MRU area',&
          'km2').ne.0) return
 
+      ALLOCATE (mru_elev(nmru))
+      if(declparam('basin', 'mru_elev', 'nmru', 'real',&
+         '0.', '-300.', '10000',&
+         'Mean elevation for each MRU',&
+         'Mean elevation for each MRU',&
+         'meters').ne.0) return
+     
 !
 ! use cover density for canopy loads
 !
@@ -1485,6 +1505,7 @@
 
 
 ! Other variables
+      ALLOCATE(kPa(nmru))
       ALLOCATE (ar_fill(nhydro,nchan))
       ALLOCATE (snowcov_area(nmru))
       ALLOCATE (src_init(nsoln,nentity))
@@ -1494,7 +1515,22 @@
       ALLOCATE (c_chem(nsoln))
       do i=1,nsoln
         ALLOCATE (c_chem(i)%M(nsolute,5))
-        ALLOCATE (c_chem(i)%del(nsolute))
+        ALLOCATE (c_chem(i)%delta(nsolute,5))
+      end do
+      ALLOCATE (c_chem_uzgen(nmru))
+      do i=1,nmru
+        ALLOCATE (c_chem_uzgen(i)%M(nsolute,5))
+        ALLOCATE (c_chem_uzgen(i)%delta(nsolute,5))
+      end do
+      ALLOCATE (c_chem_uzrip(nmru))
+      do i=1,nmru
+        ALLOCATE (c_chem_uzrip(i)%M(nsolute,5))
+        ALLOCATE (c_chem_uzrip(i)%delta(nsolute,5))
+      end do
+      ALLOCATE (c_chem_uzup(nmru))
+      do i=1,nmru
+        ALLOCATE (c_chem_uzup(i)%M(nsolute,5))
+        ALLOCATE (c_chem_uzup(i)%delta(nsolute,5))
       end do
       ALLOCATE (n_user(nentity))
       ALLOCATE (solns(nsoln))
@@ -1504,7 +1540,8 @@
       ALLOCATE (fracs(nsoln))
       ALLOCATE (fracsdep(maxdep))
       ALLOCATE (chmru_soln(nmru))
-      ALLOCATE (chuz_soln(nmru))
+      ALLOCATE (ch_rip_soln(nmru))
+      ALLOCATE (ch_upland_soln(nmru))
       ALLOCATE (mru_in_vol(nmru))
       ALLOCATE (mru_out_vol(nmru))
       ALLOCATE (uz_spread(nentity))
@@ -1533,11 +1570,11 @@
 ! Mixing variables from webmod_res
       USE WEBMOD_RESMOD, ONLY : vmix_can, vmix_snow, vmix_ohoriz, &
         vmix_uz, vmix_uz2can, vmix_uz2sat, vmix_sat2uz, vmix_uzgen,&
-        vmix_qdf, vmix_well, vmix_sat, vmix_satpref, vmix_hill, &
-        vmix_mru, vmix_hillexp, vmix_stream, vmix_diversion, &
+        vmix_uzrip, vmix_uzup, vmix_qdf, vmix_well, vmix_sat, vmix_satpref,&
+        vmix_hill,  vmix_mru, vmix_hillexp, vmix_stream, vmix_diversion, &
         vmix_chan_loss, vmix_basin, uz2sat_vol, basin_qsim_cm
 !      double precision vmix_imp(nmru,nresinp), vmix_rz(MAXMNR_3D) ! for later development
-      USE WEBMOD_TOPMOD, ONLY : gw_loss,qpref_max, quz, st
+      USE WEBMOD_TOPMOD, ONLY : gw_loss,qpref_max, quz, st, riparian, uz_area
       IMPLICIT NONE
 !      INCLUDE 'IPhreeqc.f90.inc'      
       integer, external ::  length
@@ -1546,15 +1583,15 @@
       real dt
 
       integer k, l, ir, is, it, ih, path_len, file_len
-      integer isoh1_len, isoh2_len, isogl_len, isogs_len, sol_h2_len
       integer pqdat_len, res_id, ret, io, ivar, iresult
       integer uzwet, uzdry
+!   moved to module
+      !integer isoh1_len, isoh2_len, isogl_len, isogs_len, sol_h2_len
+      !character*60 isogs, isogl
+      !character*3000 sol_header1, sol_header2, iso_header1,iso_header2
+      !character*3000 inp_dir, phreeqmms_pqi
+      !character*3000 cheminit_file, readline, phreeq_database
       
-      character*60 isogs, isogl
-      character*3000 sol_header1, sol_header2, iso_header1,iso_header2
-      character*3000 inp_dir, phreeqmms_pqi
-      character*3000 cheminit_file, readline, phreeq_database
-
       phreeqmms_init = 1
 
       if(getparam('phreeqmms', 'chem_sim', 1,&
@@ -1618,13 +1655,16 @@
 !
 ! Get parameters
 !
-!      if(getparam('io', 'chemout_file_unit', 1,
-!     $     'integer',chemout_file_unit ) .ne.0) return
+!      if(getparam('io', 'chemout_file_unit', 1,&
+!         'integer',chemout_file_unit ) .ne.0) return
 
       if(getparam('basin', 'basin_area', 1 , 'real', basin_area)&
          .ne.0) return
 
       if(getparam('basin', 'mru_area', nmru, 'real', mru_area)&
+         .ne.0) return
+
+      if(getparam('basin', 'mru_elev', nmru, 'real', mru_elev)&
          .ne.0) return
 
       if(getparam('obs_chem', 'ppt_chem', 1, 'integer',&
@@ -1644,7 +1684,7 @@
 
       if(getparam('intcp', 'covden_win', nmru, 'real', covden_win)&
          .ne.0) return 
-
+       
       if(getparam('topc', 'ac', nac*nmru, 'real', AC)&
          .ne.0) return
 
@@ -1675,8 +1715,8 @@
       if(getparam('phreeqmms', 'kinset_table', nmru_res*nchem_sets,&
            'integer', kinset_table) .ne.0) return
 
-      if(getparam('phreeqmms', 'riparian_thresh', nmru, 'real',&
-          riparian_thresh).ne.0) return
+!      if(getparam('phreeqmms', 'riparian_thresh', nmru, 'real',&
+!          riparian_thresh).ne.0) return
 
       if(getparam('phreeqmms', 'init_soln_ppt', 1, 'integer',&
            init_soln_ppt) .ne.0) return
@@ -1732,6 +1772,9 @@
       if(getparam('phreeqmms', 'c_stindx', nchemvar, 'integer',&
            c_stindx) .ne.0) return
 
+      if(getparam('phreeqmms', 'c_rip', nchemvar, 'integer',&
+           c_rip) .ne.0) return
+
       if(getparam('phreeqmms', 'c_hyd_indx', nchemvar, 'integer',&
            c_hyd_indx) .ne.0) return
 
@@ -1765,7 +1808,7 @@
          chvar_lut(i,1) = -99
          chvar_lut(i,2) =&
               solnnum(0,c_ires(i),c_obs_indx(i),c_mru(i),c_stindx(i),&
-              c_hyd_indx(i),0)
+              c_hyd_indx(i),c_rip(i))
          chvar_lut(i,3) = c_metric(i)
          chvar_lut(i,4) = c_units(i)
          chvar_lut(i,5) = c_ires(i)
@@ -1773,7 +1816,7 @@
          chvar_lut(i,7) = c_mru(i)
          chvar_lut(i,8) = c_stindx(i)
          chvar_lut(i,9) = c_hyd_indx(i)
-         chvar_lut(i,10) = 0     ! stat flag
+         chvar_lut(i,10) = c_rip(i)  ! UZ: hillslope(0), riparian(1), or upland(2)
          
  22   continue
 
@@ -2053,7 +2096,7 @@
                     dest(nphrsolns),nchemvar)
 10010    continue
          do 10030 k = 1, nmru
-            do 10030 l = 0, nacsc(k) ! zero index used for typical wet area UZ chemistry
+            do 10030 l = 0, nacsc(k) 
                nphrsolns = nphrsolns + 1
                src(nphrsolns) = 1
                dest(nphrsolns) =  solnnum(i,5,0,k,l,0,0)
@@ -2061,6 +2104,7 @@
                c_indx(nphrsolns,2) =&
                     chemflag(nphrsolns,chvar_lut,&
                     dest(nphrsolns),nchemvar)
+               if(l.eq.0)ch_rip_soln(k)=nphrsolns ! zero index used psueudo solution of all riparian UZ (st >= riparian_thresh)
 10030    continue
          do 10040 j = 6,14
             do 10040 k = 1, nmru
@@ -2071,7 +2115,7 @@
                c_indx(nphrsolns,2) =&
                     chemflag(nphrsolns,chvar_lut,&
                     dest(nphrsolns),nchemvar)
-               if(j.eq.6.and.i.eq.0)chuz_soln(k)=nphrsolns ! composite uz pseudo solution
+               if(j.eq.6.and.i.eq.0)ch_upland_soln(k)=nphrsolns ! Composite uz pseudo solution for UZ bins drier than riaparian_thresh
 10040 continue
 10050 continue
 ! 
@@ -2152,7 +2196,7 @@
 ! Populate UZ bin initialization for each entity by comparing initial 
 ! geochemistry (solutions, eq_ph, etc) for the wettest (ires=5) and driest (ires=6) bins.
 !        - If both are -1, then all of that entity unknown (-1).
-!          [uz_spread=0], *Not permitted so run will stop*
+!          [uz_spread=0], *Not permitted for solutions*
 !        - If they are the same and positive, all uz spaces initalized with that value.
 !          [uz_spread=1]
 !        - If they are different, use the wet value until the wetness index is less than 
@@ -2190,7 +2234,7 @@
           elseif(uz_spread(ET_SOLUTION).eq.1) then
             uzindxinit(i,j,ET_SOLUTION)=uzwet
           elseif(uz_spread(ET_SOLUTION).eq.2) then
-            if(st(j,i).ge.riparian_thresh(i))  then
+            if(riparian(j,i))  then
               uzindxinit(i,j,ET_SOLUTION)=uzwet
             else
               uzindxinit(i,j,ET_SOLUTION)=uzdry
@@ -2226,7 +2270,7 @@
           elseif(uz_spread(ET_REACTION).eq.1) then
             uzindxinit(i,j,ET_REACTION)=uzwet
           elseif(uz_spread(ET_REACTION).eq.2) then
-            if(st(j,i).ge.riparian_thresh(i))  then
+            if(riparian(j,i))  then
               uzindxinit(i,j,ET_REACTION)=uzwet
             else
               uzindxinit(i,j,ET_REACTION)=uzdry
@@ -2262,7 +2306,7 @@
           elseif(uz_spread(ET_EXCHANGE).eq.1) then
             uzindxinit(i,j,ET_EXCHANGE)=uzwet
           elseif(uz_spread(ET_EXCHANGE).eq.2) then
-            if(st(j,i).ge.riparian_thresh(i))  then
+            if(riparian(j,i))  then
               uzindxinit(i,j,ET_EXCHANGE)=uzwet
             else
               uzindxinit(i,j,ET_EXCHANGE)=uzdry
@@ -2298,7 +2342,7 @@
           elseif(uz_spread(ET_SURFACE).eq.1) then
             uzindxinit(i,j,ET_SURFACE)=uzwet
           elseif(uz_spread(ET_SURFACE).eq.2) then
-            if(st(j,i).ge.riparian_thresh(i))  then
+            if(riparian(j,i))  then
               uzindxinit(i,j,ET_SURFACE)=uzwet
             else
               uzindxinit(i,j,ET_SURFACE)=uzdry
@@ -2333,7 +2377,7 @@
           elseif(uz_spread(ET_PURE_PHASE).eq.1) then
             uzindxinit(i,j,ET_PURE_PHASE)=uzwet
           elseif(uz_spread(ET_PURE_PHASE).eq.2) then
-            if(st(j,i).ge.riparian_thresh(i))  then
+            if(riparian(j,i))  then
               uzindxinit(i,j,ET_PURE_PHASE)=uzwet
             else
               uzindxinit(i,j,ET_PURE_PHASE)=uzdry
@@ -2368,7 +2412,7 @@
           elseif(uz_spread(ET_KINETICS).eq.1) then
             uzindxinit(i,j,ET_KINETICS)=uzwet
           elseif(uz_spread(ET_KINETICS).eq.2) then
-            if(st(j,i).ge.riparian_thresh(i))  then
+            if(riparian(j,i))  then
               uzindxinit(i,j,ET_KINETICS)=uzwet
             else
               uzindxinit(i,j,ET_KINETICS)=uzdry
@@ -2524,12 +2568,12 @@
 ! Initialize c_chem volumes with 1 liter, Temp=25degC, ph=7, del value -1000 and solute mass = zero, 
       do i = 1,nphrsolns
          c_chem(i)%vol(init)=1.0e-3
-         c_chem(i)%Temp=25.D0
-         c_chem(i)%pH=7.D0
+         c_chem(i)%Temp(init)=25.D0
+         c_chem(i)%pH(init)=7.D0
          do j = 1, nsolute
-            c_chem(i)%del(j) = -1000.D0
             do k = 1,5 ! Init, in, out, rxn|ET, final
               c_chem(i)%M(j,k) = 0.D0
+              c_chem(i)%delta(j,k) = -1000.D0
             end do
           end do
       end do
@@ -2552,6 +2596,7 @@
          imru = chvar_lut(ivar,7)
          inac = chvar_lut(ivar,8)
          ihydro = chvar_lut(ivar,9)
+         irip = chvar_lut(ivar,10)
 
          if(imet.lt.1.or.imet.gt.6)then
             print*,'c_metric indicated in ch_var ',&
@@ -2581,9 +2626,9 @@
             if(unit_type.eq.2) then ! load, so figure which area to apply
 !
 ! if impermeable, use perc impermeable area (*mru_area) (implement later)
-! if canopy, use canopy density (*mru_area)
-! if snowpack, use snow covered area (*mru_area)
-! if unsaturated zone, use fractional area (*mru)
+! if canopy, use mru_area and then multiply by canopy density later
+! if snowpack, use mru_area and then multiply by snow covered area later
+! if unsaturated zone, use fractional area (*mru) or composite areas if ires equals 6
 ! all other hillslope reservoirs use mru_area
 ! if stream segment or zero area, write error and set conversion
 !   one square meter
@@ -2594,14 +2639,29 @@
 ! in the init section and then adjusted in the run section before 
 ! assigning the values to the chvar variables.
 !
-               if (ires.eq.5) then ! loni bin
-                  if(ia.eq.nacsc(imru)) then
+               if (ires.eq.5) then ! unsaturated (5) or composite loni bin (6)
+                  if(inac.eq.nacsc(imru)) then
                     ACF=0.5*AC(inac,imru)
                   else
-                    ACF=0.5*(AC(inac,imru)+AC(inac,imru))
+                    ACF=0.5*(AC(inac,imru)+AC(inac+1,imru))
                   endif
-                  chvar_conv(ivar,nsolute+1) = acf*&
-                                           mru_area(imru)*a_million
+                  print*,'chvar number ',ivar, 'uses an area of ',acf, &
+                         ' to compute loads for TWI ', inac
+                  chvar_conv(ivar,nsolute+1) = acf*mru_area(imru)*a_million
+               else if (ires.eq.6) then
+                 if(irip.eq.0) then
+                   chvar_conv(ivar,nsolute+1) = mru_area(imru)*a_million
+                   print*,'chvar number ',ivar, 'uses the area of mru ',imru,' for the UZ area.'
+                 elseif(irip.eq.1) then
+                   chvar_conv(ivar,nsolute+1) = uz_area(1,imru)*a_million
+                   print*,'chvar number ',ivar, 'uses a riparian area of ',uz_area(1,imru),' sq km to compute loads.'
+                 elseif(irip.eq.2) then
+                   chvar_conv(ivar,nsolute+1) = uz_area(2,imru)*a_million
+                   print*,'chvar number ',ivar, 'uses an upland area of ',uz_area(2,imru),' sq km to compute loads.'
+                 else
+                   print*,'chvar number ',ivar, 'has c_ires of 6 so c_rip must equal 0,1,or 2, fix and restart'
+                   return
+                 endif
                else if (ires.eq.1) then ! canopy.
                   print*,'Loads calculated using canopy area ',&
                        'for chvar number ',ivar
@@ -2663,8 +2723,8 @@
 !      end do
 !
       rxnmols = 0.0   ! No dry deposition
-      tempc = -1    ! Standard temperature (-1 indicates to use solution temperatures from pqi file
-      ph = 7.0
+!      tempc = -1    ! These are returned values, not inputs. use TEMPERATURE block to assign temperature.
+!      ph = 7.0      ! pH is initialized in the PQI solutions and updated with each mix and reaction.
       tsec = dt*3600   ! dt in hours
       fill_factor = 1.0
 
@@ -2780,12 +2840,13 @@
 ! Initialize individual hillslope reservoirs
 !
       do 30 is = 1, nmru
+! Establish MRU airpressure in kilopascals to derive wetbulb temperature for precipitation.
+          kPa(is) = 101.325 * (1 - 2.25577e-5*mru_elev(is))**5.25588
 !
 ! get the solution number for the pseudo-reservoir summarizing hillslope
 ! and unsaturated zone chemistry
 !
          indxm = chmru_soln(is)
-         indxuz = chuz_soln(is)
 !
 !  Initialize hillslope reservoirs using the solnset_table parameter,
 !  solnset_table(nmru_res,nmru) where reservoir ID:
@@ -2964,6 +3025,12 @@
 !
          do 37 it = 1,nacsc(is)
 !              solnnum(time,res_ID,chemdat, mru, nac,hydro, stat)
+! assign uzindx to riparian or upland
+            if(riparian(it,is))  then
+              indxuz=ch_rip_soln(is)
+            else
+              indxuz=ch_upland_soln(is)
+            end if
             mixture = solnnum(0,5,0,is,it,0,0)
             indx = isoln(mixture,nchemdat,nmru,nac,clark_segs,&
                  ires,ichemdat,imru,inac,ihydro)
@@ -3287,6 +3354,7 @@
       integer function phreeqmms_run()
 
       USE WEBMOD_PHREEQ_MMS
+!      USE WEBMOD_INTCP, ONLY : covden_win
       USE WEBMOD_OBSHYD, ONLY : relhum
       USE WEBMOD_OBSCHEM, ONLY : phq_lut, sol_id, sol_name,unit_lut,&
           n_iso, iso_list,c_precip_pH,c_precipT,cconc_precipM, &
@@ -3295,13 +3363,14 @@
       USE WEBMOD_POTET, ONLY : transp_on
       ! Mixing variables from webmod_res
 !      USE WEBMOD_PRECIP, ONLY : mru_ppt
+      USE WEBMOD_TEMP1STA, ONLY: tmax_c
       USE WEBMOD_IRRIG, ONLY : irrig_ext_mru, irrig_hyd_mru, &
           irrig_frac_ext, irrig_frac_sat, irrig_frac_hyd, mru_ppt, mru_dep
-      USE WEBMOD_TOPMOD, ONLY : gw_loss,qpref_max, quz, srzwet
+      USE WEBMOD_TOPMOD, ONLY : gw_loss,qpref_max, st, quz, srzwet, riparian_thresh, uz_area
       USE WEBMOD_RESMOD, ONLY : vmix_can, vmix_snow, vmix_ohoriz, &
           vmix_uz, vmix_uz2can, vmix_uz2sat, vmix_sat2uz, vmix_uzgen,&
-          vmix_qdf, vmix_well, vmix_sat, vmix_satpref, vmix_hill, &
-          vmix_mru, vmix_hillexp, vmix_stream, vmix_diversion, &
+          vmix_uzrip, vmix_uzup, vmix_qdf, vmix_well, vmix_sat, vmix_satpref, &
+          vmix_hill, vmix_mru, vmix_hillexp, vmix_stream, vmix_diversion, &
           vmix_chan_loss, vmix_basin, uz2sat_vol,basin_qsim_cm, &
           vmin_canopy
 !      double precision vmix_imp(nmru,nresinp), vmix_rz(MAXMNR_3D) ! for later development
@@ -3425,6 +3494,12 @@
       if(getvar('webr', 'vmix_uzgen', nmru*nresinp, 'double', &
            vmix_uzgen) .ne.0) return
 
+      if(getvar('webr', 'vmix_uzrip', nmru*nresinp, 'double', &
+           vmix_uzrip) .ne.0) return
+
+      if(getvar('webr', 'vmix_uzup', nmru*nresinp, 'double', &
+           vmix_uzup) .ne.0) return
+
       if(getvar('webr', 'vmix_qdf', nmru*nresinp, 'double', &
            vmix_qdf) .ne.0) return
 
@@ -3520,21 +3595,35 @@
             ENDIF
 !
 ! Transfer final c_chem reservoirs values to inital values
-! for this run. Leave tempc and pH alone 
-! as they will overwritten in update_chem
-!
+! for this run. Temp and pH are now included and wull be 
+! weighted by input and output volumes.
             do 203 i = 1,nphrsolns
                c_chem(i)%vol(init) = c_chem(i)%vol(fin)
                c_chem(i)%vol(in) = 0.0
                c_chem(i)%vol(out) = 0.0
                c_chem(i)%vol(ET) = 0.0
                c_chem(i)%vol(fin) = 0.0
+               c_chem(i)%Temp(init) = c_chem(i)%Temp(fin)
+               c_chem(i)%Temp(in) = 0.0
+               c_chem(i)%Temp(out) = 0.0
+               c_chem(i)%Temp(ET) = 0.0
+               c_chem(i)%Temp(fin) = 0.0
+               c_chem(i)%pH(init) = c_chem(i)%pH(fin)
+               c_chem(i)%pH(in) = 0.0
+               c_chem(i)%pH(out) = 0.0
+               c_chem(i)%pH(ET) = 0.0
+               c_chem(i)%pH(fin) = 0.0
                do 203 j = 1,nsolute
                  c_chem(i)%M(j,init) = c_chem(i)%M(j,fin)
                  c_chem(i)%M(j,in) = 0.0
                  c_chem(i)%M(j,out) = 0.0
                  c_chem(i)%M(j,rxn) = 0.0
                  c_chem(i)%M(j,fin) = 0.0
+                 c_chem(i)%delta(j,init) = c_chem(i)%delta(j,fin)
+                 c_chem(i)%delta(j,in) = -1000.0
+                 c_chem(i)%delta(j,out) = -1000.0
+                 c_chem(i)%delta(j,rxn) = -1000.0
+                 c_chem(i)%delta(j,fin) = -1000.0
  203        continue
       else
          step1=.false.
@@ -3606,7 +3695,7 @@
 !
       nchemdat_obs = ppt_chem + chem_ext*nchem_ext + nchemobs
 
-      if(chemdat_exists) then  ! create as many solutions as are in the chemdat file.
+      if(chemdat_exists) then  ! create as many solutions as are in the chemdat file. Moved precip solution to MRU loop to assign dry bulb temperature.
          ib_start = 2-ppt_chem
          ib_end   = nchemdat_obs-ppt_chem+1
          do 482 ib = ib_start, ib_end
@@ -3617,6 +3706,7 @@
 ! pick up tempc and pH from data file
             if(ib.eq.1) then
               tempc = c_precipT
+              if(tempc.eq.-999) tempc = 25  ! -999 is precip temperature flag to assign wetbulb temperature at elevation of MRU. Assign 25 to initial mix.
               ph = c_precip_pH
             else if (ib-1.le.nchem_ext*chem_ext) then
               tempc = c_extT(ib-1)
@@ -3673,7 +3763,6 @@
              ch_mru_out_permil(is,n)=0D0
          end do
          indxm = chmru_soln(is)
-         indxuz = chuz_soln(is)
          ndep = 0
          depvol = mru_dep(is)*mru_area(is)*inch2m*a_million
 !
@@ -3706,6 +3795,18 @@
                iresult=checkfracs(nmix,src,fracs,dest(1))
                if(iresult.ne.0) then
                   PRINT*,'Errors with mixing fractions'
+               end if
+! Assign wet bulb temperature to precip if indicated by temperature = -999 in chemdat file or if constant composition (ppt_chem=0)
+               if(c_precipT.eq.-999.or.ppt_chem.eq.0) then
+                   WRITE (line,100),'SOLUTION_MODIFY ', src(1)
+                   iresult = AccumulateLine(id, line)
+                   tempc=wetbulb(kPa(is),tmax_c(is), relhum(1)*100)
+                   if(tempc.lt.0.) tempc=0.
+                   WRITE (line,120),'-temp ', tempc
+                   iresult = AccumulateLine(id, line)
+                   WRITE (line,110),'END'
+                   iresult = AccumulateLine(id, line)
+                   iresult = RunAccumulated(id)
                end if
 ! Mix with no reactions (no_rxn instead of n_user)
                iresult = phr_mix(ID,nmix, src, fracs,  dest(1),&
@@ -3848,9 +3949,9 @@
                  c_chem(indxb)%M(k,out)=&
                   c_chem(indxb)%M(k,out)+ c_chem(indx)%M(k,out)
                  ch_mru_out_permil(is,k)=ch_mru_out_permil(is,k)+&
-                       c_chem(indxm)%del(k)*totvol
+                       c_chem(indxm)%delta(k,out)*totvol
                  ch_basin_out_permil(k)=ch_basin_out_permil(k)+&
-                       c_chem(indxb)%del(k)*totvol
+                       c_chem(indxb)%delta(k,out)*totvol
                end do
             end if
 !
@@ -3949,9 +4050,9 @@
             mru_in_vol(is)=mru_in_vol(is)+totvol
             do k=1,nsolute
               ch_mru_in_permil(is,k)=ch_mru_in_permil(is,k)+&
-                c_chem(indxm)%del(k)*totvol
+                c_chem(indxm)%delta(k,in)*totvol
               ch_basin_in_permil(k)=ch_basin_in_permil(k)+&
-                c_chem(indxb)%del(k)*totvol
+                c_chem(indxb)%delta(k,in)*totvol
             end do
         end if   ! mru_dep > 0
 !
@@ -4010,9 +4111,9 @@
             c_chem(indxb)%M(k,in)=&
               c_chem(indxb)%M(k,in)+ conc(k)*totvol*a_thousand
             ch_mru_in_permil(is,k)=ch_mru_in_permil(is,k)+&
-                  c_chem(indxm)%del(k)*totvol
+                  c_chem(indxm)%delta(k,in)*totvol
             ch_basin_in_permil(k)=ch_basin_in_permil(k)+&
-                  c_chem(indxb)%del(k)*totvol
+                  c_chem(indxb)%delta(k,in)*totvol
           end do
         end if ! totvol.gt.0
 !ccccccccccc end inputs
@@ -4432,7 +4533,7 @@
 !              indx = isoln(mixture,nchemdat,nmru,nac,clark_segs,&
 !                  ires,ichemdat,imru,inac,ihydro)
 ! no ionic pulse because snow_ion_factor set to 1, or most (>90% of pack) if not all snow has melted.
-              if(snow_ion_factor(is).le.1.0.or.vmix_snow(is,4).eq.zero.or.percent_melt.gt.0.9) then
+              if(snow_ion_factor(is).le.1.0.or.vmix_snow(is,4).eq.zero.or.percent_melt.ge.0.9) then
 
 ! Snowmelt with no ion pulse being simulated. Track melt with same composition as
 ! pack and assign final concentrations to remaining pack, -1 metric will access the final volume
@@ -4457,8 +4558,8 @@
                  mixture = solnnum(0,2,0,is,0,0,0) ! t0 snowpack solution for snowpack, use to store melt that has ionic pulse 
                  snow_ion_pulse(is)=1
                  ion_factor = snow_ion_factor(is)
-                 max_factor = 0.9/percent_melt
-                 if(ion_factor.gt.max_factor) ion_factor = max_factor
+                 !max_factor = 0.9/percent_melt
+                 !if(ion_factor.gt.max_factor) ion_factor = max_factor
                
 ! Assign proper delta to concentrating DI to produce depletion in melt as reported in Taylor and others 2001.
 ! Parameters snowmelt_18O_depl and snowmelt_D_depl indicate the desired permil depletion of the heavier isotopes in the melt
@@ -4466,28 +4567,47 @@
 !
                  if(n_iso.ne.0) then   ! assign the proper delta to the DI, delta values for the pack 
                                        ! were stored in the fractionate subroutine above
-                   if(snowmelt_D_depl(is).le.0.0.and.res_D_permil.ne.-1000) &
-                       delta_D = res_D_permil+snowmelt_D_depl(is)/(1-ion_factor)
-!                   if(snowmelt_18O_depl(is).lt.0.0.and.snowpack_18O.ne.-1000) &
-                   if(snowmelt_18O_depl(is).le.0.0.and.res_18O_permil.ne.-1000) &
-                       delta_18O = res_18O_permil+snowmelt_18O_depl(is)/(1-ion_factor)
-                   iresult = reset_DI(ID,zero)  ! melt is always assumed to zero degrees celsius
-                   IF (iresult.NE.0) THEN
-                     PRINT *, 'Errors establishing deltas for DI solution 1'
-                     STOP
-                   ENDIF
+                   ! int ipack, int imelt, double eps, double ipf, double fmelt, double rstd    
+                   CALL meltpack(id,solns(1),mixture, dble(snowmelt_18O_depl(is)), dble(ion_factor), dble(percent_melt),phq_lut(sol_id(iso_list(1))%phq)%isoratio )
+                   iresult = accumulateline(ID, "SELECTED_OUTPUT")
+                   iresult = accumulateline(ID, "-reset false")
+                   iresult = accumulateline(ID, "-pH")
+                   iresult = accumulateline(ID, "-temp")
+                   iresult = accumulateline(ID, "USER_PUNCH")
+                   write(aline,1000)iso_header1(1:isoh1_len)
+                   iresult = AccumulateLine(id, aline)
+                   write(aline,1050)iso_header2(1:isoh2_len)
+                   iresult = AccumulateLine(id, aline)
+                   iresult = runaccumulated(ID)   ! assigns depleted deltas and temperature to evap using lines accumulated above
+!                   if(snowmelt_D_depl(is).le.0.0.and.res_D_permil.ne.-1000) &
+!                       delta_D = res_D_permil+snowmelt_D_depl(is)/(1-ion_factor)
+!!                   if(snowmelt_18O_depl(is).lt.0.0.and.snowpack_18O.ne.-1000) &
+!                   if(snowmelt_18O_depl(is).le.0.0.and.res_18O_permil.ne.-1000) &
+!                       delta_18O = res_18O_permil+snowmelt_18O_depl(is)/(1-ion_factor)
+!                   iresult = reset_DI(ID,zero)  ! This will create a solution '2' at zero degrees celsius to concentrate melt and produce the right delta 18O
+!                   IF (iresult.NE.0) THEN
+!                     PRINT *, 'Errors establishing deltas for DI solution 2'
+!                     STOP
+!                   ENDIF
                  end if
-                   solns(1) = solnnum(1,2,0,is,0,0,0) ! mixture of initial and snowpack inputs created in previous mix
-                   fracs(1) = ion_factor
-                   solns(2) = solnnum(0,0,0,0,0,0,0)    ! soln 1:  DI water
-                   fracs(2) = 1.0-ion_factor
-! Check for negative fractions
-                   iresult=checkfracs(2,solns,fracs,mixture)
-                   if(iresult.ne.0) then
-                      PRINT*,'Errors with mixing fractions'
-                   end if
+!                   solns(1) = solnnum(1,2,0,is,0,0,0) ! mixture of initial and snowpack inputs created in previous mix
+!                   fracs(1) = ion_factor
+!!                   solns(2) = solnnum(0,0,0,0,0,0,0)    ! soln 1:  DI water
+!                   solns(2) = 2    ! soln 1:  concentrating solution
+!                   fracs(2) = 1.0-ion_factor
+!! Check for negative fractions
+!                   iresult=checkfracs(2,solns,fracs,mixture)
+!                   if(iresult.ne.0) then
+!                      PRINT*,'Errors with mixing fractions'
+!                   end if
 ! concentrated solutes in melt
-                   iresult = phr_mix(ID,2,solns, fracs,  mixture,&
+                   !iresult = phr_mix(ID,2,solns, fracs,  mixture,&
+                   !     fill_factor, mixture, conc, phr_tf, no_rxn,&
+                   !     rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
+                   !     ntally_cols)
+                   solns(1) = solnnum(0,2,0,is,0,0,0)
+                   fracs(1) = 1.0
+                   iresult = phr_mix(ID,1,solns, fracs,  mixture,&
                         fill_factor, mixture, conc, phr_tf, no_rxn,&
                         rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                         ntally_cols)
@@ -4507,15 +4627,15 @@
 
 ! reconstitute diluted snowpack
                    mixture = solnnum(1,2,0,is,0,0,0) 
-                   solns(1) = solnnum(1,2,0,is,0,0,0) ! mixture of initial and snowpack inputs created in previous mix
-                   fracs(1) = 1.0/(1-percent_melt)
-                   solns(2) = solnnum(0,2,0,is,0,0,0)    ! soln 2:  melt
-                   fracs(2) = 1-fracs(1)
-! Check for negative fractions
-                   iresult=checkfracs(2,solns,fracs,mixture)
-                   if(iresult.ne.0) then
-                      PRINT*,'Errors with mixing fractions'
-                   end if
+!                   solns(1) = solnnum(1,2,0,is,0,0,0) ! mixture of initial and snowpack inputs created in previous mix
+!                   fracs(1) = 1.0/(1-percent_melt)
+!                   solns(2) = solnnum(0,2,0,is,0,0,0)    ! soln 2:  melt
+!                   fracs(2) = 1-fracs(1)
+!! Check for negative fractions
+!                   iresult=checkfracs(2,solns,fracs,mixture)
+!                   if(iresult.ne.0) then
+!                      PRINT*,'Errors with mixing fractions'
+!                   end if
 ! fill_ent to allow reactions in this final mix before export (uses final volume)
                    iresult = fill_ent(n_user,mixture,nchemdat,nmru,&
                         nac,clark_segs,src_init)
@@ -4525,7 +4645,13 @@
                       STOP
                    end if
 ! remove solutes from pack with mix
-                   iresult = phr_mix(ID,2,solns, fracs,  solns(1),&
+                   !iresult = phr_mix(ID,2,solns, fracs,  solns(1),&
+                   !     fill_factor, mixture, conc, phr_tf, no_rxn,&
+                   !     rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
+                   !     ntally_cols)
+                   solns(1) = solnnum(1,2,0,is,0,0,0)
+                   fracs(1) = 1.0
+                   iresult = phr_mix(ID,1,solns, fracs,  mixture,&
                         fill_factor, mixture, conc, phr_tf, no_rxn,&
                         rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                         ntally_cols)
@@ -4846,6 +4972,15 @@
 !     Create new UZ solutions
 !     
          do 93 j = 1, nacsc(is)
+!
+! Determine if UZ bin is in the riparian zone or upland using riparin_threh 
+!
+           if(st(j,is).ge.riparian_thresh(is))  then
+              indxuz=ch_rip_soln(is)
+           else
+              indxuz=ch_upland_soln(is)
+           end if
+
 !         
 !        Record evaporation and make initial and final UZ volumes
 !        available for reaction accounting
@@ -5160,10 +5295,10 @@
 ! --------------  iso evap section
 !
 ! If D or 18O are included in list of solutes of interest, compute fractionation of evaporated water.
-! Evaporated D and 18O are tracked as basin exports in the function call. 
+! Evaporated D and 18O are tracked as exports in the function call. 
 ! if n_iso, the number of isotopes, =0, this section is skipped and DI is evaporated
                if(n_iso.ne.0.and.vmix_can(is,6).gt.0) then
-                 evap=vmix_can(is,6)
+                 evap = vmix_can(is,6)
                  ison=iso_n(is)
                  rh=relhum(1)
                  totvol_can = totvol - vmin_canopy(is)
@@ -5621,9 +5756,9 @@
             c_chem(indxb)%M(k,out)=&
               c_chem(indxb)%M(k,out)+ conc(k)*totvol*a_thousand
             ch_mru_out_permil(is,k)=ch_mru_out_permil(is,k)+&
-              c_chem(indxm)%del(k)*totvol
+              c_chem(indxm)%delta(k,out)*totvol
             ch_basin_out_permil(k)=ch_basin_out_permil(k)+&
-              c_chem(indxb)%del(k)*totvol
+              c_chem(indxb)%delta(k,out)*totvol
           end do
         end if ! totvol.gt.0
 
@@ -5848,7 +5983,7 @@
             mru_out_vol(is)=mru_out_vol(is)+totvol
             do k=1,nsolute
               ch_mru_out_permil(is,k)=ch_mru_out_permil(is,k)+&
-                   c_chem(indxm)%del(k)*totvol
+                   c_chem(indxm)%delta(k,out)*totvol
             end do
           endif ! totvol.gt.0.0
 
@@ -5998,7 +6133,7 @@
             c_chem(chbas_soln)%M(k,out)=&
               c_chem(chbas_soln)%M(k,out)+ conc(k)*totvol*a_thousand
             ch_basin_out_permil(k)=ch_basin_out_permil(k)+&
-                  c_chem(indxb)%del(k)*totvol
+                  c_chem(indxb)%delta(k,out)*totvol
           end do
         end if ! totvol.gt.0
 
@@ -6043,7 +6178,7 @@
           basin_out_vol=basin_out_vol+str_vol
           do k=1,nsolute
             ch_basin_out_permil(k)=ch_basin_out_permil(k)+&
-                  c_chem(indxb)%del(k)*str_vol
+                  c_chem(indxb)%delta(k,out)*str_vol
           end do
         end if
 
@@ -6053,17 +6188,26 @@
 ! Assign composite uz volumes (uzgen), then compute final values for each 
 ! reservoir, (ignoring temp and precip)
 !
-      do 200 k = 1,nmru ! uzgen variables
-        i = chuz_soln(k)
-        c_chem(i)%vol(init) = vmix_uzgen(k,1)
-        c_chem(i)%vol(in) = vmix_uzgen(k,2)
-        c_chem(i)%vol(out) = vmix_uzgen(k,3)
-        c_chem(i)%vol(ET) = vmix_uzgen(k,6)
+      do 200 k = 1,nmru ! composite uz variables
+        c_chem_uzgen(k)%vol(init) = vmix_uzgen(k,1)
+        c_chem_uzgen(k)%vol(in) = vmix_uzgen(k,2)
+        c_chem_uzgen(k)%vol(out) = vmix_uzgen(k,3)
+        c_chem_uzgen(k)%vol(ET) = vmix_uzgen(k,6)
 !        c_chem(i)%vol(fin) = vmix_uzgen(k,4) ! Calculated below
+        c_chem_uzrip(k)%vol(init) = vmix_uzrip(k,1)
+        c_chem_uzrip(k)%vol(in) = vmix_uzrip(k,2)
+        c_chem_uzrip(k)%vol(out) = vmix_uzrip(k,3)
+        c_chem_uzrip(k)%vol(ET) = vmix_uzrip(k,6)
+!        c_chem(i)%vol(fin) = vmix_uzrip(k,4) ! Calculated below
+        c_chem_uzup(k)%vol(init) = vmix_uzup(k,1)
+        c_chem_uzup(k)%vol(in) = vmix_uzup(k,2)
+        c_chem_uzup(k)%vol(out) = vmix_uzup(k,3)
+        c_chem_uzup(k)%vol(ET) = vmix_uzup(k,6)
+!        c_chem(i)%vol(fin) = vmix_uzup(k,4) ! Calculated below
  200  continue
         k=nchemdat+2 !DI water and concentrations in the chemdat file do not have volumes associated
 !                     with them so track volumes beginning with the canopy of the first MRU
-      do 205 i = k,nphrsolns-nmru-1 ! last indices (nmru+1) are basin and meu assigned below
+      do 205 i = k,nphrsolns-nmru-1 ! last indices (nmru+1) are basin and mru assigned below
         minvol = .TRUE.
         c_chem(i)%vol(fin) = c_chem(i)%vol(init)+&
           c_chem(i)%vol(in)-c_chem(i)%vol(out)-&
@@ -6099,8 +6243,8 @@
       vol_in = c_chem(i)%vol(in)
       vol_out = c_chem(i)%vol(out)
       ch_basin_vol_m3 = c_chem(i)%vol(fin)
-      ch_basin_out_tempC = c_chem(i)%Temp
-      ch_basin_out_pH = c_chem(i)%pH
+      ch_basin_out_tempC = c_chem(i)%Temp(fin)
+      ch_basin_out_pH = c_chem(i)%pH(fin)
 
       do n = 1,nsolute
          ch_basin_mass_g(n) =&
@@ -6157,8 +6301,8 @@
         c_chem(i)%vol(ET) = vmix_mru(j,6)
         c_chem(i)%vol(fin) = vmix_mru(j,4)
         ch_mru_vol_m3(j) = c_chem(i)%vol(fin)
-        ch_mru_out_tempC(j) = c_chem(i)%Temp
-        ch_mru_out_pH(j) = c_chem(i)%pH
+        ch_mru_out_tempC(j) = c_chem(i)%Temp(fin)
+        ch_mru_out_pH(j) = c_chem(i)%pH(fin)
         vol_in = c_chem(i)%vol(in)
         vol_out = c_chem(i)%vol(out)
 
@@ -6257,6 +6401,11 @@
       phreeqmms_run = 0
  
       return
+
+ 100  FORMAT(A,I10)
+ 110  FORMAT(A)
+ 120  FORMAT(A,1PG15.7E2)
+
  198  format(/,3i4,i10,6(/,i10,1x,f8.4))
  199  format(3(e10.4,1X))
  295  format(63(e10.4,1X))
@@ -6264,6 +6413,8 @@
  395  format(3i5,36(e12.5,1X))
  396  format(/,2(6e12.5))
  398  format(/,(I10,4(e12.5,1X)))
+ 1000 format('-Headings ',A)
+ 1050 format('10 PUNCH ',A)
       end
 !***********************************************************************
 !
@@ -6574,6 +6725,7 @@
       logical ET, SNOW
       integer, parameter :: a_million = 1000000
       integer, parameter :: melt = 102
+      integer, parameter :: concDI = 2
       checkfracs = 1
       sum = 0
       ET = .false.
@@ -6582,7 +6734,7 @@
          if(fracs(i).lt.0) then
             if(solns(i).eq.1) ET=.true. ! check if ET solution (soln 1)
             snowmelt=solns(i)/a_million
-            if(snowmelt.eq.melt) SNOW=.true.
+            if(solns(i).eq.concDI.or.snowmelt.eq.melt) SNOW=.true.
 !  Ignore correction if ET since ET fraction is always negative. Snowmelt also can be negative if ionic pulse simuilated
             if(.not.ET.and..not.SNOW) then
                print*,'Negative fraction encountered while ',&
@@ -6792,7 +6944,7 @@
            if(im.eq.1) then ! initial masses use the reaction concentrations in the 2nd column of the tally table
              if(sol_id(n)%iso) then  ! record inital isotopic composition
                is=is+1
-               c_chem(indx)%del(n)=conc1(nsolute+is)
+               c_chem(indx)%delta(n,1)=conc1(nsolute+is)
              end if
              k=sol_id(n)%tally
              c_chem(indx)%M(n,1) = tally_table(k,2)*vol*a_thousand
@@ -6800,7 +6952,7 @@
              c_chem(indx)%M(n,im)= c_chem(indx)%M(n,im)+ & !Imports and exports use conservative mixing&
               conc1(n)*totvol*a_thousand !This should cover snowpack chem on days of no snowpack.
            end if
-           if(restype.eq.5) & ! sum uz inputs&
+           if(restype.eq.5) & ! sum riparian or upland input as delivered in indxuz
             c_chem(indxuz)%M(n,im)=c_chem(indxuz)%M(n,im)+ &
                                    c_chem(indx)%M(n,im)
            if(indxmru.ne.0) & ! sum mru inputs and outputs&
@@ -6848,7 +7000,7 @@
              do n = 1,nsolute
                if(sol_id(n)%iso) then
                  is=is+1
-                 c_chem(indxmru)%del(n)=conc1(nsolute+is)
+                 c_chem(indxmru)%delta(n,out)=conc1(nsolute+is)
                end if
              end do
           endif
@@ -6859,7 +7011,7 @@
              do n = 1,nsolute
                if(sol_id(n)%iso) then
                  is=is+1
-                 c_chem(indxbas)%del(n)=conc1(nsolute+is)
+                 c_chem(indxbas)%delta(n,out)=conc1(nsolute+is)
                end if
              end do
           endif
@@ -6894,7 +7046,7 @@
         do 15 n = 1, nsolute
           if(sol_id(n)%iso) then
             is=is+1
-            c_chem(indx)%del(n)=conc1(nsolute+(3*is-2))
+            c_chem(indx)%delta(n,fin)=conc1(nsolute+(3*is-2))
           end if
           k=sol_id(n)%tally
           c_chem(indx)%M(n,fin) = tally_table(k,2)*vol*a_thousand
@@ -6934,8 +7086,6 @@
 ! c_chem matrix to one of the nchemvar variables (10 variables
 ! for now).
 !
-! For now use basin area for all loadings. Later add other areas
-! such as canopy density, snow covered area, and impermeable areas.
 !
       integer function chem2var()
    
@@ -6970,7 +7120,9 @@
          if(unit_type.eq.5) then
            if(.not.been_warned_iso) then
              print*,'chvar ',ivar,' indicates units of permil. ',&
-             'Only c_metric values of 5 (final) are valid. ',&
+             'A c_metric of 6 (net) is not valid. ',&
+             'A c_metric of 4 (rxn) will report the delta of 18O or D ',&
+             'in the evapotranspiration from that reservoir. ',&
              'If the selected solute is not an isotope ',&
              'the value will remain at zero. All subsequent ',&
              'warnings about isotopes for other chvars will be ignored.'
@@ -7029,17 +7181,17 @@
               ch_var_tmp(ivar,isol)= 0.0
             end if
           else if(c_unit.eq.13) then   ! permil isotopes. Change to unit_type 4 if more iso units added (pmc, etc)
-            ch_var_tmp(ivar,isol)= c_chem(indx)%del(isol)
+            ch_var_tmp(ivar,isol)= c_chem(indx)%delta(isol,imet)
           else 
             print*,'chvar ',ivar,' has invalid units indicated.'
           end if
  10      continue
 
-! Update_chem will overwrite isotope temp and pH into all 5 metrics (in, out) on
+! Update_chem will overwrite temp and pH into all 5 metrics (in, out) on
 ! each mix. Final value should be a export and react or static reaction (update_chem 3 or -1)
 
-      ch_var_tmp_tempc(ivar)=c_chem(indx)%Temp
-      ch_var_tmp_pH(ivar)=c_chem(indx)%pH
+      ch_var_tmp_tempc(ivar)=c_chem(indx)%Temp(imet)
+      ch_var_tmp_pH(ivar)=c_chem(indx)%pH(imet)
 
  1    continue
 !
@@ -7103,7 +7255,7 @@
 !
       integer function fractionate(phase,resindx,evapvol,resv,ison,rh,tempevap)
    
-      USE WEBMOD_PHREEQ_MMS, only : one, a_thousand, rxn, iso_n,&
+      USE WEBMOD_PHREEQ_MMS, only : aline, one, a_thousand, rxn, iso_n,&
              almost_one, fill_factor, phr_tf, no_rxn, n_ent,&
              rxnmols, tempc, pH, ph_final, tsec, tally_table, ires,&
              ntally_rows, ntally_cols, conc, indxm, indxb, indxuz,&
@@ -7128,7 +7280,6 @@
       double precision :: evapvol, resvol, resv, evap_frac, rh, tempevap, tot_16O, tot_H
       double precision :: log_a, eps_eq, eps_diff,ison,fracs(1)
       double precision :: delta_res0, delta_res, delta_evap_permil,evap_D_M,evap_18O_M
-      character*256 :: aline
 !      integer :: test
 !
 !      allocate(conc1(size(conc)))
@@ -7197,10 +7348,10 @@
 ! Assign depleted deltas to evaporative water and track evaporated isotopes
 !           run_(int *output_on, int *error_on, int *log_on, int *selected_on)
 !         iresult = run(1,1,0,1)   ! assigns depleted deltas to evap using lines accumulated above
-      iresult = SetOutputFileOn(ID,.false.)
-      iresult = SetErrorFileOn(ID,.false.)
-      iresult = SetLogFileOn(ID,.false.)
-      iresult = SetSelectedOutputFileOn(ID,.false.)
+      iresult = SetOutputFileOn(ID,phr_tf)
+      iresult = SetErrorFileOn(ID,phr_tf)
+      iresult = SetLogFileOn(ID,phr_tf)
+      iresult = SetSelectedOutputFileOn(ID,phr_tf)
 !
 ! Set temperature, pH and mix
 !
@@ -7226,7 +7377,7 @@
 ! so that the lost mass is subtracted from the initial
 ! mass. The loss from the basin, MRU, and gen UZ reservoir are
 ! traced in the update_chem routine
-!
+
         do 15 i = 1, nsolute
           if(sol_id(i)%iso) then
             k=sol_id(i)%tally
@@ -7263,8 +7414,8 @@
 !      end function test
 !
 !
-! Reset DI water pure water with specific isotopic signature at specified temperature
-! after fractionation and before snowmelt with ionic pulse.
+! Create pure water with specific isotopic signature at specified temperature
+! after sublimation to create snowmelt with ionic pulse and lighter isotopes.
 !
       integer function reset_DI(ID,tempc)
 
@@ -7278,8 +7429,10 @@
       character*256 :: aline
 !
       reset_DI = 1
-
-      iresult = accumulateline(ID, "solution 1")  ! solution 1 is evaporative water
+!
+! solution 2 will be used for concentrating melt and producing propoer deltas. DI, or solution 1 is mass corrected to more accurately track basin exports
+!
+      iresult = accumulateline(ID, "solution 2")
       WRITE (aline,*)'-temp ', tempc
       if(delta_D.ne.-1000) then
           write(aline,*)"D ",delta_D
@@ -7290,5 +7443,107 @@
       endif
       reset_DI = runaccumulated(ID)
       RETURN
-      END FUNCTION reset_DI
+    END FUNCTION reset_DI
+    
+!     program to converge on wet-bulb temp, given dry-bulb
+!     and relative humidity - ported by RW on 23 May 2013 from tw.f 
+!     written by Dave Stannard
+ 
+      real function wetbulb (pres, ta, rh)
+      implicit double precision (a-h,o-z)
+      real pres, ta, rh
+      wetbulb = -999.
+!     site pressure in kilopascals
+!      pres=101.3
+
+!     Coefficients for the lowe (1976) equations for saturation 
+!     vapor pressure, and the slope of that curve
+
+!     sat. vap. press. curve
+      a0=6.107799961
+      a1=4.436518521e-1
+      a2=1.428945805e-2
+      a3=2.650648471e-4
+      a4=3.031240396e-6
+      a5=2.034080948e-8
+      a6=6.136820929e-11
+
+!     slope of sat. vap. press. curve
+      b0=4.438099984e-1
+      b1=2.857002636e-2
+      b2=7.938054040e-4
+      b3=1.215215065e-5
+      b4=1.036561403e-7
+      b5=3.532421810e-10
+      b6=-7.090244804e-13
+
+!     sat. vap. press. over ice
+      a0i=6.109177956
+      a1i=5.03469897e-1
+      a2i=1.886013408e-2
+      a3i=4.176223716e-4
+      a4i=5.824720280e-6
+      a5i=4.838803174e-8
+      a6i=1.838826904e-10
+
+!     slope sat. vap. press. curve over ice
+      b0i=5.030305237e-1
+      b1i=3.773255020e-2
+      b2i=1.267995369e-3
+      b3i=2.477563108e-5
+      b4i=3.005693132e-7
+      b5i=2.158542548e-9
+      b6i=7.131097725e-12
+
+!     Read in dry bulb temp and relative humidity (0-100)
+!10    read (1,*,end=999)ta,rh
+
+!     For first tw estimate, and to compute actual VP,
+!     compute es (saturated vapor pressure) and s (slope of saturated
+!     vapor pressure) at dry bulb
+      if (ta .gt. 0.)then
+       es=(a0+ta*(a1+ta*(a2+ta*(a3+ta*(a4+ta*(a5+ta*a6))))))/10.
+       s=(b0+ta*(b1+ta*(b2+ta*(b3+ta*(b4+ta*(b5+ta*b6))))))/10.
+      else
+       es=(a0i+ta*(a1i+ta*(a2i+ta*(a3i+ta*(a4i+ta*(a5i+ta*a6i))))))/10.
+       s=(b0i+ta*(b1i+ta*(b2i+ta*(b3i+ta*(b4i+ta*(b5i+ta*b6i))))))/10.
+      endif
+
+!     Compute actual VP (emeas) to converge upon
+      emeas=es*rh/100.0d0
+
+!     For first tw estimate, use gam, es, and s at dry bulb
+      gam=pres*.00066*(1.+.00115*ta)   ! psychrometric constant
+      tw=ta-(es-emeas)/(s+gam)
+      etemp=emeas+(ta-tw)*gam
+ !     write (6,*)'   Dry bulb       RH       Wet bulb     Mod. VP    Meas. VP'
+
+!     For iterations, use gam, es, and s at wet bulb
+20    if (tw .gt. 0.0)then
+       es=(a0+tw*(a1+tw*(a2+tw*(a3+tw*(a4+tw*(a5+tw*a6))))))/10.
+       s=(b0+tw*(b1+tw*(b2+tw*(b3+tw*(b4+tw*(b5+tw*b6))))))/10.
+      else
+       es=(a0i+tw*(a1i+tw*(a2i+tw*(a3i+tw*(a4i+tw*(a5i+tw*a6i))))))/10.
+       s=(b0i+tw*(b1i+tw*(b2i+tw*(b3i+tw*(b4i+tw*(b5i+tw*b6i))))))/10.
+      endif
+ 
+      gam=pres*.00066*(1.+.00115*tw)
+      tw=tw-(es-etemp)/(s+gam)
+      etemp=emeas+(ta-tw)*gam
+      emod=es-gam*(ta-tw)
+ 
+!      write (6,2000)ta,rh,tw,emod,emeas,etemp
+
+!     the following is the convergence criterion in degrees C
+      if (abs((emod-emeas)/(s+gam)) .gt. .0001)go to 20
+ 
+!      write (2,2000)ta,rh,tw,emod,emeas
+      wetbulb = tw
+      return
+ !      go to 10
+!999   stop
+!2000  format(6f12.6)
+      end
+
+
       

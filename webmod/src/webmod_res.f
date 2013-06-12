@@ -154,7 +154,9 @@ c          UZ outputs: saturated zone, canopy(transpiration),shallow
 c                      preferential flow (qdf)
 c
 c vmix_uzgen, Composite of unsaturated zone (combination of root zone and unsaturated zone -
-c                This reservoir has two dimensions nmru, and nresinp)
+c vmix_uzrip, riparian uz composite (as determined using riparian_thresh
+c vmix_uzup, uplands uz composite
+c                These reservoir has two dimensions nmru, and nresinp)
 c     5) precip
 c     6) et
 c     8) canopy
@@ -302,6 +304,8 @@ c$$$      double precision, save, allocatable :: vmix_rz(MAXMNR_3D)  ! possible 
       double precision, save, allocatable :: vmix_uz2sat(:,:)  ! Recharge water
       double precision, save, allocatable :: vmix_sat2uz(:)  ! Water transferred from sat to uz
       double precision, save, allocatable :: vmix_uzgen(:,:)
+      double precision, save, allocatable :: vmix_uzrip(:,:)
+      double precision, save, allocatable :: vmix_uzup(:,:)
       double precision, save, allocatable :: vmix_qdf(:,:)
       double precision, save, allocatable :: vmix_sat(:,:)
       double precision, save, allocatable :: vmix_well(:)
@@ -575,12 +579,27 @@ c
      $     'resulting from a changing water table below the root zone',
      $     'm3',uz2sat_vol).ne.0) return
 c
-c Unsaturated zone composite - (suz,  combined rz/suz)
+c Unsaturated zone composite - (suz, combined rz/suz)
 c
       allocate(vmix_uzgen(nmru,nresinp))
       if(declvar('webr', 'vmix_uzgen', 'nmru,nresinp', nmru*nresinp,
      $ 'double', 'volumes to track to simulate composite solution '//
      $ 'of individual uz bins', 'm3',vmix_uzgen).ne.0) return
+c
+c Unsaturated zone composite for riparian zone - (suz, combined rz/suz)
+c
+      allocate(vmix_uzrip(nmru,nresinp))
+      if(declvar('webr', 'vmix_uzrip', 'nmru,nresinp', nmru*nresinp,
+     $ 'double', 'volumes to track to simulate composite solution '//
+     $ 'of individual uz bins in riparian zone', 'm3',
+     $ vmix_uzrip).ne.0) return
+c
+c Unsaturated zone composite for uplands - (suz, combined rz/suz)
+c
+      allocate(vmix_uzup(nmru,nresinp))
+      if(declvar('webr', 'vmix_uzup', 'nmru,nresinp', nmru*nresinp,
+     $ 'double', 'volumes to track to simulate composite solution '//
+     $ 'of individual uz bins in uplands', 'm3',vmix_uzup).ne.0) return
 c
 c Unsaturated zone preferential flow - (suz,  combined rz/suz)
 c
@@ -1209,7 +1228,7 @@ c
       integer function webrinit()
 
       USE WEBMOD_RESMOD
-
+      USE WEBMOD_TOPMOD, ONLY : riparian
       integer is, ia, ih
       real acf
 
@@ -1443,6 +1462,8 @@ c basin saturation deficit, the initial root zone deficit and the
 c distribution of water table predicted using T0, szm, and the resp_coef.
 c
             vmix_uzgen(is,1) = 0.0
+            vmix_uzrip(is,1) = 0.0
+            vmix_uzup(is,1) = 0.0
             do 75 ia = 1, nacsc(is)
               if(ia.eq.nacsc(is)) then
                 ACF=0.5*AC(IA,is)
@@ -1452,6 +1473,11 @@ c
               vmix_uz(ia,is,1) = uz_depth(ia,is) * acf *
      $             mru_area(is) * a_million
               vmix_uzgen(is,1) = vmix_uzgen(is,1) + vmix_uz(ia,is,1)
+              if(riparian(ia,is))  then
+                vmix_uzrip(is,1)=vmix_uzrip(is,1) + vmix_uz(ia,is,1)
+              else
+                vmix_uzup(is,1)=vmix_uzup(is,1) + vmix_uz(ia,is,1)
+              end if
               vmix_mru(is,1) = vmix_mru(is,1) + vmix_uz(ia,is,1)
               vmix_basin(1) = vmix_basin(1) + vmix_uz(ia,is,1) 
               basin_sssto_cm =
@@ -1589,7 +1615,7 @@ c
 
       USE WEBMOD_RESMOD
       USE WEBMOD_IO, only: chemout_file_unit
-      USE WEBMOD_TOPMOD, only: z_wt_local, srzwet
+      USE WEBMOD_TOPMOD, only: z_wt_local, srzwet, riparian
 
 c variables and parameters from other modules
       double precision timestep
@@ -1977,6 +2003,8 @@ c     vmix_imp(is,2) = 0.0
                vmix_uz(k,is,j) = 0.0
  1000       continue
             vmix_uzgen(is,j) = 0.0
+            vmix_uzrip(is,j) = 0.0
+            vmix_uzup(is,j) = 0.0
             vmix_sat(is,j) = 0.0
             vmix_satpref(is,j) = 0.0
             vmix_hill(is,j) = 0.0
@@ -2512,6 +2540,21 @@ c
         vmix_uzgen(is,19)=vmix_uzgen(is,19)+vmix_uz(ia,is,19)
         vmix_uzgen(is,8)=vmix_uzgen(is,8)+vmix_uz(ia,is,8)
         vmix_uzgen(is,9)=vmix_uzgen(is,9)+vmix_uz(ia,is,9)
+        if(riparian(ia,is))  then
+            vmix_uzrip(is,5)=vmix_uzrip(is,5)+vmix_uz(ia,is,5)
+            vmix_uzrip(is,17)=vmix_uzrip(is,17)+vmix_uz(ia,is,17)
+            vmix_uzrip(is,18)=vmix_uzrip(is,18)+vmix_uz(ia,is,18)
+            vmix_uzrip(is,19)=vmix_uzrip(is,19)+vmix_uz(ia,is,19)
+            vmix_uzrip(is,8)=vmix_uzrip(is,8)+vmix_uz(ia,is,8)
+            vmix_uzrip(is,9)=vmix_uzrip(is,9)+vmix_uz(ia,is,9)
+        else
+            vmix_uzup(is,5)=vmix_uzup(is,5)+vmix_uz(ia,is,5)
+            vmix_uzup(is,17)=vmix_uzup(is,17)+vmix_uz(ia,is,17)
+            vmix_uzup(is,18)=vmix_uzup(is,18)+vmix_uz(ia,is,18)
+            vmix_uzup(is,19)=vmix_uzup(is,19)+vmix_uz(ia,is,19)
+            vmix_uzup(is,8)=vmix_uzup(is,8)+vmix_uz(ia,is,8)
+            vmix_uzup(is,9)=vmix_uzup(is,9)+vmix_uz(ia,is,9)
+        endif
 c
 c ET - note that the water transpired to the canopy is drawn from
 c the unsaturated zone as water with solutes and therefore appears
@@ -2527,6 +2570,11 @@ c
 c Collect evaporation in uzgen, mru, and basin variables
 c
         vmix_uzgen(is,6)=vmix_uzgen(is,6)+vmix_uz(ia,is,6)
+        if(riparian(ia,is)) then
+          vmix_uzrip(is,6)=vmix_uzrip(is,6)+vmix_uz(ia,is,6)
+        else  
+          vmix_uzup(is,6)=vmix_uzup(is,6)+vmix_uz(ia,is,6)
+        endif
         vmix_mru(is,6) = vmix_mru(is,6) + vmix_uz(ia,is,6)
         vmix_basin(6) = vmix_basin(6) + vmix_uz(ia,is,6)
 c
@@ -2559,6 +2607,12 @@ c add uz inputs from saturated zone
 c
         vmix_sat2uz(is) = vmix_sat2uz(is)+ vmix_uz(ia,is,14)
         vmix_uzgen(is,14)=vmix_uzgen(is,14)+vmix_uz(ia,is,14)
+        if(riparian(ia,is)) then
+          vmix_uzrip(is,14)=vmix_uzrip(is,14)+vmix_uz(ia,is,14)
+        else  
+          vmix_uzup(is,14)=vmix_uzup(is,14)+vmix_uz(ia,is,14)
+        endif
+
 c
 c sum inputs
 c
@@ -2569,7 +2623,12 @@ c
 c
 c collect inputs in uzgen
 c
-        vmix_uzgen(is,2)=vmix_uzgen(is,2)+vmix_uz(ia,is,2)     
+        vmix_uzgen(is,2)=vmix_uzgen(is,2)+vmix_uz(ia,is,2)
+        if(riparian(ia,is)) then
+          vmix_uzrip(is,2)=vmix_uzrip(is,2)+vmix_uz(ia,is,2)
+        else  
+          vmix_uzup(is,2)=vmix_uzup(is,2)+vmix_uz(ia,is,2)
+        endif
 c
 c Unsaturated zone outputs (other than evaporation)
 c
@@ -2594,9 +2653,15 @@ c               add volume engulfed by rising water to UZ output
 c$$$        vmix_uz(ia,is,3) = vmix_uz2can(ia,is) + !transpiration
 c$$$     $       vmix_uz2sat(ia,is) !plus recharge and volume from rising water table
 c
-c collect outputs from uzgen
+c collect composite outputs
 c
-        vmix_uzgen(is,3)=vmix_uzgen(is,3)+vmix_uz(ia,is,3)     
+        vmix_uzgen(is,3)=vmix_uzgen(is,3)+vmix_uz(ia,is,3)
+        if(riparian(ia,is)) then
+          vmix_uzrip(is,3)=vmix_uzrip(is,3)+vmix_uz(ia,is,3)
+        else  
+          vmix_uzup(is,3)=vmix_uzup(is,3)+vmix_uz(ia,is,3)
+        endif
+
 c
 c collect inputs for the preferential flow and the recharge from the
 c unsaturated zone (source index 11)
@@ -2620,7 +2685,6 @@ c
      $       - vmix_uz(ia,is,3) - vmix_uz(ia,is,6)
 
         v_sssto = v_sssto + vmix_uz(ia,is,4)
-        vmix_uzgen(is,4)=vmix_uzgen(is,4)+vmix_uz(ia,is,4)     
 
 c
 c Debugging output to chemout file
@@ -2657,6 +2721,15 @@ c$$$ 233     format(' quz_loc   qdffrac    vmix_uz2sat')
 c$$$ 234  format(3(e12.5,1X))
 
  150       continue                  ! end of loni loop
+
+! Compute new composite volumes
+           vmix_uzgen(is,4) = vmix_uzgen(is,1) + vmix_uzgen(is,2)
+     $           - vmix_uzgen(is,3) - vmix_uzgen(is,6)
+           vmix_uzrip(is,4) = vmix_uzrip(is,1) + vmix_uzrip(is,2)
+     $           - vmix_uzrip(is,3) - vmix_uzrip(is,6)
+           vmix_uzup(is,4) = vmix_uzup(is,1) + vmix_uzup(is,2)
+     $           - vmix_uzup(is,3) - vmix_uzup(is,6)
+
 
 c
 c     Calculate shallow preferential flow fluxes

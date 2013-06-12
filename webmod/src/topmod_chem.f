@@ -218,6 +218,8 @@ c     distribution of vertical conductivity (XK0)
       real, save, allocatable ::   irrig_sat_next(:), sbar_max(:)
       real, save, allocatable ::   irrig_int_max(:), gw_loss_k(:)
       real, save, allocatable ::   gwbnd_len1(:),gwbnd_len2(:)
+      real, save, allocatable :: riparian_thresh(:)  ! used to aggregate riparian and upland TWIs
+      real, save, allocatable :: uz_area(:,:)  ! areas of riparian, and upland TWI bins
 C   Declared Variables
       real, save, allocatable :: SBAR(:),SRMAX(:),SD(:,:),QB(:),REX(:)
       real, save, allocatable :: QOF(:), QUZ(:), QSCM(:),QOFS(:)
@@ -260,6 +262,7 @@ C getvars from other modules
 C   Local for init section
       integer, save, allocatable :: atag(:)
       real, save, allocatable ::  irrig_int_init(:), sbar0(:)
+      logical, save, allocatable :: riparian(:,:)
 C   Local for run section
       real, save :: DT, XKAREA, sbar_norm, sat_head, rate
       real, save :: POBS, P
@@ -1195,6 +1198,14 @@ c$$$
      +   'The ln(a/tanB) value.',
      +   'none').ne.0) return
 
+      allocate(riparian_thresh(nmru))
+      if(declparam('topc', 'riparian_thresh', 'nmru',
+     +   'real','10.0', '1.0', '40.0',
+     +   'UZ bins wetter than this are riparian',
+     +   'UZ bins wetter than this are riparian; '//
+     +   'UZ bins drier than this are upslope.',
+     +   'lambda').ne.0) return
+
       ALLOCATE (AREA(Nmru)) ! local copy for mru_area_frac
       if(declparam('topc', 'mru_area_frac', 'nmru', 'real',
      +   '1', '0', '1',
@@ -1260,6 +1271,9 @@ c$$$
 !
 ! From init section
        ALLOCATE (atag(nac))
+       ALLOCATE (riparian(nac,nmru))
+! areas for riparian(1), and upland(2) TWI bins. all UZ areas (irip=0) uses the mru_area
+       ALLOCATE (uz_area(2,nmru))
 !
 ! From run section
        ALLOCATE (last_uz_dep(nac,Nmru))
@@ -1317,6 +1331,7 @@ c      logical filflg
 
       topminit = 1
       step1 = .true.
+
 
 c----- set name for topmod unique output file 
 c      ret = getoutname (output_path, '.topout')
@@ -1517,21 +1532,38 @@ c      READ(8,*)(AC(J),ST(J),J=1,NAC)
      $         tarea, '. Please correct and rerun.'
          return
       endif
-
+! Identify first (and wettest) TWI bin as riparian 
+      riparian(1,is) = .true.
+      uz_area(1,is) = 0.5*(AC(1,is)+AC(2,is))*sc_area(is)! uz_riparian
+      uz_area(2,is) = 0.0! uz_uplands
+c
 c Use average ac (acf calculation) to check for multiple zero areas and warn
-c user about using those indices
+c user about using those indices.
 
        acflag = .FALSE.
 
        do 10 j=2,nacsc(is)
-       tarea = tarea + ac(j,is)
-       if((ac(j-1,is)+ac(j,is))/2.eq.0) then  ! getting past check above insures that ac(1,is) = 0
+        riparian(j,is)=.true.
+        tarea = tarea + ac(j,is)
+        if(st(j,is).lt.riparian_thresh(is)) riparian(j,is)=.false. ! identify upland TWI bins based on fixed threshold
+        if((ac(j-1,is)+ac(j,is))/2.eq.0) then  ! getting past check above insures that ac(1,is) = 0
           atag(j-1) = 1
           acflag = .true.
-       else
+        else
           atag(j-1) = 0
-       end if
-
+        end if
+!  Assign uz composite areas for load conversions
+        if(j.eq.nacsc(is)) then
+          ACF=0.5*AC(j,is)
+        else
+          ACF=0.5*(AC(j,is)+AC(j+1,is))
+        endif
+        ! uz_all uses the mru_area
+        if(riparian(j,is)) then
+         uz_area(1,is) = uz_area(1,is)+ACF*sc_area(is)! uz_riparian
+        else
+         uz_area(2,is) = uz_area(2,is)+ACF*sc_area(is)! uz_uplands
+        endif
    10  continue
 
       if(abs(tarea-1.0).gt.0.0005)then
@@ -1560,8 +1592,8 @@ c
       TL(is)=0.
       SUMAC=AC(1,is)
       DO 11 J=2,nacsc(is)
-      SUMAC=SUMAC+AC(J,is)
-      TL(is)=TL(is)+AC(J,is)*(ST(J,is)+ST(J-1,is))/2
+        SUMAC=SUMAC+AC(J,is)
+        TL(is)=TL(is)+AC(J,is)*(ST(J,is)+ST(J-1,is))/2
    11 CONTINUE
 
 c$$$      write(topout_file_unit,8010) TL(is), SUMAC
