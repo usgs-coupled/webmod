@@ -3366,7 +3366,7 @@
       USE WEBMOD_TEMP1STA, ONLY: tmax_c
       USE WEBMOD_IRRIG, ONLY : irrig_ext_mru, irrig_hyd_mru, &
           irrig_frac_ext, irrig_frac_sat, irrig_frac_hyd, mru_ppt, mru_dep
-      USE WEBMOD_TOPMOD, ONLY : gw_loss,qpref_max, st, quz, srzwet, riparian_thresh, uz_area
+      USE WEBMOD_TOPMOD, ONLY : gw_loss,qpref_max, st, quz, srzwet, riparian_thresh, uz_area, riparian
       USE WEBMOD_RESMOD, ONLY : vmix_can, vmix_snow, vmix_ohoriz, &
           vmix_uz, vmix_uz2can, vmix_uz2sat, vmix_sat2uz, vmix_uzgen,&
           vmix_uzrip, vmix_uzup, vmix_qdf, vmix_well, vmix_sat, vmix_satpref, &
@@ -5093,7 +5093,9 @@
                  evap=vmix_uz(j,is,6)
                  ison=iso_n(is)
                  rh=relhum(1)
-                 if(srzwet(j,is).gt.0) then ! water table is close to surface so permit fractionation
+!                   iresult=fractionate(water, indx,evap,totvol,ison,rh,tempc)  ! Rayleigh fractionation of evapaporated (or sublimated) water
+!                 if(srzwet(j,is).gt.0) then ! water table is close to surface so permit fractionation
+                 if(riparian(j,is)) then ! water table is close to surface so permit fractionation
                    iresult=fractionate(water, indx,evap,totvol,ison,rh,tempc)  ! Rayleigh fractionation of evapaporated (or sublimated) water
                  else
                    iresult=fractionate(transp, indx,evap,totvol,ison,rh,tempc)  ! transp keywork results in no fractionation for UZ bins with thick UZ

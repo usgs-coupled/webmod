@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{6989167D-11E4-40FE-8C1A-2192A86A7E90}") = "webmod_f", "webmod\webmod_f.vfproj", "{BD619FDF-A27D-4CCC-9542-C9E7BFD10DAE}"
 	ProjectSection(ProjectDependencies) = postProject
 		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7} = {F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}
@@ -8,11 +8,11 @@ Project("{6989167D-11E4-40FE-8C1A-2192A86A7E90}") = "webmod_f", "webmod\webmod_f
 		{0CA69363-AB82-4798-B54E-03B1632DB539} = {0CA69363-AB82-4798-B54E-03B1632DB539}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mmf_c", "mmf_c\mmf_c.vcproj", "{0CA69363-AB82-4798-B54E-03B1632DB539}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mmf_c", "mmf_c\mmf_c.vcxproj", "{0CA69363-AB82-4798-B54E-03B1632DB539}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IPhreeqcMMS", "IPhreeqcMMS\IPhreeqcMMS.2008.vcproj", "{B03BAF31-B8E5-4E6B-9495-6F36503F4B0A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IPhreeqcMMS", "IPhreeqcMMS\IPhreeqcMMS.2008.vcxproj", "{B03BAF31-B8E5-4E6B-9495-6F36503F4B0A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IPhreeqc", "IPhreeqcMMS\IPhreeqc\IPhreeqc.MMS.vcproj", "{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "IPhreeqc", "IPhreeqcMMS\IPhreeqc\IPhreeqc.MMS.vcxproj", "{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -20,6 +20,8 @@ Global
 		Debug|x64 = Debug|x64
 		DebugDll|Win32 = DebugDll|Win32
 		DebugDll|x64 = DebugDll|x64
+		Intel_SSA|Win32 = Intel_SSA|Win32
+		Intel_SSA|x64 = Intel_SSA|x64
 		Release|Win32 = Release|Win32
 		Release|x64 = Release|x64
 		ReleaseDll|Win32 = ReleaseDll|Win32
@@ -33,6 +35,10 @@ Global
 		{BD619FDF-A27D-4CCC-9542-C9E7BFD10DAE}.DebugDll|Win32.ActiveCfg = Debug|x64
 		{BD619FDF-A27D-4CCC-9542-C9E7BFD10DAE}.DebugDll|x64.ActiveCfg = Debug|x64
 		{BD619FDF-A27D-4CCC-9542-C9E7BFD10DAE}.DebugDll|x64.Build.0 = Debug|x64
+		{BD619FDF-A27D-4CCC-9542-C9E7BFD10DAE}.Intel_SSA|Win32.ActiveCfg = Intel_SSA|Win32
+		{BD619FDF-A27D-4CCC-9542-C9E7BFD10DAE}.Intel_SSA|Win32.Build.0 = Intel_SSA|Win32
+		{BD619FDF-A27D-4CCC-9542-C9E7BFD10DAE}.Intel_SSA|x64.ActiveCfg = Intel_SSA|x64
+		{BD619FDF-A27D-4CCC-9542-C9E7BFD10DAE}.Intel_SSA|x64.Build.0 = Intel_SSA|x64
 		{BD619FDF-A27D-4CCC-9542-C9E7BFD10DAE}.Release|Win32.ActiveCfg = Release|Win32
 		{BD619FDF-A27D-4CCC-9542-C9E7BFD10DAE}.Release|Win32.Build.0 = Release|Win32
 		{BD619FDF-A27D-4CCC-9542-C9E7BFD10DAE}.Release|x64.ActiveCfg = Release|x64
@@ -47,6 +53,10 @@ Global
 		{0CA69363-AB82-4798-B54E-03B1632DB539}.DebugDll|Win32.ActiveCfg = Debug|x64
 		{0CA69363-AB82-4798-B54E-03B1632DB539}.DebugDll|x64.ActiveCfg = Debug|x64
 		{0CA69363-AB82-4798-B54E-03B1632DB539}.DebugDll|x64.Build.0 = Debug|x64
+		{0CA69363-AB82-4798-B54E-03B1632DB539}.Intel_SSA|Win32.ActiveCfg = Release|Win32
+		{0CA69363-AB82-4798-B54E-03B1632DB539}.Intel_SSA|Win32.Build.0 = Release|Win32
+		{0CA69363-AB82-4798-B54E-03B1632DB539}.Intel_SSA|x64.ActiveCfg = Release|x64
+		{0CA69363-AB82-4798-B54E-03B1632DB539}.Intel_SSA|x64.Build.0 = Release|x64
 		{0CA69363-AB82-4798-B54E-03B1632DB539}.Release|Win32.ActiveCfg = Release|Win32
 		{0CA69363-AB82-4798-B54E-03B1632DB539}.Release|Win32.Build.0 = Release|Win32
 		{0CA69363-AB82-4798-B54E-03B1632DB539}.Release|x64.ActiveCfg = Release|x64
@@ -61,6 +71,10 @@ Global
 		{B03BAF31-B8E5-4E6B-9495-6F36503F4B0A}.DebugDll|Win32.ActiveCfg = Debug|x64
 		{B03BAF31-B8E5-4E6B-9495-6F36503F4B0A}.DebugDll|x64.ActiveCfg = Debug|x64
 		{B03BAF31-B8E5-4E6B-9495-6F36503F4B0A}.DebugDll|x64.Build.0 = Debug|x64
+		{B03BAF31-B8E5-4E6B-9495-6F36503F4B0A}.Intel_SSA|Win32.ActiveCfg = Release|Win32
+		{B03BAF31-B8E5-4E6B-9495-6F36503F4B0A}.Intel_SSA|Win32.Build.0 = Release|Win32
+		{B03BAF31-B8E5-4E6B-9495-6F36503F4B0A}.Intel_SSA|x64.ActiveCfg = Release|x64
+		{B03BAF31-B8E5-4E6B-9495-6F36503F4B0A}.Intel_SSA|x64.Build.0 = Release|x64
 		{B03BAF31-B8E5-4E6B-9495-6F36503F4B0A}.Release|Win32.ActiveCfg = Release|Win32
 		{B03BAF31-B8E5-4E6B-9495-6F36503F4B0A}.Release|Win32.Build.0 = Release|Win32
 		{B03BAF31-B8E5-4E6B-9495-6F36503F4B0A}.Release|x64.ActiveCfg = Release|x64
@@ -76,6 +90,10 @@ Global
 		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.DebugDll|Win32.Build.0 = DebugDll|Win32
 		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.DebugDll|x64.ActiveCfg = DebugDll|x64
 		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.DebugDll|x64.Build.0 = DebugDll|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.Intel_SSA|Win32.ActiveCfg = ReleaseDll|Win32
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.Intel_SSA|Win32.Build.0 = ReleaseDll|Win32
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.Intel_SSA|x64.ActiveCfg = ReleaseDll|x64
+		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.Intel_SSA|x64.Build.0 = ReleaseDll|x64
 		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.Release|Win32.ActiveCfg = Release|Win32
 		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.Release|Win32.Build.0 = Release|Win32
 		{F9C18E06-F73A-4EB0-92E0-AE1713EA7FD7}.Release|x64.ActiveCfg = Release|x64

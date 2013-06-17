@@ -1409,6 +1409,9 @@ c$$$
       if(getparam('topc', 's_rock_depth', nmru, 'real', s_rock_depth)
      +   .ne.0) return
 
+      if(getparam('topc','riparian_thresh', nmru, 'real', 
+     +   riparian_thresh).ne.0) return
+
       if(getparam('topc', 's_satpref_zmin', nmru, 'real',
      $     s_satpref_zmin) .ne.0) return
 
@@ -1805,6 +1808,11 @@ c
 c Initialize unsaturated zone water content
       do 26 is=1,nsc
          sr0(is) = (s_theta_fc(is) - s_theta_0(is)) * s_root_depth(is)
+         if(s_theta_0(is).gt.s_theta_fc(is)) then
+            print*,'Error: Initial soil moisture, s_theta_0, ',
+     $        'exceeds field capacity, s_theta_fc, for MRU ',is,
+     $        '. Correct parameters and rerun.'
+         endif
          
 c Readily drainable porosity is the difference getween saturated
 c soil moisture content and field capacity
@@ -1832,7 +1840,7 @@ C  CALCULATE LOCAL STORAGE DEFICIT
 c
 c
             SD(IA,is)=SBAR0(is)+(SZM(is)*(TL(is)-ST(IA,is)))
-     $           *resp_coef(is)
+!     $           *resp_coef(is)
 
 
 c
@@ -2245,8 +2253,8 @@ c
 C
 C  CALCULATE LOCAL STORAGE DEFICIT and associated fluxes
 c
-      SD(IA,is)=SBAR(is)+(SZM(is)*(TL(is)-ST(IA,is)))*resp_coef(is)
-c      SD(IA,is)=SBAR(is)+SZM(is)*(TL(is)-ST(IA,is))
+!      SD(IA,is)=SBAR(is)+(SZM(is)*(TL(is)-ST(IA,is)))*resp_coef(is)
+         SD(IA,is)=SBAR(is)+SZM(is)*(TL(is)-ST(IA,is))
 c
 cccccccMove to end so that depth reflect ending water table after ET
 c$$$c Add uz_depth to indicate the initial water content in the
@@ -2272,7 +2280,9 @@ c
         if(abs(sd(ia,is)).ge.srz(ia,is)) then
            srzwet(ia,is) = srz(ia,is)
            srz(ia,is) = 0
-           qexfil(is) = qexfil(is) - ((sd(ia,is)+srzwet(ia,is)) * acf)
+           !qexfil(is) = qexfil(is) - ((sd(ia,is)+srzwet(ia,is)) * acf)
+           qexfil(is) = 0
+           sd(ia,is) = 0  ! this reverts to original topmodel
         else
            srzwet(ia,is) = abs(sd(ia,is))
            srz(ia,is) = srz(ia,is) - srzwet(ia,is)
@@ -2560,9 +2570,9 @@ c
       if(qpref_max(is).gt.0) then
          qprefwt = qpref(is)/qpref_max(is)
          qb(is) = qb(is) - qpref(is)*qprefwt
-         qexfil(is)=qexfil(is) - qpref(is)*qprefwt
+!         qexfil(is)=qexfil(is) - qpref(is)*qprefwt
          if(qb(is).lt..00001) qb(is)=.00001
-         if(qexfil(is).lt..00001) qexfil(is)=.00001
+!         if(qexfil(is).lt..00001) qexfil(is)=.00001
       end if
       
       SBAR(is)=SBAR(is)-QUZ(is)-qvpref(is)+QB(is)+qwet(is)+
@@ -2586,7 +2596,8 @@ c      z_wt_local(ia,is) = 0.0
         endif
 
          sd_temp = 
-     $        SBAR(is)+(SZM(is)*(TL(is)-ST(IA,is)))*resp_coef(is)
+     $        SBAR(is)+(SZM(is)*(TL(is)-ST(IA,is)))
+!     $        SBAR(is)+(SZM(is)*(TL(is)-ST(IA,is)))*resp_coef(is)
 c$$$         if(is.eq.1) print*,ia,sd_temp
          if(sd_temp.lt.0) sd_temp = 0.0
          z_wt_local(IA,is) = - sd_temp/s_drain(is)
