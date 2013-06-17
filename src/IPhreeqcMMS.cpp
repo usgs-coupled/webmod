@@ -677,22 +677,33 @@ int IPhreeqcMMS::Melt_pack(int ipack, int imelt, double eps, double ipf, double 
 	strm << "190 PUNCH \"H2[18O] \", diff, EOL$\n";
 	strm << "200 PUNCH 1, EOL$\n";
 	strm << "210 PUNCH \"SAVE solution \" " << "\"" << imelt <<"\"" << ", EOL$\n";
-	strm << "220 PUNCH \"END\", EOL$\n";
+	//strm << "220 PUNCH \"END\", EOL$\n";
 	strm << "-end\n";
-	strm << "SAVE solution " << imelt  << "\n";
+	//strm << "SAVE solution " << imelt  << "\n";
 	strm << "END\n";
 
 	this->SetSelectedOutputStringOn(true);
-	this->SetOutputStringOn(true);	
+	//this->SetOutputStringOn(true);	
 	//std::cerr << strm.str().c_str() << std::endl;
 	this->RunString(strm.str().c_str());
 	std::string selout = this->GetSelectedOutputString();
 	//std::cerr << this->GetSelectedOutputString() << std::endl;
 	//std::cerr << this->GetOutputString() << std::endl;
-	this->RunString("PRINT;-selected_output false");
-
+	//this->RunString("PRINT;-selected_output false");
+	this->SetSelectedOutputStringOn(false);
+	
+	// Add selected output for mass of water
+	VAR pvar1, pvar2;
+	VarInit(&pvar1);
+	VarInit(&pvar2);	
+	selout.append("SELECTED_OUTPUT; -reset false\n");
+	selout.append("USER_PUNCH; -heading mass_water\n");
+	selout.append("10 PUNCH TOT(\"water\")\n");
+	selout.append("END\n");
+	
 	// Make melt
 	this->RunString(selout.c_str());
+	this->GetSelectedOutputValue(1,0, &pvar1);	
 	//std::cerr << this->GetOutputString() << std::endl;
 
 	// Make snowpack
@@ -702,32 +713,17 @@ int IPhreeqcMMS::Melt_pack(int ipack, int imelt, double eps, double ipf, double 
 	strm0 << imelt << " -1\n";
 	strm0 << "SAVE solution " << ipack  << "\n";
 	this->RunString(strm0.str().c_str());
+	this->GetSelectedOutputValue(1,0, &pvar2);
 	//std::cerr << this->GetOutputString() << std::endl;
-
-
-	std::ostringstream strm1;
-	strm1 << "PRINT;-selected_output true\n";
-	strm1 << "RUN_CELLS ; -cell " << imelt << " " << ipack << "\n";
-	strm1 << "SELECTED_OUTPUT; -reset false\n";
-	strm1 << "USER_PUNCH; -heading mass_water\n";
-	//strm1 << "10 PUNCH TOT(\"water\") / (.001 * GFW(\"H2O\"))\n";
-	strm1 << "10 PUNCH TOT(\"water\")\n";
-	VAR pvar1, pvar2;
-	VarInit(&pvar1);
-	VarInit(&pvar2);
-	this->RunString(strm1.str().c_str());
-	//std::cerr << this->GetOutputString() << std::endl;
-	this->GetSelectedOutputValue(1,0, &pvar1);
-	this->GetSelectedOutputValue(2,0, &pvar2);
 
 	std::ostringstream strm2;
-	strm2 << "MIX\n";
+	strm2 << "SOLUTION_MIX " << imelt << "\n";
 	strm2 << imelt << " " << 1./pvar1.dVal << "\n";
-	strm2 << "SAVE solution " << imelt << "\n";
 	strm2 << "END\n";
-	strm2 << "MIX\n";
+	strm2 << "SOLUTION_MIX " << ipack << "\n";
 	strm2 << ipack << " " << 1./pvar2.dVal << "\n";
-	strm2 << "SAVE solution " << ipack << "\n";
+	strm2 << "END" << "\n";
+	
 	//std::cerr << strm2.str().c_str();
 	this->RunString(strm2.str().c_str());
 	//std::cerr << this->GetOutputString() << std::endl;
