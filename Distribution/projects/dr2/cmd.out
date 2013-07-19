@@ -1,0 +1,25 @@
+ The following modules are included in WEBMOD_1.0:
+  io.f, soltab_prms, basin_topg, obs_chem, obs_webmod,
+  obs_webx, temp_1sta_prms, precip_web,xyz_dist_dist,
+  irrig_web, ccsolrad_web, potet_hamon_prms
+  intcp_prms, nwsmelt_topg, topmod_chem 
+  top2clark, route_clark, webmod_res, 
+  phreeq_mms, web_sum.f
+ Chem_sim parameter equals zero so no chemical inputs read or processed
+ vmix_basin0 =    4848082.15027142     
+ Chem_sim parameter equals zero so all chemical  variables are uninitialized
+ Irrigation rate reduced because of limited pumping capacity on time step
+         116  for MRU            2
+  This warning will not be repeated
+ River diversion rate reduced because of limited pumping capacity on time step
+         136  for MRU            7
+ This warning will not be repeated
+ Diversions set in route_clark do not equal those deposited in the irrigation mo
+ dule.
+  This warning will not be repeated.
+ Demands for irrigation from stream segment            1 
+  exceed available volume. Irrigation to MRUs pumping from this segment have bee
+ n reduced.
+  This warning will not be repeated.
+declmodule: $Id: mmf.c 4627 2008-10-01 16:48:11Z markstro $
+declmodule: $Id: call_modules_webmod.f 494 2013-07-15 18:00:00Z rmwebb $

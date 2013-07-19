@@ -1,0 +1,13 @@
+SOLUTION 0 Precipitation
+	-units	mg/kgw
+	Cl	0.2
+SOLUTION 1 E.T. or DI
+SOLUTION 2 Irrigation, channel leakage and initial canopy, snow, and stream
+	-units	mg/kgw
+	Cl	0.8
+SOLUTION 3 All other hillslope reservoirs and upslope groundwater
+	-units	mg/kgw
+	Cl	20
+PRINT
+# -RESET FALSE
+-STATUS FALSE
