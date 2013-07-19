@@ -75,6 +75,10 @@ C   Declared Variables
       double precision, save, allocatable ::  irrig_hyd_seg_next(:)
 C   local variables
       logical, save :: div_exists
+      integer, save :: div_warn
+      data div_warn/0/
+      logical, save :: demand_warn
+      data demand_warn/.false./
       integer, save, allocatable ::  nrsc(:), ndsc(:)
       integer, save ::  NTSTEP, irrsrc, irrsched
       real, save, allocatable :: ach(:,:), D(:,:)
@@ -845,10 +849,14 @@ c
                if(irrig_int_next(irrsched).le.irrig_dep_max) then
                   irrig_hyd_next(i) = irrig_int_next(irrsrc)
                else
-                  print*,'River diversion rate reduced because of '//
-     $                 'limited pumping capacity on time step', ntstep,
-     $                 ' for MRU ',i
-                   irrig_hyd_next(i) = irrig_dep_max
+                 if(div_warn.eq.0) then
+                   print*,'River diversion rate reduced because of '//
+     $               'limited pumping capacity on time step', ntstep,
+     $               ' for MRU ',i
+                   print*,'This warning will not be repeated'
+                   div_warn = 1
+                 endif
+                 irrig_hyd_next(i) = irrig_dep_max
                end if
                vol_m3 = irrig_int_next(irrsched)*inch2m*a_million*
      $              mru_area(i)
@@ -912,9 +920,13 @@ c  Limit diversions to availability
 c
          if(qavail(ir).lt.irrig_hyd_seg_next(ir)) then
             reduce = qavail(ir)/irrig_hyd_seg_next(ir)
-            print*,'Demands for irrigation from stream segment ',
+            if(.NOT.demand_warn) then
+              print*,'Demands for irrigation from stream segment ',
      $           ir,' exceed available volume. Irrigation to MRUs '//
      $           'pumping from this segment have been reduced.'
+              print*,' This warning will not be repeated.'
+              demand_warn=.true.
+            end if   
             do i = 1,nmru
                if(irrig_int_src(i).eq.ir)
      $              irrig_hyd_next(i)=reduce*irrig_hyd_next(i)

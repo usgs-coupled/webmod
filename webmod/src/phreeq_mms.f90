@@ -5,7 +5,7 @@
 !
 !     Rick Webb - August 2003
 !
-!     18 Mar 09 - Converted to use Fortran90 Module (WEMOD_PHREEQ_MMS)
+!     18 Mar 09 - Converted to use Fortran90 Module (WEBMOD_PHREEQ_MMS)
 !
 !     13 Mar 05 - Removed references to vmix_hold_ variables
 !                 vmix_hold_well, and vmix_hold_diversion
@@ -2645,8 +2645,8 @@
                   else
                     ACF=0.5*(AC(inac,imru)+AC(inac+1,imru))
                   endif
-                  print*,'chvar number ',ivar, 'uses an area of ',acf, &
-                         ' to compute loads for TWI ', inac
+                  print*,'chvar number ',ivar, 'uses an area of ',acf*mru_area(imru), &
+                         ' sq km to compute loads for TWI ', inac
                   chvar_conv(ivar,nsolute+1) = acf*mru_area(imru)*a_million
                else if (ires.eq.6) then
                  if(irip.eq.0) then
@@ -4536,19 +4536,19 @@
               if(snow_ion_factor(is).le.1.0.or.vmix_snow(is,4).eq.zero.or.percent_melt.ge.0.9) then
 
 ! Snowmelt with no ion pulse being simulated. Track melt with same composition as
-! pack and assign final concentrations to remaining pack, -1 metric will access the final volume
+! pack. Remaining Pack composition set after possible ionic pulse block.
                    iresult = update_chem(indx,totvol,3,conc,pH,tempc,&
                                       tally_table,n_ent,0,0,ires)
                    IF (iresult.NE.0) THEN
                       PRINT *, 'Errors updating mole matrix:'
                       STOP
                    ENDIF
-                   iresult = update_chem(indx,totvol,-1,conc,pH,tempc,& ! totvol ignored as final volume used in update_chem
-                                      tally_table,n_ent,0,0,ires)
-                   IF (iresult.NE.0) THEN
-                      PRINT *, 'Errors updating mole matrix:'
-                      STOP
-                   ENDIF
+                   !iresult = update_chem(indx,totvol,-1,conc,pH,tempc,& ! totvol ignored as final volume used in update_chem
+                   !                   tally_table,n_ent,0,0,ires)
+                   !IF (iresult.NE.0) THEN
+                   !   PRINT *, 'Errors updating mole matrix:'
+                   !   STOP
+                   !ENDIF
 
 !
 ! Simulate ionic pulse and isotopic fractionation of melt if snow_ion_factor > 1. Throttle ion concentration factor (ICF) to 0.9*max_factor.
@@ -4625,8 +4625,11 @@
                    ENDIF
 !            endif
 
+
+              endif  ! ionic pulse or not
+            endif   ! did melt occur
 ! reconstitute diluted snowpack
-                   mixture = solnnum(1,2,0,is,0,0,0) 
+            mixture = solnnum(1,2,0,is,0,0,0) 
 !                   solns(1) = solnnum(1,2,0,is,0,0,0) ! mixture of initial and snowpack inputs created in previous mix
 !                   fracs(1) = 1.0/(1-percent_melt)
 !                   solns(2) = solnnum(0,2,0,is,0,0,0)    ! soln 2:  melt
@@ -4637,39 +4640,35 @@
 !                      PRINT*,'Errors with mixing fractions'
 !                   end if
 ! fill_ent to allow reactions in this final mix before export (uses final volume)
-                   iresult = fill_ent(n_user,mixture,nchemdat,nmru,&
-                        nac,clark_segs,src_init)
-                   if(iresult.ne.0) then
-                      PRINT *, 'Errors assigning phreeq entities:'
-                      CALL OutputErrorString(id)
-                      STOP
-                   end if
+            iresult = fill_ent(n_user,mixture,nchemdat,nmru,nac,clark_segs,src_init)
+            if(iresult.ne.0) then
+              PRINT *, 'Errors assigning phreeq entities:'
+              CALL OutputErrorString(id)
+              STOP
+            end if
 ! remove solutes from pack with mix
                    !iresult = phr_mix(ID,2,solns, fracs,  solns(1),&
                    !     fill_factor, mixture, conc, phr_tf, no_rxn,&
                    !     rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                    !     ntally_cols)
-                   solns(1) = solnnum(1,2,0,is,0,0,0)
-                   fracs(1) = 1.0
-                   iresult = phr_mix(ID,1,solns, fracs,  mixture,&
-                        fill_factor, mixture, conc, phr_tf, no_rxn,&
-                        rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
-                        ntally_cols)
-                   IF (iresult.NE.0) THEN
-                      PRINT *, 'Errors during phr_mix:'
-                      CALL OutputErrorString(id)
-                      STOP
-                   ENDIF
-                   iresult = update_chem(indx,totvol,-1,conc,pH,tempc,&  ! totvol ignored as final volume is accessed in update_chem
-                          tally_table,n_ent,0,0,ires)
-
-                   IF (iresult.NE.0) THEN
-                      PRINT *, 'Errors updating mole matrix:'
-                      STOP
-                   ENDIF
-                endif  ! ionic pulse or not
-            endif   ! did melt occur
-         else if(vmix_snow(is,4).gt.0) then   ! No change in snowpack so mix original to final soln so
+            solns(1) = solnnum(1,2,0,is,0,0,0)
+            fracs(1) = 1.0
+            iresult = phr_mix(ID,1,solns, fracs,  mixture,&
+                 fill_factor, mixture, conc, phr_tf, no_rxn,&
+                 rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
+                 ntally_cols)
+            IF (iresult.NE.0) THEN
+               PRINT *, 'Errors during phr_mix:'
+               CALL OutputErrorString(id)
+               STOP
+            ENDIF
+            iresult = update_chem(indx,totvol,-1,conc,pH,tempc,&  ! totvol ignored as final volume is accessed in update_chem
+                   tally_table,n_ent,0,0,ires)
+            IF (iresult.NE.0) THEN
+               PRINT *, 'Errors updating mole matrix:'
+               STOP
+            ENDIF
+          else if(vmix_snow(is,4).gt.0) then   ! No change in snowpack so mix original to final soln so
                                               ! that reactions can take place. Skip this if snowpack is melted
             fracs(1)=1.0
             solns(1) = solnnum(0,2,0,is,0,0,0)
@@ -6933,7 +6932,7 @@
          if(im.eq.1) then
            vol = c_chem(indx)%vol(init)
          else if(im.eq.-1) then
-           vol = c_chem(indx)%vol(fin)
+           vol = c_chem(indx)%vol(fin)   ! check if this should in 'in' instead of 'fin'
          else
            c_chem(indx)%vol(im) =&
                c_chem(indx)%vol(im)+totvol
@@ -6953,6 +6952,10 @@
            else if(im.ne.-1) then
              c_chem(indx)%M(n,im)= c_chem(indx)%M(n,im)+ & !Imports and exports use conservative mixing&
               conc1(n)*totvol*a_thousand !This should cover snowpack chem on days of no snowpack.
+             if(sol_id(n)%iso) then ! track input and output deltas which shoul only occur on a single input or output.
+               is=is+1
+               c_chem(indx)%delta(n,im)=conc1(nsolute+is)
+             end if
            end if
            if(restype.eq.5) & ! sum riparian or upland input as delivered in indxuz
             c_chem(indxuz)%M(n,im)=c_chem(indxuz)%M(n,im)+ &

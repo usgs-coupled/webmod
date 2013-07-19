@@ -107,6 +107,8 @@ c
         nwsmelt_topg = nwsminit()
       else if(arg.eq.'run') then
         nwsmelt_topg = nwsmrun()
+      else if(arg.eq.'clean') then
+        nwsmelt_topg = nwsmclean()
       end if
 
       return
@@ -1215,6 +1217,18 @@ c$$$      end if
       RETURN                                              ! RETURN TO MODEL
  450  format('snow',/,7(1x,f10.3))
       END
+!***********************************************************************
+! 
+!     nwsmclean - to comply with MMS module standard
+!     --------
+      integer function nwsmclean()
+
+      nwsmclean = 1
+
+      nwsmclean = 0
+
+      return
+      end
 
       SUBROUTINE MELTFACT(IDN,ALAT,MFMAX,MFMIN,MF,RATIO)
 !..................................................................................

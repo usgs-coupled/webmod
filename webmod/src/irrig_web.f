@@ -38,6 +38,9 @@ C   Declared Parameters
 
 C   Declared Private Variables
       integer, save :: step1
+      
+      logical, save :: irrig_warn
+      data irrig_warn/.false./
 
 C   Undeclared Static Variables gotten from from other modules
       integer, save :: route_on, clark_segs
@@ -559,9 +562,11 @@ c
       if(nstep.gt.1) then
          do i=1,nhydro
             diff = abs(irrig_hyd_seg_next(i)-irrig_hyd_seg(i))
-            if(diff.gt.0.001) then
+            if(.not.irrig_warn.and.diff.gt.0.001) then
                print*,'Diversions set in route_clark do not equal '//
-     $              'those deposited in the irrigation module'
+     $              'those deposited in the irrigation module.'
+               print*,' This warning will not be repeated.'
+               irrig_warn = .true.
 ! No need for return, this is just an alert to the user that irrigation
 ! applied was less than that requested by irrig_hyd_seg_next
 !               return

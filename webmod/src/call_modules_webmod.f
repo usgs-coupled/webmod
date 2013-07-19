@@ -51,7 +51,7 @@
       IF ( Arg.EQ.'declare' ) THEN
 
 
-        PRINT *, 'The following modules are included in WEBMOD2008:'
+        PRINT *, 'The following modules are included in WEBMOD_1.0:'
         PRINT *, ' io.f, soltab_prms, basin_topg, obs_chem, obs_webmod,'
         PRINT *, ' obs_webx, temp_1sta_prms, precip_web,xyz_dist_dist,'
         PRINT *, ' irrig_web, ccsolrad_web, potet_hamon_prms'
@@ -60,7 +60,7 @@
         PRINT *, ' phreeq_mms, web_sum.f'
 
         call_modules = declmodule(
-     +'$Id: call_modules_webmod.f 494 2008-10-31 18:59:05Z rmwebb $')
+     +'$Id: call_modules_webmod.f 494 2013-07-15 18:00:00Z rmwebb $')
 
         IF ( control_string(Model_mode, 'model_mode').NE.0 ) RETURN
 

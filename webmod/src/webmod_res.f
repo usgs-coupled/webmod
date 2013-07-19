@@ -2918,7 +2918,7 @@ c volumes will be converted to depths at the end of this run section
         basin_snowmelt_cm = basin_snowmelt_cm + vmix_snow(is,3)
         basin_snowevap_cm = basin_snowevap_cm + vmix_snow(is,6)
         basin_surfdep_cm = basin_surfdep_cm + v_surfdep
-c soil moisture in the root zone not explicitly tracked in wemodres since
+c soil moisture in the root zone not explicitly tracked in webmodres since
 c it is assumed part of the overall unsaturated zone reservoir.
 c So just assign the topmodel smav_basin to basin_soil_moist_cm
 c at the end of this run section

@@ -188,10 +188,10 @@ c     distribution of vertical conductivity (XK0)
 !     to area normalized deposition to the saturated zone, in meters 
 !
       real, PARAMETER :: qlin2dep = 6.3343e-8
-      logical step1
-      integer irr_warn
+      logical, save :: step1
+      integer, save :: irr_warn
       data irr_warn/0/
-!   Dimensions
+      !   Dimensions
       integer, save :: nsc, nmru, nac, nobs
       integer, save :: nxkbin, ngw_ext, nirrig_int
 !   Declared Parameters

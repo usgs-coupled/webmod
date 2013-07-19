@@ -858,7 +858,7 @@ c
 
       end if
       
- 10   format('WEMOD version 0.9',A,
+ 10   format('WEBMOD version 1.0',A,
      $ 'Model Run: ', i2.2, '/', i2.2, '/', i4.4, '; ',
      &   i2.2, ':', i2.2, ':', i2.2,A,
      $ 'Data File ',2A ,
@@ -942,7 +942,7 @@ c
      $ '(This header can be turned off by setting ',
      $        'print_explanation=0)',2A1)
 
-20    format('WEMOD version 0.9',A,
+20    format('WEBMOD version 1.0',A,
      $ 'Model Run: ', i2.2, '/', i2.2, '/', i4.4, '; ',
      &   i2.2, ':', i2.2, ':', i2.2,A,
      $ 'Data File ',2A ,
