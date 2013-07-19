@@ -283,7 +283,7 @@ Pyrite_O2
 END
 KINETICS 1 Everywhere
 Oligoclase
-	-parm -0.15             # fit the first parameter as log10 Surface Area
+	-parm -2.15             # fit the first parameter as log10 Surface Area
         -m    1000
 
 Biotite
