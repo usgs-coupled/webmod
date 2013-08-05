@@ -1953,7 +1953,7 @@
             CALL OutputErrorString(id)
             STOP
          end if
-        iresult = SetFortranBasicCallback(ID, webmod_callback)
+        iresult = SetBasicFortranCallback(ID, webmod_callback)
       else
          print*,'Cannot open the phreeqc database ',&
               phreeq_database,' Run terminated.'
