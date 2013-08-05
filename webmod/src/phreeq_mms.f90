@@ -1578,6 +1578,14 @@
       IMPLICIT NONE
 !      INCLUDE 'IPhreeqc.f90.inc'      
       integer, external ::  length
+      interface
+        function webmod_callback(x1, x2, str)
+            double precision webmod_callback
+            double precision, intent (in) :: x1
+            double precision, intent (in) :: x2
+            character(*), intent (in) :: str
+        end function webmod_callback
+      end interface
 
       logical filflg
       real dt
@@ -1945,6 +1953,7 @@
             CALL OutputErrorString(id)
             STOP
          end if
+        iresult = SetFortranBasicCallback(ID, webmod_callback)
       else
          print*,'Cannot open the phreeqc database ',&
               phreeq_database,' Run terminated.'
@@ -7548,7 +7557,26 @@
  !      go to 10
 !999   stop
 !2000  format(6f12.6)
-      end
+    end function wetbulb 
+    
+double precision function webmod_callback(x1, x2, str)
+    use WEBMOD_POTET
+    double precision x1, x2
+    character (*) str
+    if (str .eq. "leaveson") then
+        webmod_callback = dble(transp_on(1))
+        return 
+    else if (str .eq. "julian") then
+        webmod_callback = 1.1
+        return
+    else if (str .eq. "doy") then
+        webmod_callback = 1.1
+        return
+    endif
+    webmod_callback = 0
+    return 
+end function webmod_callback
+
 
 
       
