@@ -2015,7 +2015,7 @@
              'C')sol_id(j)%tally = i
          end do
       end do
-      tally_row_label(ntally_rows + 1) = "Reactant moles"
+      tally_row_label(ntally_rows + 1) = "Moles"
 !
 ! Alert the user if solute not known to PHREEQC. i.e. not in any solution
 ! or pure phase in .pqi file and stop
