@@ -1995,8 +1995,8 @@
       ENDIF
       
 ! Allocate tally table arrays
-      allocate (tally_table(ntally_rows, ntally_cols))
-      allocate (tally_row_label(ntally_rows))
+      allocate (tally_table(ntally_rows + 1, ntally_cols))
+      allocate (tally_row_label(ntally_rows + 1))
       allocate (tally_col_type(ntally_cols))
       allocate (tally_col_label(ntally_cols))
       ALLOCATE (n_ent(ntally_cols))
@@ -2015,6 +2015,7 @@
              'C')sol_id(j)%tally = i
          end do
       end do
+      tally_row_label(ntally_rows + 1) = "Reactant moles"
 !
 ! Alert the user if solute not known to PHREEQC. i.e. not in any solution
 ! or pure phase in .pqi file and stop
