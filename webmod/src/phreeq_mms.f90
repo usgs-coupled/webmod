@@ -272,6 +272,8 @@
          double precision, allocatable :: delta(:,:) ! delta values for any of nsolutes that are isotopes
          double precision :: Temp(5)   ! Temperature of reservoir inputs and outputs
          double precision :: pH(5)   ! pH of reservoir inputs and outputs
+!         double precision :: Ent_Type(:)   ! pH of reservoir inputs and outputs
+!         double precision :: Ent_M(:)   ! pH of reservoir inputs and outputs
       END TYPE geochem
      
       TYPE(geochem), save, allocatable :: c_chem(:) ! to be allocated by the total number of solutions, nphrsolns
@@ -463,7 +465,7 @@
       character(15) heading
       character(60) line
       integer  nstep, datetime(6),xdebug_start,xdebug_stop
-
+      integer iphrq_mru
 
       END MODULE WEBMOD_PHREEQ_MMS
 !
@@ -1962,7 +1964,9 @@
 !
 ! Allocate the conc as the number of solutes plus the number of isotopes
 !
-           ALLOCATE (conc(nsolute+n_iso*3))
+      ALLOCATE (conc(nsolute+n_iso*3))
+!
+      iphrq_mru = 1  ! point transpiration switch to MRU 1 for intial phreeqc callback function
 !
 ! Provide initial solutions to phreeqc with the 
 ! initialization file, phreeqmms.pqi, that should
@@ -2737,6 +2741,7 @@
 !      ph = 7.0      ! pH is initialized in the PQI solutions and updated with each mix and reaction.
       tsec = dt*3600   ! dt in hours
       fill_factor = 1.0
+      iphrq_mru = 1    ! need at least one index for transpiration switch before phrees_mix is called
 
 !
 ! Initialize nchemdat reservoirs (precip, irrigation).
@@ -2857,6 +2862,7 @@
 ! and unsaturated zone chemistry
 !
          indxm = chmru_soln(is)
+         iphrq_mru = is
 !
 !  Initialize hillslope reservoirs using the solnset_table parameter,
 !  solnset_table(nmru_res,nmru) where reservoir ID:
@@ -3764,6 +3770,7 @@
       do 10 is = 1, nmru
 ! Get the solution indices for tracking MRU and UZfluxes
 !
+         iphrq_mru = is
          mru_in_vol(is)=0D0
          mru_out_vol(is)=0D0
          delta_D = -1000D0
@@ -7562,13 +7569,20 @@
     
 double precision function webmod_callback(x1, x2, str)
     use WEBMOD_POTET
+    use WEBMOD_PHREEQ_MMS
     double precision x1, x2
     character (*) str
-    if (str .eq. "leaveson") then
-        webmod_callback = dble(transp_on(1))
+    if (str .eq. "transp_on") then
+        webmod_callback = dble(transp_on(iphrq_mru))
         return 
-    else if (str .eq. "julian") then
-        webmod_callback = 1.1
+    else if (str .eq. "year") then
+        webmod_callback = dble(datetime(1))
+        return
+    else if (str .eq. "month") then
+        webmod_callback = dble(datetime(2))
+        return
+    else if (str .eq. "day") then
+        webmod_callback = dble(datetime(3))
         return
     else if (str .eq. "doy") then
         webmod_callback = 1.1
