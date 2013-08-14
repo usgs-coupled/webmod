@@ -317,8 +317,8 @@ Pyrite_O2_xtreme
    26  rate = 10^rate * (1 - SR("pyrite"))
 #   26  rate = 10^rate
    27 gwsto = callback(cell_no,dummy,"gwsto")
-# when parm(6)=2 the xtreme rate will double with each 10 cm of gwsto below parm(5)
-   28 if(gwsto < parm(5)) then rate = rate * (parm(5)-gwsto)/10*parm(6) else rate = 0
+# linear enhancement when gwsto below parm(5)
+   28 if(gwsto < parm(5)) then rate = rate * (parm(5)-gwsto) else rate = 0
    30  moles = rate * time
 #   40 if (moles > m) then moles = m
    200 save moles
@@ -336,7 +336,7 @@ Biotite
         -m    1000
 
 Chlorite
-	-parm 0.15               # fit the first parameter as log10 Surface Area
+	-parm 0.2               # fit the first parameter as log10 Surface Area
         -m    1000
 
 Calcite
@@ -347,7 +347,7 @@ Pyrite_O2
     -formula  Pyrite  1
     -m        1000
     -m0       1000
-    -parms    -1.9 0 0.5 -0.11
+    -parms    -2.3 0 0.5 -0.11
     -tol      1e-008	
 
 Nitrification
@@ -358,7 +358,7 @@ Nitrification
 Potassium_Cycling
     -formula KHCO3 1  Mg(HCO3)2 1 # Ca(HCO3)2 1
     -m       0
-    -parms   -0.05 0.005
+    -parms   -0.05 0.05
 
 #Amm_assimilation
 #	-formula AmmHHCO3 -1
@@ -386,7 +386,7 @@ Biotite
         -m    1000
 
 Chlorite
-	-parm 0.15               # fit the first parameter as log10 Surface Area
+	-parm 0.2               # fit the first parameter as log10 Surface Area
         -m    1000
 
 Calcite
@@ -397,14 +397,14 @@ Pyrite_O2
     -formula  Pyrite 1
     -m        1000
     -m0       1000
-    -parms    -2.1 0 0.5 -0.11
+    -parms    -2.3 0 0.5 -0.11
     -tol      1e-008	
 
 Pyrite_O2_xtreme
     -formula  FeS2 1 H2O 0.5 O2 3.75
     -m        1000
     -m0       1000
-    -parms    -1.9 0 0.5 -0.11 155 2
+    -parms    -3.9 0 0.5 -0.11 155
     -tol      1e-008	
 
 Nitrification
