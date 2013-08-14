@@ -257,6 +257,24 @@ Nitrification
     100 SAVE moles
  -end
  
+ Potassium_cycling
+  -start
+    1 REM parm(1) is summer uptake rate constant, units per day
+    2 REM parm(2) is winter release rate constant, units per day
+    4 REM Winter
+    5 transp = callback(cell_no,dummy,"transp_on")
+    10 If transp > 0.1 then goto 100
+    20 k = parm(2)/86400
+    30 rate = k * M
+    40 moles = rate * TIME
+    50 goto 200
+    100 REM Summer
+    120 k = parm(1)/86400
+    130 rate = k * TOT("K")
+    140 moles = rate * TIME
+    200 SAVE moles
+ -end
+ 
  NO3_assimilation
   -start
     1 REM parm(1) is log factor to speed or slow reaction
@@ -267,7 +285,7 @@ Nitrification
 
 Pyrite_O2
   -start
-   1 rem        Handcart Gulch model numbers, round 1
+   1 rem        Handcart Gulch model numbers, round 1, Add Pyrite
    2 rem        parm(1) = log10(A/V, m^2/L water)      parm(2) = exp for (m/m0)
    3 rem        parm(3) = exp for O2            parm(4) = exp for H+
 #   10 if (m <= 0) then goto 200
@@ -280,10 +298,30 @@ Pyrite_O2
    200 save moles
   -end
 
+Pyrite_O2_xtreme
+  -start
+   1 rem        Handcart Gulch model numbers, round 1, Linear increase to add sulfate as water table drops
+   2 rem        parm(1) = log10(A/V, m^2/L water)      parm(2) = exp for (m/m0)
+   3 rem        parm(3) = exp for O2            parm(4) = exp for H+
+#   10 if (m <= 0) then goto 200
+   20 if (si("Pyrite") >= 0) then goto 200
+# log pO2 of -1.8 converted to log molal = -4.476
+   25  rate = -9.14 + parm(1) + parm(3)*-4.476 + parm(4)*lm("H3O+") + parm(2)*log10(m/m0)
+   26  rate = 10^rate * (1 - SR("pyrite"))
+#   26  rate = 10^rate
+   27 gwsto = callback(cell_no,dummy,"gwsto")
+# when parm(6)=2 the xtreme rate will double with each 10 cm of gwsto below parm(5)
+   28 if(gwsto < parm(5)) then rate = rate * (parm(5)-gwsto)/10*parm(6) else rate = 0
+   30  moles = rate * time
+#   40 if (moles > m) then moles = m
+   200 save moles
+  -end
+
 END
-KINETICS 1 Everywhere
+KINETICS 1 O-Horizon and UZ (normal and preferential)
+
 Oligoclase
-	-parm -2.15             # fit the first parameter as log10 Surface Area
+	-parm 0.1             # fit the first parameter as log10 Surface Area
         -m    1000
 
 Biotite
@@ -291,7 +329,7 @@ Biotite
         -m    1000
 
 Chlorite
-	-parm 0.2               # fit the first parameter as log10 Surface Area
+	-parm 0.15               # fit the first parameter as log10 Surface Area
         -m    1000
 
 Calcite
@@ -302,13 +340,18 @@ Pyrite_O2
     -formula  Pyrite  1
     -m        1000
     -m0       1000
-    -parms    -1.9 0 0.5 -0.11
+    -parms    -2.1 0 0.5 -0.11
     -tol      1e-008	
 
 Nitrification
     -formula Amm -1 NH3 +1
     -m       1000
     -parms   -6.5
+
+Potassium_Cycling
+    -formula KHCO3 1  Mg(HCO3)2 1 # Ca(HCO3)2 1 
+    -m       0
+    -parms   -0.05 0.002
 
 #Amm_assimilation
 #	-formula AmmHHCO3 -1
@@ -324,6 +367,51 @@ Nitrification
 #        -cvode
 
 END
+
+
+KINETICS 2 Sat and Preferential Sat 
+Oligoclase
+	-parm 0.1             # fit the first parameter as log10 Surface Area
+        -m    1000
+
+Biotite
+	-parm -0.6              # fit the first parameter as log10 Surface Area
+        -m    1000
+
+Chlorite
+	-parm 0.15               # fit the first parameter as log10 Surface Area
+        -m    1000
+
+Calcite
+        -parm -6.8              # fit the first parameter as log10 Surface Area
+        -m    1000
+        
+Pyrite_O2
+    -formula  Pyrite 1
+    -m        1000
+    -m0       1000
+    -parms    -2.1 0 0.5 -0.11
+    -tol      1e-008	
+
+Pyrite_O2_xtreme
+    -formula  FeS2 1 H2O 0.5 O2 3.75
+    -m        1000
+    -m0       1000
+    -parms    -2.1 0 0.5 -0.11 155 1.5
+    -tol      1e-008	
+
+Nitrification
+    -formula Amm -1 NH3 +1
+    -m       1000
+    -parms   -6.5
+
+
+-step 86400
+
+END
+
+
+
 EQUILIBRIUM_PHASES 2 Equilibrate stream pO2 and pCO2
 	O2(g)       -1.0 100      # ~ atmospheric at 850 m amsl to simulate incomplete degassing
 	CO2(g)      -3.4  10      # ~ PCO2 at 850 m amsl
@@ -354,12 +442,12 @@ Hfo_w .001 1 50
 REACTION_TEMPERATURE 1
 0
 END
-USE SOLUTION 3
-USE EQUILIBRIUM_PHASES 30
+#USE SOLUTION 3
+#USE EQUILIBRIUM_PHASES 30
 #USE EXCHANGE 1
-USE KINETICS 1
-SAVE SOLUTION 3
-END
+#USE KINETICS 1
+#SAVE SOLUTION 3
+#END
 
 
 PRINT
