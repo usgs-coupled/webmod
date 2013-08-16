@@ -1517,8 +1517,8 @@ Default   : 1.000000
 
 Name      : qdffrac
 Module    : topc
-Descr     : Proportion of unsaturated zone drainage that runs off as direct flow.
-Help      : Fraction of unsaturated zone drainage that runs off as direct flow.QDF=QDFFRAC*QUZ
+Descr     : Fraction of infiltration that becomes lateral direct flow.
+Help      : Fraction of infiltration that becomes lateral direct flow.QDF=QDFFRAC*INFILTRATION
 Ndimen    : 1
 Dimensions: nmru - 10
 Size      : 10

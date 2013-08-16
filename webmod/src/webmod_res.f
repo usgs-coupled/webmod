@@ -1070,12 +1070,12 @@ c
       allocate(qdffrac(nmru))
       if(declparam('topc', 'qdffrac', 'nmru', 'real',
      +   '.3', '0', '1',
-     +   'Proportion of unsaturated zone drainage that runs off'//
-     +   ' as direct flow.','Fraction of unsaturated zone drainage'//
-     +   ' that runs off as direct flow.'//
-     +   'QDF=QDFFRAC*QUZ','Proportion')
+     +   'Fraction of infiltration that becomes'//
+     +   ' lateral direct flow.','Fraction of infiltration'//
+     +   ' that becomes lateral direct flow.'//
+     +   'QDF=QDFFRAC*INFILTRATION','Proportion')
      +    .ne.0) return
-
+      
       allocate(nacsc(nmru))
       if(declparam('topc', 'nacsc', 'nmru', 'integer',
      +   '1', '0', '100',
@@ -2667,12 +2667,12 @@ c collect inputs for the preferential flow and the recharge from the
 c unsaturated zone (source index 11)
 c
         vmix_qdf(is,11) = vmix_qdf(is,11) + 
-     $       v_rech_loc * qdffrac(is)
+     $       v_infil_loc * qdffrac(is)
         vmix_sat(is,11) = vmix_sat(is,11) + 
-     $       v_rech_loc * (1-qdffrac(is))
+     $       v_rech_loc
 
 c track matrix recharge separate from uz-bypass or uz2sat volumes
-        v_rech = v_rech + v_rech_loc * (1-qdffrac(is))
+        v_rech = v_rech + v_rech_loc
 
 c add engulfed water as uz output to sat zone
         if(uz2sat(ia,is).gt.0.0) vmix_sat(is,11) =

@@ -3,7 +3,7 @@
 	<Configurations>
 		<Configuration Name="Debug|Win32" CommandArguments="-Ccontrol/andcrk.control" WorkingDirectory="D:\System\Users\rmwebb\Desktop\WEBMOD_1.0\projects\And10MRU"/>
 		<Configuration Name="Release|Win32" CommandArguments="-C.\control\andcrk.control &gt; test.out" WorkingDirectory="D:\System\Users\rmwebb\Desktop\WEBWIN_beta_archive\projects\and10mru"/>
-		<Configuration Name="Debug|x64" CommandArguments="-Ccontrol/andcrk.control" WorkingDirectory="D:\System\Users\rmwebb\Desktop\WEBMOD_1.0\projects\Andrews"/>
+		<Configuration Name="Debug|x64" CommandArguments="-Ccontrol/andcrk.control" WorkingDirectory="D:\System\Users\rmwebb\Desktop\webmod\Distribution\projects\Andrews"/>
 		<Configuration Name="Release|x64" CommandArguments="-C.\control\andcrk.control &gt; test.out" WorkingDirectory="D:\System\Users\rmwebb\Desktop\WEBWIN_beta_archive\projects\And10mru"/>
 		<Configuration Name="Intel_SSA|Win32" CommandArguments="-Ccontrol/andcrk.control" WorkingDirectory="D:\System\Users\rmwebb\Desktop\WEBWIN_beta_archive\projects\And10MRU"/>
 		<Configuration Name="Intel_SSA|x64" CommandArguments="-Ccontrol/andcrk.control" WorkingDirectory="D:\System\Users\rmwebb\Desktop\WEBWIN_beta_archive\projects\And10mru"/></Configurations></VisualStudioUserFile>

@@ -1142,14 +1142,23 @@ c$$$
      +   'in QUZ=SUZ/(SD*TD).',' h/m').ne.0) return
 
       ALLOCATE (qdffrac(Nmru))
+c      if(declparam('topc', 'qdffrac', 'nmru', 'real',
+c     +   '.3', '0', '1',
+c     +   'Proportion of unsaturated zone drainage that runs off'//
+c     +   ' as direct flow.','Fraction of unsaturated zone drainage'//
+c     +   ' that runs off as direct flow.'//
+c     +   'QDF=QDFFRAC*QUZ','Proportion')
+c     +    .ne.0) return
+
       if(declparam('topc', 'qdffrac', 'nmru', 'real',
      +   '.3', '0', '1',
-     +   'Proportion of unsaturated zone drainage that runs off'//
-     +   ' as direct flow.','Fraction of unsaturated zone drainage'//
-     +   ' that runs off as direct flow.'//
-     +   'QDF=QDFFRAC*QUZ','Proportion')
+     +   'Fraction of infiltration that becomes'//
+     +   ' lateral direct flow.','Fraction of infiltration'//
+     +   ' that becomes lateral direct flow.'//
+     +   'QDF=QDFFRAC*INFILTRATION','Proportion')
      +    .ne.0) return
-
+      
+      
       ALLOCATE (sbar0(Nmru))
       if(declparam('topc', 'sbar0', 'nmru', 'real',
      +   '.001', '0', '10',  
@@ -1760,7 +1769,7 @@ c
      $     'PMACRO: Fraction of infiltration that bypasses root zone'/
      $     'PMAC_SAT: Fraction of infiltration that bypasses'/
      $     '  the root zone and the unsaturated zone (Max=PMACRO)'/
-     $     'QDFFRAC: Fraction of recharge diverted to stream'/
+     $     'QDFFRAC: Fraction of infiltration diverted to stream'/
      $     'S_TH_WP: Soil moisture at wilting point(cm3/cm3)'/
      $     'S_TH_0: Initial soil moisture(cm3/cm3)'/
      $     'S_TH_FC: Soil moisture at field capacity(cm3/cm3)'/
@@ -2445,6 +2454,7 @@ c Compute surface deposition and total infiltration for mru and basin variables
 c
       surfdep(is) = infil(is)
       infil(is) = infil(is) - qof(is)
+      qdf(is)=qdffrac(is)*infil(is)
 c
 c Variable infilitration excess areas now. Independent variables
 c afx(is) and afxmax(is) will track area of ponded water
@@ -2526,9 +2536,10 @@ C  CALCULATE SATURATED ZONE DRAINAGE
 c
 c  Added direct flow to model quick flow through macropores per
 c  work by Dave Kinner - RW
+c  Changed to fraction of infiltration - RW - 15Aug2013
 c
-      qdf(is)=qdffrac(is)*quz(is)
-      quz(is)=quz(is)-qdf(is)
+c      qdf(is)=qdffrac(is)*quz(is)
+c      quz(is)=quz(is)-qdf(is)
 
       QB(is)=SZQ(is)*EXP(-SBAR(is)/SZM(is))
 c

@@ -1478,10 +1478,10 @@
       allocate(qdffrac(nmru))
       if(declparam('topc', 'qdffrac', 'nmru', 'real',&
          '.3', '0', '1',&
-         'Proportion of unsaturated zone drainage that runs off'//&
-         ' as direct flow.','Fraction of unsaturated zone drainage'//&
-         ' that runs off as direct flow.'//&
-         'QDF=QDFFRAC*QUZ','Proportion')&
+         'Fraction of infiltration that becomes'//&
+         ' lateral direct flow.','Fraction of infiltration'//&
+         ' that becomes lateral direct flow.'//&
+         'QDF=QDFFRAC*INFILTRATION','Proportion')&
           .ne.0) return
 
       allocate(snow_ion_factor(nmru))
@@ -7568,13 +7568,18 @@
     end function wetbulb 
     
 double precision function webmod_callback(x1, x2, str)
-    use WEBMOD_POTET
+    use WEBMOD_POTET, ONLY : transp_on
     use WEBMOD_PHREEQ_MMS
+    USE WEBMOD_RESMOD, ONLY : basin_gw_sto_cm
+
     double precision x1, x2
     character (*) str
     if (str .eq. "transp_on") then
         webmod_callback = dble(transp_on(iphrq_mru))
         return 
+    else if (str .eq. "gwsto") then
+        webmod_callback = dble(basin_gw_sto_cm)
+        return
     else if (str .eq. "year") then
         webmod_callback = dble(datetime(1))
         return
@@ -7583,9 +7588,6 @@ double precision function webmod_callback(x1, x2, str)
         return
     else if (str .eq. "day") then
         webmod_callback = dble(datetime(3))
-        return
-    else if (str .eq. "doy") then
-        webmod_callback = 1.1
         return
     endif
     webmod_callback = 0
