@@ -1150,7 +1150,7 @@ c$$$     + .ne.0) return
 
       allocate(s_ohoriz_depth(nmru))
       if(declparam('webres', 's_ohoriz_depth', 'nmru', 'real',
-     +   '.005', '0.0001', '0.05',
+     +   '.005', '0.0001', '0.5',
      +   'Fixed depth for O-horizon','Fixed depth for O-horizon. '//
      +   'Carbon produced in the the O-horizon reservoir will be '//
      +   'available for transport by overland flow.',
