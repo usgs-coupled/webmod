@@ -325,40 +325,58 @@ Pyrite_O2_xtreme
   -end
 
 END
+
+
 KINETICS 1 O-Horizon and UZ (normal and preferential)
 
 Oligoclase
+<<<<<<< .mine
+	-parm 0.2                # fit the first parameter as log10 Surface Area
+=======
 	-parm 0.0               # fit the first parameter as log10 Surface Area
+>>>>>>> .r7949
         -m    1000
 
 Biotite
-	-parm -0.6              # fit the first parameter as log10 Surface Area
+	-parm -0.65              # fit the first parameter as log10 Surface Area
         -m    1000
 
 Chlorite
-	-parm 0.2               # fit the first parameter as log10 Surface Area
+	-parm 0.0               # fit the first parameter as log10 Surface Area
         -m    1000
 
 Calcite
-        -parm -6.8              # fit the first parameter as log10 Surface Area
+        -parm -6.9              # fit the first parameter as log10 Surface Area
         -m    1000
 
 Pyrite_O2
     -formula  Pyrite  1
     -m        1000
     -m0       1000
+<<<<<<< .mine
+    -parms    -2.4 0 0.5 -0.11
+=======
     -parms    -2.6 0 0.5 -0.11
+>>>>>>> .r7949
     -tol      1e-008	
 
 Nitrification
     -formula Amm -1 NH3 +1
     -m       1000
+<<<<<<< .mine
+    -parms   -6.5
+=======
     -parms   -6.0
+>>>>>>> .r7949
 
 Potassium_Cycling
     -formula KHCO3 1  Mg(HCO3)2 1 # Ca(HCO3)2 1
     -m       0
+<<<<<<< .mine
+    -parms   -0.03 0.005
+=======
     -parms   -0.05 0.005
+>>>>>>> .r7949
 
 #Amm_assimilation
 #	-formula AmmHHCO3 -1
@@ -378,11 +396,15 @@ END
 
 KINETICS 2 Sat and Preferential Sat
 Oligoclase
+<<<<<<< .mine
+	-parm 0.1             # fit the first parameter as log10 Surface Area
+=======
 	-parm 0.0             # fit the first parameter as log10 Surface Area
+>>>>>>> .r7949
         -m    1000
 
 Biotite
-	-parm -0.9              # fit the first parameter as log10 Surface Area
+	-parm -0.75              # fit the first parameter as log10 Surface Area
         -m    1000
 
 Chlorite
@@ -390,7 +412,7 @@ Chlorite
         -m    1000
 
 Calcite
-        -parm -7.1              # fit the first parameter as log10 Surface Area
+        -parm -7.0              # fit the first parameter as log10 Surface Area
         -m    1000
 
 Pyrite_O2
@@ -404,13 +426,17 @@ Pyrite_O2_xtreme
     -formula  FeS2 1 H2O 0.5 O2 3.75
     -m        1000
     -m0       1000
+<<<<<<< .mine
+    -parms    -5.5 0 0.5 -0.11 145
+=======
     -parms    -3.8 0 0.5 -0.11 155
+>>>>>>> .r7949
     -tol      1e-008	
 
 Nitrification
     -formula Amm -1 NH3 +1
     -m       1000
-    -parms   -5.5
+    -parms   -6.5
 
 
 -step 86400

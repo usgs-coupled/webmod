@@ -1,0 +1,3588 @@
+Program MMS                     
+============
+
+Printout of variables after a run.
+
+Parameter file: .\input\andcrk.params
+Data file     : .\input\andcrk.dat
+
+Andrews Creek
+
+
+Start time        : 00:00:00  10/01/1983
+End time          : 00:00:00  09/30/2010
+Current time      : 00:00:00  00/00/0000
+Current time step :        0
+
+Name: acm
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Contributing area for each subcatchment
+Units: decimal percent
+
+Name: acm_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Proportion of basin with saturated overland flow
+Units: decimal percent
+
+Name: afx
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Area experiencing infiltration excess for each subcatchment
+Units: decimal percent
+
+Name: afx_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Proportion of basin with infiltration excess
+Units: decimal percent
+
+Name: ar_fill
+Module: routec
+Ndimen: 2
+Dimensions: nhydro - 4, nchan - 1
+Size: 4
+Type: float
+Desc: Matrix of time delay ordinates for stream routing
+Units: fraction
+
+Name: basin_actet
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: evapotranspiration from the root zone for the entire basin
+Units: meters
+
+Name: basin_chan_div_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin channel diversions for irrigation
+Units: cm
+
+Name: basin_chan_div_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin diversions for irrigation for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_chan_loss_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin channel losses to deep aquifer
+Units: cm
+
+Name: basin_chan_loss_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin chan_lossersions for irrigation for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_chan_sto_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin channel storage
+Units: cm
+
+Name: basin_dep
+Module: precip
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area-weighted adjusted average precip+irrig for basin
+Units: inches
+
+Name: basin_et_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin evaporatranspiration
+Units: cm
+
+Name: basin_et_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin evapotranspiration for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_exfil_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin exfiltration
+Units: cm
+
+Name: basin_exfil_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin exfiltration for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_gw1_in_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin inputs from leaky canals
+Units: cm
+
+Name: basin_gw1_in_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of inputs from leaky canals for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_gw2_in_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin inputs from upgradient groundwater
+Units: cm
+
+Name: basin_gw2_in_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of inputs from upgradient groundwater for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_gw_sto_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin groundwater storage
+Units: cm
+
+Name: basin_gwflow_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin baseflow
+Units: cm
+
+Name: basin_gwflow_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin baseflow for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_gwloss_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin groundwater loss to deep aquifer
+Units: cm
+
+Name: basin_gwloss_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin groundwater loss to deep aquifer for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_in_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin inputs from precip, irrigation, and regional groundwater
+Units: cm
+
+Name: basin_in_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin inputs from precip, irrigation, and regional groundwater for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_infil
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Average infiltration for the basin
+Units: meters
+
+Name: basin_infil_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin infiltration
+Units: cm
+
+Name: basin_infil_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin infiltration for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_intcp_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin average interception
+Units: cm
+
+Name: basin_intcp_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin interception for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_intcp_evap
+Module: intcp
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted evaporation from interception
+Units: inches
+
+Name: basin_intcp_evap_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin average evaporation from leaves/canopy
+Units: cm
+
+Name: basin_intcp_evap_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of evaporation from interception for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_intcp_sto_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin storage on leaves/canopy
+Units: cm
+
+Name: basin_intcp_stor
+Module: intcp
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted average interception storage
+Units: inches
+
+Name: basin_irr_ext
+Module: irrig
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area weighted adjusted irrigation from external sources
+Units: inches
+
+Name: basin_irr_ext_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin irrigation from external sources (canals and deep wells)
+Units: cm
+
+Name: basin_irr_ext_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin irrigation from external sources for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_irr_hyd
+Module: irrig
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area weighted adjusted irrigation from stream diversions
+Units: inches
+
+Name: basin_irr_hyd_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin irrigation from stream diversions
+Units: cm
+
+Name: basin_irr_hyd_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin irrigation from stream diversions for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_irr_sat
+Module: irrig
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area weighted adjusted irrigation from shallow wells
+Units: inches
+
+Name: basin_irr_sat_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin irrigation from shallow wells
+Units: cm
+
+Name: basin_irr_sat_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin irrigation from shallow wells for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_net_dep
+Module: intcp
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted average net_dep
+Units: inches
+
+Name: basin_net_dep_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin net deposition (direct plus throughfall)
+Units: cm
+
+Name: basin_net_dep_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin direct deposition plus throughfall (precip+irrig) for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_net_rain
+Module: snow
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted average of rainfall minus interception
+Units: inches
+
+Name: basin_net_rain_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin net rain
+Units: cm
+
+Name: basin_net_rain_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin net rain for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_net_snow
+Module: snow
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted average snowfall minus interception
+Units: inches
+
+Name: basin_net_snow_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin net snow
+Units: cm
+
+Name: basin_net_snow_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin net snow for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_ofdunn_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin saturation excess (Dunnian overland flow)
+Units: cm
+
+Name: basin_ofdunn_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin saturation excess for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_ofhort_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin infiltration excess (Hortonian overland flow)
+Units: cm
+
+Name: basin_ofhort_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin infiltration excess for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_out_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin discharge and losses to deep aquifers
+Units: cm
+
+Name: basin_out_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin discharge and losses to deep aquifers for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_potet
+Module: potet
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted average of potential et
+Units: inches
+
+Name: basin_potet_cm
+Module: sumb
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin potential ET 
+Units: cm
+
+Name: basin_potet_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of potential ET for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_ppt
+Module: precip
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area-weighted adjusted average precip for basin
+Units: inches
+
+Name: basin_ppt_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin precipitation
+Units: cm
+
+Name: basin_ppt_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin precipitation for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_pweqv
+Module: snow
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted average of total water in the snowpack
+Units: inches
+
+Name: basin_pweqv_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin packwater equivalence
+Units: cm
+
+Name: basin_qdf_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin lateral macropore flow
+Units: cm
+
+Name: basin_qdf_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin lateral macropore flow for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_qobs_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin observed discharge (at station qobsta)
+Units: cm
+
+Name: basin_qobs_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin observed discharge (at station qobsta) for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_qobs_m3s
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin observed discharge (at station qobsta)
+Units: m^3/s
+
+Name: basin_qobs_m3s_avg
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Average basin observed discharge (at station qobsta) for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: m^3/s
+
+Name: basin_qpref_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin preferential flow in the saturated zone
+Units: cm
+
+Name: basin_qpref_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin preferential flow through the saturated zone for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_qsim_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin simulated discharge
+Units: cm
+
+Name: basin_qsim_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin simulated discharge for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_qsim_m3s
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin simulated discharge
+Units: m^3/s
+
+Name: basin_qsim_m3s_avg
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Average basin predicted runoff for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: m^3/s
+
+Name: basin_qwell_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin pumping from shallow wells
+Units: cm
+
+Name: basin_qwell_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin water pumped from shallow wells for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_qwet_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin root-zone replenishment from groundwater
+Units: cm
+
+Name: basin_qwet_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin root-zone replenishment by groundwater for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_recharge_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin recharge to groundwater not including qvpref
+Units: cm
+
+Name: basin_recharge_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin recharge to groundwater from UZ for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_sat2uz_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin water left in UZ as water table lowers
+Units: cm
+
+Name: basin_sat2uz_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin water left in UZ as water table lowers for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_snowevap
+Module: snow
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted average of sublimation of the snowpack
+Units: inches
+
+Name: basin_snowevap_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin snow evaporation
+Units: cm
+
+Name: basin_snowevap_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin snow evaporation for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_snowmelt
+Module: snow
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted average of snowmelt
+Units: inches
+
+Name: basin_snowmelt_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin snowmelt
+Units: cm
+
+Name: basin_snowmelt_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin snowmelt for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_soil_moist_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin soil moisture in root zone
+Units: cm
+
+Name: basin_sroff_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin overland flow
+Units: cm
+
+Name: basin_sroff_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin overland flow for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_sssto_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin subsurface storage
+Units: cm
+
+Name: basin_stflow_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin hillslope runoff to channels
+Units: cm
+
+Name: basin_stflow_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin hillslope runoff to channels for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_sto_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Storage in basin including streams, groundwater, subsurface storage, soil moisture, snowpack, and interception
+Units: cm
+
+Name: basin_surfdep
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Average surface deposition (rain+snowmelt) for the basin
+Units: meters
+
+Name: basin_surfdep_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin hillslope deposition (direct plus melt)
+Units: cm
+
+Name: basin_surfdep_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin hillslope deposition for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_temp_c
+Module: temp
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted temperature for timestep
+Units: degrees C
+
+Name: basin_temp_f
+Module: temp
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted temperature for timestep
+Units: degrees F
+
+Name: basin_thruf_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin average canopy throughfall
+Units: cm
+
+Name: basin_thruf_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of canopy throughfall for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_tmax_c
+Module: temp
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted daily maximum temperature
+Units: degrees C
+
+Name: basin_tmax_f
+Module: temp
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted daily maximum temperature
+Units: degrees F
+
+Name: basin_tmaxc_max
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Maximum mean basin temp observed for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: deg C
+
+Name: basin_tmin_c
+Module: temp
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted daily minimum temperature
+Units: degrees C
+
+Name: basin_tmin_f
+Module: temp
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted daily minimum temperature
+Units: degrees F
+
+Name: basin_tminc_min
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Minimum mean basin temp observed for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: deg C
+
+Name: basin_transp_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin average transpiration
+Units: cm
+
+Name: basin_transp_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of transpiration from root zone for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_uz2sat
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin average transfer of water from unsaturated zone to the saturated zone resulting from a change in water table.
+Units: meters
+
+Name: basin_uz2sat_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin UZ water engulfed into saturated zone as water table rises
+Units: cm
+
+Name: basin_uz2sat_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin UZ water engulfed into saturated zone as water table rises for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_uz_et_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin evaporation from the soil
+Units: cm
+
+Name: basin_uz_et_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin evaporation from soil for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: basin_vpref_cm
+Module: webr
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin infiltration delivered directly to groundwater
+Units: cm
+
+Name: basin_vpref_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Sum of basin infiltration delivered directly to groundwater for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: c_extT
+Module: obs_chem
+Ndimen: 1
+Dimensions: nchem_ext - 1
+Size: 1
+Type: double
+Desc: Temperature of external source
+Units: deg celsius
+
+Name: c_ext_pH
+Module: obs_chem
+Ndimen: 1
+Dimensions: nchem_ext - 1
+Size: 1
+Type: double
+Desc: pH of external source
+Units: pH units
+
+Name: c_obsT
+Module: obs_chem
+Ndimen: 1
+Dimensions: nchemobs - 5
+Size: 5
+Type: double
+Desc: Temperature of water sample
+Units: deg celsius
+
+Name: c_obs_pH
+Module: obs_chem
+Ndimen: 1
+Dimensions: nchemobs - 5
+Size: 5
+Type: double
+Desc: pH of water sample
+Units: pH units
+
+Name: c_precipT
+Module: obs_chem
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: Temperature of NADP precipitation
+Units: deg celsius
+
+Name: c_precip_pH
+Module: obs_chem
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: pH of NADP precipitation
+Units: pH units
+
+Name: cconc_extM
+Module: obs_chem
+Ndimen: 2
+Dimensions: nchem_ext - 1, nsolute - 11
+Size: 11
+Type: double
+Desc: Solute concentrations describing an external source
+Units: moles/liter
+
+Name: cconc_obsM
+Module: obs_chem
+Ndimen: 2
+Dimensions: nchemobs - 5, nsolute - 11
+Size: 55
+Type: double
+Desc: Solute concentrations for a water sample
+Units: moles/liter
+
+Name: cconc_precipM
+Module: obs_chem
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Solute concentrations in precipitation
+Units: moles/liter
+
+Name: ch_basin_conc_mgL
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Average concentration of solute in basin
+Units: mg/L
+
+Name: ch_basin_in_g
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Total mass of solute into basin
+Units: g
+
+Name: ch_basin_in_gm2
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Area-normalized flux of influents into basin.
+Units: g/m2
+
+Name: ch_basin_in_mgL
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Average solute concentration of precip ,ground water influx and irrigation
+Units: mg/L
+
+Name: ch_basin_in_permil
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Average permil value of isotope in precip ,ground water influx and irrigation
+Units: permil
+
+Name: ch_basin_mass_g
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Total mass of solute in basin
+Units: g
+
+Name: ch_basin_net_g
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Net export of solute from basin.
+Units: g
+
+Name: ch_basin_net_gm2
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Net area-normalized flux of effluent from basin.
+Units: g/m2
+
+Name: ch_basin_out_g
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Total mass of solute exported from basin
+Units: g
+
+Name: ch_basin_out_gm2
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Area-normalized flux of effluent from basin.
+Units: g/m2
+
+Name: ch_basin_out_mgL
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Average solute concentration of stream at outlet
+Units: mg/L
+
+Name: ch_basin_out_pH
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: pH of water leaving the basin
+Units: pH units
+
+Name: ch_basin_out_permil
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Average permil value of isotope of stream at outlet
+Units: permil
+
+Name: ch_basin_out_tempC
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: Temperature of water leaving the basin
+Units: deg C
+
+Name: ch_basin_rxn_g
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Total mass of solute created or consumed by reactions in basin
+Units: g
+
+Name: ch_basin_vol_m3
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: Total volume of water in the basin
+Units: m3
+
+Name: ch_mru_conc_mgL
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 1, nsolute - 11
+Size: 11
+Type: double
+Desc: Average concentration of solute in mru
+Units: mg/L
+
+Name: ch_mru_in_g
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 1, nsolute - 11
+Size: 11
+Type: double
+Desc: Total mass of solute into mru
+Units: g
+
+Name: ch_mru_in_gm2
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 1, nsolute - 11
+Size: 11
+Type: double
+Desc: Area-normalized flux of influents into mru.
+Units: g/m2
+
+Name: ch_mru_in_mgL
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 1, nsolute - 11
+Size: 11
+Type: double
+Desc: Average solute concentration of precip, ground water influx, and irrigation
+Units: mg/L
+
+Name: ch_mru_in_permil
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 1, nsolute - 11
+Size: 11
+Type: double
+Desc: Average permil value of precip, ground water influx, and irrigation
+Units: permil
+
+Name: ch_mru_mass_g
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 1, nsolute - 11
+Size: 11
+Type: double
+Desc: Total mass of solute in mru
+Units: g
+
+Name: ch_mru_net_g
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 1, nsolute - 11
+Size: 11
+Type: double
+Desc: Net export of solute from MRU.
+Units: g
+
+Name: ch_mru_net_gm2
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 1, nsolute - 11
+Size: 11
+Type: double
+Desc: Net area-normalized flux of effluent from mru.
+Units: g/m2
+
+Name: ch_mru_out_g
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 1, nsolute - 11
+Size: 11
+Type: double
+Desc: Total mass of solute exported from mru
+Units: g
+
+Name: ch_mru_out_gm2
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 1, nsolute - 11
+Size: 11
+Type: double
+Desc: Area-normalized flux of effluent from mru.
+Units: g/m2
+
+Name: ch_mru_out_mgL
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 1, nsolute - 11
+Size: 11
+Type: double
+Desc: Average solute concentration of mru discharge
+Units: mg/L
+
+Name: ch_mru_out_pH
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: double
+Desc: pH of water leaving the mru
+Units: pH units
+
+Name: ch_mru_out_permil
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 1, nsolute - 11
+Size: 11
+Type: double
+Desc: Average permil value of mru discharge
+Units: permil
+
+Name: ch_mru_out_tempC
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: double
+Desc: Temperature of water leaving the mru
+Units: deg C
+
+Name: ch_mru_rxn_g
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 1, nsolute - 11
+Size: 11
+Type: double
+Desc: Total mass of solute created or consumed by reactions in mru
+Units: g
+
+Name: ch_mru_vol_m3
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: double
+Desc: Total volume of water in the mru
+Units: m3
+
+Name: ch_var_01_m3
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The volume the reservoir defined by the parameters associated with dimension nchemvar(1)
+Units: cubic meters
+
+Name: ch_var_01_pH
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The pH of the reservoir defined by the parameters associated with dimension nchemvar(1)
+Units: pH units
+
+Name: ch_var_01_sol
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Mass, flux or concentration of a solute for a modeled reservoir as defined by parameters with dimension nchemvar(1)
+Units: c_units
+
+Name: ch_var_01_tempc
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The temperature of the reservoir defined by the parameters associated with dimension nchemvar(1)
+Units: degrees Celsius
+
+Name: ch_var_02_m3
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The volume the reservoir defined by the parameters associated with dimension nchemvar(2)
+Units: cubic meters
+
+Name: ch_var_02_pH
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The pH of the reservoir defined by the parameters associated with dimension nchemvar(2)
+Units: pH units
+
+Name: ch_var_02_sol
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Mass, flux or concentration of a solute for a modeled reservoir as defined by parameters with dimension nchemvar(2)
+Units: c_units
+
+Name: ch_var_02_tempc
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The temperature of the reservoir defined by the parameters associated with dimension nchemvar(2)
+Units: degrees Celsius
+
+Name: ch_var_03_m3
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The volume the reservoir defined by the parameters associated with dimension nchemvar(3)
+Units: cubic meters
+
+Name: ch_var_03_pH
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The pH of the reservoir defined by the parameters associated with dimension nchemvar(3)
+Units: pH units
+
+Name: ch_var_03_sol
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Mass, flux or concentration of a solute for a modeled reservoir as defined by parameters with dimension nchemvar(3)
+Units: c_units
+
+Name: ch_var_03_tempc
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The temperature of the reservoir defined by the parameters associated with dimension nchemvar(3)
+Units: degrees Celsius
+
+Name: ch_var_04_m3
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The volume the reservoir defined by the parameters associated with dimension nchemvar(4)
+Units: cubic meters
+
+Name: ch_var_04_pH
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The pH of the reservoir defined by the parameters associated with dimension nchemvar(4)
+Units: pH units
+
+Name: ch_var_04_sol
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Mass, flux or concentration of a solute for a modeled reservoir as defined by parameters with dimension nchemvar(4)
+Units: c_units
+
+Name: ch_var_04_tempc
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The temperature of the reservoir defined by the parameters associated with dimension nchemvar(4)
+Units: degrees Celsius
+
+Name: ch_var_05_m3
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The volume the reservoir defined by the parameters associated with dimension nchemvar(5)
+Units: cubic meters
+
+Name: ch_var_05_pH
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The pH of the reservoir defined by the parameters associated with dimension nchemvar(5)
+Units: pH units
+
+Name: ch_var_05_sol
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Mass, flux or concentration of a solute for a modeled reservoir as defined by parameters with dimension nchemvar(5)
+Units: c_units
+
+Name: ch_var_05_tempc
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The temperature of the reservoir defined by the parameters associated with dimension nchemvar(5)
+Units: degrees Celsius
+
+Name: ch_var_06_m3
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The volume the reservoir defined by the parameters associated with dimension nchemvar(6)
+Units: cubic meters
+
+Name: ch_var_06_pH
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The pH of the reservoir defined by the parameters associated with dimension nchemvar(6)
+Units: pH units
+
+Name: ch_var_06_sol
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Mass, flux or concentration of a solute for a modeled reservoir as defined by parameters with dimension nchemvar(6)
+Units: c_units
+
+Name: ch_var_06_tempc
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The temperature of the reservoir defined by the parameters associated with dimension nchemvar(6)
+Units: degrees Celsius
+
+Name: ch_var_07_m3
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The volume the reservoir defined by the parameters associated with dimension nchemvar(7)
+Units: cubic meters
+
+Name: ch_var_07_pH
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The pH of the reservoir defined by the parameters associated with dimension nchemvar(7)
+Units: pH units
+
+Name: ch_var_07_sol
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Mass, flux or concentration of a solute for a modeled reservoir as defined by parameters with dimension nchemvar(7)
+Units: c_units
+
+Name: ch_var_07_tempc
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The temperature of the reservoir defined by the parameters associated with dimension nchemvar(7)
+Units: degrees Celsius
+
+Name: ch_var_08_m3
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The volume the reservoir defined by the parameters associated with dimension nchemvar(8)
+Units: cubic meters
+
+Name: ch_var_08_pH
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The pH of the reservoir defined by the parameters associated with dimension nchemvar(8)
+Units: pH units
+
+Name: ch_var_08_sol
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Mass, flux or concentration of a solute for a modeled reservoir as defined by parameters with dimension nchemvar(8)
+Units: c_units
+
+Name: ch_var_08_tempc
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The temperature of the reservoir defined by the parameters associated with dimension nchemvar(8)
+Units: degrees Celsius
+
+Name: ch_var_09_m3
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The volume the reservoir defined by the parameters associated with dimension nchemvar(9)
+Units: cubic meters
+
+Name: ch_var_09_pH
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The pH of the reservoir defined by the parameters associated with dimension nchemvar(9)
+Units: pH units
+
+Name: ch_var_09_sol
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Mass, flux or concentration of a solute for a modeled reservoir as defined by parameters with dimension nchemvar(9)
+Units: c_units
+
+Name: ch_var_09_tempc
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The temperature of the reservoir defined by the parameters associated with dimension nchemvar(9)
+Units: degrees Celsius
+
+Name: ch_var_10_m3
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The volume the reservoir defined by the parameters associated with dimension nchemvar(10)
+Units: cubic meters
+
+Name: ch_var_10_pH
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The pH of the reservoir defined by the parameters associated with dimension nchemvar(10)
+Units: pH units
+
+Name: ch_var_10_sol
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 11
+Size: 11
+Type: double
+Desc: Mass, flux or concentration of a solute for a modeled reservoir as defined by parameters with dimension nchemvar(10)
+Units: c_units
+
+Name: ch_var_10_tempc
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: The temperature of the reservoir defined by the parameters associated with dimension nchemvar(10)
+Units: degrees Celsius
+
+Name: chan_area
+Module: top2c
+Ndimen: 1
+Dimensions: nchan - 1
+Size: 1
+Type: float
+Desc: Sum of MRU areas contributing to the channel reach
+Units: km2
+
+Name: chan_area_frac
+Module: top2c
+Ndimen: 1
+Dimensions: nchan - 1
+Size: 1
+Type: float
+Desc: Decimal fraction of total basin area drained by a given channel segment. Equal to the sum of contibuting mru_area_frac
+Units: none
+
+Name: chan_loss
+Module: routec
+Ndimen: 1
+Dimensions: nhydro - 4
+Size: 4
+Type: float
+Desc: Channel loss to deep aquifer normalized to basin area.
+Units: m
+
+Name: chan_loss_basin
+Module: routec
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Average channel loss to deep aquifer for entire bain
+Units: m
+
+Name: chemdat_flag
+Module: obs_chem
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: long
+Desc: Equals 1 if the chemdat file was found and 0 if not
+Units: none
+
+Name: chngpckmru
+Module: snow
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: change in water in snowpack for this day for each MRU
+Units: inches
+
+Name: clark_segs
+Module: routec
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: long
+Desc: number of time delay bins for this model run.
+Units: none
+
+Name: coverbasin
+Module: snow
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted average of percentage of snowcover
+Units: none
+
+Name: drad
+Module: solrad
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Potential shortwave radiation for each MRU
+Units: langleys
+
+Name: endper
+Module: io
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: long
+Desc: Composite flag indicating the end of a given period: Run(16)+Year(8)+Month(4)+Day(2)+storm(1)
+Units: none
+
+Name: form_data
+Module: obs
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: long
+Desc: Form of precip - 0=not known, 1=snow, 2=rain
+Units: none
+
+Name: gw_ext
+Module: obs
+Ndimen: 1
+Dimensions: ngw_ext - 1
+Size: 1
+Type: float
+Desc: Influx of groundwater from sources external to basin
+Units: cfs/mile
+
+Name: gw_in1
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Ground water influx from 1st gw source external to basin
+Units: m
+
+Name: gw_in1_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area-weighted influx of groundwater into basin from 1st gw source
+Units: meters
+
+Name: gw_in2
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Ground water influx from 2nd gw source external to basin
+Units: m
+
+Name: gw_in2_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area-weighted influx of groundwater into basin from 2nd gw source
+Units: meters
+
+Name: gw_loss
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Loss of water from saturated to deep aquifer for each subcatchment
+Units: meters
+
+Name: gwl_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area-weighted loss of water from saturated zone to the deep aquifer for the basin
+Units: meters
+
+Name: infil
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: infiltration into soil for each subcatchment
+Units: meters
+
+Name: int_snow
+Module: intcp
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: long
+Desc: Whether snow has fallen from the canopy, 0=no 1=yes 
+Units: none
+
+Name: intcp_evap
+Module: intcp
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Evaporation from interception on each MRU
+Units: inches
+
+Name: intcp_form
+Module: intcp
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: long
+Desc: Form (rain or snow) of interception
+Units: none
+
+Name: intcp_on
+Module: intcp
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: long
+Desc: Whether there is interception in the canopy, 0=no 1=yes 
+Units: none
+
+Name: intcp_stor
+Module: intcp
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Current interception storage on an MRU
+Units: inches
+
+Name: irrig_ext
+Module: obs
+Ndimen: 1
+Dimensions: nirrig_ext - 1
+Size: 1
+Type: float
+Desc: Depth of applied irrigation from an external source
+Units: inches
+
+Name: irrig_ext_mru
+Module: irrig
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Irrigation applied to MRU from external source: 
+Units: inches
+
+Name: irrig_frac_ext
+Module: irrig
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Fraction of deposition that was irrigation from an external source; equal to -0.1 on days with no rain or irrig
+Units: decimal percent
+
+Name: irrig_frac_hyd
+Module: irrig
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Fraction of deposition that was irrigation from a stream; equal to -0.1 on days with no rain or irrig
+Units: decimal percent
+
+Name: irrig_frac_sat
+Module: irrig
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Fraction of deposition that was irrigation from a well; equal to -0.1 on days with no rain or irrig
+Units: decimal percent
+
+Name: irrig_hyd_mru
+Module: irrig
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Irrigation applied to MRU from a stream.
+Units: inches
+
+Name: irrig_hyd_next
+Module: routec
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: double
+Desc: Diverted stream water to be applied as irrigation on the next time step
+Units: inches
+
+Name: irrig_hyd_seg
+Module: irrig
+Ndimen: 1
+Dimensions: nhydro - 4
+Size: 4
+Type: double
+Desc: Volume of water diverted from a stream segment to be applied to one or more MRUs.
+Units: m3
+
+Name: irrig_hyd_seg_next
+Module: routec
+Ndimen: 1
+Dimensions: nhydro - 4
+Size: 4
+Type: double
+Desc: Volume of water diverted from a stream segment to be applied to one or more MRUs on the next time step.
+Units: m3
+
+Name: irrig_int_next
+Module: obs
+Ndimen: 1
+Dimensions: nirrig_int - 1
+Size: 1
+Type: float
+Desc: Depth of irrigation from an internal source to apply the next day
+Units: inches
+
+Name: irrig_sat_mru
+Module: irrig
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Irrigation applied to MRU from a well.
+Units: inches
+
+Name: irrig_sat_next
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Ground water to be pumped and applied as irrigation on the next time step
+Units: inches
+
+Name: maxchanloss
+Module: routec
+Ndimen: 1
+Dimensions: nhydro - 4
+Size: 4
+Type: float
+Desc: Maximum rate of channel loss to deep aquifer normalized to basin area.
+Units: m
+
+Name: mru_cossl
+Module: soltab
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Cosine of the slope of the model response unit
+Units: none
+
+Name: mru_dep
+Module: precip
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Adjusted precip+irrig on each MRU
+Units: inches
+
+Name: mru_imperv
+Module: basin
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: MRU impervious area
+Units: km2
+
+Name: mru_perv
+Module: basin
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: MRU pervious area
+Units: km2
+
+Name: mru_potsw
+Module: solrad
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Potential shortwave radiation for each MRU for each day
+Units: langleys
+
+Name: mru_ppt
+Module: precip
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Adjusted precip on each MRU
+Units: inches
+
+Name: mru_rain
+Module: precip
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Computed rain on each MRU
+Units: inches
+
+Name: mru_snow
+Module: precip
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Computed snow on each MRU
+Units: inches
+
+Name: mru_soltab
+Module: soltab
+Ndimen: 2
+Dimensions: ndays - 366, nmru - 1
+Size: 366
+Type: float
+Desc: Potential shortwave radiation for each model response unit for each timestep
+Units: langleys
+
+Name: mru_sunhrs
+Module: solrad
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Hours between sunrise and sunset for each MRU
+Units: units of 12-hours
+
+Name: mru_sunrise
+Module: soltab
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Time of sunrise on the model response unit
+Units: hours
+
+Name: mru_sunrise2
+Module: soltab
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Time of second sunrise on the model response unit if applicable
+Units: hours
+
+Name: mru_sunset
+Module: soltab
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Time of sunset on model response unit
+Units: hours
+
+Name: mru_sunset2
+Module: soltab
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Time of second sunset on the model response unit if applicable
+Units: hours
+
+Name: net_dep
+Module: intcp
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: MRU deposition (ppt and irrigation) with interception removed
+Units: inches
+
+Name: net_rain
+Module: intcp
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: mru_rain minus interception
+Units: inches
+
+Name: net_snow
+Module: intcp
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: mru_snow minus interception
+Units: inches
+
+Name: newsnow
+Module: precip
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: long
+Desc: New snow on MRU, 0=no, 1=yes
+Units: none
+
+Name: obj_func
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Objective function for each time step.\nIndex 1: |Obs-Pred.|\n      2: (Obs-Pred)^2.\n      3: |(ln(obs+1)-ln(Pred+1)|.\n      4: (ln(Obs+1)-ln(Pred+1))^2.\n      5: Obs-Pred.
+Units: none
+
+Name: obj_func_sum
+Module: sumb
+Ndimen: 2
+Dimensions: five - 5, five - 5
+Size: 25
+Type: float
+Desc: Objective function for each time period.\nIndex 1: |Obs-Pred.|      2: (Obs-Pred)^2.      3: |(ln(obs+1)-ln(Pred+1)|      4: (ln(Obs+1)-ln(Pred+1))^2      5: Obs-Pred.Index 1: storm \n      2: day \n      3: month \n      4: year \n      5: run
+Units: none
+
+Name: orad
+Module: solrad
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Observed or computed solar radiation on a horizontal surface
+Units: langleys
+
+Name: p
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Sum of precipitation and snowmelt available for input into the TOPMOD routines.
+Units: meters
+
+Name: pan_evap
+Module: obs
+Ndimen: 1
+Dimensions: nevap - 0
+Size: 0
+Type: float
+Desc: Observed pan evaporation
+Units: inches
+
+Name: pkwater_equiv
+Module: snow
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: snow-water-equivalent of snowpack for this day for each MRU
+Units: inches
+
+Name: potet
+Module: potet
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Potential evapotranspiration on an MRU
+Units: inches
+
+Name: pptmix
+Module: precip
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: long
+Desc: Precip mixture - 0=no, 1=yes
+Units: none
+
+Name: pptmix_nopack
+Module: snow
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: long
+Desc: variable set =1 if rain and snow same day with no pack 
+Units: none
+
+Name: precip
+Module: obs
+Ndimen: 1
+Dimensions: nrain - 2
+Size: 2
+Type: float
+Desc: Observed precip at each rain gage
+Units: inches
+
+Name: precipm
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Observed precipitation in metric units for comparing with predicted flows
+Units: meters
+
+Name: prmx
+Module: precip
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Proportion of rain in a mixed event
+Units: decimal percent; equal to -0.1 on days with no rain
+
+Name: psoilbasin
+Module: snow
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted average of precipitation, irrigation and thrufall on non-snow-covered areas
+Units: inches
+
+Name: psoilmru
+Module: snow
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: precipitation, irrigation, and thrufall on non-snow-covered areas in each mru
+Units: inches
+
+Name: q
+Module: routec
+Ndimen: 2
+Dimensions: nhydro - 4, nchan - 1
+Size: 4
+Type: float
+Desc: discharge discretized by nhydro and nchan
+Units: m
+
+Name: qb
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Discharge from saturated zone for each subcatchment
+Units: meters
+
+Name: qb_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area-weighted discharge from saturated zone for the basin
+Units: meters
+
+Name: qbasincfs
+Module: routec
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Predicted basin runoff, in cfs.
+Units: cfs
+
+Name: qbasinm
+Module: routec
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Predicted basin runoff, in meters.
+Units: meters
+
+Name: qchanin
+Module: top2c
+Ndimen: 1
+Dimensions: nchan - 1
+Size: 1
+Type: float
+Desc: Sum of mru inputs into each channel reach for eachtime step.
+Units: m^3
+
+Name: qchanin_m
+Module: routec
+Ndimen: 1
+Dimensions: nchan - 1
+Size: 1
+Type: float
+Desc: Average depth of discharge received by channel from contributing MRUs
+Units: meters
+
+Name: qdf
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Predicted direct flow for each subcatchment
+Units: meters
+
+Name: qdf_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area-weighted predicted direct flow for the basin
+Units: meters
+
+Name: qexfil
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Exfiltration discharge from oversaturated zones for each subcatchment
+Units: meters
+
+Name: qexfil_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area-weighted exfiltration discharge from saturatedzone for the basin
+Units: meters
+
+Name: qof
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Predicted overland flow
+Units: meters
+
+Name: qof_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area-weighted predicted overland flow for the basin
+Units: meters
+
+Name: qofs
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Predicted saturation excess overland flow
+Units: meters
+
+Name: qofs_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area-weighted predicted saturated overland flow for the basin
+Units: meters
+
+Name: qout
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Sum of overland flow, direct flow, and discharge from the saturated zone for each subcatchment
+Units: meters
+
+Name: qout_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area-weighted sum of overland flow, direct flow, and discharge from the saturated zone for the basin
+Units: meters
+
+Name: qpref
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Predicted deep preferential flow for each subcatchment. A function of s_satpref_zmin, s_satpref_zmax, and s_satpref_k
+Units: meters
+
+Name: qpref_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area-weighted deep preferential flow for the basin
+Units: meters
+
+Name: qpref_max
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Maximum discharge for preferential flow through the saturated zone for each MRU
+Units: m/hr
+
+Name: qtot
+Module: routec
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Sum of predicted runoff for all subcatchments
+Units: meters
+
+Name: quz
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Predicted flow from unsaturated zone to saturated zone
+Units: meters
+
+Name: quz_local
+Module: topc
+Ndimen: 2
+Dimensions: nac - 11, nmru - 1
+Size: 11
+Type: float
+Desc: Local recharge from the unsaturated zone to the shallow preferential flow and the saturated zone
+Units: meters
+
+Name: qvpref
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Predicted vertical preferential flow bypassing the unsaturated zone for each subcatchment.
+Units: meters
+
+Name: qvpref_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area-weighted vertical preferential flow for the basin
+Units: meters
+
+Name: qwet
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Root zone recharge from shallow ground water for each subcatchment
+Units: meters
+
+Name: qwet_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area-weighted root zone recharge from shallow ground water for the basin
+Units: meters
+
+Name: relhum
+Module: obs
+Ndimen: 1
+Dimensions: nhum - 1
+Size: 1
+Type: float
+Desc: Observed relative humidity
+Units: decimal fraction
+
+Name: resp_coef
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: static value for response coefficient that throttles the redistribution of hillslope moisture content (sd adjustment). Derived from response parameters.
+Units: none
+
+Name: rex
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Predicted infiltration excess surface runoff.
+Units: meters
+
+Name: rex_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area-weighted predicted infiltration excess for the basin
+Units: meters
+
+Name: route_on
+Module: obs
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: long
+Desc: Kinematic routing switch - 1=storm period
+Units: none
+
+Name: runoff
+Module: obs
+Ndimen: 1
+Dimensions: nobs - 3
+Size: 3
+Type: float
+Desc: Observed runoff for each gage
+Units: cfs
+
+Name: runoff_m3s
+Module: webr
+Ndimen: 1
+Dimensions: nobs - 3
+Size: 3
+Type: float
+Desc: Observed discharge at one of the nobs stations
+Units: m3s
+
+Name: runoffm
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Observed discharge in metric units for comparing with predicted flows
+Units: meters
+
+Name: s_drain
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Readily drainable soil porosity. Equal to the the effective porosity, s_porosity, minus the moisture content at field capacity, s_theta_fc.
+Units: cm3/cm3
+
+Name: sae
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: evapotranspiration from the root zone for each subcatchment
+Units: meters
+
+Name: sae_local
+Module: topc
+Ndimen: 2
+Dimensions: nac - 11, nmru - 1
+Size: 11
+Type: float
+Desc: evapotranspiration from the root zone for each topographic index bin
+Units: meters
+
+Name: sbar
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: average saturation deficit for the subcatchment
+Units: meters
+
+Name: sbar_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Area-weighted mean saturation deficit for the basin
+Units: meters
+
+Name: sd
+Module: topc
+Ndimen: 2
+Dimensions: nac - 11, nmru - 1
+Size: 11
+Type: float
+Desc: local saturation deficit for each ln(a/tanB) increment
+Units: meters
+
+Name: smav_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted mean root zone moisture storage. Equal to SRMAX - srz_basin + residual water
+Units: meters
+
+Name: smav_sc
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Mean root zone moisture storage for each subcatchment. Equal to SRMAX - srz_sc + residual water
+Units: meters
+
+Name: smcont_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted soil moisture content. Equal to smav/s_root_depth
+Units: cm3/cm3
+
+Name: smcont_sc
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Mean root soil moisture content for each subcatchment. Equal to smav_sc/s_root_depth
+Units: cm3/cm3
+
+Name: snow_evap
+Module: snow
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: sublimation from the snowpack for this day for each MRU
+Units: inches
+
+Name: snow_ion_pulse
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: long
+Desc: Incongruous melting on this time step
+Units: none
+
+Name: snowcov_area
+Module: snow
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: percentage of snowcovered ground in each mru
+Units: none
+
+Name: snowmelt
+Module: snow
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: mean value of snowmelt in each mru
+Units: inches
+
+Name: solrad
+Module: obs
+Ndimen: 1
+Dimensions: nsol - 1
+Size: 1
+Type: float
+Desc: Observed solar radiation
+Units: langleys
+
+Name: sr0
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: initial root-zone soil moisture deficit for each MRU
+Units: m
+
+Name: srmax
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Storage between field capacity and wilting point. Derived as (s_th_fc - s_th_wp)* s_root_depth.
+Units: m
+
+Name: srz
+Module: topc
+Ndimen: 2
+Dimensions: nac - 11, nmru - 1
+Size: 11
+Type: float
+Desc: root zone deficit for each ln(a/tanB) increment
+Units: meters
+
+Name: srz_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted mean root zone deficit
+Units: meters
+
+Name: srz_sc
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Mean root zone deficit for subcatchment
+Units: meters
+
+Name: srzwet
+Module: topc
+Ndimen: 2
+Dimensions: nac - 11, nmru - 1
+Size: 11
+Type: float
+Desc: depth of water transferred from the ground water to the root zone deficit for each ln(a/tanB) increment
+Units: meters
+
+Name: sum_chan_loss
+Module: routec
+Ndimen: 1
+Dimensions: nhydro - 4
+Size: 4
+Type: float
+Desc: Sum of channel loss to deep aquifer normalized to basin area.
+Units: m
+
+Name: sumgw_in1
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Sum of groundwater flux into MRU from 1st gw source
+Units: meters
+
+Name: sumgw_in2
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Sum of groundwater flux into MRU from 2nd gw source
+Units: meters
+
+Name: sumgw_loss
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Sum of water lost from saturated zone to deep aquifer for each subcatchment
+Units: meters
+
+Name: sumqb
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Sum of saturated zone discharge for each subcatchment
+Units: meters
+
+Name: sumqdf
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Sum of predicted direct flow for each subcatchment
+Units: meters
+
+Name: sumqexfil
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Sum of exfiltration discharge from oversaturated zones for each subcatchment
+Units: meters
+
+Name: sumqofs
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Sum of predicted saturated overland flow for each subcatchment
+Units: meters
+
+Name: sumqpref
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Sum of deep preferential flow in the saturated zone for each subcatchment
+Units: meters
+
+Name: sumqrex
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Sum of predicted infiltration excess for each subcatchment
+Units: meters
+
+Name: sumquz
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Sum of predicted flux from unsaturated zoneto the saturated zone for each subcatchment
+Units: meters
+
+Name: sumqvpref
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Sum of vertical preferential flow that bypasses the unsaturated zone.
+Units: meters
+
+Name: sumqwet
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Sum of root zone recharge from shallow ground water for each subcatchment
+Units: meters
+
+Name: sunhrs_soltab
+Module: soltab
+Ndimen: 2
+Dimensions: ndays - 366, nmru - 1
+Size: 366
+Type: float
+Desc: Hours between sunrise and sunset for model response unit
+Units: hours
+
+Name: surfdep
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Surface deposition (rain+snowmelt) for each subcatchment
+Units: meters
+
+Name: suz
+Module: topc
+Ndimen: 2
+Dimensions: nac - 11, nmru - 1
+Size: 11
+Type: float
+Desc: unsaturated zone storage for each ln(a/tanB) increment
+Units: meters
+
+Name: suz_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin area-weighted mean unsaturated zone storage
+Units: meters
+
+Name: suz_sc
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Mean unsaturated zone storage for subcatchment
+Units: meters
+
+Name: swe
+Module: obs
+Ndimen: 1
+Dimensions: nsnow - 0
+Size: 0
+Type: float
+Desc: Observed snow water equivalent of snowpack
+Units: inches
+
+Name: swrad
+Module: solrad
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Computed shortwave radiation for each MRU
+Units: langleys
+
+Name: swrad_W
+Module: sumb
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Basin average incident shortwave radiation on a horizontal surface.
+Units: W/m2
+
+Name: swrad_W_avg
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Average shortwave radiation for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: W/m2
+
+Name: temp_c
+Module: temp
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: MRU adjusted temperature for timestep
+Units: degrees C
+
+Name: temp_f
+Module: temp
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: MRU adjusted temperature for timestep
+Units: degrees F
+
+Name: tindxi
+Module: snow
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: antecedent snowpack temperature index for each MRU
+Units: degrees F
+
+Name: tl
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: Mean topographic index for MRU
+Units: ln(a/tanB)
+
+Name: tmax_c
+Module: temp
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: MRU adjusted daily maximum temperature
+Units: degrees C
+
+Name: tmax_f
+Module: temp
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: MRU adjusted daily maximum temperature
+Units: degrees F
+
+Name: tmin_c
+Module: temp
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: MRU adjusted daily minimum temperature
+Units: degrees C
+
+Name: tmin_f
+Module: temp
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: MRU adjusted daily minimum temperature
+Units: degrees F
+
+Name: transp_on
+Module: potet
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: long
+Desc: Switch indicating whether transpiration is occurring, 0=no 1=yes
+Units: none
+
+Name: tsta_max_c
+Module: obs
+Ndimen: 1
+Dimensions: ntemp - 1
+Size: 1
+Type: float
+Desc: Observed daily maximum temperature
+Units: degrees celsius
+
+Name: tsta_max_f
+Module: obs
+Ndimen: 1
+Dimensions: ntemp - 1
+Size: 1
+Type: float
+Desc: Observed daily maximum temperature
+Units: degrees fahrenheit
+
+Name: tsta_min_c
+Module: obs
+Ndimen: 1
+Dimensions: ntemp - 1
+Size: 1
+Type: float
+Desc: Observed daily minimum temperature
+Units: degrees celsius
+
+Name: tsta_min_f
+Module: obs
+Ndimen: 1
+Dimensions: ntemp - 1
+Size: 1
+Type: float
+Desc: Observed daily minimum temperature
+Units: degrees fahrenheit
+
+Name: tsta_temp_c
+Module: obs
+Ndimen: 1
+Dimensions: ntemp - 1
+Size: 1
+Type: float
+Desc: Average observed daily temperature
+Units: degrees celsius
+
+Name: tsta_temp_f
+Module: obs
+Ndimen: 1
+Dimensions: ntemp - 1
+Size: 1
+Type: float
+Desc: Average observed daily temperature
+Units: degrees fahrenheit
+
+Name: uz2sat
+Module: topc
+Ndimen: 2
+Dimensions: nac - 11, nmru - 1
+Size: 11
+Type: float
+Desc: Transfer of water from unsaturated zone to the saturated zone resulting from a change in water table.
+Units: meters
+
+Name: uz2sat_vol
+Module: webr
+Ndimen: 2
+Dimensions: nac - 11, nmru - 1
+Size: 11
+Type: double
+Desc: Net volume of water transferredfrom the unsaturated zone to the saturated zone.resulting from a changing water table below the root zone
+Units: m3
+
+Name: uz_depth
+Module: topc
+Ndimen: 2
+Dimensions: nac - 11, nmru - 1
+Size: 11
+Type: float
+Desc: Total moisture content in the unsaturated zone at the end of the previous time step (resid water + UZ storage + root zone water
+Units: meters
+
+Name: uz_infil
+Module: topc
+Ndimen: 2
+Dimensions: nac - 11, nmru - 1
+Size: 11
+Type: float
+Desc: Local infiltration of unsaturated zone by precipitation and snowmelt.Does not include pmacro flow that bypasses the uz to become recharge.
+Units: meters
+
+Name: vmix_basin
+Module: webr
+Ndimen: 1
+Dimensions: nresinp - 21
+Size: 21
+Type: double
+Desc: volumes to check overall water balance for basin.
+Units: m3
+
+Name: vmix_can
+Module: webr
+Ndimen: 2
+Dimensions: nmru - 1, nresinp - 21
+Size: 21
+Type: double
+Desc: volumes to mix for making new canopy solution
+Units: m3
+
+Name: vmix_chan_loss
+Module: webr
+Ndimen: 1
+Dimensions: nhydro - 4
+Size: 4
+Type: double
+Desc: volume of stream water lost by seepage through channel bed
+Units: m3
+
+Name: vmix_diversion
+Module: webr
+Ndimen: 1
+Dimensions: nhydro - 4
+Size: 4
+Type: double
+Desc: volume of stream water pumped or diverted forirrigation
+Units: m3
+
+Name: vmix_hill
+Module: webr
+Ndimen: 2
+Dimensions: nmru - 1, nresinp - 21
+Size: 21
+Type: double
+Desc: volumes to mix for making new stream solution
+Units: m3
+
+Name: vmix_hillexp
+Module: webr
+Ndimen: 2
+Dimensions: nhydro - 4, nmru - 1
+Size: 4
+Type: double
+Desc: volumes to mix for making new stream solutions
+Units: m3
+
+Name: vmix_mru
+Module: webr
+Ndimen: 2
+Dimensions: nmru - 1, nresinp - 21
+Size: 21
+Type: double
+Desc: volumes to track inputs and outputs for MRU
+Units: m3
+
+Name: vmix_ohoriz
+Module: webr
+Ndimen: 2
+Dimensions: nmru - 1, nresinp - 21
+Size: 21
+Type: double
+Desc: volumes to mix for making new o-horizon solution
+Units: m3
+
+Name: vmix_qdf
+Module: webr
+Ndimen: 2
+Dimensions: nmru - 1, nresinp - 21
+Size: 21
+Type: double
+Desc: volumes to mix for making new direct flow solution
+Units: m3
+
+Name: vmix_sat
+Module: webr
+Ndimen: 2
+Dimensions: nmru - 1, nresinp - 21
+Size: 21
+Type: double
+Desc: volumes to mix for making new saturated zone solution
+Units: m3
+
+Name: vmix_sat2uz
+Module: webr
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: double
+Desc: volume transferred from saturated zone to the unsaturated zone
+Units: m3
+
+Name: vmix_satpref
+Module: webr
+Ndimen: 2
+Dimensions: nmru - 1, nresinp - 21
+Size: 21
+Type: double
+Desc: volumes to mix for making new deep preferential flow solution
+Units: m3
+
+Name: vmix_snow
+Module: webr
+Ndimen: 2
+Dimensions: nmru - 1, nresinp - 21
+Size: 21
+Type: double
+Desc: volumes to mix for making new snowpack solution
+Units: m3
+
+Name: vmix_stream
+Module: webr
+Ndimen: 1
+Dimensions: nhydro - 4
+Size: 4
+Type: double
+Desc: volume in each stream segment
+Units: m3
+
+Name: vmix_uz
+Module: webr
+Ndimen: 1
+Dimensions: nac_nmru_nresinp - 231
+Size: 231
+Type: double
+Desc: volumes to mix for making new unsaturated zone storage, suz, solution
+Units: m3
+
+Name: vmix_uz2can
+Module: webr
+Ndimen: 2
+Dimensions: nac - 11, nmru - 1
+Size: 11
+Type: double
+Desc: volumes to mix for making water transpired to canopy
+Units: m3
+
+Name: vmix_uz2sat
+Module: webr
+Ndimen: 2
+Dimensions: nac - 11, nmru - 1
+Size: 11
+Type: double
+Desc: volumes to mix for recharge
+Units: m3
+
+Name: vmix_uzgen
+Module: webr
+Ndimen: 2
+Dimensions: nmru - 1, nresinp - 21
+Size: 21
+Type: double
+Desc: volumes to track to simulate composite solution of individual uz bins
+Units: m3
+
+Name: vmix_uzrip
+Module: webr
+Ndimen: 2
+Dimensions: nmru - 1, nresinp - 21
+Size: 21
+Type: double
+Desc: volumes to track to simulate composite solution of individual uz bins in riparian zone
+Units: m3
+
+Name: vmix_uzup
+Module: webr
+Ndimen: 2
+Dimensions: nmru - 1, nresinp - 21
+Size: 21
+Type: double
+Desc: volumes to track to simulate composite solution of individual uz bins in uplands
+Units: m3
+
+Name: vmix_well
+Module: webr
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: double
+Desc: volume of saturated zone water pumped to the surface for irrigation
+Units: m3
+
+Name: wat_bal_cm
+Module: sumb
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: Error in basin water balance
+Units: cm
+
+Name: wat_bal_cm_sum
+Module: sumb
+Ndimen: 1
+Dimensions: five - 5
+Size: 5
+Type: float
+Desc: Cumulative error in basin water balance for time step of (1) unit, (2) day, (3) month, (4) year, or (5) entire run.
+Units: cm
+
+Name: z_wt
+Module: topc
+Ndimen: 1
+Dimensions: nmru - 1
+Size: 1
+Type: float
+Desc: average water table height above land surface for each MRU
+Units: meters
+
+Name: z_wt_basin
+Module: topc
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: float
+Desc: average water table height above land surface for the entire basin
+Units: meters
+
+Name: z_wt_local
+Module: topc
+Ndimen: 2
+Dimensions: nac - 11, nmru - 1
+Size: 11
+Type: float
+Desc: local water table height above land surface for each ln(a/tanB) increment
+Units: meters

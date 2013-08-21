@@ -15,11 +15,11 @@ Value : 5
 Desc  : Dimension of obj_q
 
 Name  : nac
-Value : 5
+Value : 11
 Desc  : Number of ln(a/tanB) increments
 
 Name  : nac_nmru_nresinp
-Value : 1050
+Value : 231
 Desc  : Vector of volumes used to calculate mixing ratios needed for simulating new topographic bin solutions
 
 Name  : nchan
@@ -99,7 +99,7 @@ Value : 12
 Desc  : Number of months in a year
 
 Name  : nmru
-Value : 10
+Value : 1
 Desc  : Number of model response units
 
 Name  : nmru_res
@@ -158,8 +158,8 @@ Module    : snow
 Descr     : Init. state: max. water equiv. since snow began to accum.
 Help      : Init. state: max. water equiv. since snow began to accum.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : inches
 Width     : 8
@@ -242,8 +242,8 @@ Module    : snow
 Descr     : Ave. daily melt at the snow-soil interface during winter
 Help      : Ave. daily melt at the snow-soil interface during winter
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : inches
 Width     : 8
@@ -256,8 +256,8 @@ Module    : snow
 Descr     : Base temperature for melt computations during non-rain per.
 Help      : Base temperature for melt computations during non-rain per.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : degrees F
 Width     : 8
@@ -270,8 +270,8 @@ Module    : snow
 Descr     : Maximum non-rain melt factor which occurs on June 21
 Help      : Maximum non-rain melt factor which occurs on June 21
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : mm/(6hr.degrees C)
 Width     : 8
@@ -284,8 +284,8 @@ Module    : snow
 Descr     : Minimum non-rain melt factor which occurs on Dec 21
 Help      : Minimum non-rain melt factor which occurs on Dec 21
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : mm/(6hr.degrees C)
 Width     : 8
@@ -298,8 +298,8 @@ Module    : snow
 Descr     : Identifier for which areal depletion curve to use
 Help      : Identifier for which areal depletion curve to use
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 8
@@ -313,8 +313,8 @@ Module    : snow
 Descr     : Initial negative heat storage for each MRU
 Help      : Initial negative heat storage for each MRU
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : inches
 Width     : 8
@@ -327,8 +327,8 @@ Module    : snow
 Descr     : Maximum value of negative melt factor which occurs on June 21
 Help      : Maximum value of negative melt factor which occurs on June 21
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : mm/(6hr.degrees C)
 Width     : 8
@@ -341,8 +341,8 @@ Module    : snow
 Descr     : Percent (decimal) liquid water holding capacity
 Help      : Percent (decimal) liquid water holding capacity
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : none
 Width     : 8
@@ -355,8 +355,8 @@ Module    : snow
 Descr     : Snow water equivalence above which snowcovered area reaches a maximum
 Help      : Snow water equivalence above which snowcovered area reaches a maximum
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : inches
 Width     : 8
@@ -369,8 +369,8 @@ Module    : snow
 Descr     : Average daily snowpack sublimation rate for each MRU
 Help      : Average daily snowpack sublimation rate for each MRU, INITIALIZE=0.0 if you do not want to calculate snow evaporation, rate is * 0.5 for each of the 2 daylight 6-hour periods
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : inches/day
 Width     : 8
@@ -383,8 +383,8 @@ Module    : snow
 Descr     : Antecedent temperature index parameter. 0.2 for Thick pack; 0.5 for Thin Pack
 Help      : Antecedent temperature index parameter. 0.2 for Thick pack; 0.5 for Thin Pack
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : none
 Width     : 8
@@ -397,8 +397,8 @@ Module    : snow
 Descr     : Average 6-hour wind function during rain on snow events
 Help      : Average 6-hour wind function during rain on snow events
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : mm/(mb 6hr)
 Width     : 8
@@ -411,8 +411,8 @@ Module    : snow
 Descr     : Initial water equivalent for each MRU
 Help      : Initial water equivalent for each MRU
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : inches
 Width     : 8
@@ -425,8 +425,8 @@ Module    : topc
 Descr     : Fractional area for each ln(a/tanB) increment.
 Help      : Fractional area for each ln(a/tanB) increment.
 Ndimen    : 2
-Dimensions: nac - 5, nmru - 10
-Size      : 50
+Dimensions: nac - 11, nmru - 1
+Size      : 11
 Type      : float
 Units     : km2/km2
 Width     : 8
@@ -677,8 +677,8 @@ Module    : intcp
 Descr     : Cover type designation for MRU
 Help      : Vegetation cover type designation for MRU:  0 = bare soil, 1 = grasses, 2 = shrubs, 3 = trees
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 9
@@ -691,8 +691,8 @@ Module    : intcp
 Descr     : Summer vegetation cover density for major vegetation type
 Help      : Summer vegetation cover density for the major vegetation type on each MRU
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : decimal percent
 Width     : 11
@@ -705,8 +705,8 @@ Module    : intcp
 Descr     : Winter vegetation cover density for major vegetation type
 Help      : Winter vegetation cover density for the major vegetation type on each MRU
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : decimal percent
 Width     : 11
@@ -761,8 +761,8 @@ Module    : topc
 Descr     : Water content change across the wetting front.
 Help      : Water content change across the wetting front
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : vol/vol
 Width     : 8
@@ -831,8 +831,8 @@ Module    : topc
 Descr     : Negative common log of hydraulic conductivity for bedrock or aquitard.
 Help      : Negative common log of hydraulic conductivity for bedrock or aquitard. The rate that water is irreversably lost from the saturated zone to a deep aquifer is controlled by this parameter and the variable z_wt, the average height above bedrock. Any value of 11 or greater results in zero loss.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : -log10(cm/s)
 Width     : 4
@@ -845,8 +845,8 @@ Module    : topc
 Descr     : Length of MRU cross-section receiving ground water influx from 1st gw source outside the basin
 Help      : Length of MRU cross-section receiving ground water influx from 1st gw source outside the basin
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : meters
 Width     : 11
@@ -859,8 +859,8 @@ Module    : topc
 Descr     : Length of MRU cross-section receiving ground water influx from 2nd gw source outside the basin
 Help      : Length of MRU cross-section receiving ground water influx from 2nd gw source outside the basin
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : meters
 Width     : 11
@@ -887,8 +887,8 @@ Module    : topc
 Descr     : Wetting front suction.
 Help      : Wetting front suction.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : m
 Width     : 8
@@ -929,8 +929,8 @@ Module    : phreeqmms
 Descr     : Equilibrium-phase set to use for initializing each reservoir in an MRU
 Help      : Equilibrium-phase species set to use for initializing each reservoir in an MRUThe equilibrium-phase sets are described by the 2-dimensional eq_phset_table parameter in conjuction with the .pqi file.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 15
@@ -957,8 +957,8 @@ Module    : phreeqmms
 Descr     : Exchanger set to use for initializing the solute composition for each reservoir in an MRU
 Help      : Exchanger set to use for initializing the solute composition for each reservoir in an MRU. The exchanger sets are described by the 2-dimensional exchset_table parameter in conjuction with the .pqi file.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 14
@@ -985,8 +985,8 @@ Module    : phreeqmms
 Descr     : Kinetic sets to use for initializing each reservoir in an MRU
 Help      : Kinetic sets to use for initializing each reservoir in an MRUThe kinetic sets are described by the 2-dimensional kinset_table parameter in conjuction with the .pqi file.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 13
@@ -1013,8 +1013,8 @@ Module    : phreeqmms
 Descr     : Reactant set to use for initializing the reactants in each reservoir in an MRU
 Help      : Reactant set to use for initializing the reactants in each reservoir in an MRUThe reactant sets are described by the 2-dimensional rxnset_table parameter in conjuction with the .pqi file.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 13
@@ -1055,8 +1055,8 @@ Module    : phreeqmms
 Descr     : Solution set to use for initializing the solute composition for each reservoir in an MRU
 Help      : Solution set to use for initializing the solute composition for each reservoir in an MRU. The solution sets are described by the 2-dimensional solnset_table parameter in conjuction with the .pqi file.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 14
@@ -1097,8 +1097,8 @@ Module    : phreeqmms
 Descr     : Surface-species set to use for initializing each reservoir in an MRU
 Help      : Surface-species set to use for initializing each reservoir in an MRUThe solution sets are described by the 2-dimensional surfset_table parameter in conjuction with the .pqi file.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 14
@@ -1125,8 +1125,8 @@ Module    : irrig
 Descr     : Irrigation from an internal source to be applied on first day
 Help      : Irrigation from an internal source to be applied on first day
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : inches
 Width     : 15
@@ -1139,8 +1139,8 @@ Module    : topc
 Descr     : Maximum discharge rate for a pump placed in a well or stream to provide irrigation to an MRU
 Help      : Maximum discharge rate for a pump placed in a well or stream to provide irrigation to an MRU
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : gallons per minute
 Width     : 14
@@ -1153,8 +1153,8 @@ Module    : irrig
 Descr     :  0 Irrigation from well in MRU; >0 Drainage segment ID that will provide irrigation water
 Help      :  0 Irrigation from well in MRU; >0 Drainage segment ID that will provide irrigation water
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 14
@@ -1167,8 +1167,8 @@ Module    : irrig
 Descr     : Index of external irrigation schedule for MRU; 0 if none
 Help      : Index of external irrigation schedule for MRU; 0 if none
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 16
@@ -1181,8 +1181,8 @@ Module    : irrig
 Descr     : Index of internal irrigation schedule for MRU; 0 if none
 Help      : Index of internal irrigation schedule for MRU; 0 if none
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 16
@@ -1195,8 +1195,8 @@ Module    : phreeqmms
 Descr     : Isotopic fractionation factor "n"
 Help      : Isotopic fractionation factor "n" of the Craig-Gordon evaporative fractionation model (1965)
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : double
 Units     : none
 Width     : 8
@@ -1223,8 +1223,8 @@ Module    : top2c
 Descr     : Index of channel receiving discharge from MRU
 Help      : Index of channel receiving discharge from MRU
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 12
@@ -1238,8 +1238,8 @@ Module    : basin
 Descr     : MRU area
 Help      : MRU area
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : km2
 Width     : 9
@@ -1252,8 +1252,8 @@ Module    : topc
 Descr     : Subcatchment area/total area
 Help      : Subcatchment area/total area
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : none
 Width     : 14
@@ -1266,8 +1266,8 @@ Module    : soltab
 Descr     : Aspect of model response unit
 Help      : Aspect for each model response unit
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : degrees
 Width     : 11
@@ -1280,8 +1280,8 @@ Module    : basin
 Descr     : Mean elevation for each MRU
 Help      : Mean elevation for each MRU
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : meters
 Width     : 9
@@ -1294,8 +1294,8 @@ Module    : soltab
 Descr     : Latitude of model response unit
 Help      : Latitude of model response unit
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : degrees
 Width     : 8
@@ -1308,8 +1308,8 @@ Module    : basin
 Descr     : MRU impervious area in decimal percent
 Help      : MRU impervious area as a decimal percent of the total MRU area
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : decimal percent
 Width     : 19
@@ -1322,8 +1322,8 @@ Module    : precip
 Descr     : Index of precipitation station for MRU
 Help      : Index of precipitation station used to compute rain and snow on MRU.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 9
@@ -1337,8 +1337,8 @@ Module    : soltab
 Descr     : MRU slope in decimal vertical feet/horizontal feet
 Help      : MRU slope in decimal vertical feet/horizontal feet
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : decimal percent
 Width     : 10
@@ -1351,8 +1351,8 @@ Module    : temp
 Descr     : Index of temperature station for MRU
 Help      : Index of temperature station used to compute MRU temperatures
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 9
@@ -1366,8 +1366,8 @@ Module    : topc
 Descr     : Number of ln(a/tanB) increments in the subcatchment.
 Help      : Number of ln(a/tanB) increments in the subcatchment.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 8
@@ -1394,8 +1394,8 @@ Module    : topc
 Descr     : Fraction of potential infiltration that bypasses the root zone and mixes immediately with the saturated zone
 Help      : Fraction of potential infiltration that bypasses the root zone and mixes immediately with the saturated zone
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : fraction
 Width     : 9
@@ -1408,8 +1408,8 @@ Module    : topc
 Descr     : Fraction of potential infiltration that bypasses the root zone
 Help      : Fraction of potential infiltration that bypasses the root zone
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : fraction
 Width     : 7
@@ -1517,11 +1517,11 @@ Default   : 1.000000
 
 Name      : qdffrac
 Module    : topc
-Descr     : Fraction of infiltration that becomes lateral direct flow.
-Help      : Fraction of infiltration that becomes lateral direct flow.QDF=QDFFRAC*INFILTRATION
+Descr     : Proportion of unsaturated zone drainage that runs off as direct flow.
+Help      : Fraction of unsaturated zone drainage that runs off as direct flow.QDF=QDFFRAC*QUZ
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : Proportion
 Width     : 8
@@ -1591,8 +1591,8 @@ Module    : precip
 Descr     : Rain adjustment factor, by month for each MRU
 Help      : Monthly factor to adjust measured precipitation to each mru to account for differences in elevation, etc
 Ndimen    : 2
-Dimensions: nmru - 10, nmonths - 12
-Size      : 120
+Dimensions: nmru - 1, nmonths - 12
+Size      : 12
 Type      : float
 Units     : none
 Width     : 9
@@ -1605,8 +1605,8 @@ Module    : topc
 Descr     : Minimum saturation readjustment coefficient
 Help      : Minimum saturation readjustment coefficient
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : none
 Width     : 14
@@ -1619,8 +1619,8 @@ Module    : topc
 Descr     : Time step after which the saturation readjustment coefficient becomes 1
 Help      : Time step after which the saturation radjustment coefficient become 1 (i.e. original TOPMODEL)
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : hours
 Width     : 13
@@ -1633,8 +1633,8 @@ Module    : topc
 Descr     : Time step below which the saturation readjustment coefficient is set equal to resp_coef_min
 Help      : Time step below which the saturation readjustment coefficient is set equal to resp_coef_min
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : hours
 Width     : 12
@@ -1647,8 +1647,8 @@ Module    : topc
 Descr     : UZ bins wetter than this are riparian
 Help      : UZ bins wetter than this are riparian; UZ bins drier than this are upslope.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : lambda
 Width     : 6
@@ -1675,8 +1675,8 @@ Module    : webres
 Descr     : Fixed depth for O-horizon
 Help      : Fixed depth for O-horizon. Carbon produced in the the O-horizon reservoir will be available for transport by overland flow.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : m
 Width     : 15
@@ -1689,8 +1689,8 @@ Module    : topc
 Descr     : Soil porosity
 Help      : Effective soil porosity, equal to saturated soil moisture content.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : cm3/cm3
 Width     : 11
@@ -1703,8 +1703,8 @@ Module    : topc
 Descr     : Average depth to bedrock for the MRU.
 Help      : Average depth to bedrock. Must be greater than the rooting depth, s_root_depth.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : m
 Width     : 13
@@ -1717,8 +1717,8 @@ Module    : topc
 Descr     : Rooting depth.
 Help      : Rooting depth from ground surface, Available water capacity (moisture content at field capacity minus that at wilting point) * root_depth equals the maximum soil moisture deficit, srmax: smcont_sc = theta_wp+((srmax - srz)/root_depth).Be sure to set root_depth to a value less then the depth to bedrock, s_rock_depth
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : m
 Width     : 13
@@ -1731,8 +1731,8 @@ Module    : topc
 Descr     : Hydraulic conductivity for preferential flow through the saturated zone
 Help      : Hydraulic conductivity for preferential flow through the saturated zone. The maximum discharge qpref_max, will be proportional to (zmax - zmin)*satpref_k.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : cm/s
 Width     : 12
@@ -1745,8 +1745,8 @@ Module    : topc
 Descr     : Water table elevation at which preferential flow in the saturated zone reaches a maximum.
 Help      : Water table elevation (z=0 at surface) at which preferential flow in the saturated zone reaches a maximum. Set equal to s_satpref_zmin if path does not exist.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : m
 Width     : 15
@@ -1759,8 +1759,8 @@ Module    : topc
 Descr     : Water table elevation at which preferential flow in the saturated zone begins.
 Help      : Water table elevation (z=0 at surface) at which preferential flow in the saturated zone begins. Set equal to s_satpref_zmax if path does not exist.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : m
 Width     : 15
@@ -1773,8 +1773,8 @@ Module    : topc
 Descr     : Initial volumetric soil moisture content in the root zone.
 Help      : Initial volumetric soil moisture content in the root zone.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : cm3/cm3
 Width     : 10
@@ -1787,8 +1787,8 @@ Module    : topc
 Descr     : Volumetric soil moisture content at field capacity
 Help      : Volumetric soil moisture content at field capacity. Field capacity is determined as the moisture content at which the hydraulic conductivity is equal to 1E-8 cm/s.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : cm3/cm3
 Width     : 11
@@ -1801,8 +1801,8 @@ Module    : topc
 Descr     : Volumetric soil moisture content at wilting point
 Help      : Volumetric soil moisture content at wilting point. The wilting point is determined as the mositure content at a tension of 15,300 cm (15 bars). Also known as residual soil moisture content.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : cm3/cm3
 Width     : 11
@@ -1815,8 +1815,8 @@ Module    : topc
 Descr     : Initial soil moisture deficit, SBAR, in MRU.
 Help      : Initial soil moisture deficit, SBAR, in MRU.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : m
 Width     : 6
@@ -1829,8 +1829,8 @@ Module    : topc
 Descr     : Index of time series describing ground water inputs into the MRU from the 1st gw source outside the basin; 0 if none
 Help      : Index of time series describing ground water inputs into the MRU from the 1st gw source outside the basin; 0 if none
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 10
@@ -1844,8 +1844,8 @@ Module    : topc
 Descr     : Index of time series describing ground water inputs into the MRU from the 2nd gw source outside the basin; 0 if none
 Help      : Index of time series describing ground water inputs into the MRU from the 2nd gw source outside the basin; 0 if none
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 10
@@ -1859,8 +1859,8 @@ Module    : precip
 Descr     : Snow adjustment factor, by month for each mru
 Help      : Monthly factor to adjust measured precipitation to each mru to account for differences in elevation, etc
 Ndimen    : 2
-Dimensions: nmru - 10, nmonths - 12
-Size      : 120
+Dimensions: nmru - 1, nmonths - 12
+Size      : 12
 Type      : float
 Units     : none
 Width     : 9
@@ -1873,8 +1873,8 @@ Module    : intcp
 Descr     : Snow interception storage capacity
 Help      : Snow interception storage capacity for the major vegetation type in the MRU
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : inches
 Width     : 11
@@ -1887,8 +1887,8 @@ Module    : topc
 Descr     : Maximum ratio of solute concentrations in melt/pack
 Help      : Maximum ratio of solute concentrations in melt/pack
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : ratio melt/pack
 Width     : 14
@@ -1901,8 +1901,8 @@ Module    : topc
 Descr     : Depletion of 18O in melt versus pack
 Help      : Depletion of 18O in melt versus pack
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : permil per meltday
 Width     : 14
@@ -1915,8 +1915,8 @@ Module    : topc
 Descr     : Depletion of deuterium in melt versus pack
 Help      : Depletion of deuterium in melt versus pack
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : permil per meltday
 Width     : 14
@@ -1943,8 +1943,8 @@ Module    : intcp
 Descr     : Summer rain interception storage capacity
 Help      : Summer rain interception storage capacity for the major vegetation type in the MRU
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : inches
 Width     : 12
@@ -1957,8 +1957,8 @@ Module    : phreeqmms
 Descr     : Chemical source for external irrigation
 Help      : Chemical source for external irrigation
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 14
@@ -1972,8 +1972,8 @@ Module    : phreeqmms
 Descr     : Chemical source for 1st groundwater influx
 Help      : Chemical source for 1st groundwater influx
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 7
@@ -1987,8 +1987,8 @@ Module    : phreeqmms
 Descr     : Chemical source for 2nd groundwater influx
 Help      : Chemical source for 2nd groundwater influx
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : none
 Width     : 7
@@ -2002,8 +2002,8 @@ Module    : topc
 Descr     : The ln(a/tanB) value.
 Help      : The ln(a/tanB) value.
 Ndimen    : 2
-Dimensions: nac - 5, nmru - 10
-Size      : 50
+Dimensions: nac - 11, nmru - 1
+Size      : 11
 Type      : float
 Units     : none
 Width     : 8
@@ -2016,8 +2016,8 @@ Module    : precip
 Descr     : Storm rain adjustment factor, by month for each mru
 Help      : Monthly factor to adjust measured precipitation to each mru to account for differences in elevation, etc.This factor is for the rain gage used for kinematic orstorm routing
 Ndimen    : 2
-Dimensions: nmru - 10, nmonths - 12
-Size      : 120
+Dimensions: nmru - 1, nmonths - 12
+Size      : 12
 Type      : float
 Units     : none
 Width     : 11
@@ -2044,8 +2044,8 @@ Module    : topc
 Descr     : Value of M in recession equation.
 Help      : Value of M in recession equation.QB = SZQ*EXP(SBAR/M)
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : m
 Width     : 8
@@ -2058,8 +2058,8 @@ Module    : topc
 Descr     : Mean subcatchment value of ln(T0)
 Help      : Mean subcatchment value of ln(T0) where local transmissivity T=T0*exp(T0-TL)
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : ln(m^2/h)
 Width     : 8
@@ -2072,8 +2072,8 @@ Module    : topc
 Descr     : Unsaturated zone time delay per unit of storage deficit.
 Help      : Unsaturated zone time delay per unit of storage deficitin QUZ=SUZ/(SD*TD).
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     :  h/m
 Width     : 8
@@ -2100,8 +2100,8 @@ Module    : temp
 Descr     : MRU maximum temperature adjustment
 Help      : Adjustment, in deg C, to MRU maximum temperature based on slope and aspect of MRU
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : degrees C
 Width     : 9
@@ -2156,8 +2156,8 @@ Module    : temp
 Descr     : MRU minimum temperature adjustment
 Help      : Adjustment, in deg C to MRU minimum temperature based on slope and aspect of MRU
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : degrees C
 Width     : 9
@@ -2198,8 +2198,8 @@ Module    : potet
 Descr     : Month to begin testing for transpiration
 Help      : Month to begin summing tmax_c for each MRU; when sum is >= to transp_tmax_c, transpiration begins
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : month
 Width     : 11
@@ -2212,8 +2212,8 @@ Module    : potet
 Descr     : End month of transpiration period
 Help      : Last month for transpiration computations; Transpiration is computed through end of month
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : long
 Units     : month
 Width     : 11
@@ -2226,8 +2226,8 @@ Module    : potet
 Descr     : Tmax index to determine start of transpiration
 Help      : Temperature index to determine the specific date of the start of the transpiration period.  Subroutine sums tmax_c for days above freezing for each MRU starting with the first day of month transp_beg.  When the sum exceeds this index, transpiration begins
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : degrees celsius
 Width     : 12
@@ -2254,8 +2254,8 @@ Module    : intcp
 Descr     : Winter rain interception storage capacity
 Help      : Winter rain interception storage capacity for the major vegetation type in the MRU
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : inches
 Width     : 12
@@ -2296,8 +2296,8 @@ Module    : topc
 Descr     : Median value of subcatchment surface vertical hydraulic conductivity.
 Help      : Median value of subcatchment surface vertical hydraulic conductivity. This is allowed to vary from its theoretical link with T0 to allow for anisotropic soil conductivities/transmissivities.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : m/hr
 Width     : 8
@@ -2310,8 +2310,8 @@ Module    : topc
 Descr     : Coefficient of variation for population ln(XK0).
 Help      : Coefficient of variation for population ln(XK0). A value of 0.0 indicates homogeneous soils for the entire subcatchment, resulting in the original behavior of TMOD9502. A value of 14.13 approximates a lognormal distribution with an order of magnitude change in XK0 for each standard deviation unit in lognormal space.
 Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
+Dimensions: nmru - 1
+Size      : 1
 Type      : float
 Units     : unitless(standard deviation/mean)
 Width     : 8
