@@ -300,7 +300,7 @@ qdffrac 8
 nmru
 1
 2
-0.4
+0.2
 ####
 c_mru 6
 1
@@ -573,7 +573,7 @@ s_rock_depth 13
 nmru
 1
 2
-200.0
+190.0
 ####
 srain_intcp 12
 1
@@ -1379,7 +1379,7 @@ td 8
 nmru
 1
 2
-4000.0
+400.0
 ####
 ppt_chem 9
 1
@@ -1650,7 +1650,7 @@ MFMAX 8
 nmru
 1
 2
-0.5
+0.3
 ####
 mru_area 9
 1
