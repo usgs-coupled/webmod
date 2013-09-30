@@ -44,6 +44,7 @@ void setup_cont (void) {
         decl_control_string ("srunoff_module", "srunoff_smidx");
         decl_control_string ("solrad_module", "ddsolrad");
 		decl_control_string ("soilzone_module", "soilzone");
+		decl_control_string ("capillary_module", "soilzone");
 		decl_control_string ("strmflow_module", "strmflow");
         decl_control_string ("transp_module", "transp_tindex");
         decl_control_string ("gsflow_output_file", "gsflow.out");
@@ -123,6 +124,14 @@ void setup_cont (void) {
 		lval[0] = 0;
 		decl_control_int_array ("dyn_radtrncf_flag", 1, lval);
 
+        lval = (long *)umalloc (sizeof (long));
+		lval[0] = 0;
+		decl_control_int_array ("dyn_sro_to_dprst_flag", 1, lval);
+
+		lval = (long *)umalloc (sizeof (long));
+		lval[0] = 0;
+		decl_control_int_array ("dyn_sro_to_imperv_flag", 1, lval);
+
 		lval = (long *)umalloc (sizeof (long));
 		lval[0] = 0;
 		decl_control_int_array ("dyn_dprst_flag", 1, lval);
@@ -182,6 +191,11 @@ void setup_cont (void) {
 		lval = (long *)umalloc (sizeof (long));
 		lval[0] = 0;
 		decl_control_int_array ("snow_cbh_flag", 1, lval);
+
+		lval = (long *)umalloc (sizeof (long));
+		lval[0] = 0;
+		decl_control_int_array ("gwflow_cbh_flag", 1, lval);
+
 /*
 **	file names
 */
@@ -205,6 +219,7 @@ void setup_cont (void) {
         decl_control_string ("snow_evap_day", "snow_evap.day");
         decl_control_string ("snowcov_area_day", "snowcov_area.day");
         decl_control_string ("snowmelt_day", "snowmelt.day");
+        decl_control_string ("gwres_flow_day", "gwres_flow.day");
         decl_control_string ("dprst_area_dynamic", "dyndprst");
         decl_control_string ("dprst_depth_dynamic", "dyndprst");
 		decl_control_string ("snow_intcp_dynamic", "dynsnowintcp");
@@ -220,6 +235,8 @@ void setup_cont (void) {
 		decl_control_string ("soilrechr_dynamic", "dynsoilrechr");
 		decl_control_string ("soilmoist_dynamic", "dynsoilmoist");
 		decl_control_string ("radtrncf_dynamic", "dynradtrncf");
+		decl_control_string ("sro_to_dprst_dynamic", "dynsrotodprst");
+		decl_control_string ("sro_to_imperv_dynamic", "dynsrotoimperv");
 		decl_control_string ("csv_output_file", "prms_summary.csv");
 /*
 **	run start and end times
