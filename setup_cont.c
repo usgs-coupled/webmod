@@ -93,6 +93,10 @@ void setup_cont (void) {
 		decl_control_int_array ("parameter_check_flag", 1, lval);
 
         lval = (long *)umalloc (sizeof (long));
+		lval[0] = 1;
+		decl_control_int_array ("cbh_check_flag", 1, lval);
+
+		lval = (long *)umalloc (sizeof (long));
 		lval[0] = 0;
 		decl_control_int_array ("dyn_imperv_flag", 1, lval);
 
@@ -221,6 +225,8 @@ void setup_cont (void) {
         decl_control_string ("swrad_day", "swrad.day");
         decl_control_string ("potet_day", "potet.day");
         decl_control_string ("transp_day", "transp.day");
+        decl_control_string ("windspeed_day", "windspeed.day");
+        decl_control_string ("humidity_day", "humidity.day");
 		decl_control_string ("pkwater_equiv_day", "pkwater_equiv.day");
         decl_control_string ("pk_depth_day", "pk_depth.day");
         decl_control_string ("snow_evap_day", "snow_evap.day");
