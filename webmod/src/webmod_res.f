@@ -1008,14 +1008,14 @@ c topmodg_chem
 c
       allocate(s_porosity(nmru))
       if(declparam('topc','s_porosity', 'nmru',
-     +   'real', '0.4', '0.1', '0.8',
+     +   'real', '0.4', '0.001', '0.8',
      +   'Soil porosity', 'Effective soil porosity, equal '//
      +   'to saturated soil moisture content.',
      +   'cm3/cm3') .ne.0) return
 
       allocate(s_theta_fc(nmru))
       if(declparam('topc','s_theta_fc', 'nmru',
-     +   'real', '0.23', '0.01', '0.7',
+     +   'real', '0.23', '0.001', '0.7',
      +   'Volumetric soil moisture content at field capacity',
      +   'Volumetric soil moisture content at field capacity. '//
      +   'Field capacity is determined as the moisture content '//
@@ -1024,7 +1024,7 @@ c
 
       allocate(s_theta_wp(nmru))
       if(declparam('topc','s_theta_wp', 'nmru',
-     +   'real', '0.13', '0.01', '0.56',
+     +   'real', '0.13', '0.001', '0.56',
      +   'Volumetric soil moisture content at wilting point',
      +   'Volumetric soil moisture content at wilting point. '//
      +   'The wilting point is determined as the mositure content '//
@@ -1035,7 +1035,7 @@ c
 
       allocate(s_root_depth(nmru))
       if(declparam('topc', 's_root_depth', 'nmru', 'real',
-     +   '1.8', '0.1', '50',
+     +   '1.8', '0.1', '100',
      +   'Rooting depth.','Rooting depth from ground surface, '//
      +   'Available water capacity (moisture content at field '//
      +   'capacity minus that at wilting point) * root_depth '//
@@ -1047,7 +1047,7 @@ c
 
       allocate(s_rock_depth(nmru))
       if(declparam('topc', 's_rock_depth', 'nmru', 'real',
-     +     '6.0', '0.1', '100',
+     +     '6.0', '0.1', '300.0',
      +     'Average depth to bedrock for the MRU.','Average depth to '//
      $     'bedrock. Must be greater than the rooting depth, '//
      $     's_rock_depth.',
@@ -1141,7 +1141,7 @@ c$$$      if(decl*pri('webr_srmax', 'srmax', nmru, 'real', srmax)
 c$$$     + .ne.0) return
 
       if(declparam('webres', 'c_can_depth', 'one', 'real',
-     +   '.0001', '0.00001', '0.001',
+     +   '.001', '0.00001', '0.01',
      +     'Fixed depth for residual water on the canopy',
      $     'Fixed depth for residual water on the canopy. '//
      $     'Residual water will be tranferred to and from the '//
@@ -1432,8 +1432,8 @@ c
          vmix_basin(1) = vmix_basin(1) + vmix_snow(is,1) 
 
 c
-c Initialize O-horizon volume to the fixed parameter value of s_ohoriz_depth
-c The default depth is 0.5 mm. We might make s_ohoriz_depth a basin parameter
+c Initialize O-horizon volume, s_ohoriz_depth(nmru). The default depth
+c is 0.5 mm. We might make s_ohoriz_depth a basin parameter or even static
 c if it proves insensitive. This may be modified once we add explicit
 c impervious areas. The o-horizon will also hold the residual water and
 c solutes dropped from the canopy on the day of leaves off (transp_on=0)
@@ -1979,8 +1979,8 @@ c
 
 c debug
 c$$$            if (is.eq.3) then
-c$$$               write(*,295)(quz_local(ij,is),uz2sat(ij,is),
-c$$$     $              srzwet(ij,is),ij=1,30)
+               write(26,295)(quz_local(ij,is),uz2sat(ij,is),
+     $              srzwet(ij,is),ij=1,11)
 c$$$            end if
 c$$$            if(datetime(3).eq.9.and.is.eq.3) return
 c end debug
@@ -2799,15 +2799,15 @@ c
          vmix_basin(3) = vmix_basin(3) + v_gw_loss + v_qwell
 
 c debug
-c$$$           if(is.eq.1)then
-c$$$              write(*,295)vsat_tmp,vmix_sat(is,2),vmix_sat(is,3),
-c$$$     $          z_wt_local(10,is),
-c$$$     $          (uz2sat_net(ij,is),ij=1,30),
-c$$$     $          (srzwet(ia,is),ia=1,30),
-c$$$     $          (sd(ik,is),ik=1,30)
-c$$$           end if
-c$$$           if(datetime(1).eq.1993.and.
-c$$$     $          datetime(3).eq.13.and.is.eq.1) return
+c           if(is.eq.1)then
+c              write(*,295)vsat_tmp,vmix_sat(is,2),vmix_sat(is,3),
+c     $          z_wt_local(10,is),
+c     $          (uz2sat_net(ij,is),ij=1,11),
+c     $          (srzwet(ia,is),ia=1,11),
+c     $          (sd(ik,is),ik=1,11)
+c           end if
+c           if(datetime(1).eq.1993.and.
+c     $          datetime(3).eq.13.and.is.eq.1) return
 c /debug
 c
 c New saturated zone volume
@@ -3071,7 +3071,7 @@ c$$$     $     vmix_basin0
       webrrun = 0
 
       return
-! 295  format(79(e10.4,1X))
+ 295  format(79(e10.4,1X))
       end
 
 c

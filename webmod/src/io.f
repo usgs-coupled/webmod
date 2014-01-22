@@ -12,6 +12,12 @@ c     9/17/03 - Add file unit for outputting solute chemistry
 c       from the webmod_res and phreeq_mms modules
 c
 c    27 apr  2010 - Port to Fortran 90 with module and dynamic memory
+c
+c
+c    17 jan 2014 - Added files for volumes and solutes. LUNs for 
+c     topout_file_unit, chemout_file_unit, and all out output files
+c     now assigned using NEWUNIT.
+c
 c***********************************************************************
       MODULE WEBMOD_IO
       IMPLICIT NONE
@@ -19,6 +25,8 @@ c***********************************************************************
 !   Dimensions and Local Variables
       integer, SAVE:: topout_file_unit, chemout_file_unit
       integer, save:: endper, yrdays, modays(12),nowtime(6)
+      integer, save :: nvf, nsf
+      integer, save, allocatable :: volfiles(:), solfiles(:,:,:)
       logical, save:: step1
       double precision, save:: endjday
       data modays/31,28,31,30,31,30,31,31,30,31,30,31/
@@ -110,7 +118,7 @@ c
 #endif
       USE WEBMOD_IO
 
-      integer ret
+      integer ret, nsolute, nmru, nhydro, print_type
       character*135 output_path
       logical filflg
 
@@ -120,12 +128,25 @@ c End-period variables
 
       step1 = .true.
 
-      if(getparam('io', 'topout_file_unit', 1, 'integer',
-     +   topout_file_unit).ne.0) return
 
-      if(getparam('io', 'chemout_file_unit', 1, 'integer',
-     +   chemout_file_unit).ne.0) return
+! Get Dimensions
+      nmru = getdim('nmru')
+      IF (nmru.EQ.-1) RETURN
+      nsolute = getdim('nsolute')
+      IF (nsolute.EQ.-1) RETURN
+      nhydro = getdim('nhydro')
+      IF (nhydro.EQ.-1) RETURN
 
+! Get file unit numbers (can be eliminated?) and print_type
+!     ! if(get*param('io', 'topout_file_unit', 1, 'integer',
+!     !+   topout_file_unit).ne.0) return
+!     !
+!     ! if(get*param('io', 'chemout_file_unit', 1, 'integer',
+!     !+   chemout_file_unit).ne.0) return
+
+      if(getparam('sumb', 'print_type', 1, 'integer', print_type)
+     +   .ne.0) return
+     
 c
 c Open topmodel output file
 c
@@ -136,12 +157,12 @@ c
 c      output_path='.\output\loch3.topout'
       inquire(file=output_path,exist=filflg)
       if (filflg) then
-        open(unit=topout_file_unit,file=output_path,status='old')
-        close(unit=topout_file_unit,status='delete')
+        open(newunit=topout_file_unit,file=output_path,status='old')
+        close(topout_file_unit,status='delete')
       endif
 
 c-----open the file.
-      open (unit=topout_file_unit,file=output_path,
+      open (newunit=topout_file_unit,file=output_path,
      +    access='sequential', form='formatted', status='new')
 
 c
@@ -150,7 +171,7 @@ c
       ret = getoutname (output_path, '.chemout')
 c Kludge for running on 2nd CPU
 c      output_path='.\output\loch3.chemout'
-
+c End Kludge
       inquire(file=output_path,exist=filflg)
       if (filflg) then
         open(unit=chemout_file_unit,file=output_path,status='old')
@@ -167,7 +188,6 @@ c
 !
 ! select_mixes file
 !
-c Kludge for multiple CPU
       inquire(file='./output/select_mixes',exist=filflg)
       if (filflg) then
         open(unit=25,file='./output/select_mixes',status='old')
@@ -179,7 +199,6 @@ c Kludge for multiple CPU
 !
 ! Debug file
 !
-! ---------- open another for watching select mixes
       inquire(file='./output/Debug',exist=filflg)
       if (filflg) then
         open(unit=26,file='./output/Debug',status='old')
@@ -188,9 +207,19 @@ c Kludge for multiple CPU
 !----open the file.
       open (unit=26,file='./output/Debug',access='sequential',
      * form='formatted', status='new')
-
-c End Kludge
-
+c Basin volume file
+c
+!
+      nvolfiles = 0
+      inquire(file='./output/BasinVolumes',exist=filflg)
+      if (filflg) then
+        open(unit=27,file='./output/BasinVolumes',status='old')
+        close(unit=27,status='delete')
+      endif
+!----open the file.
+      open (unit=27,file='./output/BasinVolumes',access='sequential',
+     * form='formatted', status='new')
+      
       ioinit = 0
 
       return
@@ -316,6 +345,11 @@ c     ioclean
       close (unit = 25)  ! Output for selected mixes
       
       close (unit = 26)  ! Debug file
+      
+      do i = 1, nvolfiles
+        close (unit = 26+i)  ! Reservoir volumes file
+      end do
+      close (unit = 27)  ! Canopy volumes file
 
       ioclean = 0
       return

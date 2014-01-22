@@ -162,6 +162,28 @@ c       (bedrock) and head above bedrock depth (rock_depth) for the MRU.
 c
 c   17apr09 - Add Fortran90 Module: WEBMOD_TOPMODULE
 c
+c    3dec13 - Added power function decay for n=2 (parabolic decrease of T) and
+c             n=1 (linear decrease of T) as described in Ambroise, Beven, and 
+c             Freer (1996) and Wang, Endreny, and Hassett (2005). Follows model
+c             of reservoir drainage (Maillet, 1905). ST values will be the 
+c             topographic index TI=a/tanB that will be converted to ln(TI), TI,
+c             or sqrt(TI) if T_decay equals (0) exponential K and T - original 
+c             TOPMODEL, incised streams in humid, low-relief terrain; 
+c             (1) constant K -> linear T - mountain headwaters; or 
+c             (2) linear K, parabolic T - intermediate terrain like Ambroise's 
+c             Ringelbach catchment. K for (1) and (2) is zero below depth SZM,
+c             in meters of saturation deficit. T0 is unconstrained for T_decay = 0
+c             and constrained my for T_decay = 1 or 2. The parameter T0 that was ln(To)
+c             in the original TMOD9502.F is now simply 'To' the transmissivity at
+c             saturation.
+c
+c   17dec13 - Changed TL(is), the mean ln(a/tanB), from a calculated variable to a 
+c             parameter as the distributions of TWI (a/tanB; T_decay=1)
+c             and sqrt(TWI) (T_decay=2) are not normally distributed as ln(TWI) is,
+c             so the computed TL is far from the actual mean. The user must put in the
+c             ST values and TL values consistant with T_decay. Both should be available
+c             as simple statistics of the surface in GIS.
+c             
 c
 c***********************************************************************
 
@@ -195,14 +217,14 @@ c     distribution of vertical conductivity (XK0)
       integer, save :: nsc, nmru, nac, nobs
       integer, save :: nxkbin, ngw_ext, nirrig_int
 !   Declared Parameters
-      integer, save :: INFEX, iout, qobsta, topout_file_unit
+      integer, save :: INFEX, T_decay, iout, qobsta, topout_file_unit
       integer, save :: irrsched,irrsrc,gwsched
       integer, save, allocatable :: nacsc(:), cov_type(:)
       real, save :: basin_area, irrig_dep_max, pump_coeff
-      real, save, allocatable :: SZM(:), TD(:), T0(:)
+      real, save, allocatable :: SZM(:), TD(:), To(:)
       real, save, allocatable :: XK0(:),HF(:),DTH(:)
-      real, save, allocatable :: AC(:,:), TL(:), ST(:,:), SR0(:)
-      real, save, allocatable :: sc_area(:), AREA(:) ! local copies of mru_area and mru_area_frac
+      real, save, allocatable :: AC(:,:), TL(:), ST(:,:)
+      real, save, allocatable :: SR0(:), sc_area(:), AREA(:) ! local copies of mru_area and mru_area_frac
       real, save, allocatable :: resp_hr_full(:), resp_hr_min(:)
       real, save, allocatable :: resp_coef_min(:), resp_coef(:)
       real, save, allocatable :: xk_cv(:),xk(:,:)
@@ -523,11 +545,11 @@ c
      + 'm',
      $ srmax).ne.0) return
 
-      ALLOCATE (tl(Nmru))
-      if(declvar('topc', 'tl', 'nmru', nmru, 'real', 
-     + 'Mean topographic index for MRU',
-     + 'ln(a/tanB)',
-     $ tl).ne.0) return
+!      ALLOCATE (tl(Nmru))
+!      if(dec*lvar('topc', 'tl', 'nmru', nmru, 'real', 
+!     + 'Mean topographic index for MRU',
+!     + 'ln(a/tanB)',
+!     $ tl).ne.0) return
 
       ALLOCATE (sr0(Nmru))
       if(declvar('topc', 'sr0', 'nmru', nmru, 'real', 
@@ -992,7 +1014,7 @@ c solute fluxes (to be computed by the phreeq_mms module).
 c
       ALLOCATE (s_theta_fc(Nmru))
       if(declparam('topc','s_theta_fc', 'nmru',
-     +   'real', '0.23', '0.01', '0.7',
+     +   'real', '0.23', '0.001', '0.7',
      +   'Volumetric soil moisture content at field capacity',
      +   'Volumetric soil moisture content at field capacity. '//
      +   'Field capacity is determined as the moisture content '//
@@ -1008,7 +1030,7 @@ c
 
       ALLOCATE (s_theta_wp(Nmru))
       if(declparam('topc','s_theta_wp', 'nmru',
-     +   'real', '0.13', '0.01', '0.56',
+     +   'real', '0.13', '0.001', '0.56',
      +   'Volumetric soil moisture content at wilting point',
      +   'Volumetric soil moisture content at wilting point. '//
      +   'The wilting point is determined as the mositure content '//
@@ -1018,7 +1040,7 @@ c
 
       ALLOCATE (s_porosity(Nmru))
       if(declparam('topc','s_porosity', 'nmru',
-     +   'real', '0.4', '0.1', '0.8',
+     +   'real', '0.4', '0.001', '0.8',
      +   'Soil porosity', 'Effective soil porosity, equal '//
      +   'to saturated soil moisture content.',
      +   'cm3/cm3') .ne.0) return
@@ -1049,7 +1071,7 @@ c$$$
 
       ALLOCATE (s_rock_depth(Nmru))
       if(declparam('topc', 's_rock_depth', 'nmru', 'real',
-     +     '6.0', '0.1', '100',
+     +     '6.0', '0.1', '300.0',
      +     'Average depth to bedrock for the MRU.','Average depth to '//
      $     'bedrock. Must be greater than the rooting depth, '//
      $     's_root_depth.',
@@ -1057,7 +1079,7 @@ c$$$
 
       ALLOCATE (s_root_depth(Nmru))
       if(declparam('topc', 's_root_depth', 'nmru', 'real',
-     +   '1.8', '0.1', '50',
+     +   '1.8', '0.1', '100',
      +   'Rooting depth.','Rooting depth from ground surface, '//
      +   'Available water capacity (moisture content at field '//
      +   'capacity minus that at wilting point) * root_depth '//
@@ -1094,17 +1116,26 @@ c$$$
      +   'qpref_max, will be proportional to (zmax - zmin)*satpref_k.',
      +   'cm/s') .ne.0) return
 
-      ALLOCATE (t0(Nmru))
-      if(declparam('topc', 't0', 'nmru', 'real',
-     +   '-2', '-6', '4',
-     +   'Mean subcatchment value of ln(T0)',
-     +   'Mean subcatchment value of ln(T0) '//
-     +   'where local transmissivity T=T0*exp(T0-TL)',
-     +   'ln(m^2/h)').ne.0) return
+c      ALLOCATE (t0(Nmru))
+c      if(decl*param('topc', 't0', 'nmru', 'real',
+c     +   '-2', '-6', '4',
+c     +   'Mean subcatchment value of ln(T0)',
+c     +   'Mean subcatchment value of ln(T0) '//
+c     +   'where local transmissivity T=T0*exp(T0-TL)',
+c     +   'ln(m^2/h)').ne.0) return
+c     
+
+      ALLOCATE (To(Nmru))
+      if(declparam('topc', 'To', 'nmru', 'real',
+     +   '0.1', '0.002', '100',
+     +   'Transmissivity at saturation',
+     +   'Transmissivity at saturation. Decreases '//
+     +   'per T_decay: 0-exponential; 1-linear; 2-parabolic.',
+     +   'm^2/h').ne.0) return
 
       ALLOCATE (szm(Nmru))
       if(declparam('topc', 'szm', 'nmru', 'real',
-     +   '.03', '0', '10',
+     +   '.03', '0.01', '0.1',
      +   'Value of M in recession equation.',
      +   'Value of M in recession equation.'//
      +   'QB = SZQ*EXP(SBAR/M)','m'
@@ -1112,7 +1143,7 @@ c$$$
 
       ALLOCATE (xk0(Nmru))
       if(declparam('topc', 'xk0', 'nmru', 'real',
-     +   '.2', '.01', '5',
+     +   '.2', '.001', '5',
      +   'Median value of subcatchment surface vertical '//
      +   'hydraulic conductivity.',
      +   'Median value of subcatchment surface vertical '//
@@ -1172,6 +1203,12 @@ c     +    .ne.0) return
      +   'Switch for infiltration excess computation (1=y, 0=n).',
      +   'none').ne.0) return
 
+      if(declparam('topc', 'T_decay', 'one', 'integer',
+     +   '0', '0', '2',  
+     +   'Transmissivity decay: (0) exponential; (1) linear; (2) '//
+     +   'parabolic.','Transmissivity decay: (0) exponential; (1)'//
+     +   ' linear; (2) parabolic. ','none').ne.0) return
+
       ALLOCATE (hf(Nmru))
       if(declparam('topc', 'hf', 'nmru', 'real',
      +   '.01', '0', '1',
@@ -1199,6 +1236,14 @@ c     +    .ne.0) return
      +   'Fractional area for each ln(a/tanB) increment.',
      +   'Fractional area for each ln(a/tanB) increment.',
      +   'km2/km2').ne.0) return      
+
+
+      ALLOCATE (tl(Nmru))
+      if(declparam('topc', 'tl', 'nmru', 'real', 
+     +   '10.0', '1.0', '10000000',
+     + 'Mean ln(TWI),TWI, or sqrt(TWI) for MRU',
+     + 'Mean ln(TWI),TWI, or sqrt(TWI) for MRU',
+     + 'depends on T_Decay. TWI in m2/hr').ne.0) return
 
       ALLOCATE (st(nac,Nmru))
       if(declparam('topc', 'st', 'nac,nmru', 'real',
@@ -1383,7 +1428,10 @@ c     * form='formatted', status='new')
       if(getparam('topc', 'iout', 1 , 'integer', iout)
      +   .ne.0) return
 
-      if(getparam('topc', 't0', nmru, 'real', T0)
+c      if(get*param('topc', 't0', nmru, 'real', T0)
+c    +   .ne.0) return
+c
+      if(getparam('topc', 'To', nmru, 'real', To)
      +   .ne.0) return
 
       if(getparam('topc', 'szm', nmru, 'real', SZM)
@@ -1468,9 +1516,15 @@ c$$$
       if(getparam('topc', 'irrig_int_max', nmru, 'real',
      $     irrig_int_max).ne.0) return
 
-      if(getparam('topc', 'infex', 1, 'real', INFEX)
+      if(getparam('topc', 'infex', 1, 'integer', INFEX)
      +   .ne.0) return
 
+      if(getparam('topc', 'T_decay', 1, 'integer', T_decay)
+     +   .ne.0) return
+
+      if(getparam('basin', 'tl', nmru, 'real', TL)
+     +   .ne.0) return
+     
       if(getparam('topc', 'pmacro', nmru, 'real', pmacro)
      +   .ne.0) return
 
@@ -1597,15 +1651,27 @@ c
          print*,' '
       end if
 *
-*  CALCULATE AREAL INTEGRAL OF LN(A/TANB)
-*  NB.  a/tanB values should be ordered from high to low with ST(1)
+*  CALCULATION of AREAL INTEGRAL OF LN(A/TANB) obsolete as the mean value
+*  of LN(A/TANB), A/TANB, or SQRT(A/TANB) is read in as a parameter with units dependent
+*  on T_Decay: 0-exponential K and T; 1- constant K, linear T; and
+c  2 - parabolic K and T.
+*  ST values of a/tanB should be ordered from high to low with ST(1)
 *  as an upper limit such that AC(1) should be zero, with AC(2) representing
 *  the area between ST(1) and ST(2)
-      TL(is)=0.
-      SUMAC=AC(1,is)
+*
+*  
+*
+!      TL(is)=0.
+      if(T_decay.lt.0.or.T_decay.gt.2) then
+        print*,'Error: T_decay parameter is set to ',T_decay,
+     $        ' which is outside the range of 0 to 2. Correct ',
+     $        ' and rerun.'
+        return
+      endif
+      SUMAC=AC(1,is)  ! should always be zero
       DO 11 J=2,nacsc(is)
         SUMAC=SUMAC+AC(J,is)
-        TL(is)=TL(is)+AC(J,is)*(ST(J,is)+ST(J-1,is))/2
+!       TL(is)=TL(is)+AC(J,is)*(ST(J,is)+ST(J-1,is))/2
    11 CONTINUE
 
 c$$$      write(topout_file_unit,8010) TL(is), SUMAC
@@ -1627,29 +1693,13 @@ c      READ(9,*)SZM,T0,TD,CHV,RV,SRMAX,Q0,SR0,INFEX,XK0,HF,DTH
 *  Convert parameters to m/time step DT
 *  with exception of XK0 which must stay in m/h
 *                    Q0 is already in m/time step
-*                    T0 is input as Ln(To)
+*                    T0 was input as Ln(To), Dec2013 revision makes
+c                       the parameter To, transmissivity at saturation
 c
 c
 c  Changed Q0 to from 'm/timestep' to m^3/s so conversion will
 c  be needed. Also changed Q0 from dimension nmru to one - RW
 c
-c  Added a linear ramp function to scale the rate that the
-c  saturation deficit will respond to the new SBAR at the
-c  beginning of each time step. The saturation deficit
-c  for each ln(a/tanB) bin was calculated as
-c
-c  SD(IA,is)=SBAR(is)+SZM(is)*(TL(is)-ST(IA,is))
-c
-c  will now be 
-c
-c  SD(IA,is)=SBAR(is)+(SZM(is)*(TL(is)-ST(IA,is)))*resp_coef
-c
-c  where resp_coef will ramp up from resp_coef_min to 1 in the
-c  interval resp_hr_min < DT < resp_hr_max. As long as the time
-c  step remains constant, so will resp_coef.
-c
-c  This allows for more realistic collection and delivery of
-c  apparent exfiltrated water (i.e. SD<0) over various time-scales.
 c
 c  15 sep 2003 remove loop here since we are already inside the
 c              DO 50 1, nsc loop
@@ -1675,12 +1725,22 @@ c      do 12 j=1,nsc
       end if
 c 12   continue
 c
-      T0DT = T0(is) + ALOG(DT)
+c      T0DT = T0(is) + ALOG(DT)
+c tak 
+      T0DT = ALOG(To(is)) + ALOG(DT)
 
-*  Calculate SZQ parameter - maximum baseflow discharge for each
-*  subcatchment for each time step.
-      SZQ(is) = EXP(T0DT-TL(is))
-**
+*  Calculate SZQ parameter - baseflow discharge when SBAR=0 for the
+*  subcatchment for 0-exponential, 1-linear, or 2-parabolic transmissivity decay
+
+c      SZQ(is) = EXP(T0DT-TL(is))
+
+      if(T_decay.eq.0) then
+        SZQ(is) = EXP(T0DT-TL(is))
+      elseif(T_decay.eq.1) then
+        SZQ(is) = To(is)*DT/TL(is)
+      else  ! only 0, 1, and 2 allowed per check when calculating TL
+        SZQ(is) = To(is)*DT/(TL(is)**2)
+      endif
 c      WRITE(80,604)TCH(NCH),(AR(IR,is),IR=1,NR)
 c  604 FORMAT(1X,'SUBCATCHMENT ROUTING DATA'/
 c     1  1X,'Maximum Routing Delay  ',E12.5/
@@ -1764,8 +1824,9 @@ c
      $     'MRU: Subcatchment ID'/
      $     'TL: Mean Topographic Index'/
      $     'SZM: Shape factor for exponential transmissivity'/
-     $     'T0: Naperian log of maximum transmissivity'/
-     $     'SZQ: Maximum baseflow discharge in m/hr'/
+     $     'T0: Transmissivity at saturation'/
+     $     'SZQ: Baseflow discharge when average soil moisture '/
+     $     '  deficit=0, in m/DT'/
      $     'PMACRO: Fraction of infiltration that bypasses root zone'/
      $     'PMAC_SAT: Fraction of infiltration that bypasses'/
      $     '  the root zone and the unsaturated zone (Max=PMACRO)'/
@@ -1798,12 +1859,12 @@ c
      $     '  Derived as (s_rock_dep - (sbar0/s_porosity)'/
      $     'BAL: Inital water balance, in meters ='/
      $     '  (S_ROCK_DEP * S_POROSITY) -(SR0+SBAR0)'//
-     $     'MRU  TL    SZM        T0         SZQ        PMACRO     ',
+     $ 'MRU  TL        SZM        T0         SZQ        PMACRO     ',
      $     'PMAC_SAT   QDFFRAC    S_TH_WP    S_TH_0     S_TH_FC    ',
      $     'S_POROSITY S_ROOT_DEP S_ROCK_DEP GW_LOSS_K  S_SATP_ZMN ',
      $     'S_SATP_ZMX S_SATP_K   QPREF_MAX  SRMAX      SR0        ',
      $     'SBAR0      Z_0        INIT STORE'/
-     $     '==== ===== ========== ========== ========== ========== ',
+     $ '==== ========= ========== ========== ========== ========== ',
      $     '========== ========== ========== ========== ========== ',
      $     '========== ========== ========== ========== ========== ',
      $     '========== ========== ========== ========== ========== ',
@@ -1816,12 +1877,13 @@ c
 
 c Initialize unsaturated zone water content
       do 26 is=1,nsc
-         sr0(is) = (s_theta_fc(is) - s_theta_0(is)) * s_root_depth(is)
          if(s_theta_0(is).gt.s_theta_fc(is)) then
             print*,'Error: Initial soil moisture, s_theta_0, ',
      $        'exceeds field capacity, s_theta_fc, for MRU ',is,
      $        '. Correct parameters and rerun.'
+            return
          endif
+         sr0(is) = (s_theta_fc(is) - s_theta_0(is)) * s_root_depth(is)
          
 c Readily drainable porosity is the difference getween saturated
 c soil moisture content and field capacity
@@ -1841,24 +1903,36 @@ c
      $        irrig_int_src(is).eq.0)
      $        sbar0(is) = sbar0(is) -
      $        (irrig_int_init(is)*inch2m)
-
+c
+c SBAR0 cannot be less that zero
+c
+         if(sbar0(is).lt.0.0) sbar0(is) = 0.0
+c         
          DO 25 IA=1,nacsc(is)
             SUZ(IA,is)=0.       ! No recharge water in UZ
             SRZ(IA,is)=SR0(is)
 C  CALCULATE LOCAL STORAGE DEFICIT
 c
 c
-            SD(IA,is)=SBAR0(is)+(SZM(is)*(TL(is)-ST(IA,is)))
+c            SD(IA,is)=SBAR0(is)+(SZM(is)*(TL(is)-ST(IA,is)))
 !     $           *resp_coef(is)
-
-
+c T_decay is limited to 0,1,or 2 earlier. SD for both 1 and 2 is the same
+c         if ST and TL are for (0) ln(a/tanB), (1) a/tanB, and (2) sqrt(a/tanB)
+c
+            if(T_decay.eq.0) then
+              SD(IA,is)=SBAR0(is)+(SZM(is)*(TL(is)-ST(IA,is)))
+            else
+              SD(IA,is)=SZM(is)-ST(IA,is)*(SZM(is)-SBAR0(is))/TL(is)
+            endif
+c initial sd cannot be less that zero
+            if(SD(IA,is).lt.0.0)  SD(IA,is) = 0.0
 c
 c Add uz_depth to indicate the initial water content in the
 c unsaturated zone. uz_depth is determined by the saturation deficit,
 c the root zone deficit, and the unsaturated zone storage
 c
             z_wt_local(IA,is) = - (sd(ia,is)/s_drain(is))
-
+c
             if(z_wt_local(ia,is).ge.-s_root_depth(is)) then 
                     ! just account for the root zone deficit plus suz
                uz_depth(ia,is) = srmax(is) - srz(ia,is) + 
@@ -1899,14 +1973,14 @@ c      SBAR(is)=-SZM(is)*ALOG(Q0DT/SZQ(is))
 
 
       If(IOUT.ge.1) write(topout_file_unit,603)is, TL(is),szm(is),
-     $     T0(is), szq(is), pmacro(is), pmac_sat(is),qdffrac(is), 
+     $     To(is), szq(is), pmacro(is), pmac_sat(is),qdffrac(is), 
      $     s_theta_wp(is),s_theta_0(is),
      $     s_theta_fc(is), s_porosity(is), s_root_depth(is),
      $     s_rock_depth(is), gw_loss_k(is),s_satpref_zmin(is),
      $     s_satpref_zmax(is),
      $     s_satpref_k(is), qpref_max(is), srmax(is), SR0(is), 
      $     SBAR(is), z_wt(is), BAL(is)
-  603 format(I4,1X,F5.2,22(1X,E10.3))
+  603 format(I4,1X,E9.2,22(1X,E10.3))
 
 c$$$      write(topout_file_unit,8040)
 c$$$     +                   is, BAL(is),SBAR(is),SR0(is)
@@ -2263,7 +2337,12 @@ C
 C  CALCULATE LOCAL STORAGE DEFICIT and associated fluxes
 c
 !      SD(IA,is)=SBAR(is)+(SZM(is)*(TL(is)-ST(IA,is)))*resp_coef(is)
-         SD(IA,is)=SBAR(is)+SZM(is)*(TL(is)-ST(IA,is))
+c         SD(IA,is)=SBAR(is)+SZM(is)*(TL(is)-ST(IA,is))
+         if(T_decay.eq.0) then
+           SD(IA,is)=SBAR(is)+(SZM(is)*(TL(is)-ST(IA,is)))
+         else
+           SD(IA,is)=SZM(is)-ST(IA,is)*(SZM(is)-SBAR(is))/TL(is)
+         endif
 c
 cccccccMove to end so that depth reflect ending water table after ET
 c$$$c Add uz_depth to indicate the initial water content in the
@@ -2291,7 +2370,7 @@ c
            srz(ia,is) = 0
            !qexfil(is) = qexfil(is) - ((sd(ia,is)+srzwet(ia,is)) * acf)
            qexfil(is) = 0
-           sd(ia,is) = 0  ! this reverts to original topmodel
+!           sd(ia,is) = 0  ! this reverts to original topmodel. Set to zero below for all cases
         else
            srzwet(ia,is) = abs(sd(ia,is))
            srz(ia,is) = srz(ia,is) - srzwet(ia,is)
@@ -2301,7 +2380,7 @@ c        SRZ(IA,is) = SRZ(IA,is) + (sd(ia,is)*(1-resp_coef(is)))
 c         if (srz(ia,is).lt.0) then
 c            srz(ia,is)=0
 c         endif
-        SD(IA,is)=0.
+        SD(IA,is)=0.  ! for all cases where SD < 0
       ENDIF
 C
 C  ROOT ZONE CALCULATIONS
@@ -2541,7 +2620,20 @@ c
 c      qdf(is)=qdffrac(is)*quz(is)
 c      quz(is)=quz(is)-qdf(is)
 
-      QB(is)=SZQ(is)*EXP(-SBAR(is)/SZM(is))
+c      QB(is)=SZQ(is)*EXP(-SBAR(is)/SZM(is))
+
+      if(T_decay.eq.0) then
+        QB(is)=SZQ(is)*EXP(-SBAR(is)/SZM(is))
+      elseif(T_decay.eq.1) then
+        QB(is)=SZQ(is)*(1-SBAR(is)/SZM(is))
+      elseif(T_decay.eq.2) then
+        QB(is)=SZQ(is)*(1-SBAR(is)/SZM(is))**2
+      endif
+c
+c  Limit QB to minimum flow to avoid negative QB when wells lower water
+c  table below SZM the maximum deficit when using the power low decrease in Transmissivity
+c
+      if(qb(is).lt..00001) qb(is)=.00001
 c
 c  Compute drainage from preferential flow in the unsaturated zone using
 c  the water table height from the previous time step.
@@ -2605,9 +2697,14 @@ c      z_wt_local(ia,is) = 0.0
         else
           ACF=0.5*(AC(IA,is)+AC(IA+1,is))
         endif
+        if(T_decay.eq.0) then
+           sd_temp=SBAR(is)+(SZM(is)*(TL(is)-ST(IA,is)))
+         else
+           sd_temp=SZM(is)-ST(IA,is)*(SZM(is)-SBAR(is))/TL(is)
+         endif
 
-         sd_temp = 
-     $        SBAR(is)+(SZM(is)*(TL(is)-ST(IA,is)))
+!         sd_temp = 
+!     $        SBAR(is)+(SZM(is)*(TL(is)-ST(IA,is)))
 !     $        SBAR(is)+(SZM(is)*(TL(is)-ST(IA,is)))*resp_coef(is)
 c$$$         if(is.eq.1) print*,ia,sd_temp
          if(sd_temp.lt.0) sd_temp = 0.0

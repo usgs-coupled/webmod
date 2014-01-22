@@ -330,19 +330,19 @@ END
 KINETICS 1 O-Horizon and UZ (normal and preferential)
 
 Oligoclase
-	-parm 0.2                # fit the first parameter as log10 Surface Area
+	-parm 0.8                # fit the first parameter as log10 Surface Area
         -m    1000
 
 Biotite
-	-parm -0.65              # fit the first parameter as log10 Surface Area
+	-parm -0.45              # fit the first parameter as log10 Surface Area
         -m    1000
 
 Chlorite
-	-parm 0.0               # fit the first parameter as log10 Surface Area
+	-parm 1.0               # fit the first parameter as log10 Surface Area
         -m    1000
 
 Calcite
-        -parm -6.9              # fit the first parameter as log10 Surface Area
+        -parm -6.4              # fit the first parameter as log10 Surface Area
         -m    1000
 
 Pyrite_O2
@@ -357,10 +357,10 @@ Nitrification
     -m       1000
     -parms   -6.5
 
-#Potassium_Cycling
-#    -formula KHCO3 1  Mg(HCO3)2 1 # Ca(HCO3)2 1
-#    -m       0
-#    -parms   -0.03 0.005
+Potassium_Cycling
+     -formula KHCO3 1  Mg(HCO3)2 1 # Ca(HCO3)2 1
+     -m       0
+     -parms   -0.03 0.005   # absorption (summer) / release (winter)
 
 #Amm_assimilation
 #	-formula AmmHHCO3 -1
@@ -406,7 +406,7 @@ Pyrite_O2_xtreme
     -formula  FeS2 1 H2O 0.5 O2 3.75
     -m        1000
     -m0       1000
-    -parms    -5.5 0 0.5 -0.11 145
+    -parms    -4.8 0 0.5 -0.11 150  # Increase pyrite_O2 rate linearly when gw_sto is below parm(5) cm.
     -tol      1e-008	
 
 Nitrification

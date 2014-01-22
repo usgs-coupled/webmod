@@ -163,7 +163,7 @@ c     +   'none').ne.0) return
 
       ALLOCATE (hamon_coef(Nmonths))
       if(declparam('potet', 'hamon_coef', 'nmonths', 'real',
-     +   '.0055', '.004', '.008',
+     +   '.0055', '.004', '.015',
      +   'Monthly air temp coefficient - Hamon',
      +   'Monthly air temperature coefficient used in Hamon '//
      +   'potential evapotranspiration computations, see '//

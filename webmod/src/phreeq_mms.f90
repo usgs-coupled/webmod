@@ -5579,7 +5579,7 @@
                c_chem(indx)%vol(ET)=vmix_sat(is,6) ! Should be zero
                c_chem(indx)%vol(fin)=vmix_sat(is,4)
 
-! TOPMODEL always has some baseflow but include check to be complete
+! Exponential TOPMODEL always has some baseflow. Power law functions may have no baseflow.
 !
          if(vmix_sat(is,3).gt.0.0.or.vmix_sat(is,2).gt.0.0) then
 !
@@ -6882,7 +6882,7 @@
 ! Add up the number of tally table columns the first time through,
 ! ignoring solution concentrations that are always in column one.
 ! nally_cols is static for each run. Assign a multiplier of 1 for mass
-! produced by reactions (n_ent(2)) and negatives for all other 
+! added by reactants (n_ent(2)) and negatives for all other 
 ! entities (exchange, surface, gas, etx)
 !
       if(step1) then

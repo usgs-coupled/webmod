@@ -5,23 +5,23 @@ Version: 1.7
 nchan
 1
 ####
-nresinp
-21
-####
 ndays
 366
+####
+nresinp
+21
 ####
 ngw_ext
 1
 ####
-nrain
-2
+one
+1
 ####
 ntemp
 1
 ####
-one
-1
+nrain
+2
 ####
 nac
 11
@@ -32,14 +32,14 @@ nchem_sets
 nirrig_int
 1
 ####
-nexlag
-2
-####
 nac_nmru_nresinp
 231
 ####
+nexlag
+2
+####
 nchemobs
-5
+1
 ####
 ndeplval
 22
@@ -83,6 +83,9 @@ UZPref
 Sat
 SatPref
 ####
+nsnow
+0
+####
 nsolute
 11
 Ca
@@ -107,9 +110,6 @@ Si
 @Silica
 [18O]
 @ Oxygen Isotope
-####
-nsnow
-0
 ####
 nirrig_ext
 1
@@ -139,13 +139,6 @@ nchem_ext
 1
 ** Parameters **
 ####
-radj_wppt 14
-1
-one
-1
-2
-0.5
-####
 adjmix_rain 12
 1
 nmonths
@@ -163,6 +156,13 @@ nmonths
 1.0
 1.0
 1.0
+####
+radj_wppt 14
+1
+one
+1
+2
+0.5
 ####
 transp_beg 11
 1
@@ -443,12 +443,19 @@ nchem_sets
 -1
 -1
 ####
-mru2chan 12
+tmax_allsnow_c 14
 1
-nmru
+one
+1
+2
+2.0
+####
+xdebug_start 4
+1
+one
 1
 1
-1
+0
 ####
 solnset_table 14
 2
@@ -547,26 +554,12 @@ nchem_sets
 1
 1
 ####
-xdebug_start 4
-1
-one
-1
-1
-0
-####
-tmax_allsnow_c 14
-1
-one
-1
-2
-2.0
-####
-pmacro 7
+mru2chan 12
 1
 nmru
 1
-2
-0.0
+1
+1
 ####
 s_rock_depth 13
 1
@@ -575,12 +568,12 @@ nmru
 2
 190.0
 ####
-srain_intcp 12
+pmacro 7
 1
 nmru
 1
 2
-0.1
+0.0
 ####
 init_exch_mru 14
 1
@@ -588,6 +581,13 @@ nmru
 1
 1
 1
+####
+srain_intcp 12
+1
+nmru
+1
+2
+0.1
 ####
 sched_gw1 10
 1
@@ -610,24 +610,6 @@ nmru
 2
 0.01
 ####
-epan_coef 10
-1
-nmonths
-12
-2
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-####
 ccov_intcp 11
 1
 nmonths
@@ -645,6 +627,24 @@ nmonths
 1.83
 1.83
 1.83
+####
+epan_coef 10
+1
+nmonths
+12
+2
+1.0
+1.0
+1.0
+1.0
+1.0
+1.0
+1.0
+1.0
+1.0
+1.0
+1.0
+1.0
 ####
 strain_adj 11
 2
@@ -703,19 +703,19 @@ one
 1
 1
 ####
-mru_aspect 11
-1
-nmru
-1
-2
-60.0
-####
 gwbnd_len1 11
 1
 nmru
 1
 2
 0.0
+####
+mru_aspect 11
+1
+nmru
+1
+2
+60.0
 ####
 ccov_slope 11
 1
@@ -1433,19 +1433,19 @@ nmru
 2
 0.02
 ####
-mru_elev 9
-1
-nmru
-1
-2
-3510.0
-####
 dth 8
 1
 nmru
 1
 2
 1.0
+####
+mru_elev 9
+1
+nmru
+1
+2
+3510.0
 ####
 st 8
 2
@@ -1593,19 +1593,19 @@ nmru
 2
 80.0
 ####
-ACUMX 8
-1
-nmru
-1
-2
-0.0
-####
 s_theta_0 10
 1
 nmru
 1
 2
 0.004
+####
+ACUMX 8
+1
+nmru
+1
+2
+0.0
 ####
 iso_n 8
 1
@@ -1628,6 +1628,13 @@ nmru
 2
 0.004
 ####
+s_satpref_zmax 15
+1
+nmru
+1
+2
+-2.0
+####
 init_soln_hydro 16
 1
 nhydro
@@ -1638,26 +1645,12 @@ nhydro
 3
 3
 ####
-s_satpref_zmax 15
-1
-nmru
-1
-2
--2.0
-####
 MFMAX 8
 1
 nmru
 1
 2
 0.3
-####
-mru_area 9
-1
-nmru
-1
-2
-1.74
 ####
 cov_type 9
 1
@@ -1666,12 +1659,12 @@ nmru
 1
 3
 ####
-s_theta_wp 11
+mru_area 9
 1
 nmru
 1
 2
-0.002
+1.74
 ####
 riparian_thresh 6
 1
@@ -1679,6 +1672,13 @@ nmru
 1
 2
 4.0
+####
+s_theta_wp 11
+1
+nmru
+1
+2
+0.002
 ####
 basin_area 14
 1
@@ -1791,19 +1791,19 @@ nmru
 1
 1
 ####
-mru_psta 9
-1
-nmru
-1
-1
-1
-####
 gw_loss_k 4
 1
 nmru
 1
 2
 11.0
+####
+mru_psta 9
+1
+nmru
+1
+1
+1
 ####
 NMF 8
 1
@@ -1826,12 +1826,12 @@ nmru
 2
 -0.3
 ####
-snowmelt_D_depl 14
+topout_file_unit 17
 1
-nmru
+one
 1
-2
--4.0
+1
+80
 ####
 radj_sppt 14
 1
@@ -1840,12 +1840,12 @@ one
 2
 0.6
 ####
-topout_file_unit 17
+snowmelt_D_depl 14
 1
-one
+nmru
 1
-1
-80
+2
+-4.0
 ####
 print_type 11
 1
@@ -1908,6 +1908,13 @@ nhydro
 -1
 -1
 ####
+xk0 8
+1
+nmru
+1
+2
+0.005
+####
 ppt_rad_adj 4
 1
 nmonths
@@ -1925,13 +1932,6 @@ nmonths
 0.02
 0.02
 0.02
-####
-xk0 8
-1
-nmru
-1
-2
-0.005
 ####
 SI 8
 1
@@ -1987,6 +1987,13 @@ nmru
 2
 -0.5
 ####
+init_kin_mru 13
+1
+nmru
+1
+1
+1
+####
 ac 8
 2
 nac
@@ -2004,13 +2011,6 @@ nmru
 0.1
 0.1
 0.1
-####
-init_kin_mru 13
-1
-nmru
-1
-1
-1
 ####
 tmax_allrain_c 13
 1
