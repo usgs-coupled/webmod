@@ -1,6 +1,12 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : build_lists
+ * COMMENT  :
+ *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -93,5 +99,4 @@ void ADD_to_list (LIST *list, void *itm) {
 
 	list->itm[list->count++] = itm;
 }
-
 

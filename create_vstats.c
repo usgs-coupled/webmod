@@ -1,7 +1,12 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : create_vstats
  * COMMENT  : create linked list for stats variables
+ *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -79,3 +84,4 @@ void create_vstats (void) {
 		curr_stat_list->next = NULL;
 	}
 }
+

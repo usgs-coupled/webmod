@@ -1,13 +1,18 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : check_vars
+ * COMMENT  :
+ *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
 #define CHECK_VARS_C
 #include <string.h>
 #include "mms.h"
-
 
 /*--------------------------------------------------------------------*\
  | FUNCTION     : CHECK_stat_vars
@@ -85,7 +90,6 @@ char * CHECK_disp_vars (void) {
 	else
 		return (NULL);
 }
-
 
 /*--------------------------------------------------------------------*\
  | FUNCTION     : CHECK_ani_vars

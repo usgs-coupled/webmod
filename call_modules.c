@@ -1,9 +1,15 @@
-/*********************************************************
+/*+
  * United States Geological Survey
- * used to call a Fortran version
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : call_modules
+ * COMMENT  : used to call a Fortran version
+ *
  * $Id$
- *********************************************************/
+ *
+-*/
 
+/**1************************ INCLUDE FILES ****************************/
 #include <stdlib.h>
 #include <string.h>
 #include "mms.h"
@@ -18,3 +24,4 @@ int call_modules(char *arg) {
 	 retval = call_modules_ (arg, len);
 	 return((int)retval);
 }
+

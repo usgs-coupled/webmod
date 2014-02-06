@@ -1,9 +1,14 @@
 /*+
  * United States Geological Survey
- * COMMENT  :
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : control_addr
  * returns a pointer to a CONTROL struct which contains the given key
  * returns NULL if key not found
+ * COMMENT  :
+ *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/

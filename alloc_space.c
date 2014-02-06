@@ -1,7 +1,12 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : alloc_space
  * COMMENT  : allocates space for variables
+ *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -87,5 +92,4 @@ void alloc_space (void) {
 	Mparaminfo = strdup ("Default case");
 	Mdatainfo = strdup ("Default case");
 }
-
 
