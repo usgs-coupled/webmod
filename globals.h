@@ -19,14 +19,10 @@
  */
 
 char *MAltContFile = NULL;          /* Alt. name of control file */
-char *MAltEnvFile = NULL;           /* Alt. name of enivironment file */
 long Mdebuglevel = 0;               /* the current debug level */
 char *model_name = NULL;
 char *executable_model = NULL;
 int batch_run_mode = FALSE;         /* flag for running in batch mode  */
-int esp_mode = FALSE;               /* flag for running esp in batch mode  */
-int rosenbrock_mode = FALSE;        /* flag for running rosenbrock opt in
-                                            batch mode  */
 int run_period_of_record = FALSE;   /* flag for running entire period of
                                             record in batch mode  */
 int print_mode = FALSE;
@@ -55,13 +51,9 @@ double Mprevjt = -1.0;              /* the latest previous Julian time  */
 double Mdeltat = 0.0;               /* the latest time step in hours */
 char *Minpptr = NULL;               /* pointer to current posn in data input line*/
 double Mdeltanext = 0.0;            /* the latest next time step in hours */
-FILE *Moutfile = NULL;              /* pointer to model output file */
-int MuserFiles = 0;                 /* to allow or disallow user-written files */
 int  M_stop_run = 0;                /* Run switch 0 -or 1 */
 STAT_LIST_TYPE *Mfirst_stat_list = NULL;     /* pointer to first entry
 						in stats link list */
-char scen[80];
-char scen_info[80];
 char *Mtypes[] = {"", "long", "float", "double", "string", "", "","", "", ""};
 long ParamBaseIsDirty = FALSE;
 int max_vars;
@@ -69,7 +61,6 @@ int max_params;
 int max_read_vars;
 int max_dims;
 int max_controls;
-int popen_pid;
 
 #else
 
@@ -78,13 +69,10 @@ int popen_pid;
  */
 
 extern char *MAltContFile;
-extern char *MAltEnvFile;
 extern long Mdebuglevel;
 extern char *model_name;
 extern char *executable_model;
 extern int batch_run_mode;
-extern int esp_mode;
-extern int rosenbrock_mode;
 extern int run_period_of_record;
 extern int print_mode;
 extern int runtime_graph_on;
@@ -112,12 +100,8 @@ extern double Mprevjt;
 extern double Mdeltat;
 extern char *Minpptr;
 extern double Mdeltanext;
-extern FILE *Moutfile;
-extern int MuserFiles;
 extern int  M_stop_run;
 extern STAT_LIST_TYPE *Mfirst_stat_list;
-extern char scen[];
-extern char scen_info[];
 extern char *Mtypes[];
 extern long ParamBaseIsDirty;
 extern int max_vars;
@@ -125,7 +109,6 @@ extern int max_params;
 extern int max_read_vars;
 extern int max_dims;
 extern int max_controls;
-extern int popen_pid;
 
 #endif /* MAIN */
 

@@ -54,18 +54,8 @@ void parse_args (int argc, char **argv, int *set_count, char **set_name, char **
             MAltContFile = (char *)((argv[i]));
             MAltContFile+=2;
 
-         } else if (!strncmp(argv[i],"-E",2)){
-            MAltEnvFile = (char *)((argv[i]));
-            MAltEnvFile+=2;
-
          } else if (!strncmp(argv[i],"-batch", 6)){
             batch_run_mode = TRUE;
-
-         } else if (!strncmp(argv[i],"-esp", 4)){
-            esp_mode = TRUE;
-
-         } else if (!strncmp(argv[i],"-rosenbrock", 11)){
-            rosenbrock_mode = TRUE;
 
          } else if (!strncmp(argv[i],"-print", 6)){
             print_mode = TRUE;

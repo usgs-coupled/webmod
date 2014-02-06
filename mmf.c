@@ -1,7 +1,12 @@
 /*+
  * United States Geological Survey
- * COMMENT  : Main driver for PRMS/GSFLOW models.
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : xmms
+ * COMMENT  : main driver for xmms
+ *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -45,7 +50,6 @@ int main (int argc, char *argv[]) {
    char   **fname;
    char pathname[MAXDATALNLEN];
 
-   
 	/*
 	**  List of modules that are used by the model. This is
 	**  determined by calls to declmodule
@@ -115,15 +119,10 @@ int main (int argc, char *argv[]) {
 	fname =   control_svar ("param_file");
     num_param_files = control_var_size ("param_file");
 
-/*
-   append_env (MAltEnvFile, MAltContFile);
-*/
-
     if (call_setdims()) {
 	  (void)fprintf(stderr, "\nERROR: Calling function 'call_setdims'\n");
       exit (1);
     }
-    
 
     /*
     **	read dimension info from parameter file
@@ -142,7 +141,6 @@ int main (int argc, char *argv[]) {
 		(void)fprintf (stderr,"\nERROR: reading dimensions from Parameter File\n");
         exit (1);
 	}
-
 
 	fname =   control_svar ("param_file");
     num_param_files = control_var_size ("param_file");

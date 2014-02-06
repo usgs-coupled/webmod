@@ -23,7 +23,6 @@ extern char *single_run_pre_init (void);
 extern char *single_run_post_init (void);
 extern char *single_run_pre_run (void);
 extern char *single_run_post_run (void);
-extern char *single_run_pre_cleanup (void);
 extern char *single_run_post_cleanup (void);
 
 /*--------------------------------------------------------------------*\
@@ -57,7 +56,6 @@ int BATCH_run (void) {
 */
 
    M_stop_run = 0;
-   MuserFiles = 1;
    Mprevjt = -1.0;
 
    while(!endofdata) {
@@ -83,7 +81,7 @@ int BATCH_run (void) {
       }
    }
 
-   ret = single_run_pre_cleanup ();
+   ret = single_run_post_cleanup ();
    if (ret) return(1);
 
 /*
@@ -94,9 +92,6 @@ int BATCH_run (void) {
        fprintf (stderr, "Problem with module cleanup.");
        return(1);
    }
-
-   ret = single_run_post_cleanup ();
-   if (ret) return(1);
 
    return(0);
 }
