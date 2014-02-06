@@ -1,14 +1,18 @@
-/**************************************************************************
+/*+
  * United States Geological Survey
- * getparam.c: gets the parameter associated with a module and name, and
- * copies it into the space provided by the calling routine.
  *
- * There are 2 functions: getparam() to be called from C
- *                        getparam_() to be called from Fortran
- * Returns 0 if successful, 1 otherwise.
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : getparam() to be called from C
+ *            getparam_() to be called from Fortran
+ *            Returns 0 if successful, 1 otherwise.
+ * COMMENT  : gets the parameter associated with a module and name, and
+ *            copies it into the space provided by the calling routine.
  *
  * $Id$
- **************************************************************************/
+ *
+-*/
+
+/**1************************ INCLUDE FILES ****************************/
 #define GETPARAM_C
 #include <stdio.h>
 #include <string.h>
@@ -474,5 +478,4 @@ long getparamstring_ (char *mname, char *pname, ftnint *pmaxsize, char *ptype, f
    strncpy (pstring, *((char **)param->value + *pindex), pslen);
 
    return(0);
-
 }

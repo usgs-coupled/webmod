@@ -1,8 +1,13 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : getdimname
  * COMMENT  : The following are two routines to obtain the "ith" index name 
  *            of a dimension variable from either Fortran or C modules.
+ *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/

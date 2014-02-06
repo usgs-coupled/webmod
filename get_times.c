@@ -1,7 +1,12 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : get_times
  * COMMENT  : get start and end times from control data base
+ *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -9,6 +14,7 @@
 #include <stdio.h>
 #include "mms.h"
 
+/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : get_times
  | COMMENT		:

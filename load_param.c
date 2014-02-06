@@ -1,11 +1,15 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : load_param
  * COMMENT  : Stores the parameter value, minima and maxima at the
- *  required address.  Uses str_to_vals to decode the strings and
- *  store the values. This routine mainly handles the error conditions.
- *  Examples of legal strings for this routine are given in str_to_vals.c
+ *            required address.  Uses str_to_vals to decode the strings and
+ *            store the values. This routine mainly handles the error conditions.
+ *            Examples of legal strings for this routine are given in str_to_vals.c
  *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/

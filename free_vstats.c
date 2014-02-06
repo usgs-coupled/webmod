@@ -1,7 +1,12 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : free_vstats
  * COMMENT  : free linked list for stats variables
+ *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -10,6 +15,7 @@
 #include <string.h>
 #include "mms.h"
 
+/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : free_vstats
  | COMMENT		:

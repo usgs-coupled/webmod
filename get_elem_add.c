@@ -1,7 +1,12 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : get_elem_add
  * COMMENT  : This file contains utility routines for multiple index arrays.
+ *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -11,6 +16,7 @@
 #include <stdlib.h>
 #include "mms.h"
 
+/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : CheckIndices
  | COMMENT		: Verifies that the number of indices

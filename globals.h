@@ -1,85 +1,13 @@
-/*
+/*+
+ * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION :
+ * COMMENT  :
+ *
  *  $Id$
- */
-/*
-**
-**		$Author$
-**
-**		$Date: 1996/02/19 20:05:09 $
-**
-**		$Locker:  $
-**
-**		$Log: globals.h,v $
-**		Revision 1.15  1996/02/19 20:05:09  markstro
-**		After first lint session
-**
-**		Revision 1.14  1996/01/23 20:09:23  markstro
-**		Fixed menu_bar
-**
- * Revision 1.13  1996/01/23  18:43:58  markstro
- * Fixes for HP compiler
  *
- * Revision 1.12  1995/06/21  18:06:54  markstro
- * Scenario stuff
- *
- * Revision 1.11  1994/12/09  16:16:27  markstro
- * (1)  Work on global variables
- * (2)  Changed some prototypes
- *
- * Revision 1.10  1994/11/22  17:18:43  markstro
- * (1) CLeaned up dimensions and parameters.
- * (2) Some changes due to use of malloc_dbg.
- *
- * Revision 1.9  1994/11/08  16:16:15  markstro
- * More proto type fine tuning
- *
- * Revision 1.8  1994/05/23  14:26:03  markstro
- * (1) Put in ifndef so included only once.
- * (2) Cleaned out a lot of includes in includes
- *
- * Revision 1.7  1994/05/18  17:15:06  markstro
- * TERRA changed mhms to mms
- *
- * Revision 1.6  1994/05/11  14:29:22  markstro
- * Changes from TERRA
- *
- * Revision 1.5  1994/03/23  20:05:18  markstro
- * Changes from TERRA
- *
- * Revision 1.4  1994/03/11  21:15:46  markstro
- * Got rid of client_data data types.
- *
- * Revision 1.3  1994/02/28  22:57:53  markstro
- * Cleaned up some of the "Set" dialogs.
- *
- * Revision 1.2  1994/01/04  19:37:25  markstro
- * Pedro's include files
- *
- * Revision 1.1  91/07/24  08:20:04  schmitz
- * Initial revision
- *
- * Revision 2.1  91/07/07  13:46:30  farah
- * *** empty log message ***
- *
- * Revision 2.0  91/04/16  13:49:37  brannon
- * new revision branch started by Jim Brannon
- *
- * Revision 1.2  91/04/12  14:01:11  brannon
- * left locked by steve
- *
- * Revision 1.1  90/07/31  12:25:05  markb
- * Initial revision
- *
-**Revision 1.1  90/07/31  12:11:30  markb
-**Initial revision
-**
-**
-**		$Revision$
-**
-**		$Source: /z/runoff/work4/mms_cvs/mms/src/include/globals.h,v $
-**
-**		$State: Exp $
-*/
+-*/
 
 #ifndef MMS_GLOBAL_H
 #define MMS_GLOBAL_H

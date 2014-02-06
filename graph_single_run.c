@@ -1,8 +1,13 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : graph_single_run
  * COMMENT  : graph routines for mms run
+ *
  * $Id$
- */
+ *
+-*/
 
 /**1************************ INCLUDE FILES ****************************/
 #define GRAPH_SINGLE_RUN_C
@@ -20,6 +25,7 @@ PUBVAR **disp_var;
 int *disp_ele;
 int numDispVars;
 
+/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : initializeRuntimeGraphs
  | COMMENT		:

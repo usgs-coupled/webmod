@@ -1,14 +1,20 @@
-/**********************************************************************
- * julday() - computes julian day, puts it into the jd slot in the
+/*+
+ * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : julday()
+ * COMMENT  : computes julian day, puts it into the jd slot in the
  *            datetime structure
+ *
  * $Id$
- **********************************************************************/
+ *
+-*/
+
+/**1************************ INCLUDE FILES ****************************/
 #define JULDAY_C
 #include <math.h>
 #include "mms.h"
 #define IGREG (15+31L*(10+12L*1582))
-
-
 
 /*--------------------------------------------------------------------*\
  | FUNCTION     : julday

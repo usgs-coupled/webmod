@@ -1,66 +1,13 @@
-
-/*
+/*+
+ * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION :
+ * COMMENT  :
+ *
  *  $Id$
- */
-
-/*
-**
-**		$Author$
-**
-**		$Date: 1997/04/21 22:28:58 $
-**
-**		$Locker:  $
-**
-**		$Log: defs.h,v $
-**		Revision 1.11  1997/04/21 22:28:58  markstro
-**		Xmbuild fixes
-**
-**		Revision 1.10  1996/09/10 16:37:59  markstro
-**		(1) Bugs in XY plotter
-**		(2) Reworked file text widgets in run control.
-**
- * Revision 1.9  1996/02/19  20:05:08  markstro
- * After first lint session
  *
-**		Revision 1.8  1995/11/24 14:39:45  markstro
-**		Initial Purify work.
-**		This is the version for the Watershed Systems Modeling class 11/27 - 12/1, 1995
-**
- * Revision 1.7  1995/02/07  23:16:58  markstro
- * Stuff for rosenbrock and sensitivity
- *
- * Revision 1.6  1994/12/21  21:43:18  markstro
- * Unknown
- *
- * Revision 1.5  1994/11/23  19:46:06  markstro
- * Unknown
- *
- * Revision 1.4  1994/06/02  20:13:28  markstro
- * Clean include files
- *
- * Revision 1.3  1994/05/23  14:26:00  markstro
- * (1) Put in ifndef so included only once.
- * (2) Cleaned out a lot of includes in includes
- *
- * Revision 1.2  1994/01/04  19:37:22  markstro
- * Pedro's include files
- *
- * Revision 1.1  91/07/05  14:23:08  farah
- * Initial revision
- *
- * Revision 1.1  90/07/31  12:25:03  markb
- * Initial revision
- *
-**Revision 1.1  90/07/31  12:11:14  markb
-**Initial revision
-**
-**
-**		$Revision$
-**
-**		$Source: /z/runoff/work4/mms_cvs/mms/src/include/defs.h,v $
-**
-**		$State: Exp $
-*/
+-*/
 
 #ifndef MMS_DEF_H
 #define MMS_DEF_H
@@ -125,3 +72,4 @@
 //#define MAX_SAVE_MAP 5
 
 #endif /* MMS_DEF_H */
+

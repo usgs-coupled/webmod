@@ -1,13 +1,15 @@
 /*+
  * United States Geological Survey
- * getvar.c: gets the value associated with a module and name, and copies
- * it into the variable provided by the calling routine.
  *
- * There are 2 functions: getvar() to be called from C
- *                        getvar_() to be called from Fortran
- * Returns 0 if successful, 1 otherwise.
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : getvar() to be called from C
+ *            getvar_() to be called from Fortran
+ *            Returns 0 if successful, 1 otherwise.
+ * COMMENT  : gets the value associated with a module and name, and copies
+ *            it into the variable provided by the calling routine.
  *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
