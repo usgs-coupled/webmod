@@ -1,7 +1,14 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : batch_run_functions
+ * COMMENT  :
+ *
  * $Id$
+ *
 -*/
+
 /**1************************ INCLUDE FILES ****************************/
 #include <stdlib.h>
 #include <stdio.h>
@@ -10,7 +17,6 @@
 #include <string.h>
 #include <sys/stat.h>
 #include "mms.h"
-
 
 /**5*********************** LOCAL VARIABLES ***************************/
   static FILE *statvar_file;
@@ -31,6 +37,7 @@
   static int num_ani_dims, found, k;
   static DATETIME start_of_data, end_of_data;
 
+/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : single_run_pre_init
  | COMMENT		:
@@ -251,7 +258,6 @@ char *single_run_pre_init () {
 
   }
 
-
 /*
 **  set initial values of nsteps global variable if they
 **  don't come from the var init file
@@ -261,7 +267,6 @@ char *single_run_pre_init () {
 /*
 * initialize modules
 */
-  MuserFiles = 1;
 
   errno = 0;
   return(NULL);
@@ -275,7 +280,6 @@ char *single_run_pre_init () {
  | RESTRICTIONS :
 \*--------------------------------------------------------------------*/
 char *single_run_post_init () {
-
 
   initializeRuntimeGraphs();
 
@@ -313,7 +317,6 @@ char *single_run_pre_run () {
  | RESTRICTIONS :
 \*--------------------------------------------------------------------*/
 char *single_run_post_run () {
-
 
       if (stats_flag)
          write_vstats (statvar_file);
@@ -373,27 +376,6 @@ char *single_run_post_run () {
 }
 
 /*--------------------------------------------------------------------*\
- | FUNCTION     : single_run_pre_cleanup
- | COMMENT		:
- | PARAMETERS   :
- | RETURN VALUE : char *
- | RESTRICTIONS :
-\*--------------------------------------------------------------------*/
-char *single_run_pre_cleanup () {
-
-/*
-  if (GISProcessRunning)
-    GISEndAnimation();
-
-  if (ani_init) {
-    RESET_animation_control ();
-  }
-*/
-
-   return (NULL);
-}
-
-/*--------------------------------------------------------------------*\
  | FUNCTION     : single_run_post_cleanup
  | COMMENT		:
  | PARAMETERS   :
@@ -441,5 +423,3 @@ char *single_run_post_cleanup () {
 
    return (NULL);
 }
-
-

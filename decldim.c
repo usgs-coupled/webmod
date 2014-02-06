@@ -1,11 +1,15 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
  * FUNCTION : decldim() to be called from C
  *            decldim_() to be called from Fortran
  *            declfix() to be called from C
  *            declfix_() to be called from Fortran
  * COMMENT  : initializes an entry in the dimension database
+ *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -14,6 +18,7 @@
 #include <string.h>
 #include "mms.h"
 
+/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : decldim_
  | COMMENT		: called from Fortran, sorts out args and calls decldim()
@@ -161,3 +166,24 @@ long declfix_ (char *dname, ftnint *dval, ftnint *dmax, char *ddescr, ftnlen nam
 
 	return (ret);
 }
+///*--------------------------------------------------------------------*\
+// | FUNCTION     : getmodule
+// | COMMENT		:
+// | PARAMETERS   :
+// | RETURN VALUE : 
+// | RESTRICTIONS :
+//\*--------------------------------------------------------------------*/
+//MODULE_DATA * getmodule (char *key) { 
+//	MODULE_DATA *module;
+//	long i;
+//
+//	for (i = 0; i < module_db->count; i++) {
+//		module = (MODULE_DATA *)(module_db->itm[i]);
+//	   printf ("comparing %s to %s\n", key, module->name);
+//		if (!strcmp(module->name, key))
+//		return module;
+//	}
+//
+//	/* if no match found, return null */
+//	return NULL;
+//}

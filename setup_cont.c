@@ -1,6 +1,12 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : setup_cont
+ * COMMENT  :
+ *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -19,6 +25,7 @@ extern void decl_control_int_array (char *key, long size, long *valstr);
 extern void decl_control_float_array (char *key, long size, float *valstr);
 extern void decl_control_string_array (char *key, long size, char *valstr);
 
+/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : setup_cont
  | COMMENT		:
@@ -219,7 +226,8 @@ void setup_cont (void) {
         decl_control_string ("stat_var_file", "statvar.out");
         decl_control_string ("ani_output_file", "animation.out");
         decl_control_string ("model_output_file", "prms.out");
-        decl_control_string ("tmax_day", "tmax.day");
+        decl_control_string ("stats_output_file", "stats.out");
+		decl_control_string ("tmax_day", "tmax.day");
         decl_control_string ("tmin_day", "tmin.day");
         decl_control_string ("precip_day", "precip.day");
         decl_control_string ("swrad_day", "swrad.day");

@@ -1,13 +1,17 @@
-/**************************************************************************
+/*+
  * United States Geological Survey
- * declvar.c: initializes a module variable entry in the memory database
  *
- * There are 2 functions: declvar() to be called from C
- *                        declvar_() to be called from Fortran
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : declvar() to be called from C
+ *            declvar_() to be called from Fortran
+ *            Returns 0 if successful, 1 otherwise.
+ * COMMENT  : initializes a module variable entry in the memory database
  *
- * Returns 0 if successful, 1 otherwise.
  * $Id$
- **************************************************************************/
+ *
+-*/
+
+/**1************************ INCLUDE FILES ****************************/
 #define DECLVAR_C
 #include <stdio.h>
 #include <string.h>
@@ -203,7 +207,6 @@ long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
     token = strtok ((char *) NULL, ",");
     i++;
   }
-
 
   /*
    * get the size of the variable
