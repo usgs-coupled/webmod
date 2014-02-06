@@ -1,14 +1,15 @@
 /*+
  * United States Geological Survey
- * readvar.c: reads the values associated with a key from an input file,
- * and stores it in the data base
  *
- * There are 2 functions: readvar() to be called from C
- *                        readvar_() to be called from Fortran
- *
- * returns 0 if success, 1 if failure
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : readvar() to be called from C
+ *            readvar_() to be called from Fortran
+ *            returns 0 if success, 1 if failure
+ * COMMENT  : reads the values associated with a key from an input file,
+ *            and stores it in the data base
  *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -22,6 +23,7 @@
 /**2************************* LOCAL MACROS ****************************/
 #define MISSING_VAR -999
 
+/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : readvar_
  | COMMENT		: called from Fortran, sorts out args and calls readvar()
@@ -159,5 +161,4 @@ long readvar (char *module, char *name) {
 
 
   return(0);
-
 }

@@ -1,12 +1,14 @@
-/**************************************************************************
+/*+
  * United States Geological Survey
- * str_to_vals.c: decodes a string into values, and loads memory addresses
  *
- * Examples of legal strings for this routine:
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : str_to_vals
+ * COMMENT  : decodes a string into values, and loads memory addresses
+ *            Examples of legal strings for this routine:
  *
- *           "1 2 3 4 5"
- *           "1.0, 2.2, 19e9"
- *           "1*23.5, 7*1 13 12*3"
+ *            "1 2 3 4 5"
+ *            "1.0, 2.2, 19e9"
+ *            "1*23.5, 7*1 13 12*3"
  *
  * Blanks, commas, tabs and newlines may delimit the values.
  * The repeat count is optional, but must be greater than 0 if included.
@@ -14,7 +16,10 @@
  * is repeated.
  *
  * $Id$
- **************************************************************************/
+ *
+-*/
+
+/**1************************ INCLUDE FILES ****************************/
 #define STR_TO_VALS_C
 #include <stdio.h>
 #include <string.h>
@@ -205,5 +210,4 @@ long str_to_vals (char *encoded_string, long size, long type, char *store_addr) 
   }
 
   return S2V_SUCCESS;
-
 }

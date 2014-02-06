@@ -1,9 +1,16 @@
-/**************************************************************************
+/*+
  * United States Geological Survey
- * sort_dims.c: sorts the dimen array so that the key for each
- * structure is in increasing alphabetical order
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : sort_dims
+ * COMMENT  : sorts the dimen array so that the key for each
+ *            structure is in increasing alphabetical order
+ *
  * $Id$
- **************************************************************************/
+ *
+-*/
+
+/**1************************ INCLUDE FILES ****************************/
 #define SORT_DIMS_C
 #include <stdio.h>
 #include <string.h>

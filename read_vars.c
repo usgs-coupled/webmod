@@ -1,8 +1,13 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : read_vars
  * COMMENT  : reads the vars data base from a file.
- *             File name is passed in as an argument
+ *            File name is passed in as an argument
+ *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -16,6 +21,7 @@
 /**4***************** DECLARATION LOCAL FUNCTIONS *********************/
 static int read_var_line (char *, char *, FILE *, char *);
 
+/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : read_vars
  | COMMENT		:
@@ -326,6 +332,7 @@ variables:
    return(0);
 }
 
+/**7****************** LOCAL FUNCTION DEFINITIONS *********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : read_var_line
  | COMMENT		: gets a line from the variable file

@@ -1,9 +1,17 @@
-/**************************************************************************
+/*+
  * United States Geological Survey
- * returns a pointer to a PARAM struct which contains the given key
- * returns NULL if key not found
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : param_addr
+ *            returns a pointer to a PARAM struct which contains the given key
+ *            returns NULL if key not found
+ * COMMENT  :
+ *
  * $Id$
- **************************************************************************/
+ *
+-*/
+
+/**1************************ INCLUDE FILES ****************************/
 #define PARAM_ADDR_C
 #include <string.h>
 #include "mms.h"
@@ -39,4 +47,3 @@ PARAM * param_addr (char *key) {
   /* if no match found, return null */
   return NULL;
 }
-

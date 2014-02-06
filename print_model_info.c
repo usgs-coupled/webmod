@@ -1,7 +1,15 @@
-/*
+/*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : print_model_info
+ * COMMENT  :
+ *
  * $Id$
- */
+ *
+-*/
+
+/**1************************ INCLUDE FILES ****************************/
 #define PRINT_MODEL_INFO_C
 #include <string.h>
 #include <stdio.h>
@@ -67,9 +75,7 @@ int print_model_info (void) {
 	}
 	//fprintf(model_info_file, "\n\n\n\n\n\n");
 
- 
   fclose(model_info_file);
 
   return(0);
-
 }

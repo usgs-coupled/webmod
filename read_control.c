@@ -1,9 +1,13 @@
 /*+
  * United States Geological Survey
- * read_control.c: reads the control data base from a file
- * File name is obtained from the environment variable "mms_control_file"
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : read_control
+ * COMMENT  : reads the control data base from a file
+ *            File name is obtained from the environment variable "mms_control_file"
  *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/

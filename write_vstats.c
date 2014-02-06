@@ -1,8 +1,13 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : write_vstats
  * COMMENT  : saves values of stat variables into a temporary file.
  *            The temporary file was open in user_input
+ *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/

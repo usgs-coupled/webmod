@@ -1,10 +1,16 @@
-/**************************************************************************
+/*+
  * United States Geological Survey
- * sort_vars.c: sorts the pubvar array so that the key for each
- * structure is in increasing alphabetical order
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : sort_vars
+ * COMMENT  : sorts the pubvar array so that the key for each
+ *            structure is in increasing alphabetical order
  *
  * $Id$
- **************************************************************************/
+ *
+-*/
+
+/**1************************ INCLUDE FILES ****************************/
 #ifdef MALLOC_FUNC_CHECK
 #include <malloc_dbg.h>
 #endif

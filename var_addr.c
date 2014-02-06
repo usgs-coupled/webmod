@@ -1,10 +1,16 @@
-/**************************************************************************
+/*+
  * United States Geological Survey
- * returns a pointer to a PUBVAR struct which contains the given key
- * returns NULL if key not found
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : var_addr
+ * COMMENT  : returns a pointer to a PUBVAR struct which contains the given key
+ *            returns NULL if key not found
  *
  * $Id$
- **************************************************************************/
+ *
+-*/
+
+/**1************************ INCLUDE FILES ****************************/
 #define VAR_ADDR_C
 #include <stdio.h>
 #include <string.h>

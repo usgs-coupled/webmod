@@ -1,8 +1,13 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : sort_params
  * COMMENT  : sorts the param array so that the key for each structure
- *             is in increasing alphabetical order
+ *            is in increasing alphabetical order
+ *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -12,6 +17,7 @@
 #include <stdlib.h>
 #include "mms.h"
 
+/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : sort_params
  | COMMENT		:

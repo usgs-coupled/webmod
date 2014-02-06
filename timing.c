@@ -1,13 +1,17 @@
-/**************************************************************************
+/*+
  * United States Geological Survey
- * timing.c: timing functions
  *
- * The routines with a _ suffix are called from Fortran
- *
- * The routines without the suffix are called from C
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : timing
+ * COMMENT  : timing functions
+ *            The routines with a _ suffix are called from Fortran
+ *            The routines without the suffix are called from C
  *
  * $Id$
- **************************************************************************/
+ *
+-*/
+
+/**1************************ INCLUDE FILES ****************************/
 #define TIMING_C
 #include <stdio.h>
 #include <string.h>

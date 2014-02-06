@@ -1,8 +1,15 @@
-/**************************************************************************
+/*+
  * United States Geological Survey
- * prints the var data base to a file
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : print_vars
+ * COMMENT  : prints the var data base to a file
+ *
  * $Id$
- **************************************************************************/
+ *
+-*/
+
+/**1************************ INCLUDE FILES ****************************/
 #define PRINT_VARS_C
 #include <stdlib.h>
 #include <stdio.h>
@@ -11,7 +18,6 @@
 
 #define PRINTLEN 77
 
-/**************************************************************************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : print_vars
  | COMMENT		:

@@ -1,10 +1,13 @@
 /*+
  * United States Geological Survey
- * COMMENT  : read_datainfo.c: reads the data file and updates the
- *                datainfo string and the data variable names and
- *                sizes
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : read_datainfo
+ * COMMENT  : reads the data file and updates the
+ *            datainfo string and the data variable names and sizes
  *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
