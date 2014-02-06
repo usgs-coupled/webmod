@@ -1,14 +1,18 @@
-/**************************************************************************
+/*+
  * United States Geological Survey
- * gets the value associated with a module and name, and copies
- * it into the variable provided by the calling routine.
  *
- * There are 2 functions: putvar() to be called from C
- *                        putvar_() to be called from Fortran
- * Returns 0 if successful, 1 otherwise.
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : putvar() to be called from C
+ *            putvar_() to be called from Fortran
+ *            Returns 0 if successful, 1 otherwise.
+ * COMMENT  : gets the value associated with a module and name, and copies
+ *            it into the variable provided by the calling routine.
  *
- * $Id$
- **************************************************************************/
+* $Id$
+ *
+-*/
+
+/**1************************ INCLUDE FILES ****************************/
 #define PUTVAR_C
 #include <stdio.h>
 #include <string.h>
@@ -87,7 +91,6 @@ long putvar (char *module, char *name, long maxsize, char *type, double *value) 
   long n1, n2;
   char *ptr1;
   char *ptr2;
-
 
   /*
    * compute the key
@@ -220,6 +223,4 @@ long putvar (char *module, char *name, long maxsize, char *type, double *value) 
     }
   
   return(0);
-  
 }
-  

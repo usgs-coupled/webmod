@@ -1,11 +1,17 @@
-/**************************************************************************
+/*+
  * United States Geological Survey
  *
- * returns a pointer to a DIMEN struct which contains the given name
- * returns NULL if name not found
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : dim_addr
+ *            returns a pointer to a DIMEN struct which contains the given name
+ *            returns NULL if name not found
+ * COMMENT  :
  *
  * $Id$
- **************************************************************************/
+ *
+-*/
+
+/**1************************ INCLUDE FILES ****************************/
 #define DIM_ADDR_C
 #include <stdio.h>
 #include <string.h>
@@ -51,3 +57,4 @@ char *dim_notes (char *ch_ptr) {
 
 	return (NULL);
 }
+

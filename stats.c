@@ -1,7 +1,12 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : stats
  * COMMENT  : statistical analysis postprocessor
+ *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -13,7 +18,6 @@
 #include "mms.h"
 
 #define MAXCELLS 100
-
 
 /**2************************* LOCAL MACROS ****************************/
 #define SQR(A) (A) * (A)

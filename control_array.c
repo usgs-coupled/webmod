@@ -1,17 +1,20 @@
-/*************************************************************************
+/*+
  * United States Geological Survey
- * control_array routines
  *
- * These return pointers to particular elements
- * in a control array.
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : control_array - generic, returns (char *) as a generic pointer
+ *            control_larray - returns long *
+ *            control_farray - returns float *
+ *            control_darray - returns double *
+ *            control_sarray - returns char ** - string
+ *            These return pointers to particular elements in a control array.
+ * COMMENT  : control_array routines
  *
- * control_array - generic, returns (char *) as a generic pointer
- * control_larray - returns long *
- * control_farray - returns float *
- * control_darray - returns double *
- * control_sarray - returns char ** - string
  * $Id$
- *************************************************************************/
+ *
+-*/
+
+/**1************************ INCLUDE FILES ****************************/
 #define CONTROL_ARRAY_C
 #include <stdlib.h>
 #include "mms.h"
