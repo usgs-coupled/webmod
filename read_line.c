@@ -1,16 +1,19 @@
 /*+
  * United States Geological Survey
- * COMMENT  :    Reads one line from data file into a string,
- *               decodes date and time, and returns if the time
- *               is within start and end limits.
- *               Otherwise reads lines until within limits or the
- *               end of file is encountered.
- *                  
- *               Returns 1l if end of data, 0l if more data to be read,
- *               and 2l if end of file
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : read_line
+ *            Returns 1l if end of data, 0l if more data to be read,
+ *            and 2l if end of file
+ * COMMENT  : Reads one line from data file into a string,
+ *            decodes date and time, and returns if the time
+ *            is within start and end limits.
+ *            Otherwise reads lines until within limits or the
+ *            end of file is encountered.
  *
  * $Id$
- -*/
+ *
+-*/
 
 /**1************************ INCLUDE FILES ****************************/
 #define READ_LINE_C

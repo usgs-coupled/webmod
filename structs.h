@@ -1,6 +1,13 @@
-/*
+/*+
+ * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION :
+ * COMMENT  :
+ *
  *  $Id$
- */
+ *
+-*/
 
 #ifndef _STRUCTS_H
 #define _STRUCTS_H

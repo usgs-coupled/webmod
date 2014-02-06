@@ -1,9 +1,15 @@
-/**************************************************************************
+/*+
  * United States Geological Survey
- * prints the param data base to a file
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : print_params
+ * COMMENT  : prints the param data base to a file
+ *
  * $Id$
- **************************************************************************/
+ *
+-*/
 
+/**1************************ INCLUDE FILES ****************************/
 #define PRINT_PARAMS_C
 #include <time.h>
 #include <string.h>
@@ -217,7 +223,6 @@ int print_params (void) {
   fclose(param_file);
 
   return(0);
-
 }
 
 /*--------------------------------------------------------------------*\

@@ -1,6 +1,12 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : reset_dim
+ * COMMENT  :
+ *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/

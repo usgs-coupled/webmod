@@ -1,16 +1,17 @@
-/*
+/*+
+ * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION :
+ * COMMENT  :
+ *
  *  $Id$
- */
+ *
+-*/
 
 /**1************* SWITCH FOR DEFINITION AND DECLARATION ***************/
 #ifndef MSYS_PROTO_H
 #define MSYS_PROTO_H
-
-/**2*********************** EXPORTED MACROS ***************************/
-
-/**3********************** EXPORTED TYPEDEFS **************************/
-
-/**4********************** EXPORTED VARIABLES *************************/
 
 /**5**************** DECLARATION EXPORTED FUNCTIONS *******************/
 

@@ -1,12 +1,14 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : declparam() to be called from C
+ *            declparam_() to be called from Fortran
+ *            Returns 0 if successful, 1 otherwise.
  * COMMENT  : initializes a module variable entry in the memory database
  *
- *      There are 2 functions: declparam() to be called from C
- *                             declparam_() to be called from Fortran
- *      Returns 0 if successful, 1 otherwise.
- *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -24,6 +26,7 @@ static int VAR_type (char *);
 /**5*********************** LOCAL VARIABLES ***************************/
 static char *types[] = {"long (or integer)", "real (or float)", "double", "string"};
 
+/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 
 /*--------------------------------------------------------------------*\
  | FUNCTION     : declparam_
@@ -140,7 +143,6 @@ long declparam_u (char *module, char *name, char *dimen, char *type, char *value
 	return 0;
 }
 
-
 /*--------------------------------------------------------------------*\
  | FUNCTION     : declparam_
  | COMMENT		: declparam_() is called from Fortran, sorts out args
@@ -210,7 +212,6 @@ long declparam_ (char *mname, char *pname, char *pdimen, char *ptype,
 	    minimum, maximum, descr, help, units);
 
 	return(retval);
-
 }
 
 /*--------------------------------------------------------------------*\

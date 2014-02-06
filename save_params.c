@@ -1,7 +1,12 @@
 /*+
  * United States Geological Survey
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : save_params
  * COMMENT  : saves the param data base to a file. File name is passed in.
+ *
  * $Id$
+ *
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -11,16 +16,10 @@
 #include <stdlib.h>
 #include "mms.h"
 
-/**2************************* LOCAL MACROS ****************************/
-
-/**3************************ LOCAL TYPEDEFS ***************************/
-
 /**4***************** DECLARATION LOCAL FUNCTIONS *********************/
 static void write_parameters (FILE *, int);
 static void write_dimensions (FILE *);
 static void write_header (FILE *, char *);
-
-/**5*********************** LOCAL VARIABLES ***************************/
 
 /**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\

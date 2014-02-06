@@ -1,12 +1,16 @@
 /*+
  * United States Geological Survey
- * reads the params data base from a file
- * File name is passed in as an argument
+ *
+ * PROJECT  : Modular Modeling System (MMS)
+ * FUNCTION : read_params
+ * COMMENT  : reads the params data base from a file
+ *            File name is passed in as an argument
  *
  * $Id$
--*/ 
+ *
+-*/
 
-/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
+/**1************************ INCLUDE FILES ****************************/
 #define READ_PARAMS_C
 #include <stdio.h>
 #include <string.h>
