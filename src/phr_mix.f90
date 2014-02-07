@@ -70,9 +70,9 @@
 !
       if(step1.and.files_on) then
 !        write(25,"(A)")" nstep soln1 soln2 frac1 frac2 indx_cons index_rxn conc_cons"
-        write(26,"(A)")"nstep ent_soln ent_rxn ent_exch ent_surf ent_gas ent_pure_ph "//&
-           "ent_sld_soln ent_kin rxn indx_cons	indx_rxn	"//&
-           "A	B	C	NoSolns	S1	S2	S3	S4	S5	S6	S7	S8	S9	S10"
+!        write(26,"(A)")"nstep ent_soln ent_rxn ent_exch ent_surf ent_gas ent_pure_ph "//&
+!           "ent_sld_soln ent_kin rxn indx_cons	indx_rxn	"//&
+!           "A	B	C	NoSolns	S1	S2	S3	S4	S5	S6	S7	S8	S9	S10"
         I = SYSTEM('touch .\output\select_mixes')
 
         step1=.false.
@@ -169,9 +169,9 @@
 !        write(26,1000)nstep, et_hyd, et_mix, startmix(1), endmix(1), &
 !          ' Rxn: ',index_conserv, index_rxn, &
 !          ' # of inputs/solns: ',count, (solutions(j),j=1,count)
-        write(26,1000)nstep, (n_user(j),j=1,8), &
-          ' Rxn: ',index_conserv, index_rxn, &
-          ' # of inputs/solns: ',count, (solutions(j),j=1,count)
+!        write(26,1000)nstep, (n_user(j),j=1,8), &
+!          ' Rxn: ',index_conserv, index_rxn, &
+!          ' # of inputs/solns: ',count, (solutions(j),j=1,count)
 !        write(25,130)"Date:  ",(nowtime(i),i=1,3)        
 !        iresult = SetOutputFileOn(ID,.FALSE.)
         I = SYSTEM('copy .\output\select_mixes + .\phreeqc.0.out .\output\select_mixes')
