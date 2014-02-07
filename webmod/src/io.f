@@ -23,10 +23,22 @@ c***********************************************************************
       IMPLICIT NONE
       include 'fmodules.inc'
 !   Dimensions and Local Variables
-      integer, SAVE:: topout_file_unit, chemout_file_unit
-      integer, save:: endper, yrdays, modays(12),nowtime(6)
-      integer, save :: nvf, nsf
-      integer, save, allocatable :: volfiles(:), solfiles(:,:,:)
+!      integer, SAVE:: topout_file_unit, chemout_file_unit, phreeqout ! standard output, in addition to MMS files *.out, *.statvar, etc
+      integer, save:: endper, yrdays, modays(12),nowtime(6), print_type
+      TYPE :: outfiles   ! file names, shortnames, and logical unit numbers for input and output files.
+         character(60) :: file   ! Output file
+         integer       :: lun        ! integer returned by NEWUNIT
+      END TYPE outfiles
+!
+      TYPE(outfiles), save :: topout, chemout, phreeqout,debug
+c     ! 
+c     ! TYPE(outfiles),save,allocatable :: c_mru(:), c_uzgen(:),
+c     !$ c_uzrip(:), c_uzup(:), c_can(:), c_snow(:), c_inperv(:),
+c     !$ c_transp(:), c_ohoriz(:), c_uz(:,:), c_qdf(:), c_sat(:),
+c     !$ c_satpref(:), c_hill(:), c_uz2sat(:), c_hyd(:)
+c     ! 
+c     ! integer, save, allocatable :: v_lun(:), c_lun(:)
+c     ! integer, save :: nvf, ncf
       logical, save:: step1
       double precision, save:: endjday
       data modays/31,28,31,30,31,30,31,31,30,31,30,31/
@@ -67,17 +79,17 @@ c
 
       iodecl = 1
 
-      if(declparam('io', 'topout_file_unit', 'one', 'integer',
-     +   '80', '50', '99',
-     +   'Unit number for TOPMODEL output file',
-     +   'Unit number for TOPMODEL output file',
-     +   'integer').ne.0) return
+!      if(decl*param('io', 'topout_file_unit', 'one', 'integer',
+!     +   '80', '50', '99',
+!     +   'Unit number for TOPMODEL output file',
+!     +   'Unit number for TOPMODEL output file',
+!     +   'integer').ne.0) return
 
-      if(declparam('io', 'chemout_file_unit', 'one', 'integer',
-     +   '90', '50', '99',
-     +   'Unit number for file summarizing solute transport',
-     +   'Unit number for file summarizing solute transport',
-     +   'integer').ne.0) return
+!      if(decl*param('io', 'chemout_file_unit', 'one', 'integer',
+!     +   '90', '50', '99',
+!     +   'Unit number for file summarizing solute transport',
+!     +   'Unit number for file summarizing solute transport',
+!     +   'integer').ne.0) return
 
 c
 c Single end period flag that can be decomposed to logical variables
@@ -118,8 +130,7 @@ c
 #endif
       USE WEBMOD_IO
 
-      integer ret, nsolute, nmru, nhydro, print_type
-      character*135 output_path
+      integer ret
       logical filflg
 
 c End-period variables
@@ -130,19 +141,19 @@ c End-period variables
 
 
 ! Get Dimensions
-      nmru = getdim('nmru')
-      IF (nmru.EQ.-1) RETURN
-      nsolute = getdim('nsolute')
-      IF (nsolute.EQ.-1) RETURN
-      nhydro = getdim('nhydro')
-      IF (nhydro.EQ.-1) RETURN
+      !nmru = getdim('nmru')
+      !IF (nmru.EQ.-1) RETURN
+      !nsolute = getdim('nsolute')
+      !IF (nsolute.EQ.-1) RETURN
+      !nhydro = getdim('nhydro')
+      !IF (nhydro.EQ.-1) RETURN
 
-! Get file unit numbers (can be eliminated?) and print_type
+! Get print_type (ahead of web_sum) so that it can be used to output detailed vol and chem files
 !     ! if(get*param('io', 'topout_file_unit', 1, 'integer',
 !     !+   topout_file_unit).ne.0) return
 !     !
-!     ! if(get*param('io', 'chemout_file_unit', 1, 'integer',
-!     !+   chemout_file_unit).ne.0) return
+!      if(getparam('io', 'chemout_file_unit', 1, 'integer',
+!     +    chemout_file_unit).ne.0) return
 
       if(getparam('sumb', 'print_type', 1, 'integer', print_type)
      +   .ne.0) return
@@ -150,36 +161,36 @@ c End-period variables
 c
 c Open topmodel output file
 c
-      ret = getoutname (output_path, '.topout')
+      ret = getoutname (topout%file, '.topout')
 c
 c Kludge to allow running on 2nd CPU
 c
 c      output_path='.\output\loch3.topout'
-      inquire(file=output_path,exist=filflg)
+      inquire(file=topout%file,exist=filflg)
       if (filflg) then
-        open(newunit=topout_file_unit,file=output_path,status='old')
-        close(topout_file_unit,status='delete')
+        open(newunit=topout%lun,file=topout%file,status='old')
+        close(topout%lun,status='delete')
       endif
 
 c-----open the file.
-      open (newunit=topout_file_unit,file=output_path,
+      open (newunit=topout%lun,file=topout%file,
      +    access='sequential', form='formatted', status='new')
 
 c
 c Open solute model output file
 c
-      ret = getoutname (output_path, '.chemout')
+      ret = getoutname (chemout%file, '.chemout')
 c Kludge for running on 2nd CPU
 c      output_path='.\output\loch3.chemout'
 c End Kludge
-      inquire(file=output_path,exist=filflg)
+      inquire(file=chemout%file,exist=filflg)
       if (filflg) then
-        open(unit=chemout_file_unit,file=output_path,status='old')
-        close(unit=chemout_file_unit,status='delete')
+        open(newunit=chemout%lun,file=chemout%file,status='old')
+        close(unit=chemout%lun,status='delete')
       endif
 
 c-----open the file.
-      open (unit=chemout_file_unit,file=output_path,
+      open (newunit=chemout%lun,file=chemout%file,
      +    access='sequential', form='formatted', status='new')
 c
 c Convert the end of run time to an absolute julian date
@@ -188,37 +199,39 @@ c
 !
 ! select_mixes file
 !
-      inquire(file='./output/select_mixes',exist=filflg)
+      phreeqout%file='./output/select_mixes'
+      inquire(file=phreeqout%file,exist=filflg)
       if (filflg) then
-        open(unit=25,file='./output/select_mixes',status='old')
-        close(unit=25,status='delete')
+        open(newunit=phreeqout%lun,file=phreeqout%file,status='old')
+        close(unit=phreeqout%lun,status='delete')
       endif
 !----open the file.
-!      open (unit=25,file='./output/select_mixes',access='sequential',
-!     * form='formatted', status='new')
+      open (newunit=phreeqout%lun,file=phreeqout%file,access=
+     * 'sequential',form='formatted', status='new')
 !
 ! Debug file
 !
-      inquire(file='./output/Debug',exist=filflg)
+      Debug%file='./output/Debug'
+      inquire(file=Debug%file,exist=filflg)
       if (filflg) then
-        open(unit=26,file='./output/Debug',status='old')
-        close(unit=26,status='delete')
+        open(newunit=debug%lun,file=debug%file,status='old')
+        close(unit=debug%lun,status='delete')
       endif
 !----open the file.
-      open (unit=26,file='./output/Debug',access='sequential',
+      open (newunit=debug%lun,file=debug%file,access='sequential',
      * form='formatted', status='new')
 c Basin volume file
 c
 !
-      nvolfiles = 0
-      inquire(file='./output/BasinVolumes',exist=filflg)
-      if (filflg) then
-        open(unit=27,file='./output/BasinVolumes',status='old')
-        close(unit=27,status='delete')
-      endif
-!----open the file.
-      open (unit=27,file='./output/BasinVolumes',access='sequential',
-     * form='formatted', status='new')
+!      nvolfiles = 0
+!      inquire(file='./output/BasinVolumes',exist=filflg)
+!      if (filflg) then
+!        open(unit=27,file='./output/BasinVolumes',status='old')
+!        close(unit=27,status='delete')
+!      endif
+!!----open the file.
+!      open (unit=27,file='./output/BasinVolumes',access='sequential',
+!     * form='formatted', status='new')
       
       ioinit = 0
 
@@ -335,22 +348,35 @@ c     ioclean
       integer function ioclean ()
 
       USE WEBMOD_IO
+      USE WEBMOD_RESMOD, ONLY : vf_lun, nvf
+      USE WEBMOD_PHREEQ_MMS, ONLY : cf_lun, ncf
 
       ioclean = 1
 
-      close (unit = topout_file_unit)
-
-      close (unit = chemout_file_unit)
+      !close (unit = topout_file_unit)
+      !
+      !close (unit = chemout_file_unit)
+      !
+      !close (unit = 25)  ! Output for selected mixes
+      !
+      !close (unit = 26)  ! Debug file
+      close (unit = topout%lun)
       
-      close (unit = 25)  ! Output for selected mixes
+      close (unit = chemout%lun)
       
-      close (unit = 26)  ! Debug file
+      close (unit = phreeqout%lun)  ! Output for selected mixes
       
-      do i = 1, nvolfiles
-        close (unit = 26+i)  ! Reservoir volumes file
-      end do
-      close (unit = 27)  ! Canopy volumes file
-
+      close (unit = debug%lun)  ! Debug file
+      
+      if(print_type.ge.2) then
+          do i = 1, nvf
+            close (unit = vf_lun(i))  ! Close volume files
+          end do
+          do i = 1, ncf
+            close (unit = cf_lun(i))  ! Close chem files
+          end do
+      endif
+      !
       ioclean = 0
       return
       end

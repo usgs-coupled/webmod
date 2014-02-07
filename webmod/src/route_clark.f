@@ -59,7 +59,7 @@ C   Dimensions and index
       integer, save :: nchan, nmru, nobs, nhydro
       integer, save :: clark_segs, ntopchan, nirrig_int
 C   Declared Parameters
-      integer, save :: qobsta, topout_file_unit
+      integer, save :: qobsta  !, topout_file_unit
       integer, save, allocatable :: irrig_int_src(:), irrig_sched_int(:)
       integer, save, allocatable :: nchan_d(:), mru2chan(:)
       real, save :: basin_area, CHV, Q0, dtinit,chan_loss_rate
@@ -385,12 +385,12 @@ c
      +   'Total basin area',
      +   'km2').ne.0) return
 
-      if(declparam('io', 'topout_file_unit', 'one', 'integer',
-     +   '80', '50', '99',
-     +   'Unit number for TOPMODEL output file',
-     +   'Unit number for TOPMODEL output file',
-     +   'integer').ne.0) return
-
+!      if(decl*param('io', 'topout_file_unit', 'one', 'integer',
+!     +   '80', '50', '99',
+!     +   'Unit number for TOPMODEL output file',
+!     +   'Unit number for TOPMODEL output file',
+!     +   'integer').ne.0) return
+!     
 ! local variables
       ALLOCATE (qscm(nchan))
       ALLOCATE (qsccfs(nchan))
@@ -417,7 +417,7 @@ c
       integer function routecinit()
 
       USE WEBMOD_ROUTE
-
+      USE WEBMOD_IO, ONLY : topout
 C***  local variables
       integer is, NCH, i, j, IN, NR, IR, ND, TIME
       integer nrtdelay
@@ -496,8 +496,8 @@ c
       if(getparam('basin', 'basin_area', 1 , 'real', basin_area)
      +   .ne.0) return
 
-      if(getparam('io', 'topout_file_unit', 1, 'integer',
-     +   topout_file_unit).ne.0) return
+!      if(get*param('io', 'topout_file_unit', 1, 'integer',
+!     +   topout_file_unit).ne.0) return
 
 
 c
@@ -518,7 +518,7 @@ c
 c
 c Write a section title
 c
-      WRITE(topout_file_unit,603)DT, CHV
+      WRITE(topout%lun,603)DT, CHV
  603  FORMAT(//'CHANNEL ROUTING DATA'/
      $     ' (Time step, DT =',f8.4,' hours)'/
      $     ' (Channel velocity, CHV =',f8.4,' meters per hour)'/
@@ -705,12 +705,12 @@ c
             ar_fill(I,is)=0.0
          end if
  26   continue
-      WRITE(topout_file_unit,604)is, chan_area(is), TCHMAX(is),
+      WRITE(topout%lun,604)is, chan_area(is), TCHMAX(is),
      $     (AR_FILL(I,is),I=1,clark_segs)
  604  FORMAT(1X,I4,E12.5,(1X,10E12.5))
  27   continue
 
-      write(topout_file_unit,605) chan_area_tot,
+      write(topout%lun,605) chan_area_tot,
      $     sumar, chan_loss_rate, maxchsegs*chvdt/1609.34
  605  format(//,'Sum of areas drained to channels ', 
      $     f10.3,' sq.km. (should equal basin area)'/
@@ -734,6 +734,7 @@ c
       integer function routecrun()
 
       USE WEBMOD_ROUTE
+      USE WEBMOD_IO, ONLY : topout
 
 C***  local variables
       integer NR, IR, ND, i, is, j, jj, k, nstep
@@ -1011,7 +1012,7 @@ c
          E=1-VARE/VARQ
 c
 c  add objective function values to output file
-         write(topout_file_unit,621)f1,e,f2,qbar,varq,vare
+         write(topout%lun,621)f1,e,f2,qbar,varq,vare
 c      write(10,621)f1,e,f2,qbar,varq,vare
  621     format(//1x,'Objective function values'/
      1        1x,'F1 ',e12.5,'   E ',f12.5,'   F2 ',e12.5//

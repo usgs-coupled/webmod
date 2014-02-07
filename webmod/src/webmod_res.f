@@ -273,7 +273,7 @@ c***********************************************************************
 ! m3cm converts cubic meters to cm depth using basin area. Set in Init section
       double precision m3cm
 
-      logical, save :: step1
+      logical, save :: resstep1
       integer, save :: nmru, nac, nobs, nresinp, nsolute, nchemvar
       integer, save :: nchemobs, nchemdat, nchem_ext
       integer, save :: clark_segs, nhydro, nchan,qobsta
@@ -379,7 +379,32 @@ c
       double precision, save, allocatable :: irrig_hyd_seg(:)
       real, save, allocatable :: gw_in1(:), gw_in2(:)
       real, save, allocatable :: chan_loss(:)
+      
+! Construction of volume file names (v_*)    
+      !integer, save :: isoh1_len, isoh2_len, isogl_len, isogs_len, sol_h2_len
+      !character*60, save :: isogs, isogl
+      !character*256 :: aline
+      !
+      !character*3000, save :: sol_header1, sol_header2, iso_header1,iso_header2
+      logical filflg
 
+      TYPE :: outfiles   ! file names, shortnames, and logical unit numbers for input and output files.
+         character(60) :: file   ! Output file
+         integer       :: lun        ! integer returned by NEWUNIT
+      END TYPE outfiles
+!
+      TYPE(outfiles),save :: vf_bas, vf_hyd
+      TYPE(outfiles),save,allocatable :: vf_mru(:), vf_uzgen(:),
+     $ vf_uzrip(:), vf_uzup(:), vf_can(:), vf_snow(:), 
+     $ vf_transp(:), vf_ohoriz(:), vf_uz(:,:), vf_qdf(:), vf_sat(:),
+     $ vf_satpref(:), vf_hill(:), vf_uz2sat(:), vf_hillexp(:)
+      !TYPE(outfiles),save, allocatable :: vf_imperv(:)
+
+      integer, save, allocatable :: vf_lun(:) ! lun numbers for closing in io cleanup
+      integer, save :: nvf  ! number of volume files
+!
+      character*3000, save :: out_dir, hdr, filename, mruid, nacid
+      integer :: nf, tmplun, path_len, j
 
       END MODULE WEBMOD_RESMOD
       
@@ -1229,12 +1254,14 @@ c
 
       USE WEBMOD_RESMOD
       USE WEBMOD_TOPMOD, ONLY : riparian
-      integer is, ia, ih
+      USE WEBMOD_IO, ONLY : print_type
+      integer, external :: length      
+      integer is, ia, ih, filelen
       real acf
 
       webrinit = 1
 
-      step1=.true.
+      resstep1=.true.
 
 
 c  Get the areas of pervious versus impervious from the basin_topg module.
@@ -1381,7 +1408,7 @@ c
 
       vmix_basin(1) = 0.0
 
-      do 50 is = 1, nmru
+      do is = 1, nmru
       
          vmix_mru(is,1) = 0.0
 
@@ -1564,7 +1591,7 @@ c Assign initial MRU volume
 
 c end of mru loop
 
- 50   continue
+      end do
 c
 c Initialize stream segment volumes. The initial and subsequent
 c total volumes for the stream segments will be stored in the nmru+1 index
@@ -1572,19 +1599,19 @@ c Add volumes for channel leakage to initial volumes since it will be removed
 c on the first time step
 c
 
-      do 100 is = 1, clark_segs
+      do is = 1, clark_segs
          vmix_stream(is) = 0.0
-         do 200 ih = 1, nchan
+         do ih = 1, nchan
             vmix_stream(is) = vmix_stream(is) + 
      $           q(is,ih)*chan_area(ih)*a_million
- 200     continue
+         end do
          vmix_stream(is) = vmix_stream(is) +
      $        maxchanloss(is)*basin_area*a_million
          vmix_diversion(is) = 0.0
          vmix_chan_loss(is) = 0.0
          basin_chan_sto_cm = basin_chan_sto_cm + vmix_stream(is) 
          vmix_basin(1) = vmix_basin(1) + vmix_stream(is) 
- 100  continue
+      end do
 
       vmix_basin0 = vmix_basin(1)
 
@@ -1599,8 +1626,354 @@ c
       basin_sssto_cm = basin_sssto_cm * m3cm
       basin_gw_sto_cm = basin_gw_sto_cm * m3cm
       basin_chan_sto_cm = basin_chan_sto_cm * m3cm
-
+c
+c Open volume files if print_type=2 (detailed)
+c
+      nvf=1+nmru*(14+nac)+nhydro+1 ! first is basin, last is stream volumes
+c composite basin volumes
+c      nvf=2
+      allocate(vf_lun(nvf))
+      nf=0
+      if(print_type.eq.2) then
+        IF(control_string(out_dir,'output_dir').NE.0) RETURN
+        path_len = index(out_dir,CHAR(0))-1   ! CHAR(0) is end of strings returned from control_string call
+        vf_bas%file = out_dir(1:path_len)//'v_basin'
+        inquire(file=vf_bas%file,exist=filflg)
+        if (filflg) then
+          open(newunit=tmplun,file=vf_bas%file,status='old')
+          close(unit=tmplun,status='delete')
+        endif
+!----open the file.
+        open (newunit=vf_bas%lun,file=vf_bas%file,access='sequential',
+     $    form='formatted', status='new')
+        nf=nf+1
+        vf_lun(nf)=vf_bas%lun
+        write(vf_bas%lun,10)
+!
+!open mru volume files
+!
+        allocate(vf_mru(nmru))
+        allocate(vf_uzgen(nmru))
+        allocate(vf_uzrip(nmru))
+        allocate(vf_uzup(nmru))
+        allocate(vf_can(nmru))
+        allocate(vf_snow(nmru))
+!        allocate(vf_imperv(nmru))
+        allocate(vf_transp(nmru))
+        allocate(vf_ohoriz(nmru))
+        allocate(vf_uz(nmru,nac))
+        allocate(vf_qdf(nmru))
+        allocate(vf_sat(nmru))
+        allocate(vf_satpref(nmru))
+        allocate(vf_hill(nmru))
+        allocate(vf_uz2sat(nmru))
+        do i = 1, nmru
+! composite mru
+          write(filename,20)i
+          filelen=length(filename)
+          vf_mru(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=vf_mru(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=vf_mru(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=vf_mru(i)%lun,file=vf_mru(i)%file,
+     $      access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vf_lun(nf)=vf_mru(i)%lun
+          write(vf_mru(i)%lun,10)
+! composite uz
+          write(filename,30)i
+          filelen=length(filename)
+          vf_uzgen(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=vf_uzgen(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=vf_uzgen(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=vf_uzgen(i)%lun,file=vf_uzgen(i)%file,
+     $      access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vf_lun(nf)=vf_uzgen(i)%lun
+          write(vf_uzgen(i)%lun,10)
+! composite riparian uz
+          write(filename,40)i
+          filelen=length(filename)
+          vf_uzrip(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=vf_uzrip(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=vf_uzrip(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=vf_uzrip(i)%lun,file=vf_uzrip(i)%file,
+     $      access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vf_lun(nf)=vf_uzrip(i)%lun
+          write(vf_uzrip(i)%lun,10)
+! composite upland uz
+          write(filename,50)i
+          filelen=length(filename)
+          vf_uzup(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=vf_uzup(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=vf_uzup(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=vf_uzup(i)%lun,file=vf_uzup(i)%file,
+     $      access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vf_lun(nf)=vf_uzup(i)%lun
+          write(vf_uzup(i)%lun,10)
+! canopy
+          write(filename,60)i
+          filelen=length(filename)
+          vf_can(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=vf_can(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=vf_can(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=vf_can(i)%lun,file=vf_can(i)%file,
+     $      access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vf_lun(nf)=vf_can(i)%lun
+          write(vf_can(i)%lun,10)
+! snowpack
+          write(filename,70)i
+          filelen=length(filename)
+          vf_snow(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=vf_snow(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=vf_snow(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=vf_snow(i)%lun,file=vf_snow(i)%file,
+     $      access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vf_lun(nf)=vf_snow(i)%lun
+          write(vf_snow(i)%lun,10)
+! impervious surface
+    !      write(filename,80)i
+    !      filelen=length(filename)
+    !      vf_imperv(i)%file = out_dir(1:path_len)//filename(1:filelen)
+    !        inquire(file=vf_imperv(i)%file,exist=filflg)
+    !      if (filflg) then
+    !        open(newunit=tmplun,file=vf_imperv(i)%file,status='old')
+    !        close(unit=tmplun,status='delete')
+    !      endif
+    !!----open the file.
+    !      open (newunit=vf_imperv(i)%lun,file=vf_imperv(i)%file,
+    ! $      access='sequential',form='formatted', status='new')
+    !      nf=nf+1
+    !      vf_lun(nf)=vf_imperv(i)%lun
+    !      write(vf_imperv(i)%lun,10)
+! transpiration
+          write(filename,90)i
+          filelen=length(filename)
+          vf_transp(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=vf_transp(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=vf_transp(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=vf_transp(i)%lun,file=vf_transp(i)%file,
+     $      access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vf_lun(nf)=vf_transp(i)%lun
+          write(vf_transp(i)%lun,12)('UZ',j,j=1,nac)
+! o-horizon
+          write(filename,100)i
+          filelen=length(filename)
+          vf_ohoriz(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=vf_ohoriz(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=vf_ohoriz(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=vf_ohoriz(i)%lun,file=vf_ohoriz(i)%file,
+     $      access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vf_lun(nf)=vf_ohoriz(i)%lun
+          write(vf_ohoriz(i)%lun,10)
+! individual unsaturated zone reservoirs
+          do j = 1, nac
+           write(filename,110)i,j
+           filelen=length(filename)
+           vf_uz(i,j)%file = out_dir(1:path_len)//filename(1:filelen)
+             inquire(file=vf_uz(i,j)%file,exist=filflg)
+           if (filflg) then
+             open(newunit=tmplun,file=vf_uz(i,j)%file,status='old')
+             close(unit=tmplun,status='delete')
+           endif
+    !----open the file.
+           open (newunit=vf_uz(i,j)%lun,file=vf_uz(i,j)%file,
+     $      access='sequential',form='formatted', status='new')
+           nf=nf+1
+           vf_lun(nf)=vf_uz(i,j)%lun
+           write(vf_uz(i,j)%lun,10)
+          end do
+! Direct flow
+          write(filename,120)i
+          filelen=length(filename)
+          vf_qdf(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=vf_qdf(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=vf_qdf(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=vf_qdf(i)%lun,file=vf_qdf(i)%file,
+     $      access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vf_lun(nf)=vf_qdf(i)%lun
+          write(vf_qdf(i)%lun,10)
+! saturated zone
+          write(filename,130)i
+          filelen=length(filename)
+          vf_sat(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=vf_sat(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=vf_sat(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=vf_sat(i)%lun,file=vf_sat(i)%file,
+     $      access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vf_lun(nf)=vf_sat(i)%lun
+          write(vf_sat(i)%lun,10)
+! preferential flow through the saturated zone (tile drains)
+          write(filename,140)i
+          filelen=length(filename)
+          vf_satpref(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=vf_satpref(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=vf_satpref(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=vf_satpref(i)%lun,file=vf_satpref(i)%file,
+     $      access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vf_lun(nf)=vf_satpref(i)%lun
+          write(vf_satpref(i)%lun,10)
+! Combined hillslope discharge (overland flow, qdf, and baseflow)
+          write(filename,150)i
+          filelen=length(filename)
+          vf_hill(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=vf_hill(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=vf_hill(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=vf_hill(i)%lun,file=vf_hill(i)%file,
+     $      access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vf_lun(nf)=vf_hill(i)%lun
+          write(vf_hill(i)%lun,10)
+! uz2sat - net flux of water from uz to sat from changes in water table
+!          and sat water moving up to meet evap demand.
+          write(filename,160)i
+          filelen=length(filename)
+          vf_uz2sat(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=vf_uz2sat(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=vf_uz2sat(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=vf_uz2sat(i)%lun,file=vf_uz2sat(i)%file,
+     $      access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vf_lun(nf)=vf_uz2sat(i)%lun
+          write(vf_uz2sat(i)%lun,13)('UZ',j,j=1,nac)
+        enddo
+! volumes of water exported to stream segments from each MRU on that day
+        allocate(vf_hillexp(nhydro))
+        do i = 1, nhydro
+          write(filename,170)i
+          filelen=length(filename)
+          vf_hillexp(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=vf_hillexp(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=vf_hillexp(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=vf_hillexp(i)%lun,file=vf_hillexp(i)%file,
+     $      access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vf_lun(nf)=vf_hillexp(i)%lun
+          write(vf_hillexp(i)%lun,15)i
+        end do
+! volumes of water in each stream segment at end of day
+        filename = 'v_hyd'
+        filelen=length(filename)
+        vf_hyd%file = out_dir(1:path_len)//filename(1:filelen)
+          inquire(file=vf_hyd%file,exist=filflg)
+        if (filflg) then
+          open(newunit=tmplun,file=vf_hyd%file,status='old')
+          close(unit=tmplun,status='delete')
+        endif
+    !----open the file.
+        open (newunit=vf_hyd%lun,file=vf_hyd%file,
+     $      access='sequential',form='formatted', status='new')
+        nf=nf+1
+        vf_lun(nf)=vf_hyd%lun
+        write(vf_hyd%lun,17)('hyd',i,i=1,nhydro)
+      endif
+      
       webrinit = 0
+c       '123456789112345678921234567893123456789412
+!
+! headers in files
+!
+ 10   format('Volumes, in cubic meters with specific input volumes ',
+     $ '(except for ET) listed after "Final" column'/'nstep Year Mo Dy',
+     $ '          Init        Inputs       Outputs',
+     $ '         Final        Precip            ET',
+     $ '    Impervious        Canopy      Snowpack',
+     $ '     O-horizon     UnsatZone     Macropore',
+     $ '       SatZone         Exfil       SatPref',
+     $ '     Hillslope       IrrWell        IrrDiv',
+     $ '        IrrExt          GW_1           GW2')
+
+ 12   format('Volumes in cubic meters pulled from each UZ by ',
+     $ 'transpiration.'/'nstep Year Mo Dy',50(A10,I4.3))
+ 13   format('Volumes, in cubic meters, of recharge from each UZ',
+     $ /'nstep Year Mo Dy',50(A10,I4.3))
+ 15   format('Volumes, in cubic meters'/'nstep Year Mo Dy Inputs',
+     $       ' to stream segment ',I5,' beginning at MRU 1')
+ 17   format('Volumes, in cubic meters at end of day'/'nstep Year Mo Dy',
+     $       '     Discharge',20(A10,I4.3))
+!
+! file names
+!
+ 20   format('v_mru',I3.3)
+ 30   format('v_mru',I3.3,'_uzgen')
+ 40   format('v_mru',I3.3,'_uzrip')
+ 50   format('v_mru',I3.3,'_uzup')
+ 60   format('v_mru',I3.3,'_can')
+ 70   format('v_mru',I3.3,'_snow')
+! 80   format('v_mru',I3.3,'_imperv')
+ 90   format('v_mru',I3.3,'_transp')
+ 100  format('v_mru',I3.3,'_ohoriz')
+ 110  format('v_mru',I3.3,'_uz',I2.2)
+ 120  format('v_mru',I3.3,'_qdf')
+ 130  format('v_mru',I3.3,'_sat')
+ 140  format('v_mru',I3.3,'_satpref')
+ 150  format('v_mru',I3.3,'_hill')
+ 160  format('v_mru',I3.3,'_uz2sat')
+ 170  format('v_hyd',I3.3)
 
       return
       end
@@ -1614,7 +1987,7 @@ c
       integer function webrrun()
 
       USE WEBMOD_RESMOD
-      USE WEBMOD_IO, only: chemout_file_unit
+      USE WEBMOD_IO, only: phreeqout, print_type
       USE WEBMOD_TOPMOD, only: z_wt_local, srzwet, riparian
 
 c variables and parameters from other modules
@@ -1623,7 +1996,7 @@ c variables and parameters from other modules
       integer endper, datetime(6), nstep
       logical end_run, end_yr, end_mo, end_dy, end_storm
       logical basinq_found
-      integer i, is, ia, ih, j, k
+      integer i, is, ia, ih, k
       real smav_basin, p
       real covden, transp_rate
       real acf
@@ -1892,11 +2265,14 @@ c
 c If not the first time step, transfer final volumes from last step
 c to initial volumes for this step
 c
-      if(.not.step1) then
+      if(.not.resstep1) then
          vmix_basin(1) = vmix_basin(4)
          do 2 is = 1,nmru
 c     vmix_imp(is,1) = vmix_imp(is,1)
             vmix_mru(is,1) = vmix_mru(is,4)
+            vmix_uzgen(is,1) = vmix_uzgen(is,4)
+            vmix_uzrip(is,1) = vmix_uzrip(is,4)
+            vmix_uzup(is,1) = vmix_uzup(is,4)
             vmix_can(is,1) = vmix_can(is,4) 
             vmix_snow(is,1) = vmix_snow(is,4)
             vmix_ohoriz(is,1) = vmix_ohoriz(is,4)
@@ -1912,7 +2288,7 @@ c     vmix_imp(is,1) = vmix_imp(is,1)
  4          continue
  2       continue
       else
-         step1=.false.
+         resstep1=.false.
 c     
 c     write debug header
 !      write(chemout_file_unit,233)
@@ -1979,8 +2355,8 @@ c
 
 c debug
 c$$$            if (is.eq.3) then
-               write(26,295)(quz_local(ij,is),uz2sat(ij,is),
-     $              srzwet(ij,is),ij=1,11)
+!               write(26,295)(quz_local(ij,is),uz2sat(ij,is),
+!     $              srzwet(ij,is),ij=1,11)
 c$$$            end if
 c$$$            if(datetime(3).eq.9.and.is.eq.3) return
 c end debug
@@ -2106,6 +2482,23 @@ c totals
         v_irrext = irrig_ext_mru(is)*mru_area(is)*a_million*inch2m
         v_dep = v_ppt + v_irrsat + v_irrhyd + v_irrext
 c
+c Track basin and mru inputs in their respective categories
+c precip (5)
+        vmix_mru(is,5) = v_ppt 
+        vmix_basin(5) = vmix_basin(5)+ v_ppt
+c irrsat (17)
+        vmix_mru(is,17) = v_irrsat 
+        vmix_basin(17) = vmix_basin(17)+ v_irrsat
+c irrhyd (18)
+        vmix_mru(is,18) = v_irrhyd 
+        vmix_basin(18) = vmix_basin(18)+ v_irrhyd
+c irrext (19)
+        vmix_mru(is,19) = v_irrext 
+        vmix_basin(19) = vmix_basin(19)+ v_irrext
+
+        vmix_mru(is,2) = v_dep
+        vmix_basin(2) = vmix_basin(2)+ v_dep
+c
 c to canopy
         v_ppt2can = v_ppt*covden
         v_irrsat2can = v_irrsat*covden
@@ -2117,13 +2510,6 @@ c unimpeded by canopy
         v_irrsat2gnd = v_irrsat*(1-covden)
         v_irrhyd2gnd = v_irrhyd*(1-covden)
         v_irrext2gnd = v_irrext*(1-covden)
-
-c
-c Add precip and irrigation to basin volume. Irrigation shows up as both 
-c exports and imports to the basin and mru on the same time step.
-c
-         vmix_mru(is,2) = v_dep
-         vmix_basin(2) = vmix_basin(2)+ v_dep
 
 c On the day that transpiration stops (leaves off), the concentration of
 c the remaining leaves will remain constant. The mass of water and solutes
@@ -2595,22 +2981,22 @@ c as pore water that was included in the unsaturated zone is now in the saturate
 c zone domain.
 c
         if(uz2sat(ia,is).lt.0.0) then
-           vmix_uz(ia,is,14) = v_qwet_loc-uz2sat_vol(ia,is)
+           vmix_uz(ia,is,13) = v_qwet_loc-uz2sat_vol(ia,is)
            v_sat2uz = v_sat2uz - uz2sat_vol(ia,is)
         else
-           vmix_uz(ia,is,14) = v_qwet_loc
+           vmix_uz(ia,is,13) = v_qwet_loc
         end if
 
 
 c
 c add uz inputs from saturated zone
 c
-        vmix_sat2uz(is) = vmix_sat2uz(is)+ vmix_uz(ia,is,14)
-        vmix_uzgen(is,14)=vmix_uzgen(is,14)+vmix_uz(ia,is,14)
+        vmix_sat2uz(is) = vmix_sat2uz(is)+ vmix_uz(ia,is,13)
+        vmix_uzgen(is,13)=vmix_uzgen(is,13)+vmix_uz(ia,is,13)
         if(riparian(ia,is)) then
-          vmix_uzrip(is,14)=vmix_uzrip(is,14)+vmix_uz(ia,is,14)
+          vmix_uzrip(is,13)=vmix_uzrip(is,13)+vmix_uz(ia,is,13)
         else  
-          vmix_uzup(is,14)=vmix_uzup(is,14)+vmix_uz(ia,is,14)
+          vmix_uzup(is,13)=vmix_uzup(is,13)+vmix_uz(ia,is,13)
         endif
 
 c
@@ -2619,7 +3005,7 @@ c
         vmix_uz(ia,is,2) = vmix_uz(ia,is,5) + vmix_uz(ia,is,8)
      $       + vmix_uz(ia,is,17) + vmix_uz(ia,is,18)
      $       + vmix_uz(ia,is,19) 
-     $       + vmix_uz(ia,is,9) + vmix_uz(ia,is,14)
+     $       + vmix_uz(ia,is,9) + vmix_uz(ia,is,13)
 c
 c collect inputs in uzgen
 c
@@ -2768,6 +3154,14 @@ c           vmix_sat(is,11) = recharge, calculated above
 c
 c Collect GW influx as mru and basin inputs
 c
+
+c gw1    (20)
+           vmix_mru(is,20) = vmix_sat(is,20)
+           vmix_basin(20) = vmix_basin(20)+ vmix_sat(is,20)
+c gw2    (21)
+           vmix_mru(is,21) = vmix_sat(is,21) 
+           vmix_basin(21) = vmix_basin(21)+ vmix_sat(is,21)
+
            vmix_mru(is,2) = vmix_mru(is,2) + 
      $          vmix_sat(is,20) + vmix_sat(is,21)
            vmix_basin(2) = vmix_basin(2) +
@@ -2845,7 +3239,7 @@ c shallow preferential flow, qdf
            vmix_hill(is,12) = vmix_qdf(is,3)
 c baseflow, qb
            vmix_hill(is,13) = v_qb
-c exfiltration, qexfil
+c exfiltration, qexfil : exfiltration in no longer simulated - RW
            vmix_hill(is,14) = v_exfil
 c deep preferential flow
            vmix_hill(is,15) = vmix_satpref(is,3)
@@ -3052,8 +3446,53 @@ c
       basin_qsim_m3s = basin_qsim_cm*basin_area/8.64/fac
 
 c
-c End of day
+c Write output volume files when print_type=2
 c
+      if(print_type.ge.2) then
+       write(vf_bas%lun,123) nstep,(datetime(i),i=1,3),
+     $      (vmix_basin(i),i=1,21)
+        do is=1,nmru
+          write(vf_mru(is)%lun,123) nstep,(datetime(i),i=1,3),
+     $      (vmix_mru(is,i),i=1,21)
+          write(vf_uzgen(is)%lun,123) nstep,(datetime(i),i=1,3),
+     $      (vmix_uzgen(is,i),i=1,21)
+          write(vf_uzrip(is)%lun,123) nstep,(datetime(i),i=1,3),
+     $      (vmix_uzrip(is,i),i=1,21)
+          write(vf_uzup(is)%lun,123) nstep,(datetime(i),i=1,3),
+     $      (vmix_uzup(is,i),i=1,21)
+          write(vf_can(is)%lun,123) nstep,(datetime(i),i=1,3),
+     $      (vmix_can(is,i),i=1,21)
+          write(vf_snow(is)%lun,123) nstep,(datetime(i),i=1,3),
+     $      (vmix_snow(is,i),i=1,21)
+!          write(vf_imperv(is)%lun,123) nstep,(datetime(i),i=1,3),
+!     $      (vmix_imp(is,i),i=1,21)
+          write(vf_transp(is)%lun,123) nstep,(datetime(i),i=1,3),
+     $      (vmix_uz2can(i,is),i=1,nac)
+          write(vf_ohoriz(is)%lun,123) nstep,(datetime(i),i=1,3),
+     $      (vmix_ohoriz(is,i),i=1,21)
+          write(vf_qdf(is)%lun,123) nstep,(datetime(i),i=1,3),
+     $      (vmix_qdf(is,i),i=1,21)
+          write(vf_sat(is)%lun,123) nstep,(datetime(i),i=1,3),
+     $      (vmix_sat(is,i),i=1,21)
+          write(vf_satpref(is)%lun,123) nstep,(datetime(i),i=1,3),
+     $      (vmix_satpref(is,i),i=1,21)
+          write(vf_hill(is)%lun,123) nstep,(datetime(i),i=1,3),
+     $      (vmix_hill(is,i),i=1,21)
+          write(vf_uz2sat(is)%lun,123) nstep,(datetime(i),i=1,3),
+     $      (vmix_uz2sat(i,is),i=1,nac)
+          do ia=1,nac
+            write(vf_uz(is,ia)%lun,123) nstep,(datetime(i),i=1,3),
+     $        (vmix_uz(ia,is,i),i=1,21)
+          end do
+        end do
+        do is=1,nhydro
+          write(vf_hillexp(is)%lun,123) nstep,(datetime(i),i=1,3),
+     $      (vmix_hillexp(is,i),i=1,nmru)
+        end do
+        write(vf_hyd%lun,123) nstep,(datetime(i),i=1,3),
+     $     basin_qsim_cm/m3cm, (vmix_stream(i),i=1,nhydro)
+      end if
+ 123  format(2I5,2I3,21E14.6)
 !      if (end_dy) write(*,"(85E14.6)")
 !     $ (vmix_can(1,i), i=1,6),(vmix_ohoriz(1,i), i=1,6),(vmix_snow(1,i),
 !     $ i=1,6),
@@ -3075,7 +3514,7 @@ c$$$     $     vmix_basin0
       end
 
 c
-c No cleanup routine needed since output file is close in the
+c No cleanup routine needed since output files are closed in the
 c io_chem module
 c
 

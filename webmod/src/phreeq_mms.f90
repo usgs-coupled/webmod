@@ -165,7 +165,24 @@
       character*3000, save :: inp_dir, phreeqmms_pqi
       character*3000, save :: cheminit_file, readline, phreeq_database
 
+! variables, file names, and logical units for detailed geochemistry files
+      character*3000, save :: out_dir
 
+      TYPE :: outfiles   ! file names, shortnames, and logical unit numbers for input and output files.
+         character(60) :: file   ! Output file
+         integer       :: lun        ! integer returned by NEWUNIT
+      END TYPE outfiles
+!
+      TYPE(outfiles),save :: cf_bas
+      TYPE(outfiles),save,allocatable :: cf_mru(:), cf_uzgen(:),&
+       cf_uzrip(:), cf_uzup(:), cf_can(:), cf_snow(:), cf_inperv(:),&
+       cf_transp(:), cf_ohoriz(:), cf_uz(:,:), cf_qdf(:), cf_sat(:),&
+       cf_satpref(:), cf_hill(:), cf_uz2sat(:), cf_hyd(:)
+
+      integer, save, allocatable :: cf_lun(:) ! lun numbers for closing in io cleanup
+      integer, save :: ncf  ! number of geochemistry files
+!
+      integer :: nf, tmplun  ! temp variables
 
 ! Basin geometry - kPa is Air pressure in kiloPascals needed to derive wetbulb temperature for precip
       real, save :: basin_area
@@ -272,15 +289,22 @@
          double precision, allocatable :: delta(:,:) ! delta values for any of nsolutes that are isotopes
          double precision :: Temp(5)   ! Temperature of reservoir inputs and outputs
          double precision :: pH(5)   ! pH of reservoir inputs and outputs
-!         double precision :: Ent_Type(:)   ! pH of reservoir inputs and outputs
-!         double precision :: Ent_M(:)   ! pH of reservoir inputs and outputs
+         double precision, allocatable :: MassRxn(:)   ! Moles of solute produced and consumed by entities, per reservoir volume
+         double precision, allocatable :: Mass(:)   ! Mass of entities in reservoir at end of time step, per reservoir volume
       END TYPE geochem
      
       TYPE(geochem), save, allocatable :: c_chem(:) ! to be allocated by the total number of solutions, nphrsolns
-      TYPE(geochem), save, allocatable :: c_chem_uzgen(:) ! additional rows of c_chem to hold uz composite mass and fluxes
-      TYPE(geochem), save, allocatable :: c_chem_uzrip(:) ! additional rows of c_chem to hold uz composite mass and fluxes
-      TYPE(geochem), save, allocatable :: c_chem_uzup(:) ! additional rows of c_chem to hold uz composite mass and fluxes
-! These parameters enable better understanding of fluxes recorded in c_chem%M and c_chem_vol; index 4 is rxn for Moles or et for volumes.
+! pseudo reservoirs populated with accumlated volumes and masses      
+      TYPE(geochem), save :: c_chem_basin
+      TYPE(geochem), save, allocatable :: c_chem_mru(:) ! to be allocated by the total number of solutions, nphrsolns
+      TYPE(geochem), save, allocatable :: c_chem_uzgen(:) ! summ of all uz reservoirs
+      TYPE(geochem), save, allocatable :: c_chem_uzrip(:) ! sum of riparian uz reservoirs [st() wetter than or equal to riparian_thresh]
+      TYPE(geochem), save, allocatable :: c_chem_uzup(:) ! sum of upland uz reservoirs drier than riparian_thresh
+
+!      integer :: EntType(:)   ! Type of Phreeqc entity: soln, eq_ph, rxn, kin, surf, exch. Dimensioned by ntallycol
+!      character(40) :: EntDescr(:)   ! Dimensioned by ntallycol
+
+      ! These parameters enable better understanding of fluxes recorded in c_chem%M and c_chem_vol; index 4 is rxn for Moles or et for volumes.
       integer, PARAMETER :: init = 1
       integer, PARAMETER :: in = 2
       integer, PARAMETER :: out = 3
@@ -474,7 +498,7 @@
 !*********************************************************
 !
       integer function phreeq_mms(arg)
-      USE WEBMOD_IO, only: chemout_file_unit
+      USE WEBMOD_IO, only: phreeqout
       implicit none
 ! Arguments
       CHARACTER(LEN=*), INTENT(IN) :: Arg
@@ -499,7 +523,7 @@
       ENDIF
 
       if(phreeq_mms.eq.1) then
-         close (chemout_file_unit)
+         close (phreeqout%lun)
          close (14)
          close (16)
          close (17)
@@ -1001,7 +1025,7 @@
          'End debugging on this step',&
          'integer').ne.0) return
 
-!      if(declparam('io', 'chemout_file_unit', 'one', 'integer',
+!      if(decl*param('io', 'chemout_file_unit', 'one', 'integer',
 !     +   '90', '50', '99',
 !     +   'Unit number for file summarizing solute transport',
 !     +   'Unit number for file summarizing solute transport',
@@ -1566,7 +1590,7 @@
 #endif
       USE WEBMOD_PHREEQ_MMS
       USE WEBMOD_OBSCHEM, ONLY :phq_lut,sol_id,sol_name,n_iso,iso_list
-      USE WEBMOD_IO, only: chemout_file_unit
+      USE WEBMOD_IO, only: phreeqout, print_type
 
 
 ! Mixing variables from webmod_res
@@ -1665,7 +1689,7 @@
 !
 ! Get parameters
 !
-!      if(getparam('io', 'chemout_file_unit', 1,&
+!      if(get*param('io', 'chemout_file_unit', 1,&
 !         'integer',chemout_file_unit ) .ne.0) return
 
       if(getparam('basin', 'basin_area', 1 , 'real', basin_area)&
@@ -1997,10 +2021,9 @@
         PRINT *, 'Errors dimensioning rows and cols in tally table:'
         STOP
       ENDIF
-      
 ! Allocate tally table arrays
       allocate (tally_table(ntally_rows + 1, ntally_cols))
-      allocate (tally_row_label(ntally_rows + 1))
+      allocate (tally_row_label(ntally_rows + 1))  ! The last role is moles of entity
       allocate (tally_col_type(ntally_cols))
       allocate (tally_col_label(ntally_cols))
       ALLOCATE (n_ent(ntally_cols))
@@ -2037,12 +2060,14 @@
       end do
 
 !
-! count how many of each entity (1, solution; 2, exchange, etc)
+! count how many of each entity (1, solution; 2, exchange, etc) and assign multipliers accordingly
+! Assign a multiplier of 1 for mass added by reactants (n_ent(2)) and negatives for all other 
+! entities (exchange, surface, gas, etx)
 !
       do i = 1,ntally_cols
          n_ent(i) = 0
+         mult(i) =1D0
       end do
-
       do i = 1,ntally_cols
          iresult = get_tally_table_column_heading(ID,i,tally_col_type(i),&
              tally_col_label(i))
@@ -2050,7 +2075,7 @@
             PRINT *, 'Errors configuring tally col headings:'
             STOP
          ENDIF
-         n_ent(tally_col_type(i)) = n_ent(tally_col_type(i)) + 1
+         if(tally_col_type(i).gt.2) mult(i) = -1D0 
       end do
 !
 !  To mimimize sorting time in phreeqc, initialize all reservoirs in numerical order.
@@ -2562,9 +2587,9 @@
             STOP
          ENDIF
 
-      write(chemout_file_unit,'(A)')'row, chemrow, src, dest, '//&
+      write(phreeqout%lun,'(A)')'row, chemrow, src, dest, '//&
                 'chemvar?, src_init->'
-      write(chemout_file_unit,123)(i,isoln(dest(i),nchemdat,nmru,nac,&
+      write(phreeqout%lun,123)(i,isoln(dest(i),nchemdat,nmru,nac,&
            clark_segs,ires,ichemdat,imru,inac,ihydro),&
            src(i),dest(i),c_indx(i,2),(src_init(i,j),j=1,11)&
               ,i=1,nphrsolns)
@@ -3357,6 +3382,41 @@
       iresult = SetErrorFileOn(ID,phr_tf)
       iresult = SetLogFileOn(ID,phr_tf)
       iresult = SetSelectedOutputFileOn(ID,phr_tf)
+!
+! Write header for detailed geochem files  if print_type=2 (detailed)
+!
+      ncf=1
+!      allocate(v_lun(1+nmru*14+nac)+nhydro)
+      allocate(cf_lun(ncf))
+      nf=0
+      if(print_type.eq.2) then
+        IF(control_string(out_dir,'output_dir').NE.0) RETURN
+        path_len = index(out_dir,CHAR(0))-1   ! CHAR(0) is end of strings returned from control_string call
+! Kludge for multi-CPU
+        cf_bas%file = out_dir(1:path_len)//'c_basin'
+        inquire(file=cf_bas%file,exist=filflg)
+        if (filflg) then
+          open(newunit=tmplun,file=cf_bas%file,status='old')
+          close(unit=tmplun,status='delete')
+        endif
+!----open the file.
+        open (newunit=cf_bas%lun,file=cf_bas%file,access='sequential',&
+         form='formatted', status='new')
+        nf=nf+1
+        cf_lun(nf)=cf_bas%lun
+        write(cf_bas%lun,100)
+!        do i = 1, nmru
+          
+!        enddo
+        endif
+      
+ 100   format('    Date  /  Time   ',&
+      ' Init     Inputs    Outputs    Final    ',&
+      ' Precip    ET      Impervious  Canopy   ',&
+      'Snowpack O-horizon  UnsatZone Macropore ',&
+      'SatZone   Exfil     SatPref   Hillslope ',&
+      'IrrWell  IrrDiv     IrrExt     GW_1     ',&
+      '   GW2') 
 
       phreeqmms_init = 0
       return
@@ -5028,7 +5088,7 @@
                fracs(3) = vmix_uz(j,is,9)/totvol
 
                solns(4) = solnnum(0,8,0,is,0,0,0) ! flux from wetting and water level change
-               fracs(4) = vmix_uz(j,is,14)/totvol
+               fracs(4) = vmix_uz(j,is,13)/totvol
 
 ! Check for negative fractions
 
@@ -5949,7 +6009,7 @@
             fracs(2) = vmix_hill(is,12)/totvol
 
             solns(3) = solnnum(1,8,0,is,0,0,0) ! saturated zone
-            fracs(3) = (vmix_hill(is,13)+vmix_hill(is,14))/totvol ! baseflow +exfiltration
+            fracs(3) = (vmix_hill(is,13))/totvol ! baseflow
 
             solns(4) = solnnum(1,9,0,is,0,0,0) ! Sat pref flow
             fracs(4) = vmix_hill(is,15)/totvol
@@ -6413,6 +6473,14 @@
          PRINT *, 'Errors assigning ch_var values:'
          STOP
       ENDIF
+!
+! Populate detailed geochem output files
+!
+!      iresult = chem2var()
+!      IF (iresult.NE.0) THEN
+!         PRINT *, 'Errors assigning ch_var values:'
+!         STOP
+!      ENDIF
 
       end if                    ! landing point if no chemical simulations to be done
 
@@ -6442,11 +6510,11 @@
       integer function phreeqmms_clean()
 
       USE WEBMOD_PHREEQ_MMS
-      USE WEBMOD_IO, only: chemout_file_unit
+      USE WEBMOD_IO, only: phreeqout
 
       phreeqmms_clean = 1
 
-      close (chemout_file_unit)
+      close (phreeqout%lun)
       close (unit=14)
       close (unit=16)
       close (unit=17)
@@ -6861,7 +6929,7 @@
        indxb, indxm, indxuz, c_indx, mult, init, in, out, rxn, ET, fin
       USE WEBMOD_OBSCHEM, ONLY : sol_id
       USE WEBMOD_RESMOD, ONLY: vmix_sat, vmix_uz
-      USE WEBMOD_IO, ONLY: chemout_file_unit
+      USE WEBMOD_IO, ONLY: phreeqout
 
 
       implicit none
@@ -6879,37 +6947,31 @@
       update_chem = 1
 
 !
-! Add up the number of tally table columns the first time through,
-! ignoring solution concentrations that are always in column one.
-! nally_cols is static for each run. Assign a multiplier of 1 for mass
-! added by reactants (n_ent(2)) and negatives for all other 
-! entities (exchange, surface, gas, etx)
-!
       if(step1) then
-         do i = 1,ntally_cols
-            mult(i) =1D0
-            if(i.gt.2+n_ent(2)) mult(i) = -1D0
+         !do i = 1,ntally_cols
+         !   mult(i) =1D0
+         !   if(i.gt.2+n_ent(2)) mult(i) = -1D0
 ! Debug
 ! /Debug
-         end do
-         if(phr_tf) write(26,'(A)')'nstep yr mo dy index In_Out metric indxmru indxbas '// &
-           'totvol vol_init vol_in vol_out vol_rxn vol_fin Cl_init Cl_in Cl_out Cl_rxn Cl_fin'
+         !end do
+!         if(phr_tf) write(26,'(A)')'nstep yr mo dy index In_Out metric indxmru indxbas '// &
+!           'totvol vol_init vol_in vol_out vol_rxn vol_fin Cl_init Cl_in Cl_out Cl_rxn Cl_fin'
          step1=.false.
       end if  ! step1
 
 ! Debug
       test =  0 ! Snowpack
      
-      if (phr_tf) then
+!      if (phr_tf) then
 ! for nsolute = 12
 !        write(26,123) nstep,(datetime(i),i=1,3),indx, &
 !           ' in ',imetric, indxmru, indxbas, totvol,(c_chem(indx)%vol(i),i=1,5), &
 !           ((c_chem(indx)%M(i,j),j=1,5),i=8,12)
 ! for nsolute = 1
-        write(26,123) nstep,(datetime(i),i=1,3),indx, &
-           ' in ',imetric, indxmru, indxbas, totvol,(c_chem(indx)%vol(i),i=1,5), &
-           (c_chem(indx)%M(1,j),j=1,5)
-      end if
+!        write(26,123) nstep,(datetime(i),i=1,3),indx, &
+!           ' in ',imetric, indxmru, indxbas, totvol,(c_chem(indx)%vol(i),i=1,5), &
+!           (c_chem(indx)%M(1,j),j=1,5)
+!      end if
 !
 ! / Debug
 !
@@ -7083,18 +7145,18 @@
 ! 122  format(I4, 2I10, i4, 10F12.1)
 
       
-      if (phr_tf) then
+!      if (phr_tf) then
 ! for nsolute = 12
 !        write(26,123) nstep,(datetime(i),i=1,3),indx, &
 !           ' out ',imetric, indxmru, indxbas, totvol,(c_chem(indx)%vol(i),i=1,5), &
 !           ((c_chem(indx)%M(i,j),j=1,5),i=8,12)
 !           i=1
 ! for nsolute = 1
-        write(26,123) nstep,(datetime(i),i=1,3),indx, &
-           ' out ',imetric, indxmru, indxbas, totvol,(c_chem(indx)%vol(i),i=1,5), &
-           (c_chem(indx)%M(1,j),j=1,5)
-           i=1
-      end if
+!        write(26,123) nstep,(datetime(i),i=1,3),indx, &
+!           ' out ',imetric, indxmru, indxbas, totvol,(c_chem(indx)%vol(i),i=1,5), &
+!           (c_chem(indx)%M(1,j),j=1,5)
+!           i=1
+!      end if
 ! // debug
 
       update_chem = 0

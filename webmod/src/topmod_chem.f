@@ -217,7 +217,7 @@ c     distribution of vertical conductivity (XK0)
       integer, save :: nsc, nmru, nac, nobs
       integer, save :: nxkbin, ngw_ext, nirrig_int
 !   Declared Parameters
-      integer, save :: INFEX, T_decay, iout, qobsta, topout_file_unit
+      integer, save :: INFEX, T_decay, iout, qobsta  !, topout_file_unit
       integer, save :: irrsched,irrsrc,gwsched
       integer, save, allocatable :: nacsc(:), cov_type(:)
       real, save :: basin_area, irrig_dep_max, pump_coeff
@@ -1316,11 +1316,11 @@ c     +    .ne.0) return
      +   'Total basin area',
      +   'km2').ne.0) return
 
-      if(declparam('io', 'topout_file_unit', 'one', 'integer',
-     +   '80', '50', '99',
-     +   'Unit number for TOPMODEL output file',
-     +   'Unit number for TOPMODEL output file',
-     +   'integer').ne.0) return
+!      if(decl*param('io', 'topout_file_unit', 'one', 'integer',
+!     +   '80', '50', '99',
+!     +   'Unit number for TOPMODEL output file',
+!     +   'Unit number for TOPMODEL output file',
+!     +   'integer').ne.0) return
 
 !
 ! From init section
@@ -1369,6 +1369,7 @@ c
       integer function topminit()
 
       USE WEBMOD_TOPMOD
+      USE WEBMOD_IO, ONLY : topout
       
       logical acflag
       integer is, j
@@ -1561,8 +1562,8 @@ c$$$
       if(getparam('basin', 'basin_area', 1 , 'real', basin_area)
      +   .ne.0) return
 
-      if(getparam('io', 'topout_file_unit', 1, 'integer',
-     +   topout_file_unit).ne.0) return
+!      if(get*param('io', 'topout_file_unit', 1, 'integer',
+!     +   topout_file_unit).ne.0) return
 
 c$$$      write(topout_file_unit, 8000) is
 c$$$ 8000 format(1x,'Subcatchment  ', i3)
@@ -1794,18 +1795,18 @@ c$$$         endif
 c$$$ 56   continue
 
       If(INFEX.ne.0) then
-         Write(topout_file_unit,8020)(ack(ik),ik=1,9)
+         Write(topout%lun,8020)(ack(ik),ik=1,9)
  8020    Format('TOPMODEL output file'//
      $       'Infiltration excess parameters'/
      +       'Proportional areas: '/3X,9(1x,e12.5)/
      +       'MRU Vertical Hydraulic Conductivities, XK'/
      +       '=== ',9('============ '))
          do 57 is = 1,nsc
-            Write(topout_file_unit,8021)is,(xk(is,ik),ik=1,nxk(is))
+            Write(topout%lun,8021)is,(xk(is,ik),ik=1,nxk(is))
  8021       Format(I3,9(1x,e12.5))
  57      continue
       else
-         Write(topout_file_unit,8025)
+         Write(topout%lun,8025)
  8025    Format('TOPMODEL output file'//
      $        'Infiltration excess not simulated')
       endif
@@ -1819,7 +1820,7 @@ c
 c  Write a subcatchment characteristics and initial water
 c  balance for each MRU
 c
-      If(IOUT.ge.1) write(topout_file_unit, 8000)
+      If(IOUT.ge.1) write(topout%lun, 8000)
  8000 format(//'Characteristics of subcatchments'/
      $     'MRU: Subcatchment ID'/
      $     'TL: Mean Topographic Index'/
@@ -1972,7 +1973,7 @@ c      SBAR(is)=-SZM(is)*ALOG(Q0DT/SZQ(is))
       BAL(is)=(s_rock_depth(is) * s_porosity(is)) - SBAR(is) - SR0(is)
 
 
-      If(IOUT.ge.1) write(topout_file_unit,603)is, TL(is),szm(is),
+      If(IOUT.ge.1) write(topout%lun,603)is, TL(is),szm(is),
      $     To(is), szq(is), pmacro(is), pmac_sat(is),qdffrac(is), 
      $     s_theta_wp(is),s_theta_0(is),
      $     s_theta_fc(is), s_porosity(is), s_root_depth(is),
@@ -2018,6 +2019,7 @@ c
       integer function topmrun()
 
       USE WEBMOD_TOPMOD
+      USE WEBMOD_IO, only: topout
       
       implicit none
 
@@ -2633,7 +2635,7 @@ c
 c  Limit QB to minimum flow to avoid negative QB when wells lower water
 c  table below SZM the maximum deficit when using the power low decrease in Transmissivity
 c
-      if(qb(is).lt..00001) qb(is)=.00001
+      if(qb(is).lt..00001) qb(is)=0.0
 c
 c  Compute drainage from preferential flow in the unsaturated zone using
 c  the water table height from the previous time step.
@@ -2878,7 +2880,7 @@ c
       if (end_run.and.iout.ge.1) then
 
 !         If(IOUT.ge.1) Write(topout_file_unit,650)
-         Write(topout_file_unit,650)
+         Write(topout%lun,650)
  650     FORMAT(/'Water Balance for Subcatchments : '//
      1        '  MRU       SUMP    SUMGWIN     SUMAE    ',
      $        '  SUMQ     SUMGW_LOSS   SUMRZ      SUMUZ  ',
@@ -2907,7 +2909,7 @@ C  CALCULATE BALANCE TERMS
      $          sumgw_loss(is) - (s_rock_depth(is) * s_porosity(is))
 
 !            If(IOUT.ge.1) Write(topout_file_unit,655) is,SUMP(is),
-            Write(topout_file_unit,655) is,SUMP(is),
+            Write(topout%lun,655) is,SUMP(is),
      $        sumgw_in1(is)+sumgw_in2(is),SUMAE(is),SUMQ(is),
      $        sumgw_loss(is),SUMRZ,SUMUZ,SBAR(is),BAL(is),
      $        acmax(is), afxmax(is)

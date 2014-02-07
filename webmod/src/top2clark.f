@@ -40,7 +40,7 @@
 !   Dimensions
       integer, save :: nmru, nchan
 !   Declared Parameters
-      integer, save :: topout_file_unit
+!      integer, save :: topout_file_unit
       integer, save, allocatable :: mru2chan(:)
       real, save :: basin_area
       real, save, allocatable :: mru_area(:), mru_area_frac(:)
@@ -117,11 +117,11 @@
      +   'MRU area',
      +   'km2').ne.0) return
 
-      if(declparam('io', 'topout_file_unit', 'one', 'integer',
-     +   '80', '50', '99',
-     +   'Unit number for TOPMODEL output file',
-     +   'Unit number for TOPMODEL output file',
-     +   'integer').ne.0) return
+!      if(decl*param('io', 'topout_file_unit', 'one', 'integer',
+!     +   '80', '50', '99',
+!     +   'Unit number for TOPMODEL output file',
+!     +   'Unit number for TOPMODEL output file',
+!     +   'integer').ne.0) return
 !
 ! getvar qout from top_chem
 !
@@ -140,6 +140,7 @@
       integer function top2cinit()
 
       USE WEBMOD_CLARK
+      USE WEBMOD_IO, ONLY : topout
       
       integer i, j
       real area_chk
@@ -178,8 +179,8 @@
       if(getparam('top2c', 'mru2chan', nmru, 'integer', mru2chan)
      +   .ne.0) return
 
-      if(getparam('io', 'topout_file_unit', 1, 'integer',
-     +   topout_file_unit).ne.0) return
+!      if(get*param('io', 'topout_file_unit', 1, 'integer',
+!     +   topout_file_unit).ne.0) return
 
       do 10 i = 1, nchan
          chan_area(i)=0.0
@@ -200,13 +201,13 @@
          return
       end if
 
-      WRITE(topout_file_unit,604)(i, mru_area(i), mru2chan(i), i=1,nmru)
+      WRITE(topout%lun,604)(i, mru_area(i), mru2chan(i), i=1,nmru)
   604 FORMAT(//'HILLSLOPE TO CHANNEL ASSIGNMENTS'/
      $     'Hillslope(MRU)  Area(km2)  Channel'/
      $     '==============  =========  ======='/
      $     (3X,I3,11X,f7.2,6X, I3))
 
-      WRITE(topout_file_unit,605)basin_area
+      WRITE(topout%lun,605)basin_area
  605  FORMAT(/'     Basin Area  ', f7.2,' sq.km')
 
       top2cinit = 0
