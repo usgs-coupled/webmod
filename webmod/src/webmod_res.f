@@ -1633,15 +1633,14 @@ c
       basin_sssto_cm = basin_sssto_cm * m3cm
       basin_gw_sto_cm = basin_gw_sto_cm * m3cm
       basin_chan_sto_cm = basin_chan_sto_cm * m3cm
+      if(print_type.eq.2) then
 c
 c Open volume files if print_type=2 (detailed)
 c
-      nvf=1+nmru*(14+nac)+nhydro+1 ! first is basin, last is stream volumes
+        nvf=1+nmru*(14+nac)+nhydro+1 ! first is basin, last is stream volumes
+        allocate(vf_lun(nvf))
+        nf=0
 c composite basin volumes
-c      nvf=2
-      allocate(vf_lun(nvf))
-      nf=0
-      if(print_type.eq.2) then
         IF(control_string(out_dir,'output_dir').NE.0) RETURN
         path_len = index(out_dir,CHAR(0))-1   ! CHAR(0) is end of strings returned from control_string call
         vf_bas%file = out_dir(1:path_len)//'v_basin'

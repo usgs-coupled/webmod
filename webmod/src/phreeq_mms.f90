@@ -3375,13 +3375,10 @@
 !$$$         STOP
 !$$$      ENDIF
 !
-! If chem_sim indicates that no chemical simulations are to be completed
-! notify the user.
-!
-!
-! Write headers for detailed geochem files  if print_type=2 (detailed)
-!
-      ncf=1
+! Write headers for detailed geochem files (concentrations in discharge are always printed in the *.chemout file)
+! if print_type = 1 print mass balance for basin and mrus
+! if print_type = 1 print additional files with mass balance for all reservoirs
+!!ncf=1
 !      allocate(v_lun(1+nmru*14+nac)+nhydro)
       allocate(cf_lun(ncf))
       nf=0
@@ -3405,6 +3402,10 @@
           
 !        enddo
        endif
+!
+! If chem_sim indicates that no chemical simulations are to be completed
+! notify the user in the console and in the *.chemout file.
+!
       else ! if chem_sim = 0
          print*,'Chem_sim parameter equals zero so all chemical ',&
            ' variables are uninitialized'
