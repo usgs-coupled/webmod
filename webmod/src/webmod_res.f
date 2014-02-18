@@ -373,7 +373,7 @@ c
       real, save, allocatable :: qpref(:), acm(:), afx(:)
       real, save, allocatable :: qof(:),qofs(:), quz(:)
       real, save, allocatable :: rex(:)
-      real, save, allocatable :: quz_local(:,:)
+      real, save, allocatable :: quz_local(:,:),qdf_local(:,:)
       real, save, allocatable :: uz_infil(:,:)
       real, save, allocatable :: uz2sat(:,:), qvpref(:)
       double precision, save, allocatable :: irrig_hyd_seg(:)
@@ -1095,11 +1095,17 @@ c
       allocate(qdffrac(nmru))
       if(declparam('topc', 'qdffrac', 'nmru', 'real',
      +   '.3', '0', '1',
-     +   'Fraction of infiltration that becomes'//
-     +   ' lateral direct flow.','Fraction of infiltration'//
-     +   ' that becomes lateral direct flow.'//
-     +   'QDF=QDFFRAC*INFILTRATION','Proportion')
+     +   'Proportion of unsaturated zone drainage that runs off'//
+     +   ' as direct flow.','Fraction of unsaturated zone drainage'//
+     +   ' that runs off as direct flow.'//
+     +   'QDF=QDFFRAC*QUZ','Proportion')
      +    .ne.0) return
+
+c     +   'Fraction of infiltration that becomes'//
+c     +   ' lateral direct flow.','Fraction of infiltration'//
+c     +   ' that becomes lateral direct flow.'//
+c     +   'QDF=QDFFRAC*INFILTRATION','Proportion')
+c     +    .ne.0) return
       
       allocate(nacsc(nmru))
       if(declparam('topc', 'nacsc', 'nmru', 'integer',
@@ -1231,6 +1237,7 @@ c$$$     + .ne.0) return
       allocate (quz(nmru))
       allocate (rex(nmru))
       allocate (quz_local(nac,nmru))
+      allocate (qdf_local(nac,nmru))
       allocate (uz_infil(nac,nmru))
       allocate (uz2sat(nac,nmru))
       allocate (qvpref(nmru))
@@ -2020,7 +2027,7 @@ c
       double precision v_qdf, v_uz_et
       double precision v_gw1_in,v_gw2_in
       double precision v_qwet_loc, v_qwet
-      double precision v_rech_loc, v_rech
+      double precision v_rech_loc, v_rech, v_qdf_loc
       double precision v_uz2sat,v_sat2uz
       double precision v_qwell, v_qpref,v_gw_loss
       double precision v_qb, v_exfil
@@ -2200,6 +2207,9 @@ c
 
       if(getvar('topc', 'quz_local', nac*nmru, 'real',
      $     quz_local).ne.0) return
+
+      if(getvar('topc', 'qdf_local', nac*nmru, 'real',
+     $     qdf_local).ne.0) return
 
       if(getvar('topc', 'uz_infil', nac*nmru, 'real',
      $     uz_infil).ne.0) return
@@ -2875,10 +2885,9 @@ c
         v_qwet_loc = srzwet(ia,is)* acf*mru_area(is) *a_million
         v_qwet = v_qwet + v_qwet_loc
 
-c v_rech_loc is later partitioned into recharge and lateral macropore
+c volumes of recharge and lateral macropore flow
         v_rech_loc = quz_local(ia,is)*acf*mru_area(is) *a_million
-
-
+        v_qdf_loc = qdf_local(ia,is)*acf*mru_area(is) *a_million
 c
 c uz2sat and uz2sat_vol are positive if the water table rose (below
 c the root zone) and negative if the water table was fell.
@@ -3024,7 +3033,7 @@ c water incorporated into the saturated zone from a rising water table.
 c
         vmix_uz2sat(ia,is) = v_rech_loc
         vmix_uz(ia,is,3) = vmix_uz2can(ia,is) +
-     $       vmix_uz2sat(ia,is)   !transpiration + local recharge
+     $       vmix_uz2sat(ia,is) + v_qdf_loc   !transpiration + local recharge + preferential flow
 
         if(uz2sat(ia,is).gt.0)  then
 c track volume of recharge from UZ (not including bypass)
@@ -3053,7 +3062,7 @@ c collect inputs for the preferential flow and the recharge from the
 c unsaturated zone (source index 11)
 c
         vmix_qdf(is,11) = vmix_qdf(is,11) + 
-     $       v_infil_loc * qdffrac(is)
+     $       v_qdf_loc
         vmix_sat(is,11) = vmix_sat(is,11) + 
      $       v_rech_loc
 

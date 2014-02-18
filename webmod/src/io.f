@@ -152,7 +152,7 @@ c End-period variables
 !     ! if(get*param('io', 'topout_file_unit', 1, 'integer',
 !     !+   topout_file_unit).ne.0) return
 !     !
-!      if(getparam('io', 'chemout_file_unit', 1, 'integer',
+!      if(get*param('io', 'chemout_file_unit', 1, 'integer',
 !     +    chemout_file_unit).ne.0) return
 
       if(getparam('sumb', 'print_type', 1, 'integer', print_type)
@@ -368,12 +368,13 @@ c     ioclean
       
       close (unit = debug%lun)  ! Debug file
       
-      if(print_type.ge.2) then
-          do i = 1, nvf
-            close (unit = vf_lun(i))  ! Close volume files
-          end do
+      if(print_type.ge.1) then
           do i = 1, ncf
             close (unit = cf_lun(i))  ! Close chem files
+          end do
+      elseif(print_type.ge.2) then
+          do i = 1, nvf
+            close (unit = vf_lun(i))  ! Close volume files
           end do
       endif
       !

@@ -1502,11 +1502,17 @@
       allocate(qdffrac(nmru))
       if(declparam('topc', 'qdffrac', 'nmru', 'real',&
          '.3', '0', '1',&
-         'Fraction of infiltration that becomes'//&
-         ' lateral direct flow.','Fraction of infiltration'//&
-         ' that becomes lateral direct flow.'//&
-         'QDF=QDFFRAC*INFILTRATION','Proportion')&
-          .ne.0) return
+        'Proportion of unsaturated zone drainage that runs off'//&
+        ' as direct flow.','Fraction of unsaturated zone drainage'//&
+        ' that runs off as direct flow.'//&
+        'QDF=QDFFRAC*QUZ','Proportion')&
+         .ne.0) return
+
+!         'Fraction of infiltration that becomes'//&
+!         ' lateral direct flow.','Fraction of infiltration'//&
+!         ' that becomes lateral direct flow.'//&
+!         'QDF=QDFFRAC*INFILTRATION','Proportion')&
+!         .ne.0) return
 
       allocate(snow_ion_factor(nmru))
       if(declparam('topc', 'snow_ion_factor', 'nmru', 'real',&
@@ -1590,7 +1596,7 @@
 #endif
       USE WEBMOD_PHREEQ_MMS
       USE WEBMOD_OBSCHEM, ONLY :phq_lut,sol_id,sol_name,n_iso,iso_list
-      USE WEBMOD_IO, only: phreeqout, print_type
+      USE WEBMOD_IO, only: phreeqout, print_type, chemout
 
 
 ! Mixing variables from webmod_res
@@ -1649,14 +1655,14 @@
 !     and then again on and after the time step x_debug_start.
 !     If x_debug_start.eq.0 then never print out phreeq_debug information.
 !
-      if(xdebug_start.gt.0) then
+        if(xdebug_start.gt.0) then
          phr_tf=.true.
-      else if(xdebug_start.eq.0) then
+        else if(xdebug_start.eq.0) then
          phr_tf=.false.
-      else
+        else
          print*,'parameter xdebug_start must be >= 0. Run terminated'
          return
-      end if
+        end if
       iresult = SetOutputFileOn(ID,phr_tf)
       iresult = SetErrorFileOn(ID,phr_tf)
       iresult = SetLogFileOn(ID,phr_tf)
@@ -3372,24 +3378,14 @@
 ! If chem_sim indicates that no chemical simulations are to be completed
 ! notify the user.
 !
-      else
-         print*,'Chem_sim parameter equals zero so all chemical ',&
-           ' variables are uninitialized'
-      end if
-
-      phr_tf=.false. ! Make debug flag false until xdebug_start is reached
-      iresult = SetOutputFileOn(ID,phr_tf)
-      iresult = SetErrorFileOn(ID,phr_tf)
-      iresult = SetLogFileOn(ID,phr_tf)
-      iresult = SetSelectedOutputFileOn(ID,phr_tf)
 !
-! Write header for detailed geochem files  if print_type=2 (detailed)
+! Write headers for detailed geochem files  if print_type=2 (detailed)
 !
       ncf=1
 !      allocate(v_lun(1+nmru*14+nac)+nhydro)
       allocate(cf_lun(ncf))
       nf=0
-      if(print_type.eq.2) then
+       if(print_type.eq.2) then
         IF(control_string(out_dir,'output_dir').NE.0) RETURN
         path_len = index(out_dir,CHAR(0))-1   ! CHAR(0) is end of strings returned from control_string call
 ! Kludge for multi-CPU
@@ -3408,7 +3404,18 @@
 !        do i = 1, nmru
           
 !        enddo
-        endif
+       endif
+      else ! if chem_sim = 0
+         print*,'Chem_sim parameter equals zero so all chemical ',&
+           ' variables are uninitialized'
+         write(chemout%lun,*)'No geochemistry simulated (chem_sim=0)'
+      endif
+
+      phr_tf=.false. ! Make debug flag false until xdebug_start is reached
+      iresult = SetOutputFileOn(ID,phr_tf)
+      iresult = SetErrorFileOn(ID,phr_tf)
+      iresult = SetLogFileOn(ID,phr_tf)
+      iresult = SetSelectedOutputFileOn(ID,phr_tf)
       
  100   format('    Date  /  Time   ',&
       ' Init     Inputs    Outputs    Final    ',&

@@ -271,6 +271,7 @@ C   Declared Variables
       real, save, allocatable :: qpref(:), sumqpref(:)
       real, save, allocatable :: qpref_max(:),s_drain(:),uz_depth(:,:)
       real, save, allocatable :: sae_local(:,:), quz_local(:,:)
+      real, save, allocatable :: qdf_local(:,:)
       real, save, allocatable :: uz_infil(:,:), uz2sat(:,:)
       real, save, allocatable :: gw_in1(:),gw_in2(:)
       real, save, allocatable :: sumgw_in1(:),sumgw_in2(:)
@@ -591,8 +592,13 @@ c
       ALLOCATE (quz_local(nac,Nmru))
       if(declvar('topc', 'quz_local', 'nac,nmru', nac*nmru,
      $ 'real','Local recharge from the unsaturated zone '//
-     $ 'to the shallow preferential flow and the saturated '//
-     $ 'zone', 'meters', quz_local).ne.0) return
+     $ 'to the saturated zone',
+     $ 'meters', quz_local).ne.0) return
+
+      ALLOCATE (qdf_local(nac,Nmru))
+      if(declvar('topc', 'qdf_local', 'nac,nmru', nac*nmru,
+     $ 'real','shallow preferential flow from the unsaturated '//
+     $ 'zone', 'meters', qdf_local).ne.0) return
 
       ALLOCATE (z_wt_local(nac,Nmru))
       if(declvar('topc', 'z_wt_local', 'nac,nmru', nac*nmru,
@@ -1173,22 +1179,22 @@ c
      +   'in QUZ=SUZ/(SD*TD).',' h/m').ne.0) return
 
       ALLOCATE (qdffrac(Nmru))
-c      if(declparam('topc', 'qdffrac', 'nmru', 'real',
-c     +   '.3', '0', '1',
-c     +   'Proportion of unsaturated zone drainage that runs off'//
-c     +   ' as direct flow.','Fraction of unsaturated zone drainage'//
-c     +   ' that runs off as direct flow.'//
-c     +   'QDF=QDFFRAC*QUZ','Proportion')
-c     +    .ne.0) return
-
       if(declparam('topc', 'qdffrac', 'nmru', 'real',
      +   '.3', '0', '1',
-     +   'Fraction of infiltration that becomes'//
-     +   ' lateral direct flow.','Fraction of infiltration'//
-     +   ' that becomes lateral direct flow.'//
-     +   'QDF=QDFFRAC*INFILTRATION','Proportion')
+     +   'Proportion of unsaturated zone drainage that runs off'//
+     +   ' as direct flow.','Fraction of unsaturated zone drainage'//
+     +   ' that runs off as direct flow.'//
+     +   'QDF=QDFFRAC*QUZ','Proportion')
      +    .ne.0) return
-      
+
+c      if(decl*param('topc', 'qdffrac', 'nmru', 'real',
+c     +   '.3', '0', '1',
+c     +   'Fraction of infiltration that becomes'//
+c     +   ' lateral direct flow.','Fraction of infiltration'//
+c     +   ' that becomes lateral direct flow.'//
+c     +   'QDF=QDFFRAC*INFILTRATION','Proportion')
+c     +    .ne.0) return
+c      
       
       ALLOCATE (sbar0(Nmru))
       if(declparam('topc', 'sbar0', 'nmru', 'real',
@@ -2223,6 +2229,7 @@ c
       sae(is)=0.
       QOF(is)=0.
       QUZ(is)=0.
+      qdf(is)=0.
       REX(is)=0.
       afx(is) = 0.
       acm(is) = 0.
@@ -2414,15 +2421,16 @@ C  CALCULATE DRAINAGE FROM SUZ
          IF(UZ.GT.SUZ(IA,is))UZ=SUZ(IA,is)
          SUZ(IA,is)=SUZ(IA,is)-UZ
          IF(SUZ(IA,is).LT.0.0000001)SUZ(IA,is)=0.
-         QUZ(is)=QUZ(is)+UZ*ACF
+         qdf(is)=qdf(is)+qdffrac(is)*UZ*ACF
+         QUZ(is)=QUZ(is)+(1-qdffrac(is))*UZ*ACF
       ENDIF
 c
 c
 c
-c Track local recharge flux for weights in webmod_res.f
+c Track local recharge flux and qdf for weights in webmod_res.f
 c
-      quz_local(ia,is) = uz
-
+      qdf_local(ia,is) = uz*qdffrac(is)
+      quz_local(ia,is) = uz*(1-qdffrac(is))
 C
 C***************************************************************
 C  CALCULATE EVAPOTRANSPIRATION FROM ROOT ZONE DEFICIT
@@ -2535,7 +2543,7 @@ c Compute surface deposition and total infiltration for mru and basin variables
 c
       surfdep(is) = infil(is)
       infil(is) = infil(is) - qof(is)
-      qdf(is)=qdffrac(is)*infil(is)
+c      qdf(is)=qdffrac(is)*infil(is)
 c
 c Variable infilitration excess areas now. Independent variables
 c afx(is) and afxmax(is) will track area of ponded water
@@ -2618,6 +2626,7 @@ c
 c  Added direct flow to model quick flow through macropores per
 c  work by Dave Kinner - RW
 c  Changed to fraction of infiltration - RW - 15Aug2013
+c  Changed back to fraction of recharge in recharge section above - RW - 7Feb2014
 c
 c      qdf(is)=qdffrac(is)*quz(is)
 c      quz(is)=quz(is)-qdf(is)
@@ -2777,8 +2786,8 @@ C  Sum different flow paths
       sumqrex(is)=sumqrex(is)+rex(is)
       sumqofs(is)=sumqofs(is)+qofs(is)
       sumqb(is)=sumqb(is)+qb(is)
-      sumquz(is)=sumquz(is)+quz(is)
       sumqdf(is)=sumqdf(is)+qdf(is)
+      sumquz(is)=sumquz(is)+quz(is)
       sumqvpref(is)=sumqvpref(is)+qvpref(is)
       sumqpref(is)=sumqpref(is)+qpref(is)
       sumgw_in1(is)=sumgw_in1(is)+gw_in1(is)
