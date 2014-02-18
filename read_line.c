@@ -503,7 +503,7 @@ char * EXTRACT_time (FILE_DATA *data) {
    errno = 0;
    data->time.year = strtol (start_point, &end_point, 10);
 
-   if (data->time.year < 1800 || data->time.year > 2100) {
+   if (data->time.year < 1800 || data->time.year > 2200) {
       (void)sprintf (err_buf, "EXTRACT_time - year %ld out of range.\nline:%s",
          data->time.year, data->line);
       return (err_buf);

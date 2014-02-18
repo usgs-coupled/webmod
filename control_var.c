@@ -152,20 +152,19 @@ long control_integer_ (int *retval, char *key, ftnlen len) {
  | RETURN VALUE : 
  | RESTRICTIONS :
 \*--------------------------------------------------------------------*/
-long control_integer_array_ (int *retval, char *tag, int *index, ftnlen len, ftnlen tlen) {
+long control_integer_array_ (int *retval, int *index, char *key, ftnlen tlen) {
 	char *foo;
-    long **longs;
-	int *intVal;
+	long intVal;
+    long *longs;
     int i;
 
 	foo = (char *) umalloc(tlen + 1);
-	strncpy(foo, tag, tlen);
+	strncpy(foo, key, tlen);
 	foo[tlen] = '\0';
 
-    longs = (long **) control_var(foo);
+    longs = (long *) control_var(foo);
     i = *index - 1;
-	intVal = (int *)umalloc(sizeof (int));
-	intVal = (int *)*(longs+i);
-	retval = intVal;
+	intVal = *(longs+i);
+	*retval = (int)intVal;
 	return 0;
 }
