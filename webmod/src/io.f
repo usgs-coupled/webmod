@@ -14,7 +14,7 @@ c
 c    27 apr  2010 - Port to Fortran 90 with module and dynamic memory
 c
 c
-c    17 jan 2014 - Added files for volumes and solutes. LUNs for 
+c    17 jan 2014 - Added files for volumes, solutes, and entities. LUNs for 
 c     topout_file_unit, chemout_file_unit, and all out output files
 c     now assigned using NEWUNIT.
 c
@@ -24,7 +24,12 @@ c***********************************************************************
       include 'fmodules.inc'
 !   Dimensions and Local Variables
 !      integer, SAVE:: topout_file_unit, chemout_file_unit, phreeqout ! standard output, in addition to MMS files *.out, *.statvar, etc
-      integer, save:: endper, yrdays, modays(12),nowtime(6), print_type
+      integer, save:: endper, yrdays, modays(12),nowtime(6)
+      integer, save, allocatable :: vse_lun(:) ! LUNs for volume, solute, and entitity files
+      integer, save:: print_type, nf  ! In addition to the four standard files, additional detailed files
+                                      ! may be output: nf files include volume files output in webmod_res and 
+                                      ! chemistry files (solutes and entities) output in phreeq_mms
+      data nf/0/ ! no extra files if print_type = 0. This number increments for each detailed file opened in webmod_res and phreeq_mms
       TYPE :: outfiles   ! file names, shortnames, and logical unit numbers for input and output files.
          character(60) :: file   ! Output file
          integer       :: lun        ! integer returned by NEWUNIT
@@ -32,7 +37,7 @@ c***********************************************************************
 !
       TYPE(outfiles), save :: topout, chemout, phreeqout,debug
 c     ! 
-c     ! TYPE(outfiles),save,allocatable :: c_mru(:), c_uzgen(:),
+c     ! TYPE(outfiles),save,allocatable :: c_mru(:), c_uzgen(:), These
 c     !$ c_uzrip(:), c_uzup(:), c_can(:), c_snow(:), c_inperv(:),
 c     !$ c_transp(:), c_ohoriz(:), c_uz(:,:), c_qdf(:), c_sat(:),
 c     !$ c_satpref(:), c_hill(:), c_uz2sat(:), c_hyd(:)
@@ -129,8 +134,8 @@ c
       USE IFPORT
 #endif
       USE WEBMOD_IO
-
-      integer ret
+      INTEGER, EXTERNAL ::open_res_files
+      integer ret, chem_sim, nmru, nac, nhydro
       logical filflg
 
 c End-period variables
@@ -141,12 +146,12 @@ c End-period variables
 
 
 ! Get Dimensions
-      !nmru = getdim('nmru')
-      !IF (nmru.EQ.-1) RETURN
-      !nsolute = getdim('nsolute')
-      !IF (nsolute.EQ.-1) RETURN
-      !nhydro = getdim('nhydro')
-      !IF (nhydro.EQ.-1) RETURN
+      nmru = getdim('nmru')
+      IF (nmru.EQ.-1) RETURN
+      nac = getdim('nac')
+      IF (nac.EQ.-1) RETURN
+      nhydro = getdim('nhydro')
+      IF (nhydro.EQ.-1) RETURN
 
 ! Get print_type (ahead of web_sum) so that it can be used to output detailed vol and chem files
 !     ! if(get*param('io', 'topout_file_unit', 1, 'integer',
@@ -157,6 +162,9 @@ c End-period variables
 
       if(getparam('sumb', 'print_type', 1, 'integer', print_type)
      +   .ne.0) return
+
+      if(getparam('phreeqmms', 'chem_sim', 1,
+     +     'integer',chem_sim) .ne.0) return
      
 c
 c Open topmodel output file
@@ -220,19 +228,29 @@ c
 !----open the file.
       open (newunit=debug%lun,file=debug%file,access='sequential',
      * form='formatted', status='new')
-c Basin volume file
-c
 !
-!      nvolfiles = 0
-!      inquire(file='./output/BasinVolumes',exist=filflg)
-!      if (filflg) then
-!        open(unit=27,file='./output/BasinVolumes',status='old')
-!        close(unit=27,status='delete')
-!      endif
-!!----open the file.
-!      open (unit=27,file='./output/BasinVolumes',access='sequential',
-!     * form='formatted', status='new')
-      
+! Detailed output in addition to the four above.
+! When print_type equals 1 or 2, calculate the number of volume files written in webmod_res and
+! the number of solute and entity files written in phr3eeq_mms. 'nf' is the the total number of
+! files to be open, written, and  
+! when print_type = 1 nf includes a summary file for the basin and each mru
+! when print_type = 2 nf includes addition files for each hillslope and stream reservoir
+! the initial prefixes are for volume (v_), solutes (s_), and entities (e_).
+! If chemistry in not being simulated (chem_sim=0), no solute or entity files will be written.
+!
+      if(print_type.eq.1) then
+          nf = nmru+1
+          if(chem_sim.eq.1) then
+              nf = 3*(nmru+1)
+          endif
+      elseif(print_type.eq.2) then
+          nf=1+nmru*(13+nac)+nhydro+1 ! first is basin, last is stream volumes, others are hillslope reservoirs
+          if(chem_sim.eq.1) then
+              nf =3*(1+nmru*(13+nac)+nhydro+1)
+          endif
+      endif
+      if(nf.gt.0) allocate(vse_lun(nf))
+      nf=0 ! reset to allow incremental assignments in webmod_res and phreeq_mms
       ioinit = 0
 
       return
@@ -348,8 +366,6 @@ c     ioclean
       integer function ioclean ()
 
       USE WEBMOD_IO
-      USE WEBMOD_RESMOD, ONLY : vf_lun, nvf
-      USE WEBMOD_PHREEQ_MMS, ONLY : cf_lun, ncf
 
       ioclean = 1
 
@@ -368,16 +384,11 @@ c     ioclean
       
       close (unit = debug%lun)  ! Debug file
       
-      if(print_type.ge.1) then
-          do i = 1, ncf
-            close (unit = cf_lun(i))  ! Close chem files
-          end do
-      elseif(print_type.ge.2) then
-          do i = 1, nvf
-            close (unit = vf_lun(i))  ! Close volume files
+      if(nf) then
+          do i = 1, nf
+            close (unit = vse_lun(i))  ! Close volume, solute, and entity files.
           end do
       endif
-      !
       ioclean = 0
       return
       end

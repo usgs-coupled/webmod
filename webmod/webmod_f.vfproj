@@ -67,7 +67,7 @@
 	<Files>
 		<Filter Name="Header Files" Filter="fi;fd">
 		<File RelativePath=".\src\fmodules.f90.inc"/>
-		<File RelativePath="..\IPhreeqcMMS\include\mms_phreeqc.inc"/></Filter>
+		<File RelativePath="..\IPhreeqcMMS\include\mms_phreeqc.f90.inc"/></Filter>
 		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
 		<File RelativePath="src\basin_topg.f"/>

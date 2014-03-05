@@ -14,7 +14,7 @@
 !                 Need to review mixing so that there is no double
 !                 accounting (i.e. remove initial irrigation volumes
 !                 at concentrations of t0 before mixing upstream
-!                 t1 concentrations to make t1 final (us, sat, stream)
+!                 t1 concentrations to make t1  final (us, sat, stream)
 !
 ! **********************************************************************
 ! ***************** START MODULE *************
@@ -173,16 +173,20 @@
          integer       :: lun        ! integer returned by NEWUNIT
       END TYPE outfiles
 !
-      TYPE(outfiles),save :: cf_bas
-      TYPE(outfiles),save,allocatable :: cf_mru(:), cf_uzgen(:),&
-       cf_uzrip(:), cf_uzup(:), cf_can(:), cf_snow(:), cf_inperv(:),&
-       cf_transp(:), cf_ohoriz(:), cf_uz(:,:), cf_qdf(:), cf_sat(:),&
-       cf_satpref(:), cf_hill(:), cf_uz2sat(:), cf_hyd(:)
-
-      integer, save, allocatable :: cf_lun(:) ! lun numbers for closing in io cleanup
-      integer, save :: ncf  ! number of geochemistry files
+      TYPE(outfiles),save :: sf_bas, sf_hyd, ef_bas, ef_hyd  ! solute and entity files, the total number of detailed 
+                                            ! volume (webmod_res) solute and entity files is nf.
+      TYPE(outfiles),save,allocatable :: sf_mru(:), sf_uzgen(:),&
+       sf_uzrip(:), sf_uzup(:), sf_can(:), sf_snow(:), &
+       sf_transp(:), sf_ohoriz(:), sf_uz(:,:), sf_qdf(:), sf_sat(:),&
+       sf_satpref(:), sf_hill(:), sf_uz2sat(:),sf_hillexp(:), &
+       ef_mru(:), ef_uzgen(:),&
+       ef_uzrip(:), ef_uzup(:), ef_can(:), ef_snow(:), &
+       ef_transp(:), ef_ohoriz(:), ef_uz(:,:), ef_qdf(:), ef_sat(:),&
+       ef_satpref(:), ef_hill(:), ef_uz2sat(:),ef_hillexp(:)
+      !TYPE(outfiles),save, allocatable :: sf_imperv(:), ef_imperv(:)
+      
 !
-      integer :: nf, tmplun  ! temp variables
+      integer :: tmplun  ! temp variable
 
 ! Basin geometry - kPa is Air pressure in kiloPascals needed to derive wetbulb temperature for precip
       real, save :: basin_area
@@ -284,13 +288,13 @@
 ! (where applicable) along with temperature and pH.
 !
       TYPE :: geochem
-         double precision, allocatable :: M(:,:)   ! Moles of each solute for init, in, out, rxn, and final
-         double precision :: vol(5)   ! volumes for init, in, out, ET, and final
+         double precision, allocatable :: M(:,:)   ! Moles of each solute for init, in, out, rxn, and final (nsolute, 5) Rxn reflects sum of Rxn(nsolute,ntally_cols)
+         double precision :: vol(5)   ! volumes of water for init, in, out, ET, and final
          double precision, allocatable :: delta(:,:) ! delta values for any of nsolutes that are isotopes
          double precision :: Temp(5)   ! Temperature of reservoir inputs and outputs
          double precision :: pH(5)   ! pH of reservoir inputs and outputs
-         double precision, allocatable :: MassRxn(:)   ! Moles of solute produced and consumed by entities, per reservoir volume
-         double precision, allocatable :: Mass(:)   ! Mass of entities in reservoir at end of time step, per reservoir volume
+         double precision, allocatable :: Rxn(:,:)   ! Moles of solute produced and consumed by entities, per reservoir volume (nsolute, ntally_cols)
+         double precision, allocatable :: Mass(:)   ! Mass of entities in reservoir at end of time step, per reservoir volume (ntally_cols), in moles
       END TYPE geochem
      
       TYPE(geochem), save, allocatable :: c_chem(:) ! to be allocated by the total number of solutions, nphrsolns
@@ -326,11 +330,12 @@
 
       double precision, allocatable ::   tally_table(:,:), mult(:)
       integer, save :: ntally_rows, ntally_cols
-      integer, save, allocatable ::  n_user(:), n_ent(:)
-      character*50, save, allocatable ::  tally_col_label(:)
+      integer, save, allocatable ::  n_user(:)
+      character*50, save, allocatable ::  tally_col_label(:), ent_label(:)  ! ent_label concatenates type and name
       integer, save, allocatable ::  tally_col_type(:)
       character*12, save, allocatable ::  tally_row_label(:)
-
+      integer, save :: n_ent(11) ! n_ent is the number of tally cols for each entity: 1, soln; 2, rxn, etc
+      DATA n_ent/11*0/
 !  mixing variables
 
       integer, save :: validnacs, indx_rxn, mixture
@@ -490,6 +495,8 @@
       character(60) line
       integer  nstep, datetime(6),xdebug_start,xdebug_stop
       integer iphrq_mru
+      character*3000, save :: filename
+    
 
       END MODULE WEBMOD_PHREEQ_MMS
 !
@@ -546,9 +553,6 @@
 #if defined(_WIN32)
       USE IFPORT
 #endif
-!      include 'fmodules.inc'
-!      INCLUDE 'IPhreeqc.f90.inc'
-!      INCLUDE 'mms_phreeqc.inc'
 
       phreeqmms_decl = 1
 ! Get dimensions
@@ -1549,6 +1553,11 @@
         ALLOCATE (c_chem(i)%M(nsolute,5))
         ALLOCATE (c_chem(i)%delta(nsolute,5))
       end do
+      ALLOCATE (c_chem_mru(nmru))
+      do i=1,nmru
+        ALLOCATE (c_chem_mru(i)%M(nsolute,5))
+        ALLOCATE (c_chem_mru(i)%delta(nsolute,5))
+      end do
       ALLOCATE (c_chem_uzgen(nmru))
       do i=1,nmru
         ALLOCATE (c_chem_uzgen(i)%M(nsolute,5))
@@ -1596,7 +1605,7 @@
 #endif
       USE WEBMOD_PHREEQ_MMS
       USE WEBMOD_OBSCHEM, ONLY :phq_lut,sol_id,sol_name,n_iso,iso_list
-      USE WEBMOD_IO, only: phreeqout, print_type, chemout
+      USE WEBMOD_IO, only: phreeqout, chemout, print_type, chemout,nf,vse_lun
 
 
 ! Mixing variables from webmod_res
@@ -1622,7 +1631,7 @@
       logical filflg
       real dt
 
-      integer k, l, ir, is, it, ih, path_len, file_len
+      integer k, l, ir, is, it, ih, path_len, file_len, filelen
       integer pqdat_len, res_id, ret, io, ivar, iresult
       integer uzwet, uzdry
 !   moved to module
@@ -2032,7 +2041,7 @@
       allocate (tally_row_label(ntally_rows + 1))  ! The last role is moles of entity
       allocate (tally_col_type(ntally_cols))
       allocate (tally_col_label(ntally_cols))
-      ALLOCATE (n_ent(ntally_cols))
+      allocate (ent_label(ntally_cols))
       allocate (mult(ntally_cols))
       sol_id%tally = -99 ! Initialize tally row of nsolute to -99
       do i = 1,ntally_rows
@@ -2065,13 +2074,30 @@
         endif
       end do
 
-!
-! count how many of each entity (1, solution; 2, exchange, etc) and assign multipliers accordingly
-! Assign a multiplier of 1 for mass added by reactants (n_ent(2)) and negatives for all other 
+! The tally column type, tally_col_type(i), reflects the entity ID number. The specific entity, 
+! biotite as a pure_phase for example, is listed as a tally_col_label(i). The entity column labels for 
+! res_sol files res_ent files are also constructed. using the type and label with specific phase, if applicable.
+!           Entity                      n_user/keyword ! comment
+!           ==================          ==============   ====
+! *         solution,                   1 ET_SOLUTION  ! the first two columns are always the 
+!                                                        result of a conservative and a reactive mix.
+!                                                        labels soln_conservative and soln_after_rxn.
+! *         reaction,                   2 ET_REACTION  ! only one reactant column for now. Mult is positive for this entity only.
+!                                                        This is reflected in the mult() multiplier. label: Reactant
+! *         exchange,                   3 ET_EXCHANGE  ! only one exchange column for now. Mult is negative for this and all 
+!                                                        subsequent entities. label: Exchange
+! *         surface,                    4 ET_SURFACE   ! only one reactant column for now. label: Surface
+! *         gas_phase,                  5 ET_GAS_PHASE ! not used
+! *         equilibrium_phases,         6 ET_PURE_PHASE ! label eq_ph_name. For examples, eq_ph_CO2(g) or eq_ph_Gibbsite
+! *         solid_solution,             7 ET_SS_PHASE  ! no used
+! *         kinetics,                   8 ET_KINETICS  ! label kin_name. For examples, kin_Calcite or kin_Pyrite_O2
+! *         mix,                        9 ET_MIX       ! not used as mixtures of solution and entities are explicity described using phr_mix.
+! *         reaction_temperature        10 ET_TEMPERATURE ! if not assigned, then temperature of mixture is passed back out.
+! *         unknown                     11 UnKnown     ! possible future use
+! A positive number in an solute ent column is assigned a multiplier of 1 for mass added by reactants (n_ent(2)) and negatives for all other 
 ! entities (exchange, surface, gas, etx)
 !
       do i = 1,ntally_cols
-         n_ent(i) = 0
          mult(i) =1D0
       end do
       do i = 1,ntally_cols
@@ -2081,7 +2107,27 @@
             PRINT *, 'Errors configuring tally col headings:'
             STOP
          ENDIF
-         if(tally_col_type(i).gt.2) mult(i) = -1D0 
+         j=tally_col_type(i)
+         n_ent(j)=n_ent(j)+1 ! The first two columns in the tally table are the Moles of each solute in solution 
+!                              before (col 1) and after (col 2) reactions.
+         if(i.eq.1) then ! first column is Moles per kilogram in conservative solution
+             ent_label(i) = "soln_conservative"
+         elseif(i.eq.2) then ! second column is Moles per kilogram after reactions
+             ent_label(i) = "soln_after_reaction"
+         elseif(j.eq.2) then ! j is type, with type 2 being a reactant
+             mult(i) = -1D0
+             ent_label(i) = "Reactant"
+         elseif(j.eq.3) then
+             ent_label(i) = "Exchange"
+         elseif(j.eq.4) then
+             ent_label(i) = "Surface"
+         elseif(j.eq.6) then
+             ent_label(i) = "eq_"//trim(tally_col_label(i))
+         elseif(j.eq.8) then
+             ent_label(i) = "kin_"//trim(tally_col_label(i))
+         else
+             print*, "Problem assigning labels to Entities in Tally Table"
+         endif
       end do
 !
 !  To mimimize sorting time in phreeqc, initialize all reservoirs in numerical order.
@@ -2475,7 +2521,7 @@
 ! populate src_init with initial solutions from pqi file
 !
       do 40050 i = 1,nphrsolns
-        k = isoln(c_indx(i,1),nchemdat,nmru,nac,clark_segs, &   ! returns the indices of the nphrsoln&
+        k = isoln(c_indx(i,1),nchemdat,nmru,nac,clark_segs, &   ! returns the indices of the nphrsolns
            ires,ichemdat,imru,inac,ihydro)
         do j = 1,11
            src_init(i,j) = -1  ! No reactions if not defined; solutions ignored
@@ -2739,7 +2785,7 @@
             end if
 !     Compute numerators for unit conversions reflecting mass
 !     and charge of each solute
-            do 10 i = 1,nsolute
+            do 11 i = 1,nsolute
                if(unit_type.lt.4.or.unit_type.eq.5) then ! standard units or permil
                   if(mod((iunit+2),3).eq.0) then ! mg
                      chvar_conv(ivar,i) = phq_lut(sol_id(i)%phq)%M2mg
@@ -2752,7 +2798,7 @@
                   chvar_conv(ivar,i) = convfactor(iunit-9)
                end if
 !             (iunit 13, permil has no conversion, it is reported directly)               
- 10         continue
+ 11         continue
          end if
  23   continue
 
@@ -2885,7 +2931,7 @@
 !
 ! Initialize individual hillslope reservoirs
 !
-      do 30 is = 1, nmru
+      do 33 is = 1, nmru
 ! Establish MRU airpressure in kilopascals to derive wetbulb temperature for precipitation.
           kPa(is) = 101.325 * (1 - 2.25577e-5*mru_elev(is))**5.25588
 !
@@ -3117,7 +3163,7 @@
                STOP
             ENDIF
 ! Accumulate initial volume of composite uz            
- 37      end do
+  37       end do ! is = 1, nac
 !     
 !     Test the selected output for last loni
 !                                !! output solution described in selected output
@@ -3291,7 +3337,7 @@
             PRINT *, 'Errors updating mole matrix:'
             STOP
          ENDIF
- 30   continue
+ 33   continue  ! do 1, nmru
 !
 ! Initialize stream chemistry
 !
@@ -3375,56 +3421,703 @@
 !$$$         STOP
 !$$$      ENDIF
 !
-! Write headers for detailed geochem files (concentrations in discharge are always printed in the *.chemout file)
-! if print_type = 1 print mass balance for basin and mrus
-! if print_type = 1 print additional files with mass balance for all reservoirs
-!!ncf=1
-!      allocate(v_lun(1+nmru*14+nac)+nhydro)
-      allocate(cf_lun(ncf))
-      nf=0
-       if(print_type.eq.2) then
+! Concentrations in discharge are always printed in the *.chemout file when chem_sim=1
+! Write additional headers for solutes (s_) and entities (e_) when print_type.ge.1
+! if print_type = 1 additional files for solutes and entities for basin and mrus. 
+! if print_type = 2 additional files for solutes and entities for all reservoirs
+!
+!
+! Open solute files if print_type= 1 (basin and mru) or 2 (all reservoirs)
+!
+      if(print_type.ge.1) then
+! composite basin solutes
         IF(control_string(out_dir,'output_dir').NE.0) RETURN
         path_len = index(out_dir,CHAR(0))-1   ! CHAR(0) is end of strings returned from control_string call
-! Kludge for multi-CPU
-        cf_bas%file = out_dir(1:path_len)//'c_basin'
-        inquire(file=cf_bas%file,exist=filflg)
+        sf_bas%file = out_dir(1:path_len)//'s_basin'
+        inquire(file=sf_bas%file,exist=filflg)
         if (filflg) then
-          open(newunit=tmplun,file=cf_bas%file,status='old')
+          open(newunit=tmplun,file=sf_bas%file,status='old')
           close(unit=tmplun,status='delete')
         endif
 !----open the file.
-        open (newunit=cf_bas%lun,file=cf_bas%file,access='sequential',&
-         form='formatted', status='new')
+        open (newunit=sf_bas%lun,file=sf_bas%file,access='sequential',&
+          form='formatted', status='new')
         nf=nf+1
-        cf_lun(nf)=cf_bas%lun
-        write(cf_bas%lun,100)
-!        do i = 1, nmru
-          
-!        enddo
-       endif
+        vse_lun(nf)=sf_bas%lun
+        write(sf_bas%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
 !
-! If chem_sim indicates that no chemical simulations are to be completed
-! notify the user in the console and in the *.chemout file.
+!open mru solute files (only compsite mru if print_type = 1)
 !
-      else ! if chem_sim = 0
-         print*,'Chem_sim parameter equals zero so all chemical ',&
-           ' variables are uninitialized'
-         write(chemout%lun,*)'No geochemistry simulated (chem_sim=0)'
-      endif
+        allocate(sf_mru(nmru))
+        do i = 1, nmru
+! composite mru
+          write(filename,25)i
+          filelen=length(filename)
+          sf_mru(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=sf_mru(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=sf_mru(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=sf_mru(i)%lun,file=sf_mru(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=sf_mru(i)%lun
+          write(sf_mru(i)%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
+! additional reservoir files
+          if(print_type.eq.2) then
+            allocate(sf_uzgen(nmru))
+            allocate(sf_uzrip(nmru))
+            allocate(sf_uzup(nmru))
+            allocate(sf_can(nmru))
+            allocate(sf_snow(nmru))
+!        allocate(sf_imperv(nmru))
+            allocate(sf_transp(nmru))
+            allocate(sf_ohoriz(nmru))
+            allocate(sf_uz(nmru,nac))
+            allocate(sf_qdf(nmru))
+            allocate(sf_sat(nmru))
+            allocate(sf_satpref(nmru))
+            allocate(sf_hill(nmru))
+            allocate(sf_uz2sat(nmru))
+! composite uz
+          write(filename,30)i
+          filelen=length(filename)
+          sf_uzgen(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=sf_uzgen(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=sf_uzgen(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=sf_uzgen(i)%lun,file=sf_uzgen(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=sf_uzgen(i)%lun
+          write(sf_uzgen(i)%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
+! composite riparian uz
+          write(filename,40)i
+          filelen=length(filename)
+          sf_uzrip(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=sf_uzrip(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=sf_uzrip(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=sf_uzrip(i)%lun,file=sf_uzrip(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=sf_uzrip(i)%lun
+          write(sf_uzrip(i)%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
+! composite upland uz
+          write(filename,50)i
+          filelen=length(filename)
+          sf_uzup(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=sf_uzup(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=sf_uzup(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=sf_uzup(i)%lun,file=sf_uzup(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=sf_uzup(i)%lun
+          write(sf_uzup(i)%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
+! canopy
+          write(filename,60)i
+          filelen=length(filename)
+          sf_can(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=sf_can(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=sf_can(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=sf_can(i)%lun,file=sf_can(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=sf_can(i)%lun
+          write(sf_can(i)%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
+! snowpack
+          write(filename,70)i
+          filelen=length(filename)
+          sf_snow(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=sf_snow(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=sf_snow(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=sf_snow(i)%lun,file=sf_snow(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=sf_snow(i)%lun
+          write(sf_snow(i)%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
+! impervious surface
+    !      write(filename,80)i
+    !      filelen=length(filename)
+    !      sf_imperv(i)%file = out_dir(1:path_len)//filename(1:filelen)
+    !        inquire(file=sf_imperv(i)%file,exist=filflg)
+    !      if (filflg) then
+    !        open(newunit=tmplun,file=sf_imperv(i)%file,status='old')
+    !        close(unit=tmplun,status='delete')
+    !      endif
+    !!----open the file.
+    !      open (newunit=sf_imperv(i)%lun,file=sf_imperv(i)%file,
+    ! $      access='sequential',form='formatted', status='new')
+    !      nf=nf+1
+    !      vse_lun(nf)=sf_imperv(i)%lun
+    !      write(sf_imperv(i)%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
+! transpiration
+          write(filename,90)i
+          filelen=length(filename)
+          sf_transp(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=sf_transp(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=sf_transp(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=sf_transp(i)%lun,file=sf_transp(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=sf_transp(i)%lun
+          write(sf_transp(i)%lun,12)('UZ',j,j=1,nac)
+! o-horizon
+          write(filename,100)i
+          filelen=length(filename)
+          sf_ohoriz(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=sf_ohoriz(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=sf_ohoriz(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=sf_ohoriz(i)%lun,file=sf_ohoriz(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=sf_ohoriz(i)%lun
+          write(sf_ohoriz(i)%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
+! individual unsaturated zone reservoirs
+          do k = 1, nac
+           write(filename,110)i,k
+           filelen=length(filename)
+           sf_uz(i,k)%file = out_dir(1:path_len)//filename(1:filelen)
+             inquire(file=sf_uz(i,k)%file,exist=filflg)
+           if (filflg) then
+             open(newunit=tmplun,file=sf_uz(i,k)%file,status='old')
+             close(unit=tmplun,status='delete')
+           endif
+    !----open the file.
+           open (newunit=sf_uz(i,k)%lun,file=sf_uz(i,k)%file,&
+            access='sequential',form='formatted', status='new')
+           nf=nf+1
+           vse_lun(nf)=sf_uz(i,k)%lun
+           write(sf_uz(i,k)%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
+          end do
+! Direct flow
+          write(filename,120)i
+          filelen=length(filename)
+          sf_qdf(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=sf_qdf(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=sf_qdf(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=sf_qdf(i)%lun,file=sf_qdf(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=sf_qdf(i)%lun
+          write(sf_qdf(i)%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
+! saturated zone
+          write(filename,130)i
+          filelen=length(filename)
+          sf_sat(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=sf_sat(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=sf_sat(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=sf_sat(i)%lun,file=sf_sat(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=sf_sat(i)%lun
+          write(sf_sat(i)%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
+! preferential flow through the saturated zone (tile drains)
+          write(filename,140)i
+          filelen=length(filename)
+          sf_satpref(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=sf_satpref(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=sf_satpref(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=sf_satpref(i)%lun,file=sf_satpref(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=sf_satpref(i)%lun
+          write(sf_satpref(i)%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
+! Combined hillslope discharge (overland flow, qdf, and baseflow)
+          write(filename,155)i
+          filelen=length(filename)
+          sf_hill(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=sf_hill(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=sf_hill(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=sf_hill(i)%lun,file=sf_hill(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=sf_hill(i)%lun
+          write(sf_hill(i)%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
+! uz2sat - net flux of water from uz to sat from changes in water table
+!          and sat water moving up to meet evap demand.
+          write(filename,160)i
+          filelen=length(filename)
+          sf_uz2sat(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=sf_uz2sat(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=sf_uz2sat(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=sf_uz2sat(i)%lun,file=sf_uz2sat(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=sf_uz2sat(i)%lun
+          write(sf_uz2sat(i)%lun,13)('UZ',j,j=1,nac)
+          endif !print_type=2, mru section
+      enddo ! mru loop
+! solutes of water exported to stream segments from each MRU on that day
+      if(print_type.eq.2) then
+          allocate(sf_hillexp(nhydro))
+          do i = 1, nhydro
+          write(filename,170)i
+          filelen=length(filename)
+          sf_hillexp(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=sf_hillexp(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=sf_hillexp(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=sf_hillexp(i)%lun,file=sf_hillexp(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=sf_hillexp(i)%lun
+          write(sf_hillexp(i)%lun,15)i
+          end do
+! solutes of water in each stream segment at end of day
+        filename = 's_hyd'
+        filelen=length(filename)
+        sf_hyd%file = out_dir(1:path_len)//filename(1:filelen)
+          inquire(file=sf_hyd%file,exist=filflg)
+        if (filflg) then
+          open(newunit=tmplun,file=sf_hyd%file,status='old')
+          close(unit=tmplun,status='delete')
+        endif
+    !----open the file.
+        open (newunit=sf_hyd%lun,file=sf_hyd%file,&
+            access='sequential',form='formatted', status='new')
+        nf=nf+1
+        vse_lun(nf)=sf_hyd%lun
+        write(sf_hyd%lun,18)('hyd',i,i=1,nhydro)
+        endif ! print_type=2, hydro section
+      endif ! print_type=1 
+! 
+!  Open entity files if print_type= 1 (basin and mru) or 2 (all reservoirs)
+! 
+      if(print_type.ge.1) then
+!  composite basin entities
+        IF(control_string(out_dir,'output_dir').NE.0) RETURN
+        path_len = index(out_dir,CHAR(0))-1   ! CHAR(0) is end of strings returned from control_string call
+        ef_bas%file = out_dir(1:path_len)//'e_basin'
+        inquire(file=ef_bas%file,exist=filflg)
+        if (filflg) then
+          open(newunit=tmplun,file=ef_bas%file,status='old')
+          close(unit=tmplun,status='delete')
+        endif
+!----open the file.
+        open (newunit=ef_bas%lun,file=ef_bas%file,access='sequential',&
+          form='formatted', status='new')
+        nf=nf+1
+        vse_lun(nf)=ef_bas%lun
+        write(ef_bas%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
+!
+!open mru entity files (only compsite mru if print_type = 1)
+!
+        allocate(ef_mru(nmru))
+        do i = 1, nmru
+! composite mru
+          write(filename,220)i
+          filelen=length(filename)
+          ef_mru(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=ef_mru(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=ef_mru(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=ef_mru(i)%lun,file=ef_mru(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=ef_mru(i)%lun
+          write(ef_mru(i)%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
+! additional reservoir files
+          if(print_type.eq.2) then
+            allocate(ef_uzgen(nmru))
+            allocate(ef_uzrip(nmru))
+            allocate(ef_uzup(nmru))
+            allocate(ef_can(nmru))
+            allocate(ef_snow(nmru))
+!        allocate(ef_imperv(nmru))
+            allocate(ef_transp(nmru))
+            allocate(ef_ohoriz(nmru))
+            allocate(ef_uz(nmru,nac))
+            allocate(ef_qdf(nmru))
+            allocate(ef_sat(nmru))
+            allocate(ef_satpref(nmru))
+            allocate(ef_hill(nmru))
+            allocate(ef_uz2sat(nmru))
+! composite uz
+          write(filename,230)i
+          filelen=length(filename)
+          ef_uzgen(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=ef_uzgen(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=ef_uzgen(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=ef_uzgen(i)%lun,file=ef_uzgen(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=ef_uzgen(i)%lun
+          write(ef_uzgen(i)%lun,217) (trim(ent_label(j)), j=3,ntally_cols)
+! composite riparian uz
+          write(filename,240)i
+          filelen=length(filename)
+          ef_uzrip(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=ef_uzrip(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=ef_uzrip(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=ef_uzrip(i)%lun,file=ef_uzrip(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=ef_uzrip(i)%lun
+          write(ef_uzrip(i)%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
+! composite upland uz
+          write(filename,250)i
+          filelen=length(filename)
+          ef_uzup(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=ef_uzup(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=ef_uzup(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=ef_uzup(i)%lun,file=ef_uzup(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=ef_uzup(i)%lun
+          write(ef_uzup(i)%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
+! canopy
+          write(filename,260)i
+          filelen=length(filename)
+          ef_can(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=ef_can(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=ef_can(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=ef_can(i)%lun,file=ef_can(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=ef_can(i)%lun
+          write(ef_can(i)%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
+! snowpack
+          write(filename,270)i
+          filelen=length(filename)
+          ef_snow(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=ef_snow(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=ef_snow(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=ef_snow(i)%lun,file=ef_snow(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=ef_snow(i)%lun
+          write(ef_snow(i)%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
+! impervious surface
+    !      write(filename,80)i
+    !      filelen=length(filename)
+    !      ef_imperv(i)%file = out_dir(1:path_len)//filename(1:filelen)
+    !        inquire(file=ef_imperv(i)%file,exist=filflg)
+    !      if (filflg) then
+    !        open(newunit=tmplun,file=ef_imperv(i)%file,status='old')
+    !        close(unit=tmplun,status='delete')
+    !      endif
+    !!----open the file.
+    !      open (newunit=ef_imperv(i)%lun,file=ef_imperv(i)%file,
+    ! $      access='sequential',form='formatted', status='new')
+    !      nf=nf+1
+    !      vse_lun(nf)=ef_imperv(i)%lun
+    !      write(ef_imperv(i)%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
+! transpiration
+          write(filename,290)i
+          filelen=length(filename)
+          ef_transp(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=ef_transp(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=ef_transp(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=ef_transp(i)%lun,file=ef_transp(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=ef_transp(i)%lun
+          write(ef_transp(i)%lun,211)  ! ('UZ',j,j=1,nac)
+! o-horizon
+          write(filename,300)i
+          filelen=length(filename)
+          ef_ohoriz(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=ef_ohoriz(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=ef_ohoriz(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=ef_ohoriz(i)%lun,file=ef_ohoriz(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=ef_ohoriz(i)%lun
+          write(ef_ohoriz(i)%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
+! individual unsaturated zone reservoirs
+          do k = 1, nac
+           write(filename,310)i,k
+           filelen=length(filename)
+           ef_uz(i,k)%file = out_dir(1:path_len)//filename(1:filelen)
+             inquire(file=ef_uz(i,k)%file,exist=filflg)
+           if (filflg) then
+             open(newunit=tmplun,file=ef_uz(i,k)%file,status='old')
+             close(unit=tmplun,status='delete')
+           endif
+    !----open the file.
+           open (newunit=ef_uz(i,k)%lun,file=ef_uz(i,k)%file,&
+            access='sequential',form='formatted', status='new')
+           nf=nf+1
+           vse_lun(nf)=ef_uz(i,k)%lun
+           write(ef_uz(i,k)%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
+          end do
+! Direct flow
+          write(filename,320)i
+          filelen=length(filename)
+          ef_qdf(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=ef_qdf(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=ef_qdf(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=ef_qdf(i)%lun,file=ef_qdf(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=ef_qdf(i)%lun
+          write(ef_qdf(i)%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
+! saturated zone
+          write(filename,330)i
+          filelen=length(filename)
+          ef_sat(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=ef_sat(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=ef_sat(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=ef_sat(i)%lun,file=ef_sat(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=ef_sat(i)%lun
+          write(ef_sat(i)%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
+! preferential flow through the saturated zone (tile drains)
+          write(filename,340)i
+          filelen=length(filename)
+          ef_satpref(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=ef_satpref(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=ef_satpref(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=ef_satpref(i)%lun,file=ef_satpref(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=ef_satpref(i)%lun
+          write(ef_satpref(i)%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
+! Combined hillslope discharge (overland flow, qdf, and baseflow)
+          write(filename,350)i
+          filelen=length(filename)
+          ef_hill(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=ef_hill(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=ef_hill(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=ef_hill(i)%lun,file=ef_hill(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=ef_hill(i)%lun
+          write(ef_hill(i)%lun,211)
+! uz2sat - net flux of water from uz to sat from changes in water table
+!          and sat water moving up to meet evap demand.
+          write(filename,360)i
+          filelen=length(filename)
+          ef_uz2sat(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=ef_uz2sat(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=ef_uz2sat(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=ef_uz2sat(i)%lun,file=ef_uz2sat(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=ef_uz2sat(i)%lun
+          write(ef_uz2sat(i)%lun,211)
+          endif !print_type=2, mru section
+      enddo ! mru loop
+! Moles of entities in each stream segments at end of day
+      if(print_type.eq.2) then
+          allocate(ef_hillexp(nhydro))
+          do i = 1, nhydro
+          write(filename,370)i
+          filelen=length(filename)
+          ef_hillexp(i)%file = out_dir(1:path_len)//filename(1:filelen)
+            inquire(file=ef_hillexp(i)%file,exist=filflg)
+          if (filflg) then
+            open(newunit=tmplun,file=ef_hillexp(i)%file,status='old')
+            close(unit=tmplun,status='delete')
+          endif
+    !----open the file.
+          open (newunit=ef_hillexp(i)%lun,file=ef_hillexp(i)%file,&
+            access='sequential',form='formatted', status='new')
+          nf=nf+1
+          vse_lun(nf)=ef_hillexp(i)%lun
+          write(ef_hillexp(i)%lun,217)(trim(ent_label(j)), j=3,ntally_cols)
+          end do
+! entities of water in each stream segment at end of day
+        filename = 'e_hyd'
+        filelen=length(filename)
+        ef_hyd%file = out_dir(1:path_len)//filename(1:filelen)
+          inquire(file=ef_hyd%file,exist=filflg)
+        if (filflg) then
+          open(newunit=tmplun,file=ef_hyd%file,status='old')
+          close(unit=tmplun,status='delete')
+        endif
+    !----open the file.
+        open (newunit=ef_hyd%lun,file=ef_hyd%file,&
+            access='sequential',form='formatted', status='new')
+        nf=nf+1
+        vse_lun(nf)=ef_hyd%lun
+        write(ef_hyd%lun,211)
+        endif ! print_type=2, hydro section
+       endif ! print_type=1 !
+      endif ! if chem_sim.eq
 
       phr_tf=.false. ! Make debug flag false until xdebug_start is reached
       iresult = SetOutputFileOn(ID,phr_tf)
       iresult = SetErrorFileOn(ID,phr_tf)
       iresult = SetLogFileOn(ID,phr_tf)
       iresult = SetSelectedOutputFileOn(ID,phr_tf)
-      
- 100   format('    Date  /  Time   ',&
-      ' Init     Inputs    Outputs    Final    ',&
-      ' Precip    ET      Impervious  Canopy   ',&
-      'Snowpack O-horizon  UnsatZone Macropore ',&
-      'SatZone   Exfil     SatPref   Hillslope ',&
-      'IrrWell  IrrDiv     IrrExt     GW_1     ',&
-      '   GW2') 
+ 
+10  format('Volumes of water, in cubic meters. ',&
+       'Moles of solute ',    /  'nstep Year Mo Dy',&
+       '       Init_m3     Inputs_m3    Outputs_m3',&
+       '         ET_m3      Final_m3        Solute',&
+       '        Init_M      Inputs_M     Outputs_M',&
+       '     Net_rxn_M       Final_M',50A30)      
+
+ 12   format('Moles of solute pulled from each UZ by ',&
+       'transpiration.'/'nstep Year Mo Dy',50(A10,I4.3))
+ 13   format('Moles of solute in recharge from each UZ',&
+       /'nstep Year Mo Dy',50(A10,I4.3))
+ 15   format('Moles of solute'/'nstep Year Mo Dy Inputs',&
+             ' to stream segment ',I5,' beginning at MRU 1')
+ 18   format('Moles of solute at end of day'/'nstep Year Mo Dy',&
+             'Solute     Discharge',20(A10,I4.3))
+!
+! file names
+!
+ 25   format('s_mru',I3.3)
+ 30   format('s_mru',I3.3,'_uzgen')
+ 40   format('s_mru',I3.3,'_uzrip')
+ 50   format('s_mru',I3.3,'_uzup')
+ 60   format('s_mru',I3.3,'_can')
+ 70   format('s_mru',I3.3,'_snow')
+! 80   format('s_mru',I3.3,'_imperv')
+ 90   format('s_mru',I3.3,'_transp')
+ 100  format('s_mru',I3.3,'_ohoriz')
+ 110  format('s_mru',I3.3,'_uz',I2.2)
+ 120  format('s_mru',I3.3,'_qdf')
+ 130  format('s_mru',I3.3,'_sat')
+ 140  format('s_mru',I3.3,'_satpref')
+ 155  format('s_mru',I3.3,'_hill')
+ 160  format('s_mru',I3.3,'_uz2sat')
+ 170  format('s_hyd',I3.3)
+
+210 format('Volumes of water, in cubic meters. ',&
+       'Moles of Entity ',    /  'nstep Year Mo Dy',&
+       '          Init        Inputs       Outputs',&
+       '            ET         Final', 50A30)      
+ 211 format('There are no reactive entities in transient reservoirs')
+!
+! No reactions in transient fluxes
+! 212   format('Moles of entity remaining pulled from each UZ by ',&  
+!       'transpiration.'/'nstep Year Mo Dy',50(A10,I4.3))
+! 213   format('Moles of solute in recharge from each UZ',&
+!       /'nstep Year Mo Dy',50(A10,I4.3))
+! 215   format('Moles of solute'/'nstep Year Mo Dy Inputs',&
+!             ' to stream segment ',I5,' beginning at MRU 1')
+!
+217 format('Volume in cubic meters and Moles of entity in',&
+           ' stream reservoit at end of day'/&
+           'nstep Year Mo Dy  Volume_m3',50A10)
+!
+! file names
+!
+ 220   format('e_mru',I3.3)
+ 230   format('e_mru',I3.3,'_uzgen')
+ 240   format('e_mru',I3.3,'_uzrip')
+ 250   format('e_mru',I3.3,'_uzup')
+ 260   format('e_mru',I3.3,'_can')
+ 270   format('e_mru',I3.3,'_snow')
+! 280   format('e_mru',I3.3,'_imperv')
+ 290   format('e_mru',I3.3,'_transp')
+ 300  format('e_mru',I3.3,'_ohoriz')
+ 310  format('e_mru',I3.3,'_uz',I2.2)
+ 320  format('e_mru',I3.3,'_qdf')
+ 330  format('e_mru',I3.3,'_sat')
+ 340  format('e_mru',I3.3,'_satpref')
+ 350  format('e_mru',I3.3,'_hill')
+ 360  format('e_mru',I3.3,'_uz2sat')
+ 370  format('e_hyd',I3.3)
+
 
       phreeqmms_init = 0
       return
@@ -3439,6 +4132,7 @@
 
       USE WEBMOD_PHREEQ_MMS
 !      USE WEBMOD_INTCP, ONLY : covden_win
+      USE WEBMOD_IO, ONLY : phreeqout, chemout
       USE WEBMOD_OBSHYD, ONLY : relhum
       USE WEBMOD_OBSCHEM, ONLY : phq_lut, sol_id, sol_name,unit_lut,&
           n_iso, iso_list,c_precip_pH,c_precipT,cconc_precipM, &
@@ -3505,7 +4199,15 @@
 !
 ! Skip run time section if chem_sim=0
 !
-      if(chem_sim.eq.1) then
+      if(chem_sim.eq.0) then
+! If chem_sim indicates that no chemical simulations are to be completed
+! notify the user in the console and in the *.chemout file.
+!
+         print*,'Chem_sim parameter equals zero so all chemical ',&
+           ' variables are uninitialized'
+         write(chemout%lun,*)'No geochemistry simulated (chem_sim=0)'
+          
+      else ! chem_sim =1. Geochemistry is being simulated.
 !
 ! Turn phreeq debugging on between xdbug_start and _stop
 !
@@ -7107,10 +7809,11 @@
                end if
              end do
           endif
-          do 12 n = 1, nsolute
+          do 21 n = 1, nsolute
             k=sol_id(n)%tally
 !            c_chem(indx)%M(n,rxn) = 0D0
             do 11 j = 3, ntally_cols  ! first two cols are conc. of conservative and reactive solutions
+              c_chem(indx)%Rxn(n,j) = tally_table(k,j)*mult(j)*vol*a_thousand
               c_chem(indx)%M(n,rxn) = c_chem(indx)%M(n,rxn)+&
                 tally_table(k,j)*mult(j)*vol*a_thousand
               if(abs(c_chem(indx)%M(n,rxn)).gt.0.01) react = .TRUE.
@@ -7125,7 +7828,7 @@
            if(restype.eq.5) & ! sum uz inputs&
             c_chem(indxuz)%M(n,rxn)=c_chem(indxuz)%M(n,rxn)+ &
               c_chem(indx)%M(n,rxn)
-   12     continue
+   21     continue
       end if
 !
 !     Use final concentration to establish final masses and record isotopes
