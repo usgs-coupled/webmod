@@ -2749,7 +2749,7 @@ c$$$            uz2sat(ia,is) = (last_uz_dep(ia,is) - uz_depth(ia,is))
 c$$$     $           + (last_srz(ia,is)-srz(ia,is))
 c$$$     $           - (last_suz(ia,is)-suz(ia,is))
 c
-c Try just using the depth to water table for uz2sat. Since the control volume
+c Just use the depth to water table for uz2sat. Since the control volume
 c for the UZ is all porosity below field capacity in the rooting zone, no
 c net flux resulting from water table changes (uz2sat) can occur unless
 c either the current or previous water table was below the root zone depth.

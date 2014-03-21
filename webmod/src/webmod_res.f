@@ -1940,16 +1940,19 @@ c composite basin volumes
       endif ! print_type=1 
       
       webrinit = 0
-!       '123456789112345678921234567893123456789412
+!     '12345678911234567892123456783123456789412
 !
 ! headers in files
 !
- 10   format('Volumes, in cubic meters, and mass, in moles ',
+ 10   format('Volumes, in cubic meters, Specific inputs, ',
      $ '(except for ET) listed after "Final" column'/'nstep Year Mo Dy',
-     $ '          Init        Inputs       Outputs',
-     $ '            ET         Final        Solute',
-     $ '          Init        Inputs       Outputs',
-     $ '  Net_reaction         Final',50A30)
+     $ '          Init         Inputs        Outputs',
+     $ '          Final         Precip             ET',
+     $ '     Impervious    Throughfall           Melt',
+     $ '      O-horizon             UZ        UZ_Pref',
+     $ '       Sat_zone          Exfil       Sat_Pref',
+     $ '      Hillslope           Well      Diversion',
+     $ ' Outside_Source           GW_1           GW_2')
 
  12   format('Volumes in cubic meters pulled from each UZ by ',
      $ 'transpiration.'/'nstep Year Mo Dy',50(A10,I4.3))
@@ -3028,7 +3031,7 @@ c Recharge to preferential flow and recharge weighted by recharge from
 c each wetness index bin. Also add the volume of unsaturated zone pore
 c water incorporated into the saturated zone from a rising water table.
 c
-        vmix_uz2sat(ia,is) = v_rech_loc
+        vmix_uz2sat(ia,is) = v_rech_loc + v_qdf_loc  
         vmix_uz(ia,is,3) = vmix_uz2can(ia,is) +
      $       vmix_uz2sat(ia,is) + v_qdf_loc   !transpiration + local recharge + preferential flow
 
@@ -3452,7 +3455,7 @@ c
       basin_qsim_m3s = basin_qsim_cm*basin_area/8.64/fac
 
 c
-c Write output volume files when print_type=2
+c Write output volume files when print_type >= 1
 c
       if(print_type.ge.1) then
        write(vf_bas%lun,123) nstep,(datetime(i),i=1,3),
@@ -3501,7 +3504,7 @@ c
         write(vf_hyd%lun,123) nstep,(datetime(i),i=1,3),
      $     basin_qsim_cm/m3cm, (vmix_stream(i),i=1,nhydro)
       end if
- 123  format(2I5,2I3,21E14.6)
+ 123  format(2I5,2I3,21(E14.6,1X))
 !      if (end_dy) write(*,"(85E14.6)")
 !     $ (vmix_can(1,i), i=1,6),(vmix_ohoriz(1,i), i=1,6),(vmix_snow(1,i),
 !     $ i=1,6),
