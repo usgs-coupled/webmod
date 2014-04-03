@@ -74,9 +74,12 @@ c internal or private variables
 !
 !
       TYPE :: sols   ! row number in phq_lut and tally table for each of nsolutes
-         integer :: phq   ! Row number in phreeq_lut file
-         integer :: tally ! Row number in tally table (populated in phreeq_mms)
-         logical :: iso   ! Is this species an isotope (True|False) 
+         integer :: phq   ! Row number of solute in phreeq_lut file
+         integer :: phq_e ! Row number of uncharged element or species with no valence state (i.e. Ca) in phreeq_lut file
+                          ! (i.e. S when solute is S(6), or N when solute is N(6) - populated in phreeq_mms).
+         integer :: tally ! Row number of solute in tally table (populated in phreeq_mms)
+         integer :: tally_e ! Row number for uncharged element in in tally table
+         logical :: iso   ! Is this species an isotope (True|False)
       END TYPE sols
       
       TYPE(sols), save, allocatable :: sol_id(:)
@@ -174,6 +177,7 @@ c
 c
 ! Functions
       INTEGER, EXTERNAL :: obsc_decl, obsc_init, obsc_run, obsc_clean
+      character*12, external :: parse
 c
       SVN_ID = 
      $     '$Id: obs_chem.f 35 2010-03-30 17:34:40Z rmwebb $ '
@@ -380,6 +384,7 @@ C      intrinsic getenv
       integer, external :: phreeq_id
 c  internal or private variables
       character*12 solname
+      character*12, external :: parse
       integer i, j, ret, io
       integer, external :: length
       character*80 test
@@ -498,6 +503,8 @@ c solname is terminated by mms with a null so take one less character
 c and overwrite into sol_name
          sol_name(i)=solname(1:length(solname)-1)
          sol_id(i)%phq = phreeq_id(sol_name(i))
+! assign elemental root if valenced species
+         sol_id(i)%phq_e = phreeq_id(parse(sol_name(i), '('))
          sol_id(i)%iso=.FALSE.
          if(phq_lut(sol_id(i)%phq)%isounit.eq.'permil') then
              sol_id(i)%iso=.TRUE.
@@ -900,11 +907,12 @@ c
 c The first two fields must be tempc and pH
 c
       tph = .true.
-      tempc = parse(rembuf)
+      
+      tempc = parse(rembuf, ' ')
       elem_len(1) = length(tempc)
       tot_len = tot_len + elem_len(1) +1
       rembuf= buf(tot_len+1:buf_len)
-      ph = parse(rembuf)
+      ph = parse(rembuf, ' ')
       elem_len(1) = length(ph)
       tot_len = tot_len + elem_len(1) +1
       rembuf= buf(tot_len+1:buf_len)
@@ -924,13 +932,13 @@ c
        do 60 while (tot_len.lt.buf_len)
          if(matched) then
             nsolobs = nsolobs + 1
-            elem(nsolobs) = parse(rembuf)
+            elem(nsolobs) = parse(rembuf, ' ')
             elem_len(nsolobs) = length(elem(nsolobs))
             tot_len = tot_len + elem_len(nsolobs) +1
             matched = .false.
          else
 c            elem_units(nsolobs) = '            '
-            elem_units(nsolobs) =  parse(rembuf)
+            elem_units(nsolobs) =  parse(rembuf, ' ')
             elem_ulen(nsolobs) = length(elem_units(nsolobs))
             tot_len = tot_len + elem_ulen(nsolobs) +1
             matched = .true.
@@ -1043,13 +1051,14 @@ c
       RETURN
       END
 c
-c Function to parse the first string of multiple space-separated words
+c Function to parse the first word of a delimited string (before space or paren for elemental root)
 c
-      character*12 FUNCTION PARSE(STRING)
+      character*12 FUNCTION PARSE(STRING, DEL)
       CHARACTER*(*) STRING
+      CHARACTER*(*) DEL
       INTEGER I
       DO 15, I = 2, LEN(STRING), 1
-         IF(STRING(I:I) .EQ. ' ') GO TO 16 
+         IF(STRING(I:I) .EQ. DEL) GO TO 16 
  15   CONTINUE 
  16   PARSE = STRING(1:I-1)
       RETURN
