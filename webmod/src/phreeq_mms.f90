@@ -117,16 +117,25 @@
       interface
          function update_chem(indx,totvol,imetric,&
               conc,ph,tempc,tally_table,n_ent,indxm,&
-              indxb,restype)
+              indxb,restype,comp_rxn)
+         
            integer :: indx, imetric,n_ent(:),restype
-           integer :: indxm,indxb
+           logical :: indxm,indxb,comp_rxn
            double precision :: totvol,conc(:),ph,tempc
            double precision :: tally_table(:,:)
            integer :: update_chem
          end function update_chem
       end interface
-      integer, save :: indxm, indxb
-      DATA indxm,indxb/2*1/
+      logical, save :: yes_m, yes_b, not_m, not_b !  logicals to place in the indxm and indxb
+                                             ! args to inform update_chem whether flux is
+                                             ! to be included in basin or MRU composite.
+      logical, save :: yes_rxn, not_rxn !  logicals to place in the comp_rxn arg to indicate
+                                             ! that this export and/or static mix included a
+                                             ! potential reaction and as such should be included
+                                             ! in accumulated reactions for this reservoir and any
+                                             ! other pertinent composite reservoir (basin, MRU, UZ, or stream)
+      DATA yes_m,yes_b,yes_rxn/3*.TRUE./
+      DATA not_m,not_b,not_rxn/2*.FALSE./
       INTERFACE
          FUNCTION fractionate(phase,indx,evap,totvol,ison,rh,tempevap)
            INTEGER :: phase, indx
@@ -289,7 +298,7 @@
 !
 ! TYPE (geochem) c_chem. Records moles and volumes init, in, out, rxn(ET), and final for
 ! all permanent and temporary reservoirs in the model. Also records 5 isotopic values
-! (where applicable) along with temperature and pH.
+! (where applicable) along with temperature and pH. 
 !
       TYPE :: geochem
          double precision, allocatable :: M(:,:)   ! Moles of each solute for init, in, out, rxn, and final (nsolute, 5) Rxn reflects sum of Rxn(nsolute,ntally_cols)
@@ -307,14 +316,214 @@
      
       TYPE(geochem), save, allocatable :: c_chem(:) ! to be allocated by the total number of hillslope and transient reservoirs, nphrsolns. 
                                                     ! For most solutions there is a matching t1 solution for each t0 solution
-! Composite reservoirs populated with accumulated volumes and masses. Entities not tracked for these
+
+!
+! Composite reservoirs for the basin, mrus, UZ bins (general, riparian, and upland), and streams
+! track inputs, outputs, and reactions for a group of reservoirs. Entities are not tracked for 
       TYPE(geochem), save :: c_chem_basin, c_chem_hyd  ! composite of all reservoirs, composite on nhydro stream reservoirs
 ! dimensioned by mru
       TYPE(geochem), save, allocatable :: c_chem_mru(:) ! 
       TYPE(geochem), save, allocatable :: c_chem_uzgen(:) ! summ of all uz reservoirs
       TYPE(geochem), save, allocatable :: c_chem_uzrip(:) ! sum of riparian uz reservoirs [st() wetter than or equal to riparian_thresh]
       TYPE(geochem), save, allocatable :: c_chem_uzup(:) ! sum of upland uz reservoirs drier than riparian_thresh
+!
+! The 'ch_outlet_' variables describe the quantity and quality of PHREEQC solution 300000000,
+! the water exported at the basin outlet. As with all transient reservoirs, fluxes are tracked as inputs
+! so 'net' always represents a cumulative mass.  Variables have been added 
+! to track cumulative volumes, along with moles and grams of solutes. Exported masses are divided
+! by basin area to compute loads of solutes exported from the basin.
+! The 'ch_outlet_' variables are distinct from the 'ch_basin_' variables that are a composite
+! of all inputs and outputs including inflows from irrigation, upgradient groundwater and leakage
+! through the bottom of the saturated zone or the bottom of stream reservoirs.
+!
+      double precision, save, allocatable :: ch_outlet_M(:),&
+           ch_outlet_g(:),ch_outlet_eq(:),ch_outlet_mML(:),ch_outlet_mgL(:),&
+           ch_outlet_meqL(:), ch_outlet_mMm2(:), ch_outlet_mgm2(:), &
+           ch_outlet_meqm2(:), ch_outlet_permil(:)
+      double precision, save :: ch_outlet_m3, ch_outlet_tempC, ch_outlet_pH
+!
+! Basin analogs that don't work for outlet
+! ch_outlet_in_g(:),  ch_outlet_rxn_g(:), ch_outlet_mass_g(:), ch_outlet_net_g(:), ch_outlet_in_gm2(:),
+! ch_outlet_net_gm2(:), ch_outlet_in_mgL(:), ch_outlet_out_mgL(:)
+! 
+! Summary variables for the basin, mru, UZ (general, riparian, and upland), and stream composites.
+! track inputs, outputs, and reactions in a group of reservoirs. 
+!
+      double precision, save, allocatable ::&
+        ch_basin_M_in(:),ch_basin_M_out(:),ch_basin_M_rxn(:),ch_basin_M_final(:),&
+        ch_basin_g_in(:),ch_basin_g_out(:),ch_basin_g_rxn(:),ch_basin_g_final(:),&
+        ch_basin_eq_in(:),ch_basin_eq_out(:),ch_basin_eq_rxn(:),ch_basin_eq_final(:),&
+        ch_basin_mMm2_in(:),ch_basin_mMm2_out(:),ch_basin_mMm2_rxn(:),ch_basin_mMm2_final(:),&
+        ch_basin_mgm2_in(:),ch_basin_mgm2_out(:),ch_basin_mgm2_rxn(:),ch_basin_mgm2_final(:),&
+        ch_basin_meqm2_in(:),ch_basin_meqm2_out(:),ch_basin_meqm2_rxn(:),ch_basin_meqm2_final(:),&
+        ch_basin_mML_in(:),ch_basin_mML_out(:),ch_basin_mML_final(:),&
+        ch_basin_mgL_in(:),ch_basin_mgL_out(:),ch_basin_mgL_final(:),&
+        ch_basin_meqL_in(:),ch_basin_meqL_out(:),ch_basin_meqL_final(:),&
+        ch_basin_permil_in(:),ch_basin_permil_out(:),ch_basin_permil_ET(:),ch_basin_permil_final(:)
 
+      double precision, save :: &
+        ch_basin_m3_in,ch_basin_m3_out,ch_basin_m3_ET,ch_basin_m3_final,&
+        ch_basin_tempC_in,ch_basin_tempC_out,ch_basin_tempC_final,&
+        ch_basin_pH_in,ch_basin_pH_out,ch_basin_pH_final
+
+      double precision, save, allocatable ::&
+        ch_hyd_M_in(:),ch_hyd_M_out(:),ch_hyd_M_rxn(:),ch_hyd_M_final(:),&
+        ch_hyd_g_in(:),ch_hyd_g_out(:),ch_hyd_g_rxn(:),ch_hyd_g_final(:),&
+        ch_hyd_eq_in(:),ch_hyd_eq_out(:),ch_hyd_eq_rxn(:),ch_hyd_eq_final(:),&
+        ch_hyd_mMm2_in(:),ch_hyd_mMm2_out(:),ch_hyd_mMm2_rxn(:),ch_hyd_mMm2_final(:),&
+        ch_hyd_mgm2_in(:),ch_hyd_mgm2_out(:),ch_hyd_mgm2_rxn(:),ch_hyd_mgm2_final(:),&
+        ch_hyd_meqm2_in(:),ch_hyd_meqm2_out(:),ch_hyd_meqm2_rxn(:),ch_hyd_meqm2_final(:),&
+        ch_hyd_mML_in(:),ch_hyd_mML_out(:),ch_hyd_mML_final(:),&
+        ch_hyd_mgL_in(:),ch_hyd_mgL_out(:),ch_hyd_mgL_final(:),&
+        ch_hyd_meqL_in(:),ch_hyd_meqL_out(:),ch_hyd_meqL_final(:),&
+        ch_hyd_permil_in(:),ch_hyd_permil_out(:),ch_hyd_permil_final(:)
+
+      double precision, save :: &
+        ch_hyd_m3_in,ch_hyd_m3_out,ch_hyd_m3_final,&
+        ch_hyd_tempC_in,ch_hyd_tempC_out,ch_hyd_tempC_final,&
+        ch_hyd_pH_in,ch_hyd_pH_out,ch_hyd_pH_final
+
+      !double precision, save, allocatable ::&
+      !     ch_basin_mass_g(:),&
+      !     ch_basin_conc_mgL(:), &
+      !     ch_basin_rxn_g(:),&
+      !     ch_basin_in_g(:), ch_basin_out_g(:),&
+      !     ch_basin_net_g(:), ch_basin_in_gm2(:),&
+      !     ch_basin_out_gm2(:), ch_basin_net_gm2(:),&
+      !     ch_basin_in_mgL(:), ch_basin_out_mgL(:),&
+      !     ch_basin_permil_in(:), ch_basin_permil_out(:)
+      !
+      !double precision, save :: ch_basin_out_tempC, ch_basin_out_pH
+      !double precision, save :: ch_basin_vol_m3
+      
+      double precision, save, allocatable ::&
+        ch_mru_M_in(:,:),ch_mru_M_out(:,:),ch_mru_M_rxn(:,:),ch_mru_M_final(:,:),&
+        ch_mru_g_in(:,:),ch_mru_g_out(:,:),ch_mru_g_rxn(:,:),ch_mru_g_final(:,:),&
+        ch_mru_eq_in(:,:),ch_mru_eq_out(:,:),ch_mru_eq_rxn(:,:),ch_mru_eq_final(:,:),&
+        ch_mru_mMm2_in(:,:),ch_mru_mMm2_out(:,:),ch_mru_mMm2_rxn(:,:),ch_mru_mMm2_final(:,:),&
+        ch_mru_mgm2_in(:,:),ch_mru_mgm2_out(:,:),ch_mru_mgm2_rxn(:,:),ch_mru_mgm2_final(:,:),&
+        ch_mru_meqm2_in(:,:),ch_mru_meqm2_out(:,:),ch_mru_meqm2_rxn(:,:),ch_mru_meqm2_final(:,:),&
+        ch_mru_mML_in(:,:),ch_mru_mML_out(:,:),ch_mru_mML_final(:,:),&
+        ch_mru_mgL_in(:,:),ch_mru_mgL_out(:,:),ch_mru_mgL_final(:,:),&
+        ch_mru_meqL_in(:,:),ch_mru_meqL_out(:,:),ch_mru_meqL_final(:,:),&
+        ch_mru_permil_in(:,:),ch_mru_permil_out(:,:),ch_mru_permil_ET(:,:),ch_mru_permil_final(:,:),&
+        ch_mru_m3_in(:),ch_mru_m3_out(:),ch_mru_m3_ET(:),ch_mru_m3_final(:),&
+        ch_mru_tempC_in(:),ch_mru_tempC_out(:),ch_mru_tempC_final(:),&
+        ch_mru_pH_in(:),ch_mru_pH_out(:),ch_mru_pH_final(:)
+!
+      double precision, save, allocatable ::&
+        ch_uzgen_M_in(:,:),ch_uzgen_M_out(:,:),ch_uzgen_M_rxn(:,:),ch_uzgen_M_final(:,:),&
+        ch_uzgen_g_in(:,:),ch_uzgen_g_out(:,:),ch_uzgen_g_rxn(:,:),ch_uzgen_g_final(:,:),&
+        ch_uzgen_eq_in(:,:),ch_uzgen_eq_out(:,:),ch_uzgen_eq_rxn(:,:),ch_uzgen_eq_final(:,:),&
+        ch_uzgen_mMm2_in(:,:),ch_uzgen_mMm2_out(:,:),ch_uzgen_mMm2_rxn(:,:),ch_uzgen_mMm2_final(:,:),&
+        ch_uzgen_mgm2_in(:,:),ch_uzgen_mgm2_out(:,:),ch_uzgen_mgm2_rxn(:,:),ch_uzgen_mgm2_final(:,:),&
+        ch_uzgen_meqm2_in(:,:),ch_uzgen_meqm2_out(:,:),ch_uzgen_meqm2_rxn(:,:),ch_uzgen_meqm2_final(:,:),&
+        ch_uzgen_mML_in(:,:),ch_uzgen_mML_out(:,:),ch_uzgen_mML_final(:,:),&
+        ch_uzgen_mgL_in(:,:),ch_uzgen_mgL_out(:,:),ch_uzgen_mgL_final(:,:),&
+        ch_uzgen_meqL_in(:,:),ch_uzgen_meqL_out(:,:),ch_uzgen_meqL_final(:,:),&
+        ch_uzgen_permil_in(:,:),ch_uzgen_permil_out(:,:),ch_uzgen_permil_ET(:,:),ch_uzgen_permil_final(:,:),&
+        ch_uzgen_m3_in(:),ch_uzgen_m3_out(:),ch_uzgen_m3_ET(:),ch_uzgen_m3_final(:),&
+        ch_uzgen_tempC_in(:),ch_uzgen_tempC_out(:),ch_uzgen_tempC_final(:),&
+        ch_uzgen_pH_in(:),ch_uzgen_pH_out(:),ch_uzgen_pH_final(:)
+!
+      double precision, save, allocatable ::&
+        ch_uzrip_M_in(:,:),ch_uzrip_M_out(:,:),ch_uzrip_M_rxn(:,:),ch_uzrip_M_final(:,:),&
+        ch_uzrip_g_in(:,:),ch_uzrip_g_out(:,:),ch_uzrip_g_rxn(:,:),ch_uzrip_g_final(:,:),&
+        ch_uzrip_eq_in(:,:),ch_uzrip_eq_out(:,:),ch_uzrip_eq_rxn(:,:),ch_uzrip_eq_final(:,:),&
+        ch_uzrip_mMm2_in(:,:),ch_uzrip_mMm2_out(:,:),ch_uzrip_mMm2_rxn(:,:),ch_uzrip_mMm2_final(:,:),&
+        ch_uzrip_mgm2_in(:,:),ch_uzrip_mgm2_out(:,:),ch_uzrip_mgm2_rxn(:,:),ch_uzrip_mgm2_final(:,:),&
+        ch_uzrip_meqm2_in(:,:),ch_uzrip_meqm2_out(:,:),ch_uzrip_meqm2_rxn(:,:),ch_uzrip_meqm2_final(:,:),&
+        ch_uzrip_mML_in(:,:),ch_uzrip_mML_out(:,:),ch_uzrip_mML_final(:,:),&
+        ch_uzrip_mgL_in(:,:),ch_uzrip_mgL_out(:,:),ch_uzrip_mgL_final(:,:),&
+        ch_uzrip_meqL_in(:,:),ch_uzrip_meqL_out(:,:),ch_uzrip_meqL_final(:,:),&
+        ch_uzrip_permil_in(:,:),ch_uzrip_permil_out(:,:),ch_uzrip_permil_ET(:,:),ch_uzrip_permil_final(:,:),&
+        ch_uzrip_m3_in(:),ch_uzrip_m3_out(:),ch_uzrip_m3_ET(:),ch_uzrip_m3_final(:),&
+        ch_uzrip_tempC_in(:),ch_uzrip_tempC_out(:),ch_uzrip_tempC_final(:),&
+        ch_uzrip_pH_in(:),ch_uzrip_pH_out(:),ch_uzrip_pH_final(:)
+!
+      double precision, save, allocatable ::&
+        ch_uzup_M_in(:,:),ch_uzup_M_out(:,:),ch_uzup_M_rxn(:,:),ch_uzup_M_final(:,:),&
+        ch_uzup_g_in(:,:),ch_uzup_g_out(:,:),ch_uzup_g_rxn(:,:),ch_uzup_g_final(:,:),&
+        ch_uzup_eq_in(:,:),ch_uzup_eq_out(:,:),ch_uzup_eq_rxn(:,:),ch_uzup_eq_final(:,:),&
+        ch_uzup_mMm2_in(:,:),ch_uzup_mMm2_out(:,:),ch_uzup_mMm2_rxn(:,:),ch_uzup_mMm2_final(:,:),&
+        ch_uzup_mgm2_in(:,:),ch_uzup_mgm2_out(:,:),ch_uzup_mgm2_rxn(:,:),ch_uzup_mgm2_final(:,:),&
+        ch_uzup_meqm2_in(:,:),ch_uzup_meqm2_out(:,:),ch_uzup_meqm2_rxn(:,:),ch_uzup_meqm2_final(:,:),&
+        ch_uzup_mML_in(:,:),ch_uzup_mML_out(:,:),ch_uzup_mML_final(:,:),&
+        ch_uzup_mgL_in(:,:),ch_uzup_mgL_out(:,:),ch_uzup_mgL_final(:,:),&
+        ch_uzup_meqL_in(:,:),ch_uzup_meqL_out(:,:),ch_uzup_meqL_final(:,:),&
+        ch_uzup_permil_in(:,:),ch_uzup_permil_out(:,:),ch_uzup_permil_ET(:,:),ch_uzup_permil_final(:,:),&
+        ch_uzup_m3_in(:),ch_uzup_m3_out(:),ch_uzup_m3_ET(:),ch_uzup_m3_final(:),&
+        ch_uzup_tempC_in(:),ch_uzup_tempC_out(:),ch_uzup_tempC_final(:),&
+        ch_uzup_pH_in(:),ch_uzup_pH_out(:),ch_uzup_pH_final(:)
+!
+!      double precision, save, allocatable ::&
+!           ch_mru_vol_m3(:),&
+!           ch_mru_mass_g(:,:),&
+!           ch_mru_conc_mgL(:,:),&
+!           ch_mru_rxn_g(:,:),&
+!           ch_mru_in_mgL(:,:),&
+!           ch_mru_out_mgL(:,:),&
+!           ch_mru_permil_in(:,:),&
+!           ch_mru_permil_out(:,:),&
+!           ch_mru_in_g(:,:),&
+!           ch_mru_out_g(:,:),&
+!           ch_mru_net_g(:,:),&
+!           ch_mru_in_gm2(:,:),&
+!           ch_mru_out_gm2(:,:),&
+!           ch_mru_net_gm2(:,:),&
+!           ch_mru_out_tempC(:),ch_mru_out_pH(:)
+!!
+!      double precision, save, allocatable ::&
+!           ch_uzgen_vol_m3(:),&
+!           ch_uzgen_mass_g(:,:),&
+!           ch_uzgen_conc_mgL(:,:),&
+!           ch_uzgen_rxn_g(:,:),&
+!           ch_uzgen_in_mgL(:,:),&
+!           ch_uzgen_out_mgL(:,:),&
+!           ch_uzgen_permil_in(:,:),&
+!           ch_uzgen_permil_out(:,:),&
+!           ch_uzgen_in_g(:,:),&
+!           ch_uzgen_out_g(:,:),&
+!           ch_uzgen_net_g(:,:),&
+!           ch_uzgen_in_gm2(:,:),&
+!           ch_uzgen_out_gm2(:,:),&
+!           ch_uzgen_net_gm2(:,:),&
+!           ch_uzgen_out_tempC(:),ch_uzgen_out_pH(:)
+!!
+!      double precision, save, allocatable ::&
+!           ch_uzrip_vol_m3(:),&
+!           ch_uzrip_mass_g(:,:),&
+!           ch_uzrip_conc_mgL(:,:),&
+!           ch_uzrip_rxn_g(:,:),&
+!           ch_uzrip_in_mgL(:,:),&
+!           ch_uzrip_out_mgL(:,:),&
+!           ch_uzrip_permil_in(:,:),&
+!           ch_uzrip_permil_out(:,:),&
+!           ch_uzrip_in_g(:,:),&
+!           ch_uzrip_out_g(:,:),&
+!           ch_uzrip_net_g(:,:),&
+!           ch_uzrip_in_gm2(:,:),&
+!           ch_uzrip_out_gm2(:,:),&
+!           ch_uzrip_net_gm2(:,:),&
+!           ch_uzrip_out_tempC(:),ch_uzrip_out_pH(:)
+!!
+!      double precision, save, allocatable ::&
+!           ch_uzup_vol_m3(:),&
+!           ch_uzup_mass_g(:,:),&
+!           ch_uzup_conc_mgL(:,:),&
+!           ch_uzup_rxn_g(:,:),&
+!           ch_uzup_in_mgL(:,:),&
+!           ch_uzup_out_mgL(:,:),&
+!           ch_uzup_permil_in(:,:),&
+!           ch_uzup_permil_out(:,:),&
+!           ch_uzup_in_g(:,:),&
+!           ch_uzup_out_g(:,:),&
+!           ch_uzup_net_g(:,:),&
+!           ch_uzup_in_gm2(:,:),&
+!           ch_uzup_out_gm2(:,:),&
+!           ch_uzup_net_gm2(:,:),&
+!           ch_uzup_out_tempC(:),ch_uzup_out_pH(:)
+!
 !      integer :: EntType(:)   ! Type of Phreeqc entity: soln, eq_ph, rxn, kin, surf, exch. Dimensioned by ntallycol
 !      character(40) :: EntDescr(:)   ! Dimensioned by ntallycol
 
@@ -351,7 +560,7 @@
 
       integer, save :: validnacs, indx_rxn, mixture
       integer, save, allocatable :: src(:),srcdep(:),dest(:)
-      double precision,save :: rxnmols,tempc,ph,ph_5,tsec,fill_factor,totvol,totvol_can
+      double precision,save :: rxnmols,tempc,ph,ph_final,tsec,fill_factor,totvol,totvol_can
       double precision :: basin_in_vol, basin_out_vol, evap_frac
       double precision :: delta_res0, delta_res, delta_res_permil
       double precision :: log_a, eps_q, eps_diff
@@ -403,44 +612,6 @@
       integer, save :: chemdat_flag ! indicates if file of time series of chem obs is available.
 
 !
-! chmru_soln indicates the index, or row number for each pseudo-solution
-! that summarizes fluxes into and out of each MRU. Ditto for chbas_soln,
-! the basin pseudo reservoir. These are reflected as indxm and indxm
-! at any function call. indxuz will reference the riparian pseudosolution, ch_rip_solution,
-! or the upland pseudosolution, ch_upland_soln as distinguised by riparian_thresh.
-!
-
-!      integer, save, allocatable :: chmru_soln(:), chuz_soln(:), ch_rip_soln(:), ch_upland_soln(:)
-!      integer, save :: chbas_soln, indxm, indxb, indxuz
-
-      double precision, save, allocatable ::&
-           ch_basin_mass_g(:),ch_basin_conc_mgL(:), &
-           ch_basin_rxn_g(:),&
-           ch_basin_in_mgL(:), ch_basin_out_mgL(:),&
-           ch_basin_in_permil(:), ch_basin_out_permil(:),&
-           ch_basin_in_g(:), ch_basin_out_g(:),&
-           ch_basin_net_g(:), ch_basin_in_gm2(:),&
-           ch_basin_out_gm2(:), ch_basin_net_gm2(:)
-
-      double precision, save :: ch_basin_out_tempC, ch_basin_out_pH
-      double precision, save :: ch_basin_vol_m3
-
-      double precision, save, allocatable ::&
-           ch_mru_vol_m3(:),&
-           ch_mru_mass_g(:,:),&
-           ch_mru_conc_mgL(:,:),&
-           ch_mru_rxn_g(:,:),&
-           ch_mru_in_mgL(:,:),&
-           ch_mru_out_mgL(:,:),&
-           ch_mru_in_permil(:,:),&
-           ch_mru_out_permil(:,:),&
-           ch_mru_in_g(:,:),&
-           ch_mru_out_g(:,:),&
-           ch_mru_net_g(:,:),&
-           ch_mru_in_gm2(:,:),&
-           ch_mru_out_gm2(:,:),&
-           ch_mru_net_gm2(:,:),&
-           ch_mru_out_tempC(:),ch_mru_out_pH(:)
 
       integer, allocatable :: solns(:)
 !
@@ -853,178 +1024,1665 @@
            ch_var_10_pH).ne.0) return
 
 !
-! The variables that follow track the total storage and fluxes of solutes
-! into and out of the basins and mrus. To track fluxes in specific 
+! Quantity and quality of water at outlet
+!
+      if(declvar('phreeqmms', 'ch_outlet_m3', 'one', 1,&
+           'double','Total volume of water discharged at outlet',&
+           'm3', ch_outlet_m3).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_outlet_tempC', 'one', 1,&
+           'double','Temperature of water discharged at outlet',&
+           'deg C', ch_outlet_tempC).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_outlet_pH', 'one', 1,&
+           'double','pH of water discharged at outlet',&
+           'pH units', ch_outlet_pH).ne.0) return
+
+      allocate(ch_outlet_M(nsolute))
+      if(declvar('phreeqmms', 'ch_outlet_M', 'nsolute', nsolute,&
+           'double','Moles of solute discharged at outlet',&
+           'Moles', ch_outlet_M).ne.0) return
+
+      allocate(ch_outlet_g(nsolute))
+      if(declvar('phreeqmms', 'ch_outlet_g', 'nsolute', nsolute,&
+           'double','Grams of solute discharged at outlet',&
+           'grams', ch_outlet_g).ne.0) return
+
+      allocate(ch_outlet_eq(nsolute))
+      if(declvar('phreeqmms', 'ch_outlet_eq', 'nsolute', nsolute,&
+           'double','Equivalents of solute discharged at outlet',&
+           'eq', ch_outlet_eq).ne.0) return
+
+      allocate(ch_outlet_mMm2(nsolute))
+      if(declvar('phreeqmms', 'ch_outlet_mMm2', 'nsolute', nsolute,&
+           'double','Load of solute at outlet',&
+           'mMol/sq meter', ch_outlet_mMm2).ne.0) return
+
+      allocate(ch_outlet_mgm2(nsolute))
+      if(declvar('phreeqmms', 'ch_outlet_mgm2', 'nsolute', nsolute,&
+           'double','Load of solute at outlet',&
+           'mg/sq meter', ch_outlet_mgm2).ne.0) return
+
+      allocate(ch_outlet_meqm2(nsolute))
+      if(declvar('phreeqmms', 'ch_outlet_meqm2', 'nsolute', nsolute,&
+           'double','Load of solute at outlet',&
+           'meq/sq meter', ch_outlet_meqm2).ne.0) return
+
+      allocate(ch_outlet_mML(nsolute))
+      if(declvar('phreeqmms', 'ch_outlet_mML', 'nsolute', nsolute,&
+           'double','Concentration of solute discharged at outlet',&
+           'mMol/L', ch_outlet_mML).ne.0) return
+
+      allocate(ch_outlet_mgL(nsolute))
+      if(declvar('phreeqmms', 'ch_outlet_mgL', 'nsolute', nsolute,&
+           'double','Concentration of solute discharged at outlet',&
+           'mg/L', ch_outlet_mgL).ne.0) return
+
+      allocate(ch_outlet_meqL(nsolute))
+      if(declvar('phreeqmms', 'ch_outlet_meqL', 'nsolute', nsolute,&
+           'double','Concentration of solute discharged at outlet',&
+           'meq/L', ch_outlet_meqL).ne.0) return
+
+      allocate(ch_outlet_permil(nsolute))
+      if(declvar('phreeqmms', 'ch_outlet_permil', 'nsolute', nsolute,&
+           'double','Concentration of solute discharged at outlet',&
+           'permil', ch_outlet_permil).ne.0) return
+!
+! These variables track the comnposite storage and fluxes of solutes
+! into and out of the basins, mrus, UZ, and streams. To track fluxes in specific 
 ! reservoirs described above, use the ch_var variables above.
 !
-      if(declvar('phreeqmms', 'ch_basin_vol_m3', 'one', 1,&
-           'double','Total volume of water in the basin',&
-           'm3', ch_basin_vol_m3).ne.0) return
+! Composite of all basin reservoirs
+!
+      if(declvar('phreeqmms', 'ch_basin_m3_in', 'one', 1,&
+           'double','Total volume of water entering the basin',&
+           'm3', ch_basin_m3_in).ne.0) return
 
-      if(declvar('phreeqmms', 'ch_basin_out_tempC', 'one', 1,&
+      if(declvar('phreeqmms', 'ch_basin_m3_out', 'one', 1,&
+           'double','Total volume of water leaving the basin',&
+           'm3', ch_basin_m3_out).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_basin_m3_ET', 'one', 1,&
+           'double','Total volume of evapotranspiration from the basin',&
+           'm3', ch_basin_m3_ET).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_basin_m3_final', 'one', 1,&
+           'double','Volume of water in basin at end of day',&
+           'm3', ch_basin_m3_final).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_basin_tempC_in', 'one', 1,&
+           'double','Temperature of water entering the basin',&
+           'deg C', ch_basin_tempC_in).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_basin_tempC_out', 'one', 1,&
            'double','Temperature of water leaving the basin',&
-           'deg C', ch_basin_out_tempC).ne.0) return
+           'deg C', ch_basin_tempC_out).ne.0) return
 
-      if(declvar('phreeqmms', 'ch_basin_out_pH', 'one', 1,&
+      if(declvar('phreeqmms', 'ch_basin_tempC_final', 'one', 1,&
+           'double','Temperature of water in basin at end of day',&
+           'deg C', ch_basin_tempC_final).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_basin_pH_in', 'one', 1,&
+           'double','pH of water entering the basin',&
+           'pH units', ch_basin_pH_in).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_basin_pH_out', 'one', 1,&
            'double','pH of water leaving the basin',&
-           'pH units', ch_basin_out_pH).ne.0) return
+           'pH units', ch_basin_pH_out).ne.0) return
 
-      allocate(ch_basin_mass_g(nsolute))
-      if(declvar('phreeqmms', 'ch_basin_mass_g', 'nsolute', nsolute,&
-           'double','Total mass of solute in basin',&
-           'g', ch_basin_mass_g).ne.0) return
+      if(declvar('phreeqmms', 'ch_basin_pH_final', 'one', 1,&
+           'double','pH of water in basin at end of day',&
+           'pH units', ch_basin_pH_final).ne.0) return
 
-      allocate(ch_basin_rxn_g(nsolute))
-      if(declvar('phreeqmms', 'ch_basin_rxn_g', 'nsolute', nsolute,&
-           'double','Total mass of solute created or consumed by '//&
-           'reactions in basin',&
-           'g', ch_basin_rxn_g).ne.0) return
+      allocate(ch_basin_M_in(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_M_in', 'nsolute', nsolute,&
+           'double','Moles of solute entering the basin',&
+           'Moles', ch_basin_M_in).ne.0) return
 
-      allocate(ch_basin_conc_mgL(nsolute))
-      if(declvar('phreeqmms', 'ch_basin_conc_mgL', 'nsolute', nsolute,&
-           'double','Average concentration of solute in basin',&
-           'mg/L', ch_basin_conc_mgL).ne.0) return
+      allocate(ch_basin_M_out(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_M_out', 'nsolute', nsolute,&
+           'double','Moles of solute leaving the basin',&
+           'Moles', ch_basin_M_out).ne.0) return
 
-      allocate(ch_basin_in_mgL(nsolute))
-      if(declvar('phreeqmms', 'ch_basin_in_mgL', 'nsolute', nsolute,&
-           'double','Average solute concentration of precip ,'//&
-           'ground water influx and irrigation', 'mg/L',&
-           ch_basin_in_mgL).ne.0) return
+      allocate(ch_basin_M_rxn(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_M_rxn', 'nsolute', nsolute,&
+           'double','Moles of solute produced (+) or consumed (-) '//&
+           'by reactions in the basin',&
+           'Moles', ch_basin_M_rxn).ne.0) return
 
-      allocate(ch_basin_out_mgL(nsolute))
-      if(declvar('phreeqmms', 'ch_basin_out_mgL', 'nsolute', nsolute,&
-           'double','Average solute concentration of stream at outlet',&
-           'mg/L', ch_basin_out_mgL).ne.0) return
+      allocate(ch_basin_M_final(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_M_final', 'nsolute', nsolute,&
+           'double','Moles of solute in basin at end of day',&
+           'Moles', ch_basin_M_final).ne.0) return
 
-      allocate(ch_basin_in_permil(nsolute))
-      if(declvar('phreeqmms', 'ch_basin_in_permil', 'nsolute', nsolute,&
-           'double','Average permil value of isotope in precip ,'//&
-           'ground water influx and irrigation', 'permil',&
-           ch_basin_in_permil).ne.0) return
+      allocate(ch_basin_g_in(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_g_in', 'nsolute', nsolute,&
+           'double','Grams of solute entering the basin',&
+           'grams', ch_basin_g_in).ne.0) return
 
-      allocate(ch_basin_out_permil(nsolute))
-      if(declvar('phreeqmms', 'ch_basin_out_permil', 'nsolute', nsolute,&
-           'double','Average permil value of isotope of stream '//&
-           'at outlet','permil', ch_basin_out_permil).ne.0) return
+      allocate(ch_basin_g_out(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_g_out', 'nsolute', nsolute,&
+           'double','Grams of solute leaving the basin',&
+           'grams', ch_basin_g_out).ne.0) return
 
-      allocate(ch_basin_in_g(nsolute))
-      if(declvar('phreeqmms', 'ch_basin_in_g', 'nsolute', nsolute,&
-           'double','Total mass of solute into basin',&
-           'g', ch_basin_in_g).ne.0) return
+      allocate(ch_basin_g_rxn(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_g_rxn', 'nsolute', nsolute,&
+           'double','Grams of solute produced (+) or consumed (-) '//&
+           'by reactions in the basin',&
+           'grams', ch_basin_g_rxn).ne.0) return
 
-      allocate(ch_basin_out_g(nsolute))
-      if(declvar('phreeqmms', 'ch_basin_out_g', 'nsolute', nsolute,&
-           'double','Total mass of solute exported from basin',&
-           'g', ch_basin_out_g).ne.0) return
+      allocate(ch_basin_g_final(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_g_final', 'nsolute', nsolute,&
+           'double','Grams of solute in basin at end of day',&
+           'grams', ch_basin_g_final).ne.0) return
 
-      allocate(ch_basin_net_g(nsolute))
-      if(declvar('phreeqmms', 'ch_basin_net_g', 'nsolute', nsolute,&
-           'double','Net export of solute from basin.',&
-           'g', ch_basin_net_g).ne.0) return
+      allocate(ch_basin_eq_in(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_eq_in', 'nsolute', nsolute,&
+           'double','Equivalents of solute entering the basin',&
+           'eq', ch_basin_eq_in).ne.0) return
 
-      allocate(ch_basin_in_gm2(nsolute))
-      if(declvar('phreeqmms', 'ch_basin_in_gm2', 'nsolute', nsolute,&
-           'double','Area-normalized flux of influents into basin.',&
-           'g/m2', ch_basin_in_gm2).ne.0) return
+      allocate(ch_basin_eq_out(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_eq_out', 'nsolute', nsolute,&
+           'double','Equivalents of solute leaving the basin',&
+           'eq', ch_basin_eq_out).ne.0) return
 
-      allocate(ch_basin_out_gm2(nsolute))
-      if(declvar('phreeqmms', 'ch_basin_out_gm2', 'nsolute', nsolute,&
-           'double','Area-normalized flux of effluent from basin.',&
-           'g/m2', ch_basin_out_gm2).ne.0) return
+      allocate(ch_basin_eq_rxn(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_eq_rxn', 'nsolute', nsolute,&
+           'double','Equivalents of solute produced (+) or consumed (-) '//&
+           'by reactions in the basin',&
+           'eq', ch_basin_eq_rxn).ne.0) return
 
-      allocate(ch_basin_net_gm2(nsolute))
-      if(declvar('phreeqmms', 'ch_basin_net_gm2', 'nsolute', nsolute,&
-           'double','Net area-normalized flux of effluent from basin.',&
-           'g/m2', ch_basin_net_gm2).ne.0) return
- 
-      allocate(snow_ion_pulse(nmru))
-      if(declvar('phreeqmms', 'snow_ion_pulse', 'nmru', nmru,&
-           'integer','Incongruous melting on this time step',&
-           'none', snow_ion_pulse).ne.0) return
+      allocate(ch_basin_eq_final(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_eq_final', 'nsolute', nsolute,&
+           'double','Equivalents of solute in basin at end of day',&
+           'eq', ch_basin_eq_final).ne.0) return
 
-      allocate(ch_mru_vol_m3(nmru))
-      if(declvar('phreeqmms', 'ch_mru_vol_m3', 'nmru', nmru,&
-           'double','Total volume of water in the mru',&
-           'm3', ch_mru_vol_m3).ne.0) return
+      allocate(ch_basin_mMm2_in(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_mMm2_in', 'nsolute', nsolute,&
+           'double','Load of solute entering the basin',&
+           'mMol/sq meter', ch_basin_mMm2_in).ne.0) return
 
-      allocate(ch_mru_out_tempC(nmru))
-      if(declvar('phreeqmms', 'ch_mru_out_tempC', 'nmru', nmru,&
-           'double','Temperature of water leaving the mru',&
-           'deg C', ch_mru_out_tempC).ne.0) return
+      allocate(ch_basin_mMm2_out(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_mMm2_out', 'nsolute', nsolute,&
+           'double','Load of solute leaving the basin',&
+           'mMol/sq meter', ch_basin_mMm2_out).ne.0) return
 
-      allocate(ch_mru_out_pH(nmru))
-      if(declvar('phreeqmms', 'ch_mru_out_pH', 'nmru', nmru,&
-           'double','pH of water leaving the mru',&
-           'pH units', ch_mru_out_pH).ne.0) return
+      allocate(ch_basin_mMm2_rxn(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_mMm2_rxn', 'nsolute', nsolute,&
+           'double','Load of solute produced (+) or consumed (-) '//&
+           'by reactions in the basin',&
+           'mMol/sq meter', ch_basin_mMm2_rxn).ne.0) return
 
-      allocate(ch_mru_mass_g(nmru,nsolute))
-      if(declvar('phreeqmms', 'ch_mru_mass_g', 'nmru,nsolute',&
-           nmru*nsolute,'double','Total mass of solute in mru',&
-           'g', ch_mru_mass_g).ne.0) return
+      allocate(ch_basin_mMm2_final(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_mMm2_final', 'nsolute', nsolute,&
+           'double','Load of solute in basin at end of day',&
+           'mMol/sq meter', ch_basin_mMm2_final).ne.0) return
 
-      allocate(ch_mru_rxn_g(nmru,nsolute))
-      if(declvar('phreeqmms', 'ch_mru_rxn_g', 'nmru,nsolute', &
-           nmru*nsolute,'double','Total mass of solute created '//&
-           'or consumed by reactions in mru',&
-           'g', ch_mru_rxn_g).ne.0) return
+      allocate(ch_basin_mgm2_in(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_mgm2_in', 'nsolute', nsolute,&
+           'double','Load of solute entering the basin',&
+           'mg/sq meter', ch_basin_mgm2_in).ne.0) return
 
-      allocate(ch_mru_conc_mgL(nmru,nsolute))
-      if(declvar('phreeqmms', 'ch_mru_conc_mgL', 'nmru,nsolute',&
-           nmru*nsolute,'double','Average concentration of '//&
-           'solute in mru','mg/L', ch_mru_conc_mgL).ne.0) return
+      allocate(ch_basin_mgm2_out(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_mgm2_out', 'nsolute', nsolute,&
+           'double','Load of solute leaving the basin',&
+           'mg/sq meter', ch_basin_mgm2_out).ne.0) return
 
-      allocate(ch_mru_in_mgL(nmru,nsolute))
-      if(declvar('phreeqmms', 'ch_mru_in_mgL', 'nmru,nsolute',&
-           nmru*nsolute,'double','Average solute concentration '//&
-           'of precip, ground water influx, and irrigation',&
-           'mg/L', ch_mru_in_mgL).ne.0) return
+      allocate(ch_basin_mgm2_rxn(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_mgm2_rxn', 'nsolute', nsolute,&
+           'double','Load of solute produced (+) or consumed (-) '//&
+           'by reactions in the basin',&
+           'mg/sq meter', ch_basin_mgm2_rxn).ne.0) return
 
-      allocate(ch_mru_out_mgL(nmru,nsolute))
-      if(declvar('phreeqmms', 'ch_mru_out_mgL', 'nmru,nsolute',&
-           nmru*nsolute,'double','Average solute concentration '//&
-           'of mru discharge','mg/L', ch_mru_out_mgL).ne.0) return
+      allocate(ch_basin_mgm2_final(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_mgm2_final', 'nsolute', nsolute,&
+           'double','Load of solute in basin at end of day',&
+           'mg/sq meter', ch_basin_mgm2_final).ne.0) return
 
-      allocate(ch_mru_in_permil(nmru,nsolute))
-      if(declvar('phreeqmms', 'ch_mru_in_permil', 'nmru,nsolute',&
-           nmru*nsolute,'double','Average permil value of '//&
-           'precip, ground water influx, and irrigation',&
-           'permil', ch_mru_in_permil).ne.0) return
 
-      allocate(ch_mru_out_permil(nmru,nsolute))
-      if(declvar('phreeqmms', 'ch_mru_out_permil', 'nmru,nsolute',&
-           nmru*nsolute,'double','Average permil value of '//&
-           'mru discharge','permil', ch_mru_out_permil).ne.0) return
+      allocate(ch_basin_meqm2_in(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_meqm2_in', 'nsolute', nsolute,&
+           'double','Load of solute entering the basin',&
+           'meq/sq meter', ch_basin_meqm2_in).ne.0) return
 
-      allocate(ch_mru_in_g(nmru,nsolute))
-      if(declvar('phreeqmms', 'ch_mru_in_g', 'nmru,nsolute',&
-           nmru*nsolute,'double','Total mass of solute into mru',&
-           'g', ch_mru_in_g).ne.0) return
+      allocate(ch_basin_meqm2_out(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_meqm2_out', 'nsolute', nsolute,&
+           'double','Load of solute leaving the basin',&
+           'meq/sq meter', ch_basin_meqm2_out).ne.0) return
 
-      allocate(ch_mru_out_g(nmru,nsolute))
-      if(declvar('phreeqmms', 'ch_mru_out_g', 'nmru,nsolute',&
-           nmru*nsolute,'double','Total mass of solute '//&
-           'exported from mru','g', ch_mru_out_g).ne.0) return
+      allocate(ch_basin_meqm2_rxn(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_meqm2_rxn', 'nsolute', nsolute,&
+           'double','Load of solute produced (+) or consumed (-) '//&
+           'by reactions in the basin',&
+           'meq/sq meter', ch_basin_meqm2_rxn).ne.0) return
 
-      allocate(ch_mru_net_g(nmru,nsolute))
-      if(declvar('phreeqmms', 'ch_mru_net_g', 'nmru,nsolute',&
-           nmru*nsolute,'double','Net export of solute from MRU.',&
-           'g', ch_mru_net_g).ne.0) return
+      allocate(ch_basin_meqm2_final(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_meqm2_final', 'nsolute', nsolute,&
+           'double','Load of solute in basin at end of day',&
+           'meq/sq meter', ch_basin_meqm2_final).ne.0) return
 
-      allocate(ch_mru_in_gm2(nmru,nsolute))
-      if(declvar('phreeqmms', 'ch_mru_in_gm2', 'nmru,nsolute',&
-           nmru*nsolute,'double','Area-normalized flux of '//&
-           'influents into mru.','g/m2', ch_mru_in_gm2).ne.0) return
+      allocate(ch_basin_mML_in(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_mML_in', 'nsolute', nsolute,&
+           'double','Concentration of solute entering the basin',&
+           'mMol/L', ch_basin_mML_in).ne.0) return
 
-      allocate(ch_mru_out_gm2(nmru,nsolute))
-      if(declvar('phreeqmms', 'ch_mru_out_gm2', 'nmru,nsolute',&
-           nmru*nsolute,'double','Area-normalized flux of '//&
-           'effluent from mru.','g/m2', ch_mru_out_gm2).ne.0) return
+      allocate(ch_basin_mML_out(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_mML_out', 'nsolute', nsolute,&
+           'double','Concentration of solute leaving the basin',&
+           'mMol/L', ch_basin_mML_out).ne.0) return
 
-      allocate(ch_mru_net_gm2(nmru,nsolute))
-      if(declvar('phreeqmms', 'ch_mru_net_gm2', 'nmru,nsolute',&
-           nmru*nsolute,'double','Net area-normalized flux '//&
-           'of effluent from mru.','g/m2', ch_mru_net_gm2).ne.0) return
+      allocate(ch_basin_mML_final(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_mML_final', 'nsolute', nsolute,&
+           'double','Concentration of solute in basin at end of day',&
+           'mMol/L', ch_basin_mML_final).ne.0) return
 
+      allocate(ch_basin_mgL_in(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_mgL_in', 'nsolute', nsolute,&
+           'double','Concentration of solute entering the basin',&
+           'mg/L', ch_basin_mgL_in).ne.0) return
+
+      allocate(ch_basin_mgL_out(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_mgL_out', 'nsolute', nsolute,&
+           'double','Concentration of solute leaving the basin',&
+           'mg/L', ch_basin_mgL_out).ne.0) return
+
+      allocate(ch_basin_mgL_final(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_mgL_final', 'nsolute', nsolute,&
+           'double','Concentration of solute in basin at end of day',&
+           'mg/L', ch_basin_mgL_final).ne.0) return
+
+      allocate(ch_basin_meqL_in(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_meqL_in', 'nsolute', nsolute,&
+           'double','Concentration of solute entering the basin',&
+           'meq/L', ch_basin_meqL_in).ne.0) return
+
+      allocate(ch_basin_meqL_out(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_meqL_out', 'nsolute', nsolute,&
+           'double','Concentration of solute leaving the basin',&
+           'meq/L', ch_basin_meqL_out).ne.0) return
+
+      allocate(ch_basin_meqL_final(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_meqL_final', 'nsolute', nsolute,&
+           'double','Concentration of solute in basin at end of day',&
+           'meq/L', ch_basin_meqL_final).ne.0) return
+
+      allocate(ch_basin_permil_in(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_permil_in', 'nsolute', nsolute,&
+           'double','Concentration of solute entering the basin',&
+           'permil', ch_basin_permil_in).ne.0) return
+
+      allocate(ch_basin_permil_out(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_permil_out', 'nsolute', nsolute,&
+           'double','Concentration of solute leaving the basin',&
+           'permil', ch_basin_permil_out).ne.0) return
+
+      allocate(ch_basin_permil_ET(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_permil_rxn', 'nsolute', nsolute,&
+           'double','Delta of evapotransiration for basin',&
+           'permil', ch_basin_permil_rxn).ne.0) return
+
+      allocate(ch_basin_permil_final(nsolute))
+      if(declvar('phreeqmms', 'ch_basin_permil_final', 'nsolute', nsolute,&
+           'double','Concentration of solute in basin at end of day',&
+           'permil', ch_basin_permil_final).ne.0) return
+
+! Composite of all stream reservoirs
+!
+      if(declvar('phreeqmms', 'ch_hyd_m3_in', 'one', 1,&
+           'double','Total volume of water entering the stream',&
+           'm3', ch_hyd_m3_in).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_hyd_m3_out', 'one', 1,&
+           'double','Total volume of water leaving the stream',&
+           'm3', ch_hyd_m3_out).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_hyd_m3_final', 'one', 1,&
+           'double','Volume of water in stream at end of day',&
+           'm3', ch_hyd_m3_final).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_hyd_tempC_in', 'one', 1,&
+           'double','Temperature of water entering the stream',&
+           'deg C', ch_hyd_tempC_in).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_hyd_tempC_out', 'one', 1,&
+           'double','Temperature of water leaving the stream',&
+           'deg C', ch_hyd_tempC_out).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_hyd_tempC_final', 'one', 1,&
+           'double','Temperature of water in stream at end of day',&
+           'deg C', ch_hyd_tempC_final).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_hyd_pH_in', 'one', 1,&
+           'double','pH of water entering the stream',&
+           'pH units', ch_hyd_pH_in).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_hyd_pH_out', 'one', 1,&
+           'double','pH of water leaving the stream',&
+           'pH units', ch_hyd_pH_out).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_hyd_pH_final', 'one', 1,&
+           'double','pH of water in stream at end of day',&
+           'pH units', ch_hyd_pH_final).ne.0) return
+
+      allocate(ch_hyd_M_in(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_M_in', 'nsolute', nsolute,&
+           'double','Moles of solute entering the stream',&
+           'Moles', ch_hyd_M_in).ne.0) return
+
+      allocate(ch_hyd_M_out(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_M_out', 'nsolute', nsolute,&
+           'double','Moles of solute leaving the stream',&
+           'Moles', ch_hyd_M_out).ne.0) return
+
+      allocate(ch_hyd_M_rxn(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_M_rxn', 'nsolute', nsolute,&
+           'double','Moles of solute produced (+) or consumed (-) '//&
+           'by reactions in the stream',&
+           'Moles', ch_hyd_M_rxn).ne.0) return
+
+      allocate(ch_hyd_M_final(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_M_final', 'nsolute', nsolute,&
+           'double','Moles of solute in stream at end of day',&
+           'Moles', ch_hyd_M_final).ne.0) return
+
+      allocate(ch_hyd_g_in(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_g_in', 'nsolute', nsolute,&
+           'double','Grams of solute entering the stream',&
+           'grams', ch_hyd_g_in).ne.0) return
+
+      allocate(ch_hyd_g_out(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_g_out', 'nsolute', nsolute,&
+           'double','Grams of solute leaving the stream',&
+           'grams', ch_hyd_g_out).ne.0) return
+
+      allocate(ch_hyd_g_rxn(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_g_rxn', 'nsolute', nsolute,&
+           'double','Grams of solute produced (+) or consumed (-) '//&
+           'by reactions in the stream',&
+           'grams', ch_hyd_g_rxn).ne.0) return
+
+      allocate(ch_hyd_g_final(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_g_final', 'nsolute', nsolute,&
+           'double','Grams of solute in stream at end of day',&
+           'grams', ch_hyd_g_final).ne.0) return
+
+      allocate(ch_hyd_eq_in(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_eq_in', 'nsolute', nsolute,&
+           'double','Equivalents of solute entering the stream',&
+           'eq', ch_hyd_eq_in).ne.0) return
+
+      allocate(ch_hyd_eq_out(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_eq_out', 'nsolute', nsolute,&
+           'double','Equivalents of solute leaving the stream',&
+           'eq', ch_hyd_eq_out).ne.0) return
+
+      allocate(ch_hyd_eq_rxn(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_eq_rxn', 'nsolute', nsolute,&
+           'double','Equivalents of solute produced (+) or consumed (-) '//&
+           'by reactions in the stream',&
+           'eq', ch_hyd_eq_rxn).ne.0) return
+
+      allocate(ch_hyd_eq_final(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_eq_final', 'nsolute', nsolute,&
+           'double','Equivalents of solute in stream at end of day',&
+           'eq', ch_hyd_eq_final).ne.0) return
+
+      allocate(ch_hyd_mMm2_in(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_mMm2_in', 'nsolute', nsolute,&
+           'double','Load of solute entering the stream',&
+           'mMol/sq meter', ch_hyd_mMm2_in).ne.0) return
+
+      allocate(ch_hyd_mMm2_out(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_mMm2_out', 'nsolute', nsolute,&
+           'double','Load of solute leaving the stream',&
+           'mMol/sq meter', ch_hyd_mMm2_out).ne.0) return
+
+      allocate(ch_hyd_mMm2_rxn(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_mMm2_rxn', 'nsolute', nsolute,&
+           'double','Load of solute produced (+) or consumed (-) '//&
+           'by reactions in the stream',&
+           'mMol/sq meter', ch_hyd_mMm2_rxn).ne.0) return
+
+      allocate(ch_hyd_mMm2_final(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_mMm2_final', 'nsolute', nsolute,&
+           'double','Load of solute in stream at end of day',&
+           'mMol/sq meter', ch_hyd_mMm2_final).ne.0) return
+
+      allocate(ch_hyd_mgm2_in(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_mgm2_in', 'nsolute', nsolute,&
+           'double','Load of solute entering the stream',&
+           'mg/sq meter', ch_hyd_mgm2_in).ne.0) return
+
+      allocate(ch_hyd_mgm2_out(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_mgm2_out', 'nsolute', nsolute,&
+           'double','Load of solute leaving the stream',&
+           'mg/sq meter', ch_hyd_mgm2_out).ne.0) return
+
+      allocate(ch_hyd_mgm2_rxn(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_mgm2_rxn', 'nsolute', nsolute,&
+           'double','Load of solute produced (+) or consumed (-) '//&
+           'by reactions in the stream',&
+           'mg/sq meter', ch_hyd_mgm2_rxn).ne.0) return
+
+      allocate(ch_hyd_mgm2_final(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_mgm2_final', 'nsolute', nsolute,&
+           'double','Load of solute in stream at end of day',&
+           'mg/sq meter', ch_hyd_mgm2_final).ne.0) return
+
+
+      allocate(ch_hyd_meqm2_in(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_meqm2_in', 'nsolute', nsolute,&
+           'double','Load of solute entering the stream',&
+           'meq/sq meter', ch_hyd_meqm2_in).ne.0) return
+
+      allocate(ch_hyd_meqm2_out(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_meqm2_out', 'nsolute', nsolute,&
+           'double','Load of solute leaving the stream',&
+           'meq/sq meter', ch_hyd_meqm2_out).ne.0) return
+
+      allocate(ch_hyd_meqm2_rxn(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_meqm2_rxn', 'nsolute', nsolute,&
+           'double','Load of solute produced (+) or consumed (-) '//&
+           'by reactions in the stream',&
+           'meq/sq meter', ch_hyd_meqm2_rxn).ne.0) return
+
+      allocate(ch_hyd_meqm2_final(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_meqm2_final', 'nsolute', nsolute,&
+           'double','Load of solute in stream at end of day',&
+           'meq/sq meter', ch_hyd_meqm2_final).ne.0) return
+
+      allocate(ch_hyd_mML_in(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_mML_in', 'nsolute', nsolute,&
+           'double','Concentration of solute entering the stream',&
+           'mMol/L', ch_hyd_mML_in).ne.0) return
+
+      allocate(ch_hyd_mML_out(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_mML_out', 'nsolute', nsolute,&
+           'double','Concentration of solute leaving the stream',&
+           'mMol/L', ch_hyd_mML_out).ne.0) return
+
+      allocate(ch_hyd_mML_final(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_mML_final', 'nsolute', nsolute,&
+           'double','Concentration of solute in stream at end of day',&
+           'mMol/L', ch_hyd_mML_final).ne.0) return
+
+      allocate(ch_hyd_mgL_in(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_mgL_in', 'nsolute', nsolute,&
+           'double','Concentration of solute entering the stream',&
+           'mg/L', ch_hyd_mgL_in).ne.0) return
+
+      allocate(ch_hyd_mgL_out(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_mgL_out', 'nsolute', nsolute,&
+           'double','Concentration of solute leaving the stream',&
+           'mg/L', ch_hyd_mgL_out).ne.0) return
+
+      allocate(ch_hyd_mgL_final(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_mgL_final', 'nsolute', nsolute,&
+           'double','Concentration of solute in stream at end of day',&
+           'mg/L', ch_hyd_mgL_final).ne.0) return
+
+      allocate(ch_hyd_meqL_in(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_meqL_in', 'nsolute', nsolute,&
+           'double','Concentration of solute entering the stream',&
+           'meq/L', ch_hyd_meqL_in).ne.0) return
+
+      allocate(ch_hyd_meqL_out(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_meqL_out', 'nsolute', nsolute,&
+           'double','Concentration of solute leaving the stream',&
+           'meq/L', ch_hyd_meqL_out).ne.0) return
+
+      allocate(ch_hyd_meqL_final(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_meqL_final', 'nsolute', nsolute,&
+           'double','Concentration of solute in stream at end of day',&
+           'meq/L', ch_hyd_meqL_final).ne.0) return
+
+      allocate(ch_hyd_permil_in(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_permil_in', 'nsolute', nsolute,&
+           'double','Delta of isotope entering the stream',&
+           'permil', ch_hyd_permil_in).ne.0) return
+
+      allocate(ch_hyd_permil_out(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_permil_out', 'nsolute', nsolute,&
+           'double','Delta of isotope leaving the stream',&
+           'permil', ch_hyd_permil_out).ne.0) return
+
+      allocate(ch_hyd_permil_final(nsolute))
+      if(declvar('phreeqmms', 'ch_hyd_permil_final', 'nsolute', nsolute,&
+           'double','Delta of isotope in stream at end of day',&
+           'permil', ch_hyd_permil_final).ne.0) return
+
+
+!
+! Composite of MRU basin reservoirs
+!
+
+      allocate(ch_mru_m3_in(nmru))
+      if(declvar('phreeqmms', 'ch_mru_m3_in', 'nmru', nmru,&
+           'double','Total volume of water entering the MRU',&
+           'm3', ch_mru_m3_in).ne.0) return
+
+      allocate(ch_mru_m3_out(nmru))
+      if(declvar('phreeqmms', 'ch_mru_m3_out', 'nmru', nmru,&
+           'double','Total volume of water leaving the MRU',&
+           'm3', ch_mru_m3_out).ne.0) return
+
+      allocate(ch_mru_m3_ET(nmru))
+      if(declvar('phreeqmms', 'ch_mru_m3_ET', 'nmru', nmru,&
+           'double','Total volume of evapotranspiration from the MRU',&
+           'm3', ch_mru_m3_ET).ne.0) return
+
+      allocate(ch_mru_m3_final(nmru))
+      if(declvar('phreeqmms', 'ch_mru_m3_final', 'nmru', nmru,&
+           'double','Volume of water in MRU at end of day',&
+           'm3', ch_mru_m3_final).ne.0) return
+
+      allocate(ch_mru_tempC_in(nmru))
+      if(declvar('phreeqmms', 'ch_mru_tempC_in', 'nmru', nmru,&
+           'double','Temperature of water entering the MRU',&
+           'deg C', ch_mru_tempC_in).ne.0) return
+
+      allocate(ch_mru_tempC_out(nmru))
+      if(declvar('phreeqmms', 'ch_mru_tempC_out', 'nmru', nmru,&
+           'double','Temperature of water leaving the MRU',&
+           'deg C', ch_mru_tempC_out).ne.0) return
+
+      allocate(ch_mru_tempC_final(nmru))
+      if(declvar('phreeqmms', 'ch_mru_tempC_final', 'nmru', nmru,&
+           'double','Temperature of water in MRU at end of day',&
+           'deg C', ch_mru_tempC_final).ne.0) return
+
+      allocate(ch_mru_pH_in(nmru))
+      if(declvar('phreeqmms', 'ch_mru_pH_in', 'nmru', nmru,&
+           'double','pH of water entering the MRU',&
+           'pH units', ch_mru_pH_in).ne.0) return
+
+      allocate(ch_mru_pH_out(nmru))
+      if(declvar('phreeqmms', 'ch_mru_pH_out', 'nmru', nmru,&
+           'double','pH of water leaving the MRU',&
+           'pH units', ch_mru_pH_out).ne.0) return
+
+      allocate(ch_mru_pH_final(nmru))
+      if(declvar('phreeqmms', 'ch_mru_pH_final', 'nmru', nmru,&
+           'double','pH of water in MRU at end of day',&
+           'pH units', ch_mru_pH_final).ne.0) return
+
+      allocate(ch_mru_M_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_M_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Moles of solute entering the MRU',&
+           'Moles', ch_mru_M_in).ne.0) return
+
+      allocate(ch_mru_M_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_M_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Moles of solute leaving the MRU',&
+           'Moles', ch_mru_M_out).ne.0) return
+
+      allocate(ch_mru_M_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_M_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Moles of solute produced (+) or consumed (-) '//&
+           'by reactions in the MRU',&
+           'Moles', ch_mru_M_rxn).ne.0) return
+
+      allocate(ch_mru_M_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_M_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Moles of solute in MRU at end of day',&
+           'Moles', ch_mru_M_final).ne.0) return
+
+      allocate(ch_mru_g_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_g_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Grams of solute entering the MRU',&
+           'grams', ch_mru_g_in).ne.0) return
+
+      allocate(ch_mru_g_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_g_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Grams of solute leaving the MRU',&
+           'grams', ch_mru_g_out).ne.0) return
+
+      allocate(ch_mru_g_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_g_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Grams of solute produced (+) or consumed (-) '//&
+           'by reactions in the MRU',&
+           'grams', ch_mru_g_rxn).ne.0) return
+
+      allocate(ch_mru_g_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_g_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Grams of solute in MRU at end of day',&
+           'grams', ch_mru_g_final).ne.0) return
+
+      allocate(ch_mru_eq_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_eq_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Equivalents of solute entering the MRU',&
+           'eq', ch_mru_eq_in).ne.0) return
+
+      allocate(ch_mru_eq_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_eq_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Equivalents of solute leaving the MRU',&
+           'eq', ch_mru_eq_out).ne.0) return
+
+      allocate(ch_mru_eq_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_eq_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Equivalents of solute produced (+) or consumed (-) '//&
+           'by reactions in the MRU',&
+           'eq', ch_mru_eq_rxn).ne.0) return
+
+      allocate(ch_mru_eq_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_eq_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Equivalents of solute in MRU at end of day',&
+           'eq', ch_mru_eq_final).ne.0) return
+
+      allocate(ch_mru_mMm2_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_mMm2_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute entering the MRU',&
+           'mMol/sq meter', ch_mru_mMm2_in).ne.0) return
+
+      allocate(ch_mru_mMm2_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_mMm2_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute leaving the MRU',&
+           'mMol/sq meter', ch_mru_mMm2_out).ne.0) return
+
+      allocate(ch_mru_mMm2_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_mMm2_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute produced (+) or consumed (-) '//&
+           'by reactions in the MRU',&
+           'mMol/sq meter', ch_mru_mMm2_rxn).ne.0) return
+
+      allocate(ch_mru_mMm2_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_mMm2_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute in MRU at end of day',&
+           'mMol/sq meter', ch_mru_mMm2_final).ne.0) return
+
+      allocate(ch_mru_mgm2_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_mgm2_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute entering the MRU',&
+           'mg/sq meter', ch_mru_mgm2_in).ne.0) return
+
+      allocate(ch_mru_mgm2_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_mgm2_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute leaving the MRU',&
+           'mg/sq meter', ch_mru_mgm2_out).ne.0) return
+
+      allocate(ch_mru_mgm2_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_mgm2_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute produced (+) or consumed (-) '//&
+           'by reactions in the MRU',&
+           'mg/sq meter', ch_mru_mgm2_rxn).ne.0) return
+
+      allocate(ch_mru_mgm2_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_mgm2_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute in MRU at end of day',&
+           'mg/sq meter', ch_mru_mgm2_final).ne.0) return
+
+
+      allocate(ch_mru_meqm2_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_meqm2_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute entering the MRU',&
+           'meq/sq meter', ch_mru_meqm2_in).ne.0) return
+
+      allocate(ch_mru_meqm2_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_meqm2_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute leaving the MRU',&
+           'meq/sq meter', ch_mru_meqm2_out).ne.0) return
+
+      allocate(ch_mru_meqm2_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_meqm2_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute produced (+) or consumed (-) '//&
+           'by reactions in the MRU',&
+           'meq/sq meter', ch_mru_meqm2_rxn).ne.0) return
+
+      allocate(ch_mru_meqm2_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_meqm2_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute in MRU at end of day',&
+           'meq/sq meter', ch_mru_meqm2_final).ne.0) return
+
+      allocate(ch_mru_mML_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_mML_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute entering the MRU',&
+           'mMol/L', ch_mru_mML_in).ne.0) return
+
+      allocate(ch_mru_mML_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_mML_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute leaving the MRU',&
+           'mMol/L', ch_mru_mML_out).ne.0) return
+
+      allocate(ch_mru_mML_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_mML_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute in MRU at end of day',&
+           'mMol/L', ch_mru_mML_final).ne.0) return
+
+      allocate(ch_mru_mgL_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_mgL_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute entering the MRU',&
+           'mg/L', ch_mru_mgL_in).ne.0) return
+
+      allocate(ch_mru_mgL_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_mgL_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute leaving the MRU',&
+           'mg/L', ch_mru_mgL_out).ne.0) return
+
+      allocate(ch_mru_mgL_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_mgL_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute in MRU at end of day',&
+           'mg/L', ch_mru_mgL_final).ne.0) return
+
+      allocate(ch_mru_meqL_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_meqL_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute entering the MRU',&
+           'meq/L', ch_mru_meqL_in).ne.0) return
+
+      allocate(ch_mru_meqL_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_meqL_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute leaving the MRU',&
+           'meq/L', ch_mru_meqL_out).ne.0) return
+
+      allocate(ch_mru_meqL_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_meqL_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute in MRU at end of day',&
+           'meq/L', ch_mru_meqL_final).ne.0) return
+
+      allocate(ch_mru_permil_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_permil_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Delta of isotope entering the MRU',&
+           'permil', ch_mru_permil_in).ne.0) return
+
+      allocate(ch_mru_permil_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_permil_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Delta of isotope leaving the MRU',&
+           'permil', ch_mru_permil_out).ne.0) return
+
+      allocate(ch_mru_permil_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_mru_permil_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Delta of isotope in MRU at end of day',&
+           'permil', ch_mru_permil_final).ne.0) return
+      
+!!
+! Composite of all unsaturated zone reservoirs
+!
+
+      allocate(ch_uzgen_m3_in(nmru))
+      if(declvar('phreeqmms', 'ch_uzgen_m3_in', 'nmru', nmru,&
+           'double','Total volume of water entering all UZ',&
+           'm3', ch_uzgen_m3_in).ne.0) return
+
+      allocate(ch_uzgen_m3_out(nmru))
+      if(declvar('phreeqmms', 'ch_uzgen_m3_out', 'nmru', nmru,&
+           'double','Total volume of water leaving all UZ',&
+           'm3', ch_uzgen_m3_out).ne.0) return
+
+      allocate(ch_uzgen_m3_ET(nmru))
+      if(declvar('phreeqmms', 'ch_uzgen_m3_ET', 'nmru', nmru,&
+           'double','Total volume of evapotranspiration from all UZ',&
+           'm3', ch_uzgen_m3_ET).ne.0) return
+
+      allocate(ch_uzgen_m3_final(nmru))
+      if(declvar('phreeqmms', 'ch_uzgen_m3_final', 'nmru', nmru,&
+           'double','Volume of water in all UZ at end of day',&
+           'm3', ch_uzgen_m3_final).ne.0) return
+
+      allocate(ch_uzgen_tempC_in(nmru))
+      if(declvar('phreeqmms', 'ch_uzgen_tempC_in', 'nmru', nmru,&
+           'double','Temperature of water entering all UZ',&
+           'deg C', ch_uzgen_tempC_in).ne.0) return
+
+      allocate(ch_uzgen_tempC_out(nmru))
+      if(declvar('phreeqmms', 'ch_uzgen_tempC_out', 'nmru', nmru,&
+           'double','Temperature of water leaving all UZ',&
+           'deg C', ch_uzgen_tempC_out).ne.0) return
+
+      allocate(ch_uzgen_tempC_final(nmru))
+      if(declvar('phreeqmms', 'ch_uzgen_tempC_final', 'nmru', nmru,&
+           'double','Temperature of water in all UZ at end of day',&
+           'deg C', ch_uzgen_tempC_final).ne.0) return
+
+      allocate(ch_uzgen_pH_in(nmru))
+      if(declvar('phreeqmms', 'ch_uzgen_pH_in', 'nmru', nmru,&
+           'double','pH of water entering all UZ',&
+           'pH units', ch_uzgen_pH_in).ne.0) return
+
+      allocate(ch_uzgen_pH_out(nmru))
+      if(declvar('phreeqmms', 'ch_uzgen_pH_out', 'nmru', nmru,&
+           'double','pH of water leaving all UZ',&
+           'pH units', ch_uzgen_pH_out).ne.0) return
+
+      allocate(ch_uzgen_pH_final(nmru))
+      if(declvar('phreeqmms', 'ch_uzgen_pH_final', 'nmru', nmru,&
+           'double','pH of water in all UZ at end of day',&
+           'pH units', ch_uzgen_pH_final).ne.0) return
+
+      allocate(ch_uzgen_M_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_M_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Moles of solute entering all UZ',&
+           'Moles', ch_uzgen_M_in).ne.0) return
+
+      allocate(ch_uzgen_M_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_M_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Moles of solute leaving all UZ',&
+           'Moles', ch_uzgen_M_out).ne.0) return
+
+      allocate(ch_uzgen_M_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_M_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Moles of solute produced (+) or consumed (-) '//&
+           'by reactions in all UZ',&
+           'Moles', ch_uzgen_M_rxn).ne.0) return
+
+      allocate(ch_uzgen_M_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_M_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Moles of solute in all UZ at end of day',&
+           'Moles', ch_uzgen_M_final).ne.0) return
+
+      allocate(ch_uzgen_g_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_g_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Grams of solute entering all UZ',&
+           'grams', ch_uzgen_g_in).ne.0) return
+
+      allocate(ch_uzgen_g_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_g_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Grams of solute leaving all UZ',&
+           'grams', ch_uzgen_g_out).ne.0) return
+
+      allocate(ch_uzgen_g_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_g_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Grams of solute produced (+) or consumed (-) '//&
+           'by reactions in all UZ',&
+           'grams', ch_uzgen_g_rxn).ne.0) return
+
+      allocate(ch_uzgen_g_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_g_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Grams of solute in all UZ at end of day',&
+           'grams', ch_uzgen_g_final).ne.0) return
+
+      allocate(ch_uzgen_eq_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_eq_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Equivalents of solute entering all UZ',&
+           'eq', ch_uzgen_eq_in).ne.0) return
+
+      allocate(ch_uzgen_eq_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_eq_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Equivalents of solute leaving all UZ',&
+           'eq', ch_uzgen_eq_out).ne.0) return
+
+      allocate(ch_uzgen_eq_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_eq_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Equivalents of solute produced (+) or consumed (-) '//&
+           'by reactions in all UZ',&
+           'eq', ch_uzgen_eq_rxn).ne.0) return
+
+      allocate(ch_uzgen_eq_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_eq_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Equivalents of solute in all UZ at end of day',&
+           'eq', ch_uzgen_eq_final).ne.0) return
+
+      allocate(ch_uzgen_mMm2_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_mMm2_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute entering all UZ',&
+           'mMol/sq meter', ch_uzgen_mMm2_in).ne.0) return
+
+      allocate(ch_uzgen_mMm2_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_mMm2_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute leaving all UZ',&
+           'mMol/sq meter', ch_uzgen_mMm2_out).ne.0) return
+
+      allocate(ch_uzgen_mMm2_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_mMm2_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute produced (+) or consumed (-) '//&
+           'by reactions in all UZ',&
+           'mMol/sq meter', ch_uzgen_mMm2_rxn).ne.0) return
+
+      allocate(ch_uzgen_mMm2_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_mMm2_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute in all UZ at end of day',&
+           'mMol/sq meter', ch_uzgen_mMm2_final).ne.0) return
+
+      allocate(ch_uzgen_mgm2_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_mgm2_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute entering all UZ',&
+           'mg/sq meter', ch_uzgen_mgm2_in).ne.0) return
+
+      allocate(ch_uzgen_mgm2_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_mgm2_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute leaving all UZ',&
+           'mg/sq meter', ch_uzgen_mgm2_out).ne.0) return
+
+      allocate(ch_uzgen_mgm2_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_mgm2_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute produced (+) or consumed (-) '//&
+           'by reactions in all UZ',&
+           'mg/sq meter', ch_uzgen_mgm2_rxn).ne.0) return
+
+      allocate(ch_uzgen_mgm2_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_mgm2_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute in all UZ at end of day',&
+           'mg/sq meter', ch_uzgen_mgm2_final).ne.0) return
+
+
+      allocate(ch_uzgen_meqm2_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_meqm2_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute entering all UZ',&
+           'meq/sq meter', ch_uzgen_meqm2_in).ne.0) return
+
+      allocate(ch_uzgen_meqm2_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_meqm2_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute leaving all UZ',&
+           'meq/sq meter', ch_uzgen_meqm2_out).ne.0) return
+
+      allocate(ch_uzgen_meqm2_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_meqm2_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute produced (+) or consumed (-) '//&
+           'by reactions in all UZ',&
+           'meq/sq meter', ch_uzgen_meqm2_rxn).ne.0) return
+
+      allocate(ch_uzgen_meqm2_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_meqm2_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute in all UZ at end of day',&
+           'meq/sq meter', ch_uzgen_meqm2_final).ne.0) return
+
+      allocate(ch_uzgen_mML_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_mML_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute entering all UZ',&
+           'mMol/L', ch_uzgen_mML_in).ne.0) return
+
+      allocate(ch_uzgen_mML_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_mML_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute leaving all UZ',&
+           'mMol/L', ch_uzgen_mML_out).ne.0) return
+
+      allocate(ch_uzgen_mML_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_mML_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute in all UZ at end of day',&
+           'mMol/L', ch_uzgen_mML_final).ne.0) return
+
+      allocate(ch_uzgen_mgL_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_mgL_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute entering all UZ',&
+           'mg/L', ch_uzgen_mgL_in).ne.0) return
+
+      allocate(ch_uzgen_mgL_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_mgL_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute leaving all UZ',&
+           'mg/L', ch_uzgen_mgL_out).ne.0) return
+
+      allocate(ch_uzgen_mgL_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_mgL_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute in all UZ at end of day',&
+           'mg/L', ch_uzgen_mgL_final).ne.0) return
+
+      allocate(ch_uzgen_meqL_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_meqL_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute entering all UZ',&
+           'meq/L', ch_uzgen_meqL_in).ne.0) return
+
+      allocate(ch_uzgen_meqL_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_meqL_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute leaving all UZ',&
+           'meq/L', ch_uzgen_meqL_out).ne.0) return
+
+      allocate(ch_uzgen_meqL_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_meqL_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute in all UZ at end of day',&
+           'meq/L', ch_uzgen_meqL_final).ne.0) return
+
+      allocate(ch_uzgen_permil_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_permil_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Delta of isotope entering all UZ',&
+           'permil', ch_uzgen_permil_in).ne.0) return
+
+      allocate(ch_uzgen_permil_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_permil_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Delta of isotope leaving all UZ',&
+           'permil', ch_uzgen_permil_out).ne.0) return
+
+      allocate(ch_uzgen_permil_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzgen_permil_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Delta of isotope in all UZ at end of day',&
+           'permil', ch_uzgen_permil_final).ne.0) return
+      
+!!
+! Composite of riparian unsaturated zone reservoirs
+!
+
+      allocate(ch_uzrip_m3_in(nmru))
+      if(declvar('phreeqmms', 'ch_uzrip_m3_in', 'nmru', nmru,&
+           'double','Total volume of water entering the riparian UZ',&
+           'm3', ch_uzrip_m3_in).ne.0) return
+
+      allocate(ch_uzrip_m3_out(nmru))
+      if(declvar('phreeqmms', 'ch_uzrip_m3_out', 'nmru', nmru,&
+           'double','Total volume of water leaving the riparian UZ',&
+           'm3', ch_uzrip_m3_out).ne.0) return
+
+      allocate(ch_uzrip_m3_ET(nmru))
+      if(declvar('phreeqmms', 'ch_uzrip_m3_ET', 'nmru', nmru,&
+           'double','Total volume of evapotranspiration from the riparian UZ',&
+           'm3', ch_uzrip_m3_ET).ne.0) return
+
+      allocate(ch_uzrip_m3_final(nmru))
+      if(declvar('phreeqmms', 'ch_uzrip_m3_final', 'nmru', nmru,&
+           'double','Volume of water in riparian UZ at end of day',&
+           'm3', ch_uzrip_m3_final).ne.0) return
+
+      allocate(ch_uzrip_tempC_in(nmru))
+      if(declvar('phreeqmms', 'ch_uzrip_tempC_in', 'nmru', nmru,&
+           'double','Temperature of water entering the riparian UZ',&
+           'deg C', ch_uzrip_tempC_in).ne.0) return
+
+      allocate(ch_uzrip_tempC_out(nmru))
+      if(declvar('phreeqmms', 'ch_uzrip_tempC_out', 'nmru', nmru,&
+           'double','Temperature of water leaving the riparian UZ',&
+           'deg C', ch_uzrip_tempC_out).ne.0) return
+
+      allocate(ch_uzrip_tempC_final(nmru))
+      if(declvar('phreeqmms', 'ch_uzrip_tempC_final', 'nmru', nmru,&
+           'double','Temperature of water in riparian UZ at end of day',&
+           'deg C', ch_uzrip_tempC_final).ne.0) return
+
+      allocate(ch_uzrip_pH_in(nmru))
+      if(declvar('phreeqmms', 'ch_uzrip_pH_in', 'nmru', nmru,&
+           'double','pH of water entering the riparian UZ',&
+           'pH units', ch_uzrip_pH_in).ne.0) return
+
+      allocate(ch_uzrip_pH_out(nmru))
+      if(declvar('phreeqmms', 'ch_uzrip_pH_out', 'nmru', nmru,&
+           'double','pH of water leaving the riparian UZ',&
+           'pH units', ch_uzrip_pH_out).ne.0) return
+
+      allocate(ch_uzrip_pH_final(nmru))
+      if(declvar('phreeqmms', 'ch_uzrip_pH_final', 'nmru', nmru,&
+           'double','pH of water in riparian UZ at end of day',&
+           'pH units', ch_uzrip_pH_final).ne.0) return
+
+      allocate(ch_uzrip_M_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_M_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Moles of solute entering the riparian UZ',&
+           'Moles', ch_uzrip_M_in).ne.0) return
+
+      allocate(ch_uzrip_M_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_M_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Moles of solute leaving the riparian UZ',&
+           'Moles', ch_uzrip_M_out).ne.0) return
+
+      allocate(ch_uzrip_M_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_M_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Moles of solute produced (+) or consumed (-) '//&
+           'by reactions in the riparian UZ',&
+           'Moles', ch_uzrip_M_rxn).ne.0) return
+
+      allocate(ch_uzrip_M_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_M_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Moles of solute in riparian UZ at end of day',&
+           'Moles', ch_uzrip_M_final).ne.0) return
+
+      allocate(ch_uzrip_g_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_g_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Grams of solute entering the riparian UZ',&
+           'grams', ch_uzrip_g_in).ne.0) return
+
+      allocate(ch_uzrip_g_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_g_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Grams of solute leaving the riparian UZ',&
+           'grams', ch_uzrip_g_out).ne.0) return
+
+      allocate(ch_uzrip_g_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_g_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Grams of solute produced (+) or consumed (-) '//&
+           'by reactions in the riparian UZ',&
+           'grams', ch_uzrip_g_rxn).ne.0) return
+
+      allocate(ch_uzrip_g_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_g_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Grams of solute in riparian UZ at end of day',&
+           'grams', ch_uzrip_g_final).ne.0) return
+
+      allocate(ch_uzrip_eq_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_eq_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Equivalents of solute entering the riparian UZ',&
+           'eq', ch_uzrip_eq_in).ne.0) return
+
+      allocate(ch_uzrip_eq_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_eq_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Equivalents of solute leaving the riparian UZ',&
+           'eq', ch_uzrip_eq_out).ne.0) return
+
+      allocate(ch_uzrip_eq_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_eq_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Equivalents of solute produced (+) or consumed (-) '//&
+           'by reactions in the riparian UZ',&
+           'eq', ch_uzrip_eq_rxn).ne.0) return
+
+      allocate(ch_uzrip_eq_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_eq_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Equivalents of solute in riparian UZ at end of day',&
+           'eq', ch_uzrip_eq_final).ne.0) return
+
+      allocate(ch_uzrip_mMm2_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_mMm2_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute entering the riparian UZ',&
+           'mMol/sq meter', ch_uzrip_mMm2_in).ne.0) return
+
+      allocate(ch_uzrip_mMm2_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_mMm2_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute leaving the riparian UZ',&
+           'mMol/sq meter', ch_uzrip_mMm2_out).ne.0) return
+
+      allocate(ch_uzrip_mMm2_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_mMm2_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute produced (+) or consumed (-) '//&
+           'by reactions in the riparian UZ',&
+           'mMol/sq meter', ch_uzrip_mMm2_rxn).ne.0) return
+
+      allocate(ch_uzrip_mMm2_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_mMm2_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute in riparian UZ at end of day',&
+           'mMol/sq meter', ch_uzrip_mMm2_final).ne.0) return
+
+      allocate(ch_uzrip_mgm2_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_mgm2_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute entering the riparian UZ',&
+           'mg/sq meter', ch_uzrip_mgm2_in).ne.0) return
+
+      allocate(ch_uzrip_mgm2_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_mgm2_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute leaving the riparian UZ',&
+           'mg/sq meter', ch_uzrip_mgm2_out).ne.0) return
+
+      allocate(ch_uzrip_mgm2_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_mgm2_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute produced (+) or consumed (-) '//&
+           'by reactions in the riparian UZ',&
+           'mg/sq meter', ch_uzrip_mgm2_rxn).ne.0) return
+
+      allocate(ch_uzrip_mgm2_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_mgm2_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute in riparian UZ at end of day',&
+           'mg/sq meter', ch_uzrip_mgm2_final).ne.0) return
+
+
+      allocate(ch_uzrip_meqm2_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_meqm2_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute entering the riparian UZ',&
+           'meq/sq meter', ch_uzrip_meqm2_in).ne.0) return
+
+      allocate(ch_uzrip_meqm2_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_meqm2_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute leaving the riparian UZ',&
+           'meq/sq meter', ch_uzrip_meqm2_out).ne.0) return
+
+      allocate(ch_uzrip_meqm2_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_meqm2_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute produced (+) or consumed (-) '//&
+           'by reactions in the riparian UZ',&
+           'meq/sq meter', ch_uzrip_meqm2_rxn).ne.0) return
+
+      allocate(ch_uzrip_meqm2_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_meqm2_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute in riparian UZ at end of day',&
+           'meq/sq meter', ch_uzrip_meqm2_final).ne.0) return
+
+      allocate(ch_uzrip_mML_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_mML_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute entering the riparian UZ',&
+           'mMol/L', ch_uzrip_mML_in).ne.0) return
+
+      allocate(ch_uzrip_mML_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_mML_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute leaving the riparian UZ',&
+           'mMol/L', ch_uzrip_mML_out).ne.0) return
+
+      allocate(ch_uzrip_mML_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_mML_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute in riparian UZ at end of day',&
+           'mMol/L', ch_uzrip_mML_final).ne.0) return
+
+      allocate(ch_uzrip_mgL_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_mgL_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute entering the riparian UZ',&
+           'mg/L', ch_uzrip_mgL_in).ne.0) return
+
+      allocate(ch_uzrip_mgL_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_mgL_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute leaving the riparian UZ',&
+           'mg/L', ch_uzrip_mgL_out).ne.0) return
+
+      allocate(ch_uzrip_mgL_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_mgL_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute in riparian UZ at end of day',&
+           'mg/L', ch_uzrip_mgL_final).ne.0) return
+
+      allocate(ch_uzrip_meqL_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_meqL_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute entering the riparian UZ',&
+           'meq/L', ch_uzrip_meqL_in).ne.0) return
+
+      allocate(ch_uzrip_meqL_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_meqL_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute leaving the riparian UZ',&
+           'meq/L', ch_uzrip_meqL_out).ne.0) return
+
+      allocate(ch_uzrip_meqL_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_meqL_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute in riparian UZ at end of day',&
+           'meq/L', ch_uzrip_meqL_final).ne.0) return
+
+      allocate(ch_uzrip_permil_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_permil_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Delta of isotope entering the riparian UZ',&
+           'permil', ch_uzrip_permil_in).ne.0) return
+
+      allocate(ch_uzrip_permil_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_permil_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Delta of isotope leaving the riparian UZ',&
+           'permil', ch_uzrip_permil_out).ne.0) return
+
+      allocate(ch_uzrip_permil_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzrip_permil_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Delta of isotope in riparian UZ at end of day',&
+           'permil', ch_uzrip_permil_final).ne.0) return
+      
+!!
+! Composite of upland unsaturated zone reservoirs
+!
+
+      allocate(ch_uzup_m3_in(nmru))
+      if(declvar('phreeqmms', 'ch_uzup_m3_in', 'nmru', nmru,&
+           'double','Total volume of water entering the upland UZ',&
+           'm3', ch_uzup_m3_in).ne.0) return
+
+      allocate(ch_uzup_m3_out(nmru))
+      if(declvar('phreeqmms', 'ch_uzup_m3_out', 'nmru', nmru,&
+           'double','Total volume of water leaving the upland UZ',&
+           'm3', ch_uzup_m3_out).ne.0) return
+
+      allocate(ch_uzup_m3_ET(nmru))
+      if(declvar('phreeqmms', 'ch_uzup_m3_ET', 'nmru', nmru,&
+           'double','Total volume of evapotranspiration from the upland UZ',&
+           'm3', ch_uzup_m3_ET).ne.0) return
+
+      allocate(ch_uzup_m3_final(nmru))
+      if(declvar('phreeqmms', 'ch_uzup_m3_final', 'nmru', nmru,&
+           'double','Volume of water in upland UZ at end of day',&
+           'm3', ch_uzup_m3_final).ne.0) return
+
+      allocate(ch_uzup_tempC_in(nmru))
+      if(declvar('phreeqmms', 'ch_uzup_tempC_in', 'nmru', nmru,&
+           'double','Temperature of water entering the upland UZ',&
+           'deg C', ch_uzup_tempC_in).ne.0) return
+
+      allocate(ch_uzup_tempC_out(nmru))
+      if(declvar('phreeqmms', 'ch_uzup_tempC_out', 'nmru', nmru,&
+           'double','Temperature of water leaving the upland UZ',&
+           'deg C', ch_uzup_tempC_out).ne.0) return
+
+      allocate(ch_uzup_tempC_final(nmru))
+      if(declvar('phreeqmms', 'ch_uzup_tempC_final', 'nmru', nmru,&
+           'double','Temperature of water in upland UZ at end of day',&
+           'deg C', ch_uzup_tempC_final).ne.0) return
+
+      allocate(ch_uzup_pH_in(nmru))
+      if(declvar('phreeqmms', 'ch_uzup_pH_in', 'nmru', nmru,&
+           'double','pH of water entering the upland UZ',&
+           'pH units', ch_uzup_pH_in).ne.0) return
+
+      allocate(ch_uzup_pH_out(nmru))
+      if(declvar('phreeqmms', 'ch_uzup_pH_out', 'nmru', nmru,&
+           'double','pH of water leaving the upland UZ',&
+           'pH units', ch_uzup_pH_out).ne.0) return
+
+      allocate(ch_uzup_pH_final(nmru))
+      if(declvar('phreeqmms', 'ch_uzup_pH_final', 'nmru', nmru,&
+           'double','pH of water in upland UZ at end of day',&
+           'pH units', ch_uzup_pH_final).ne.0) return
+
+      allocate(ch_uzup_M_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_M_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Moles of solute entering the upland UZ',&
+           'Moles', ch_uzup_M_in).ne.0) return
+
+      allocate(ch_uzup_M_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_M_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Moles of solute leaving the upland UZ',&
+           'Moles', ch_uzup_M_out).ne.0) return
+
+      allocate(ch_uzup_M_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_M_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Moles of solute produced (+) or consumed (-) '//&
+           'by reactions in the upland UZ',&
+           'Moles', ch_uzup_M_rxn).ne.0) return
+
+      allocate(ch_uzup_M_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_M_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Moles of solute in upland UZ at end of day',&
+           'Moles', ch_uzup_M_final).ne.0) return
+
+      allocate(ch_uzup_g_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_g_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Grams of solute entering the upland UZ',&
+           'grams', ch_uzup_g_in).ne.0) return
+
+      allocate(ch_uzup_g_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_g_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Grams of solute leaving the upland UZ',&
+           'grams', ch_uzup_g_out).ne.0) return
+
+      allocate(ch_uzup_g_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_g_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Grams of solute produced (+) or consumed (-) '//&
+           'by reactions in the upland UZ',&
+           'grams', ch_uzup_g_rxn).ne.0) return
+
+      allocate(ch_uzup_g_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_g_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Grams of solute in upland UZ at end of day',&
+           'grams', ch_uzup_g_final).ne.0) return
+
+      allocate(ch_uzup_eq_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_eq_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Equivalents of solute entering the upland UZ',&
+           'eq', ch_uzup_eq_in).ne.0) return
+
+      allocate(ch_uzup_eq_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_eq_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Equivalents of solute leaving the upland UZ',&
+           'eq', ch_uzup_eq_out).ne.0) return
+
+      allocate(ch_uzup_eq_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_eq_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Equivalents of solute produced (+) or consumed (-) '//&
+           'by reactions in the upland UZ',&
+           'eq', ch_uzup_eq_rxn).ne.0) return
+
+      allocate(ch_uzup_eq_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_eq_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Equivalents of solute in upland UZ at end of day',&
+           'eq', ch_uzup_eq_final).ne.0) return
+
+      allocate(ch_uzup_mMm2_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_mMm2_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute entering the upland UZ',&
+           'mMol/sq meter', ch_uzup_mMm2_in).ne.0) return
+
+      allocate(ch_uzup_mMm2_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_mMm2_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute leaving the upland UZ',&
+           'mMol/sq meter', ch_uzup_mMm2_out).ne.0) return
+
+      allocate(ch_uzup_mMm2_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_mMm2_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute produced (+) or consumed (-) '//&
+           'by reactions in the upland UZ',&
+           'mMol/sq meter', ch_uzup_mMm2_rxn).ne.0) return
+
+      allocate(ch_uzup_mMm2_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_mMm2_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute in upland UZ at end of day',&
+           'mMol/sq meter', ch_uzup_mMm2_final).ne.0) return
+
+      allocate(ch_uzup_mgm2_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_mgm2_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute entering the upland UZ',&
+           'mg/sq meter', ch_uzup_mgm2_in).ne.0) return
+
+      allocate(ch_uzup_mgm2_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_mgm2_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute leaving the upland UZ',&
+           'mg/sq meter', ch_uzup_mgm2_out).ne.0) return
+
+      allocate(ch_uzup_mgm2_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_mgm2_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute produced (+) or consumed (-) '//&
+           'by reactions in the upland UZ',&
+           'mg/sq meter', ch_uzup_mgm2_rxn).ne.0) return
+
+      allocate(ch_uzup_mgm2_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_mgm2_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute in upland UZ at end of day',&
+           'mg/sq meter', ch_uzup_mgm2_final).ne.0) return
+
+
+      allocate(ch_uzup_meqm2_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_meqm2_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute entering the upland UZ',&
+           'meq/sq meter', ch_uzup_meqm2_in).ne.0) return
+
+      allocate(ch_uzup_meqm2_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_meqm2_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute leaving the upland UZ',&
+           'meq/sq meter', ch_uzup_meqm2_out).ne.0) return
+
+      allocate(ch_uzup_meqm2_rxn(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_meqm2_rxn', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute produced (+) or consumed (-) '//&
+           'by reactions in the upland UZ',&
+           'meq/sq meter', ch_uzup_meqm2_rxn).ne.0) return
+
+      allocate(ch_uzup_meqm2_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_meqm2_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Load of solute in upland UZ at end of day',&
+           'meq/sq meter', ch_uzup_meqm2_final).ne.0) return
+
+      allocate(ch_uzup_mML_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_mML_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute entering the upland UZ',&
+           'mMol/L', ch_uzup_mML_in).ne.0) return
+
+      allocate(ch_uzup_mML_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_mML_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute leaving the upland UZ',&
+           'mMol/L', ch_uzup_mML_out).ne.0) return
+
+      allocate(ch_uzup_mML_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_mML_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute in upland UZ at end of day',&
+           'mMol/L', ch_uzup_mML_final).ne.0) return
+
+      allocate(ch_uzup_mgL_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_mgL_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute entering the upland UZ',&
+           'mg/L', ch_uzup_mgL_in).ne.0) return
+
+      allocate(ch_uzup_mgL_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_mgL_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute leaving the upland UZ',&
+           'mg/L', ch_uzup_mgL_out).ne.0) return
+
+      allocate(ch_uzup_mgL_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_mgL_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute in upland UZ at end of day',&
+           'mg/L', ch_uzup_mgL_final).ne.0) return
+
+      allocate(ch_uzup_meqL_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_meqL_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute entering the upland UZ',&
+           'meq/L', ch_uzup_meqL_in).ne.0) return
+
+      allocate(ch_uzup_meqL_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_meqL_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute leaving the upland UZ',&
+           'meq/L', ch_uzup_meqL_out).ne.0) return
+
+      allocate(ch_uzup_meqL_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_meqL_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Concentration of solute in upland UZ at end of day',&
+           'meq/L', ch_uzup_meqL_final).ne.0) return
+
+      allocate(ch_uzup_permil_in(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_permil_in', 'nmru,nsolute',nmru*nsolute,&
+           'double','Delta of isotope entering the upland UZ',&
+           'permil', ch_uzup_permil_in).ne.0) return
+
+      allocate(ch_uzup_permil_out(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_permil_out', 'nmru,nsolute',nmru*nsolute,&
+           'double','Delta of isotope leaving the upland UZ',&
+           'permil', ch_uzup_permil_out).ne.0) return
+
+      allocate(ch_uzup_permil_final(nmru,nsolute))
+      if(declvar('phreeqmms', 'ch_uzup_permil_final', 'nmru,nsolute',nmru*nsolute,&
+           'double','Delta of isotope in upland UZ at end of day',&
+           'permil', ch_uzup_permil_final).ne.0) return
+      
+!
+      !old
+      !
+      !if(declvar('phreeqmms', 'ch_basin_out_tempC', 'one', 1,&
+      !     'double','Temperature of water leaving the basin',&
+      !     'deg C', ch_basin_out_tempC).ne.0) return
+      !
+      !if(declvar('phreeqmms', 'ch_basin_out_pH', 'one', 1,&
+      !     'double','pH of water leaving the basin',&
+      !     'pH units', ch_basin_out_pH).ne.0) return
+      !
+      !allocate(ch_basin_mass_g(nsolute))
+      !if(declvar('phreeqmms', 'ch_basin_mass_g', 'nsolute', nsolute,&
+      !     'double','Total mass of solute in basin',&
+      !     'g', ch_basin_mass_g).ne.0) return
+      !
+      !allocate(ch_basin_rxn_g(nsolute))
+      !if(declvar('phreeqmms', 'ch_basin_rxn_g', 'nsolute', nsolute,&
+      !     'double','Total mass of solute created or consumed by '//&
+      !     'reactions in basin',&
+      !     'g', ch_basin_rxn_g).ne.0) return
+      !
+      !allocate(ch_basin_conc_mgL(nsolute))
+      !if(declvar('phreeqmms', 'ch_basin_conc_mgL', 'nsolute', nsolute,&
+      !     'double','Average concentration of solute in basin',&
+      !     'mg/L', ch_basin_conc_mgL).ne.0) return
+      !
+      !allocate(ch_basin_in_mgL(nsolute))
+      !if(declvar('phreeqmms', 'ch_basin_in_mgL', 'nsolute', nsolute,&
+      !     'double','Average solute concentration of precip ,'//&
+      !     'ground water influx and irrigation', 'mg/L',&
+      !     ch_basin_in_mgL).ne.0) return
+      !
+      !allocate(ch_basin_out_mgL(nsolute))
+      !if(declvar('phreeqmms', 'ch_basin_out_mgL', 'nsolute', nsolute,&
+      !     'double','Average solute concentration of stream at outlet',&
+      !     'mg/L', ch_basin_out_mgL).ne.0) return
+      !
+      !allocate(ch_basin_permil_in(nsolute))
+      !if(declvar('phreeqmms', 'ch_basin_permil_in', 'nsolute', nsolute,&
+      !     'double','Average permil value of isotope in precip ,'//&
+      !     'ground water influx and irrigation', 'permil',&
+      !     ch_basin_permil_in).ne.0) return
+      !
+      !allocate(ch_basin_permil_out(nsolute))
+      !if(declvar('phreeqmms', 'ch_basin_permil_out', 'nsolute', nsolute,&
+      !     'double','Average permil value of isotope of stream '//&
+      !     'at outlet','permil', ch_basin_permil_out).ne.0) return
+      !
+      !allocate(ch_basin_in_g(nsolute))
+      !if(declvar('phreeqmms', 'ch_basin_in_g', 'nsolute', nsolute,&
+      !     'double','Total mass of solute into basin',&
+      !     'g', ch_basin_in_g).ne.0) return
+      !
+      !allocate(ch_basin_out_g(nsolute))
+      !if(declvar('phreeqmms', 'ch_basin_out_g', 'nsolute', nsolute,&
+      !     'double','Total mass of solute exported from basin',&
+      !     'g', ch_basin_out_g).ne.0) return
+      !
+      !allocate(ch_basin_net_g(nsolute))
+      !if(declvar('phreeqmms', 'ch_basin_net_g', 'nsolute', nsolute,&
+      !     'double','Net export of solute from basin.',&
+      !     'g', ch_basin_net_g).ne.0) return
+      !
+      !allocate(ch_basin_in_gm2(nsolute))
+      !if(declvar('phreeqmms', 'ch_basin_in_gm2', 'nsolute', nsolute,&
+      !     'double','Area-normalized flux of influents into basin.',&
+      !     'g/m2', ch_basin_in_gm2).ne.0) return
+      !
+      !allocate(ch_basin_out_gm2(nsolute))
+      !if(declvar('phreeqmms', 'ch_basin_out_gm2', 'nsolute', nsolute,&
+      !     'double','Area-normalized flux of effluent from basin.',&
+      !     'g/m2', ch_basin_out_gm2).ne.0) return
+      !
+      !allocate(ch_basin_net_gm2(nsolute))
+      !if(declvar('phreeqmms', 'ch_basin_net_gm2', 'nsolute', nsolute,&
+      !     'double','Net area-normalized flux of effluent from basin.',&
+      !     'g/m2', ch_basin_net_gm2).ne.0) return
+      !
+      !allocate(snow_ion_pulse(nmru))
+      !if(declvar('phreeqmms', 'snow_ion_pulse', 'nmru', nmru,&
+      !     'integer','Incongruous melting on this time step',&
+      !     'none', snow_ion_pulse).ne.0) return
+      !
+      !allocate(ch_mru_vol_m3(nmru))
+      !if(declvar('phreeqmms', 'ch_mru_vol_m3', 'nmru', nmru,&
+      !     'double','Total volume of water in the mru',&
+      !     'm3', ch_mru_vol_m3).ne.0) return
+      !
+      !allocate(ch_mru_out_tempC(nmru))
+      !if(declvar('phreeqmms', 'ch_mru_out_tempC', 'nmru', nmru,&
+      !     'double','Temperature of water leaving the mru',&
+      !     'deg C', ch_mru_out_tempC).ne.0) return
+      !
+      !allocate(ch_mru_out_pH(nmru))
+      !if(declvar('phreeqmms', 'ch_mru_out_pH', 'nmru', nmru,&
+      !     'double','pH of water leaving the mru',&
+      !     'pH units', ch_mru_out_pH).ne.0) return
+      !
+      !allocate(ch_mru_mass_g(nmru,nsolute))
+      !if(declvar('phreeqmms', 'ch_mru_mass_g', 'nmru,nsolute',&
+      !     nmru*nsolute,'double','Total mass of solute in mru',&
+      !     'g', ch_mru_mass_g).ne.0) return
+      !
+      !allocate(ch_mru_rxn_g(nmru,nsolute))
+      !if(declvar('phreeqmms', 'ch_mru_rxn_g', 'nmru,nsolute', &
+      !     nmru*nsolute,'double','Total mass of solute created '//&
+      !     'or consumed by reactions in mru',&
+      !     'g', ch_mru_rxn_g).ne.0) return
+      !
+      !allocate(ch_mru_conc_mgL(nmru,nsolute))
+      !if(declvar('phreeqmms', 'ch_mru_conc_mgL', 'nmru,nsolute',&
+      !     nmru*nsolute,'double','Average concentration of '//&
+      !     'solute in mru','mg/L', ch_mru_conc_mgL).ne.0) return
+      !
+      !allocate(ch_mru_in_mgL(nmru,nsolute))
+      !if(declvar('phreeqmms', 'ch_mru_in_mgL', 'nmru,nsolute',&
+      !     nmru*nsolute,'double','Average solute concentration '//&
+      !     'of precip, ground water influx, and irrigation',&
+      !     'mg/L', ch_mru_in_mgL).ne.0) return
+      !
+      !allocate(ch_mru_out_mgL(nmru,nsolute))
+      !if(declvar('phreeqmms', 'ch_mru_out_mgL', 'nmru,nsolute',&
+      !     nmru*nsolute,'double','Average solute concentration '//&
+      !     'of mru discharge','mg/L', ch_mru_out_mgL).ne.0) return
+      !
+      !allocate(ch_mru_permil_in(nmru,nsolute))
+      !if(declvar('phreeqmms', 'ch_mru_permil_in', 'nmru,nsolute',&
+      !     nmru*nsolute,'double','Average permil value of '//&
+      !     'precip, ground water influx, and irrigation',&
+      !     'permil', ch_mru_permil_in).ne.0) return
+      !
+      !allocate(ch_mru_permil_out(nmru,nsolute))
+      !if(declvar('phreeqmms', 'ch_mru_permil_out', 'nmru,nsolute',&
+      !     nmru*nsolute,'double','Average permil value of '//&
+      !     'mru discharge','permil', ch_mru_permil_out).ne.0) return
+      !
+      !allocate(ch_mru_in_g(nmru,nsolute))
+      !if(declvar('phreeqmms', 'ch_mru_in_g', 'nmru,nsolute',&
+      !     nmru*nsolute,'double','Total mass of solute into mru',&
+      !     'g', ch_mru_in_g).ne.0) return
+      !
+      !allocate(ch_mru_out_g(nmru,nsolute))
+      !if(declvar('phreeqmms', 'ch_mru_out_g', 'nmru,nsolute',&
+      !     nmru*nsolute,'double','Total mass of solute '//&
+      !     'exported from mru','g', ch_mru_out_g).ne.0) return
+      !
+      !allocate(ch_mru_net_g(nmru,nsolute))
+      !if(declvar('phreeqmms', 'ch_mru_net_g', 'nmru,nsolute',&
+      !     nmru*nsolute,'double','Net export of solute from MRU.',&
+      !     'g', ch_mru_net_g).ne.0) return
+      !
+      !allocate(ch_mru_in_gm2(nmru,nsolute))
+      !if(declvar('phreeqmms', 'ch_mru_in_gm2', 'nmru,nsolute',&
+      !     nmru*nsolute,'double','Area-normalized flux of '//&
+      !     'influents into mru.','g/m2', ch_mru_in_gm2).ne.0) return
+      !
+      !allocate(ch_mru_out_gm2(nmru,nsolute))
+      !if(declvar('phreeqmms', 'ch_mru_out_gm2', 'nmru,nsolute',&
+      !     nmru*nsolute,'double','Area-normalized flux of '//&
+      !     'effluent from mru.','g/m2', ch_mru_out_gm2).ne.0) return
+      !
+      !allocate(ch_mru_net_gm2(nmru,nsolute))
+      !if(declvar('phreeqmms', 'ch_mru_net_gm2', 'nmru,nsolute',&
+      !     nmru*nsolute,'double','Net area-normalized flux '//&
+      !     'of effluent from mru.','g/m2', ch_mru_net_gm2).ne.0) return
+      !
 !
 ! parameters
 !
@@ -2040,7 +3698,7 @@
       ENDIF
 ! Allocate tally table arrays
       allocate (tally_table(ntally_rows + 1, ntally_cols))
-      allocate (tally_row_label(ntally_rows + 1))  ! The last role is moles of entity
+      allocate (tally_row_label(ntally_rows + 1))  ! The last row is moles of entity
       allocate (tally_col_type(ntally_cols))
       allocate (tally_col_label(ntally_cols))
       allocate (ent_label(ntally_cols))
@@ -2053,6 +3711,14 @@
         ALLOCATE (c_chem(i)%Rxn(nsolute,ntally_cols))
         ALLOCATE (c_chem(i)%Mass(ntally_cols))
         ALLOCATE (c_chem(i)%ElemFrac(nsolute))
+        c_chem(i)%vol = 0D0
+        c_chem(i)%Temp = 0D0
+        c_chem(i)%pH = 0D0
+        c_chem(i)%M = 0D0
+        c_chem(i)%delta = -1000D0
+        c_chem(i)%Rxn = 0D0
+        c_chem(i)%Mass = 0D0
+        c_chem(i)%ElemFrac = 0D0
       end do
       ALLOCATE (c_chem_mru(nmru))  ! Composite for each MRU
       ALLOCATE (c_chem_uzgen(nmru)) ! Composite of all UZ
@@ -2079,6 +3745,39 @@
         ALLOCATE (c_chem_uzup(i)%Rxn(nsolute,ntally_cols))
         ALLOCATE (c_chem_uzup(i)%Mass(ntally_cols))
         ALLOCATE (c_chem_uzup(i)%ElemFrac(nsolute))
+! initialize with zeros
+        c_chem_mru(i)%vol = 0D0
+        c_chem_mru(i)%temp = 0D0
+        c_chem_mru(i)%pH = 0D0
+        c_chem_mru(i)%M = 0D0
+        c_chem_mru(i)%delta = -1000D0
+        c_chem_mru(i)%Rxn = 0D0
+        c_chem_mru(i)%Mass = 0D0
+        c_chem_mru(i)%ElemFrac = 0D0
+        c_chem_uzgen(i)%vol = 0D0
+        c_chem_uzgen(i)%Temp = 0D0
+        c_chem_uzgen(i)%pH = 0D0
+        c_chem_uzgen(i)%M = 0D0
+        c_chem_uzgen(i)%delta = -1000D0
+        c_chem_uzgen(i)%Rxn = 0D0
+        c_chem_uzgen(i)%Mass = 0D0
+        c_chem_uzgen(i)%ElemFrac = 0D0
+        c_chem_uzrip(i)%vol = 0D0
+        c_chem_uzrip(i)%Temp = 0D0
+        c_chem_uzrip(i)%pH = 0D0
+        c_chem_uzrip(i)%M = 0D0
+        c_chem_uzrip(i)%delta = -1000D0
+        c_chem_uzrip(i)%Rxn = 0D0
+        c_chem_uzrip(i)%Mass = 0D0
+        c_chem_uzrip(i)%ElemFrac = 0D0
+        c_chem_uzup(i)%vol = 0D0
+        c_chem_uzup(i)%Temp = 0D0
+        c_chem_uzup(i)%pH = 0D0
+        c_chem_uzup(i)%M = 0D0
+        c_chem_uzup(i)%delta = -1000D0
+        c_chem_uzup(i)%Rxn = 0D0
+        c_chem_uzup(i)%Mass = 0D0
+        c_chem_uzup(i)%ElemFrac = 0D0
       end do
 ! Basin Composite
       ALLOCATE (c_chem_basin%M(nsolute,5))
@@ -2092,6 +3791,23 @@
       allocate (c_chem_hyd%Rxn(nsolute,ntally_cols))
       allocate (c_chem_hyd%Mass(ntally_cols))
       allocate (c_chem_hyd%ElemFrac(nsolute))
+! Initalize with zeros
+      c_chem_basin%vol = 0D0
+      c_chem_basin%Temp = 0D0
+      c_chem_basin%pH = 0D0
+      c_chem_basin%M = 0D0
+      c_chem_basin%delta = -1000
+      c_chem_basin%Rxn = 0D0
+      c_chem_basin%Mass = 0D0
+      c_chem_basin%ElemFrac = 0D0
+      c_chem_hyd%vol = 0D0
+      c_chem_hyd%Temp = 0D0
+      c_chem_hyd%pH = 0D0
+      c_chem_hyd%M = 0D0
+      c_chem_hyd%delta = -1000
+      c_chem_hyd%Rxn = 0D0
+      c_chem_hyd%Mass = 0D0
+      c_chem_hyd%ElemFrac = 0D0
 !
       sol_id%tally = -99 ! Initialize tally row of nsolute to -99
       do i = 1,ntally_rows
@@ -2103,7 +3819,7 @@
          do j = 1,nsolute
            if(sol_name(j).eq.tally_row_label(i))&
                sol_id(j)%tally = i
-           if(parse(sol_name(j), '(').eq.tally_row_label(i))&  ! flag the elemental form for traking masses of entities
+           if(parse(sol_name(j), '(').eq.tally_row_label(i))&  ! flag the elemental form for tracking masses of entities
                sol_id(j)%tally_e = i
            if(sol_name(j).eq.'Alkalinity'.and.tally_row_label(i).eq.&  ! Need to understand what's going on between Alk and C
              'C')then
@@ -2945,7 +4661,7 @@
 !      write(chemout_file_unit,'(A)')'is, mixture, conc,' 
       iresult = phr_mix(ID,1, src(1), fracs,  dest(1),&
            fill_factor, dest(1), conc, phr_tf, n_user,rxnmols,tempc,&
-           ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
+           ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
 
       IF (iresult.NE.0) THEN
          PRINT *, 'Errors during phr_mix:'
@@ -2975,7 +4691,7 @@
       
          iresult = phr_mix(ID,1, src(1), fracs,  dest(1),&
               fill_factor, dest(1), conc, phr_tf, no_rxn,rxnmols,&
-              tempc,ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
+              tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors during phr_mix:'
             CALL OutputErrorString(id)
@@ -3009,7 +4725,7 @@
 
          iresult = phr_mix(ID,1, solns, fracs,  1,&
               fill_factor, 1, conc, phr_tf, no_rxn,rxnmols,&
-              tempc,ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
+              tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
 
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors during phr_mix:'
@@ -3019,7 +4735,7 @@
 ! Update volume/mole matrix
 
          iresult = update_chem(indx,totvol,1,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,not_rxn)
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors updating mole matrix:'
             STOP
@@ -3114,7 +4830,7 @@
 
          iresult = phr_mix(ID,1, solns, fracs,  dest(1),&
               fill_factor,  dest(1), conc, phr_tf, n_user,rxnmols,&
-              tempc,ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
+              tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
 
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors during phr_mix:'
@@ -3124,7 +4840,7 @@
 ! Update volume/mole matrix after a mix
 
          iresult = update_chem(indx,totvol,1,conc,pH,tempc,&
-                               tally_table,n_ent,indxm,indxb,ires)
+                               tally_table,n_ent,yes_m,yes_b,ires,not_rxn)
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors updating mole matrix:'
             STOP
@@ -3149,7 +4865,7 @@
 
          iresult = phr_mix(ID,1, solns, fracs,  dest(2),&
               fill_factor, dest(2), conc, phr_tf, n_user,rxnmols,&
-              tempc,ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
+              tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors during phr_mix:'
             CALL OutputErrorString(id)
@@ -3158,7 +4874,7 @@
 ! Update volume/mole matrix after a mix
 
          iresult = update_chem(indx,totvol,1,conc,pH,tempc,&
-                               tally_table,n_ent,indxm,indxb,ires)
+                               tally_table,n_ent,yes_m,yes_b,ires,not_rxn)
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors updating mole matrix:'
             STOP
@@ -3185,7 +4901,7 @@
 
          iresult = phr_mix(ID,1, solns, fracs,  dest(4),&
               fill_factor, dest(4), conc, phr_tf, n_user,rxnmols,&
-              tempc,ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
+              tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors during phr_mix:'
             CALL OutputErrorString(id)
@@ -3197,7 +4913,7 @@
 ! Update volume/mole matrix after a mix
 
          iresult = update_chem(indx,totvol,1,conc,pH,tempc,&
-                               tally_table,n_ent,indxm,indxb,ires)
+                               tally_table,n_ent,yes_m,yes_b,ires,not_rxn)
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors updating mole matrix:'
             STOP
@@ -3242,7 +4958,7 @@
 ! Mix
             iresult = phr_mix(ID,1, solns, fracs,  mixture,&
                  fill_factor, mixture, conc, phr_tf, n_user,rxnmols,&
-                 tempc,ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
+                 tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
 
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors during phr_mix:'
@@ -3252,7 +4968,7 @@
             
 ! Update volume/mole matrix after a mix
             iresult = update_chem(indx,totvol,1,conc,pH,tempc,&
-                               tally_table,n_ent,indxm,indxb,ires)
+                               tally_table,n_ent,yes_m,yes_b,ires,not_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -3313,7 +5029,7 @@
 
          iresult = phr_mix(ID,1, solns, fracs,  dest(7),&
               fill_factor, dest(7), conc, phr_tf, n_user,rxnmols,&
-              tempc,ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
+              tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors during phr_mix:'
             CALL OutputErrorString(id)
@@ -3321,7 +5037,7 @@
          ENDIF
 ! Update volume/mole matrix after a mix
          iresult = update_chem(indx,totvol,1,conc,pH,tempc,&
-                               tally_table,n_ent,indxm,indxb,ires)
+                               tally_table,n_ent,yes_m,yes_b,ires,not_rxn)
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors updating mole matrix:'
             STOP
@@ -3345,7 +5061,7 @@
 
          iresult = phr_mix(ID,1, solns, fracs,  dest(8),&
               fill_factor,  dest(8), conc, phr_tf, n_user,rxnmols,&
-              tempc,ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
+              tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
 
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors during phr_mix:'
@@ -3355,7 +5071,7 @@
 ! Update volume/mole matrix after a mix
 
          iresult = update_chem(indx,totvol,1,conc,pH,tempc,&
-                               tally_table,n_ent,indxm,indxb,ires)
+                               tally_table,n_ent,yes_m,yes_b,ires,not_rxn)
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors updating mole matrix:'
             STOP
@@ -3417,7 +5133,7 @@
 
          iresult = phr_mix(ID,1, solns, fracs,  dest(9),&
               fill_factor, dest(9), conc, phr_tf, n_user,rxnmols,&
-              tempc,ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
+              tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
 
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors during phr_mix:'
@@ -3427,7 +5143,7 @@
 ! Update volume/mole matrix after a mix
 
          iresult = update_chem(indx,totvol,1,conc,pH,tempc,&
-                               tally_table,n_ent,indxm,indxb,ires)
+                               tally_table,n_ent,yes_m,yes_b,ires,not_rxn)
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors updating mole matrix:'
             STOP
@@ -3457,7 +5173,7 @@
 
          iresult = phr_mix(ID,1, solns, fracs,  dest(ih),&
               fill_factor, dest(ih), conc, phr_tf, n_user,rxnmols,&
-              tempc,ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
+              tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
 
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors during phr_mix:'
@@ -3467,7 +5183,7 @@
 ! Update volume/mole matrix after a mix: + basin
 
          iresult = update_chem(indx,totvol,1,conc,pH,tempc,&
-                               tally_table,n_ent,0,indxb,ires)
+                               tally_table,n_ent,not_m,yes_b,ires,not_rxn)
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors updating mole matrix:'
             STOP
@@ -4421,20 +6137,116 @@
 ! Get date/time stamp for debugging
 !
       call dattim('now', datetime)
-! Zero basin isotope accumulators
-      basin_in_vol=0D0
-      basin_out_vol=0D0
-      do n=1,nsolute
-        ch_basin_in_permil(n)=0D0
-        ch_basin_out_permil(n)=0D0
-      end do
+! Reset accumulators for composite geochem variables
+      !do i = 2,5
+      !  c_chem_basin%volbasin_in_vol=0D0
+      !  basin_out_vol=0D0
+      !  do n=1,nsolute
+      !    ch_basin_permil_in(n)=0D0
+      !    ch_basin_permil_out(n)=0D0
+      !  end do
+      !end do
 !
-! If not the first time step, transfer 5 solutions from last step
-! to initial solutions for this step. Concentrations for DI (soln 1)
-! and observed input sources (2001,2002,...) are either constants
-! or read in every time step and are not reset in this section. 
+! If not the first time step, transfer last solutions of composite
+! reservoirs to initials and rezero all accumulators. Also transfer
+! final solutions from last step to initial solutions for this step.
+! Concentrations for DI (soln 1) and observed input sources (2001,2002,...) 
+! are either constants or read in every time step and are not reset in
+! this section.
 !
-      if(.not.step1) then       ! copy ending solutions to initial solutions
+      if(.not.step1) then
+         ! copy final composites to initial composites
+         c_chem_basin%vol(init) = c_chem_basin%vol(fin) 
+         c_chem_basin%Temp(init) = c_chem_basin%Temp(fin) 
+         c_chem_basin%pH(init) = c_chem_basin%pH(fin) 
+         c_chem_hyd%vol(init) = c_chem_hyd%vol(fin) 
+         c_chem_hyd%Temp(init) = c_chem_hyd%Temp(fin) 
+         c_chem_hyd%pH(init) = c_chem_hyd%pH(fin)
+         do i =  1,nsolute
+           c_chem_basin%M(i,init) = c_chem_basin%M(i,fin) 
+           c_chem_basin%delta(i,init) = c_chem_basin%delta(i,fin)
+           c_chem_hyd%M(i,init) = c_chem_hyd%M(i,fin) 
+           c_chem_hyd%delta(i,init) = c_chem_hyd%delta(i,fin)
+         end do
+         do is =1, nmru
+           c_chem_mru(is)%vol(init) = c_chem_mru(is)%vol(fin)
+           c_chem_mru(is)%Temp(init) = c_chem_mru(is)%Temp(fin) 
+           c_chem_mru(is)%pH(init) = c_chem_mru(is)%pH(fin)
+           c_chem_uzgen(is)%vol(init) = c_chem_uzgen(is)%vol(fin)
+           c_chem_uzgen(is)%Temp(init) = c_chem_uzgen(is)%Temp(fin) 
+           c_chem_uzgen(is)%pH(init) = c_chem_uzgen(is)%pH(fin)
+           c_chem_uzrip(is)%vol(init) = c_chem_uzrip(is)%vol(fin)
+           c_chem_uzrip(is)%Temp(init) = c_chem_uzrip(is)%Temp(fin) 
+           c_chem_uzrip(is)%pH(init) = c_chem_uzrip(is)%pH(fin)
+           c_chem_uzup(is)%vol(init) = c_chem_uzup(is)%vol(fin)
+           c_chem_uzup(is)%Temp(init) = c_chem_uzup(is)%Temp(fin) 
+           c_chem_uzup(is)%pH(init) = c_chem_uzup(is)%pH(fin)
+           do i = 1,nsolute
+             c_chem_mru(is)%M(i,init) = c_chem_mru(is)%M(i,fin) 
+             c_chem_mru(is)%delta(i,init) = c_chem_mru(is)%delta(i,fin)
+             c_chem_uzgen(is)%M(i,init) = c_chem_uzgen(is)%M(i,fin) 
+             c_chem_uzgen(is)%delta(i,init) = c_chem_uzgen(is)%delta(i,fin)
+             c_chem_uzrip(is)%M(i,init) = c_chem_uzrip(is)%M(i,fin) 
+             c_chem_uzrip(is)%delta(i,init) = c_chem_uzrip(is)%delta(i,fin)
+             c_chem_uzup(is)%M(i,init) = c_chem_uzup(is)%M(i,fin) 
+             c_chem_uzup(is)%delta(i,init) = c_chem_uzup(is)%delta(i,fin)
+           end do
+         end do
+         ! zero composite accumulators
+         do j=2,5
+            c_chem_basin%vol(j) = 0D0
+            c_chem_basin%Temp(j) = 0D0
+            c_chem_basin%pH(j) = 0D0
+            c_chem_hyd%vol(j) = 0D0
+            c_chem_hyd%Temp(j) = 0D0
+            c_chem_hyd%pH(j) = 0D0
+            do i =  1,nsolute
+                c_chem_basin%M(i,j) = 0D0
+                c_chem_basin%delta(i,j) = 0D0
+                c_chem_hyd%M(i,j) = 0D0
+                c_chem_hyd%delta(i,j) = 0D0
+            end do
+            do is =1, nmru
+                c_chem_mru(is)%vol(j) = 0D0
+                c_chem_mru(is)%Temp(j) = 0D0 
+                c_chem_mru(is)%pH(j) = 0D0
+                c_chem_uzgen(is)%vol(j) = 0D0
+                c_chem_uzgen(is)%Temp(j) = 0D0
+                c_chem_uzgen(is)%pH(j) = 0D0
+                c_chem_uzrip(is)%vol(j) = 0D0
+                c_chem_uzrip(is)%Temp(j) = 0D0
+                c_chem_uzrip(is)%pH(j) = 0D0
+                c_chem_uzup(is)%vol(j) = 0D0
+                c_chem_uzup(is)%Temp(j) = 0D0
+                c_chem_uzup(is)%pH(j) = 0D0
+                do i = 1,nsolute
+                    c_chem_mru(is)%M(i,j) = 0D0
+                    c_chem_mru(is)%delta(i,j) = 0D0
+                    c_chem_uzgen(is)%M(i,j) = 0D0
+                    c_chem_uzgen(is)%delta(i,j) = 0D0
+                    c_chem_uzrip(is)%M(i,j) = 0D0
+                    c_chem_uzrip(is)%delta(i,j) = 0D0
+                    c_chem_uzup(is)%M(i,j) = 0D0
+                    c_chem_uzup(is)%delta(i,j) = 0D0
+                end do
+            end do
+         end do
+         ! zero composite variables describing reactions, %Rxn(nsolute,ntally_cols), and %ElemFrac(nsolute)
+         c_chem_basin%Rxn = 0D0
+         c_chem_basin%ElemFrac = 0D0
+         c_chem_hyd%Rxn = 0D0
+         c_chem_hyd%ElemFrac = 0D0
+         do is =1, nmru
+            c_chem_mru(is)%Rxn = 0D0
+            c_chem_mru(is)%ElemFrac = 0D0 
+            c_chem_uzgen(is)%Rxn = 0D0
+            c_chem_uzgen(is)%ElemFrac = 0D0 
+            c_chem_uzrip(is)%Rxn = 0D0
+            c_chem_uzrip(is)%ElemFrac = 0D0 
+            c_chem_uzup(is)%Rxn = 0D0
+            c_chem_uzup(is)%ElemFrac = 0D0 
+         end do
+         ! copy final solutions to initial solutions         
          do 31 is = 1,nmru
             do 32 res_id = 1, 9
                src(res_id) = solnnum(1,res_id,0,is,0,0,0)
@@ -4476,7 +6288,7 @@
             ENDIF
 !
 ! Transfer 5 c_chem reservoirs values to inital values
-! for this run. Temp and pH are now included and wull be 
+! for this run. Temp and pH are now included and will be 
 ! weighted by input and output volumes.
             do 203 i = 1,nphrsolns
                c_chem(i)%vol(init) = c_chem(i)%vol(fin)
@@ -4621,7 +6433,7 @@
             indx = isoln(input_soln,nchemdat,nmru,nac,clark_segs,&
                  ires,ichemdat,imru,inac,ihydro)
             iresult = update_chem(indx,totvol,0,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,not_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -4641,8 +6453,8 @@
          delta_D = -1000D0
          delta_18O = -1000D0
          do n=1,nsolute
-             ch_mru_in_permil(is,n)=0D0
-             ch_mru_out_permil(is,n)=0D0
+             ch_mru_permil_in(is,n)=0D0
+             ch_mru_permil_out(is,n)=0D0
          end do
 !         indxm = chmru_soln(is)
          ndep = 0
@@ -4693,7 +6505,7 @@
 ! Mix with no reactions (no_rxn instead of n_user)
                iresult = phr_mix(ID,nmix, src, fracs,  dest(1),&
                     fill_factor, dest(1), conc, phr_tf, no_rxn,&
-                    rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                    rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                     ntally_cols)
 
 
@@ -4709,7 +6521,7 @@
 ! in c_chem so no need to use the isoln function here.
 !
                iresult = update_chem(2,totvol,2,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,not_rxn)
                IF (iresult.NE.0) THEN
                   PRINT *, 'Errors updating mole matrix:'
                   STOP
@@ -4747,7 +6559,7 @@
 ! Mix
                iresult = phr_mix(ID,nmix, src, fracs,  dest(1),&
                     fill_factor, dest(1), conc, phr_tf, no_rxn,&
-                    rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                    rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                     ntally_cols)
 
                IF (iresult.NE.0) THEN
@@ -4761,7 +6573,7 @@
                indx = isoln(dest(1),nchemdat,nmru,nac,clark_segs,&
                     ires,ichemdat,imru,inac,ihydro)
                iresult = update_chem(indx,totvol,2,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,not_rxn)
                IF (iresult.NE.0) THEN
                   PRINT *, 'Errors updating mole matrix:'
                   STOP
@@ -4798,7 +6610,7 @@
 ! Mix
                iresult = phr_mix(ID,nmix, src, fracs,  dest(1),&
                     fill_factor, dest(1), conc, phr_tf, no_rxn,&
-                    rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                    rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                     ntally_cols)
 
                IF (iresult.NE.0) THEN
@@ -4808,33 +6620,34 @@
                ENDIF
 !
 ! update c_chem with irrigation outputs from the saturated zone
+! Include as outputs from MRU and basin
 !
                indx = isoln(dest(1),nchemdat,nmru,nac,clark_segs,&
                     ires,ichemdat,imru,inac,ihydro)
                iresult = update_chem(indx,totvol,3,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires) 
+                               tally_table,n_ent,yes_m,yes_b,ires,not_rxn) 
                IF (iresult.NE.0) THEN
                   PRINT *, 'Errors updating mole matrix:'
                   STOP
                ENDIF
                
-!     add outputs from wells as outputs from MRU and basin pseudo solutions
-               basin_out_vol=basin_out_vol+totvol
-               mru_out_vol(is)=mru_out_vol(is)+totvol
-               c_chem_mru(is)%vol(out)= &
-                          c_chem_mru(is)%vol(out)+totvol
-               c_chem_basin%vol(out)=&
-                          c_chem_basin%vol(out)+totvol
-               do k=1,nsolute
-                 c_chem_mru(is)%M(k,out)=&
-                  c_chem_mru(is)%M(k,out)+ c_chem(indx)%M(k,out)
-                 c_chem_basin%M(k,out)=&
-                  c_chem_basin%M(k,out)+ c_chem(indx)%M(k,out)
-                 ch_mru_out_permil(is,k)=ch_mru_out_permil(is,k)+&
-                       c_chem_mru(is)%delta(k,out)*totvol
-                 ch_basin_out_permil(k)=ch_basin_out_permil(k)+&
-                       c_chem_basin%delta(k,out)*totvol
-               end do
+!!     add outputs from wells as outputs from MRU and basin pseudo solutions
+!               basin_out_vol=basin_out_vol+totvol
+!               mru_out_vol(is)=mru_out_vol(is)+totvol
+!               c_chem_mru(is)%vol(out)= &
+!                          c_chem_mru(is)%vol(out)+totvol
+!               c_chem_basin%vol(out)=&
+!                          c_chem_basin%vol(out)+totvol
+!               do k=1,nsolute
+!                 c_chem_mru(is)%M(k,out)=&
+!                  c_chem_mru(is)%M(k,out)+ c_chem(indx)%M(k,out)
+!                 c_chem_basin%M(k,out)=&
+!                  c_chem_basin%M(k,out)+ c_chem(indx)%M(k,out)
+!                 ch_mru_permil_out(is,k)=ch_mru_permil_out(is,k)+&
+!                       c_chem_mru(is)%delta(k,out)*totvol
+!                 ch_basin_permil_out(k)=ch_basin_permil_out(k)+&
+!                       c_chem_basin%delta(k,out)*totvol
+!               end do
             end if
 !
 ! irrigation from a stream diversion ***************************
@@ -4868,7 +6681,7 @@
 ! Mix
                iresult = phr_mix(ID,nmix, src, fracs,  dest(1),&
                     fill_factor, dest(1), conc, phr_tf, no_rxn,&
-                    rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                    rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                     ntally_cols)
 
                IF (iresult.NE.0) THEN
@@ -4882,7 +6695,7 @@
                indx = isoln(dest(1),nchemdat,nmru,nac,clark_segs,&
                     ires,ichemdat,imru,inac,ihydro)
                iresult = update_chem(indx,totvol,3,conc,pH,tempc,&
-                               tally_table,n_ent,0,indxb,ires)
+                               tally_table,n_ent,not_m,yes_b,ires,not_rxn)
                IF (iresult.NE.0) THEN
                   PRINT *, 'Errors updating mole matrix:'
                   STOP
@@ -4902,7 +6715,7 @@
 ! Mix with no_rxn
             iresult = phr_mix(ID,ndep, srcdep, fracsdep,  dest(1),&
                  fill_factor, dest(1), conc, phr_tf, no_rxn,rxnmols,&
-                 tempc,ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
+                 tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
 
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors during phr_mix:'
@@ -4920,7 +6733,7 @@
             indx = isoln(dest(1),nchemdat,nmru,nac,clark_segs,&
                  ires,ichemdat,imru,inac,ihydro)
             iresult = update_chem(indx,totvol,2,conc,pH,tempc,&
-                               tally_table,n_ent,indxm,indxb,ires)
+                               tally_table,n_ent,yes_m,yes_b,ires,not_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -4928,14 +6741,14 @@
 !
 ! Update isotope data
 !
-            basin_in_vol=basin_in_vol+totvol
-            mru_in_vol(is)=mru_in_vol(is)+totvol
-            do k=1,nsolute
-              ch_mru_in_permil(is,k)=ch_mru_in_permil(is,k)+&
-                c_chem_mru(is)%delta(k,in)*totvol
-              ch_basin_in_permil(k)=ch_basin_in_permil(k)+&
-                c_chem_basin%delta(k,in)*totvol
-            end do
+            !basin_in_vol=basin_in_vol+totvol
+            !mru_in_vol(is)=mru_in_vol(is)+totvol
+            !do k=1,nsolute
+            !  ch_mru_permil_in(is,k)=ch_mru_permil_in(is,k)+&
+            !    c_chem_mru(is)%delta(k,in)*totvol
+            !  ch_basin_permil_in(k)=ch_basin_permil_in(k)+&
+            !    c_chem_basin%delta(k,in)*totvol
+            !end do
         end if   ! mru_dep > 0
 !
 ! Mix groundwater inputs (without reactions) into temporary reservoir
@@ -4970,7 +6783,7 @@
 ! Mix with no_rxn
           iresult = phr_mix(ID,2, src, fracs,  dest(1),&
                fill_factor, dest(1), conc, phr_tf, no_rxn,rxnmols,&
-               tempc,ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
+               tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
 
           IF (iresult.NE.0) THEN
            PRINT *, 'Errors during phr_mix:'
@@ -4981,20 +6794,28 @@
 ! Add inputs to MRU and basin pseudo solutions. Inputs to actual groundwater reservoir
 ! computed in groundwater section below
 !
-          basin_in_vol=basin_in_vol+totvol
-          mru_in_vol(is)=mru_in_vol(is)+totvol
+          !basin_in_vol=basin_in_vol+totvol
+          !mru_in_vol(is)=mru_in_vol(is)+totvol
           c_chem_mru(is)%vol(in)= &
             c_chem_mru(is)%vol(in)+totvol
           c_chem_basin%vol(in)= &
             c_chem_basin%vol(in)+totvol
+          c_chem_mru(is)%Temp(in)= &
+            c_chem_mru(is)%Temp(in)+tempc*totvol
+          c_chem_basin%Temp(in)= &
+            c_chem_basin%Temp(in)+tempc*totvol
+          c_chem_mru(is)%pH(in)= &
+            c_chem_mru(is)%pH(in)+pH_final*totvol
+          c_chem_basin%pH(in)= &
+            c_chem_basin%pH(in)+pH_final*totvol
           do k=1,nsolute
             c_chem_mru(is)%M(k,in)=&
               c_chem_mru(is)%M(k,in)+ conc(k)*totvol*a_thousand   ! conc in Moles/L
             c_chem_basin%M(k,in)=&
               c_chem_basin%M(k,in)+ conc(k)*totvol*a_thousand
-            ch_mru_in_permil(is,k)=ch_mru_in_permil(is,k)+&
+            ch_mru_permil_in(is,k)=ch_mru_permil_in(is,k)+&
                   c_chem_mru(is)%delta(k,in)*totvol
-            ch_basin_in_permil(k)=ch_basin_in_permil(k)+&
+            ch_basin_permil_in(k)=ch_basin_permil_in(k)+&
                   c_chem_basin%delta(k,in)*totvol
           end do
         end if ! totvol.gt.0
@@ -5062,7 +6883,7 @@
 ! Mix
                iresult = phr_mix(ID,2, solns, fracs,  mixture,&
                     fill_factor, mixture, conc, phr_tf, no_rxn,&
-                    rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                    rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                     ntally_cols)
                
 
@@ -5080,7 +6901,7 @@
                  ires,ichemdat,imru,inac,ihydro)
 ! basin and mru inputs included in combined input section above
             iresult = update_chem(indx,totvol,2,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,not_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -5111,7 +6932,7 @@
 !
                iresult = phr_mix(ID,2, solns, fracs,  solns(1),&
                     fill_factor, mixture, conc, phr_tf, no_rxn,&
-                    rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                    rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                     ntally_cols)
 
 
@@ -5162,7 +6983,7 @@
                end if
                iresult = phr_mix(ID,2, solns, fracs,  solns(1),&
                  fill_factor, mixture, conc, phr_tf, n_user,&
-                 rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                 rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                  ntally_cols)
                IF (iresult.NE.0) THEN
                  PRINT *, 'Errors during phr_mix:'
@@ -5174,7 +6995,7 @@
 !     Update volume/mole matrix with output volumes
             totvol = vmix_can(is,3)
             iresult = update_chem(indx,totvol,3,conc,pH,tempc,&
-                                  tally_table,n_ent,0,0,ires)
+                                  tally_table,n_ent,not_m,not_b,ires,yes_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -5218,7 +7039,7 @@
 
                iresult = phr_mix(ID,1, solns, fracs,&
                     solns(1),fill_factor, mixture, conc, phr_tf,&
-                    n_user,rxnmols,tempc,ph,ph_5,tsec,&
+                    n_user,rxnmols,tempc,ph,ph_final,tsec,&
                     tally_table,ntally_rows,ntally_cols)
 
                IF (iresult.NE.0) THEN
@@ -5232,7 +7053,7 @@
                indx = isoln(mixture,nchemdat,nmru,nac,clark_segs,&
                     ires,ichemdat,imru,inac,ihydro)
                iresult = update_chem(indx,totvol,-1,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,yes_rxn)
                IF (iresult.NE.0) THEN
                   PRINT *, 'Errors updating mole matrix:'
                   STOP
@@ -5288,7 +7109,7 @@
 ! Mix
                iresult = phr_mix(ID,2, solns, fracs,  mixture,&
                     fill_factor, mixture, conc, phr_tf, no_rxn,&
-                    rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                    rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                     ntally_cols)
 
                IF (iresult.NE.0) THEN
@@ -5304,7 +7125,7 @@
      
     
                iresult = update_chem(indx,totvol,2,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,not_rxn)
                IF (iresult.NE.0) THEN
                   PRINT *, 'Errors updating mole matrix:'
                   STOP
@@ -5333,7 +7154,7 @@
 ! Mix
                iresult = phr_mix(ID,2, solns, fracs,  solns(1),&
                     fill_factor, mixture, conc, phr_tf, no_rxn,&
-                    rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                    rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                     ntally_cols)
 
                IF (iresult.NE.0) THEN
@@ -5380,7 +7201,7 @@
 ! remove sublimated water from snow pack
                totvol = totvol-vmix_snow(is,6)
 !               iresult = update_chem(indx,totvol,3,conc,pH,tempc,&
-!                               tally_table,n_ent,0,0,ires)
+!                               tally_table,n_ent,not_m,not_b,ires,not_rxn)
 !               IF (iresult.NE.0) THEN
 !                 PRINT *, 'Errors updating mole matrix:'
 !                 STOP
@@ -5392,7 +7213,7 @@
                fracs(2) = -vmix_snow(is,6)/totvol
                iresult = phr_mix(ID,2,solns, fracs,  solns(1),&
                     fill_factor, mixture, conc, phr_tf, no_rxn,&
-                    rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                    rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                     ntally_cols)
 
                IF (iresult.NE.0) THEN
@@ -5420,13 +7241,13 @@
 ! Snowmelt with no ion pulse being simulated. Track melt with same composition as
 ! pack. Remaining Pack composition set after possible ionic pulse block.
                    iresult = update_chem(indx,totvol,3,conc,pH,tempc,&
-                                      tally_table,n_ent,0,0,ires)
+                                      tally_table,n_ent,not_m,not_b,ires,not_rxn)
                    IF (iresult.NE.0) THEN
                       PRINT *, 'Errors updating mole matrix:'
                       STOP
                    ENDIF
                    !iresult = update_chem(indx,totvol,-1,conc,pH,tempc,& ! totvol ignored as 5 volume used in update_chem
-                   !                   tally_table,n_ent,0,0,ires)
+                   !                   tally_table,n_ent,not_m,not_b,ires,not_rxn)
                    !IF (iresult.NE.0) THEN
                    !   PRINT *, 'Errors updating mole matrix:'
                    !   STOP
@@ -5485,13 +7306,13 @@
 ! concentrated solutes in melt
                    !iresult = phr_mix(ID,2,solns, fracs,  mixture,&
                    !     fill_factor, mixture, conc, phr_tf, no_rxn,&
-                   !     rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                   !     rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                    !     ntally_cols)
                    solns(1) = solnnum(0,2,0,is,0,0,0)
                    fracs(1) = 1.0
                    iresult = phr_mix(ID,1,solns, fracs,  mixture,&
                         fill_factor, mixture, conc, phr_tf, no_rxn,&
-                        rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                        rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                         ntally_cols)
                    IF (iresult.NE.0) THEN
                       PRINT *, 'Errors during phr_mix:'
@@ -5500,7 +7321,7 @@
                    ENDIF
                    !     Update volume/mole matrix with snowmelt volumes and masses
                    iresult = update_chem(indx,totvol,3,conc,pH,tempc,&
-                                      tally_table,n_ent,0,0,ires)
+                                      tally_table,n_ent,not_m,not_b,ires,not_rxn)
                    IF (iresult.NE.0) THEN
                       PRINT *, 'Errors updating mole matrix:'
                       STOP
@@ -5531,13 +7352,13 @@
 ! remove solutes from pack with mix
                    !iresult = phr_mix(ID,2,solns, fracs,  solns(1),&
                    !     fill_factor, mixture, conc, phr_tf, no_rxn,&
-                   !     rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                   !     rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                    !     ntally_cols)
             solns(1) = solnnum(1,2,0,is,0,0,0)
             fracs(1) = 1.0
             iresult = phr_mix(ID,1,solns, fracs,  mixture,&
                  fill_factor, mixture, conc, phr_tf, no_rxn,&
-                 rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                 rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                  ntally_cols)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors during phr_mix:'
@@ -5545,7 +7366,7 @@
                STOP
             ENDIF
             iresult = update_chem(indx,totvol,-1,conc,pH,tempc,&  ! totvol ignored as 5 volume is accessed in update_chem
-                   tally_table,n_ent,0,0,ires)
+                   tally_table,n_ent,not_m,not_b,ires,yes_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -5566,7 +7387,7 @@
 
             iresult = phr_mix(ID,1, solns, fracs,&
                  solns(1),fill_factor, mixture, conc, phr_tf,&
-                 n_user,rxnmols,tempc,ph,ph_5,tsec,&
+                 n_user,rxnmols,tempc,ph,ph_final,tsec,&
                  tally_table,ntally_rows,ntally_cols)
 
             IF (iresult.NE.0) THEN
@@ -5579,7 +7400,7 @@
             indx = isoln(mixture,nchemdat,nmru,nac,clark_segs,&
                  ires,ichemdat,imru,inac,ihydro)
             iresult = update_chem(indx,totvol,-1,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,yes_rxn)
 
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
@@ -5655,7 +7476,7 @@
 ! Mix
                iresult = phr_mix(ID,3, solns, fracs,  mixture,&
                     fill_factor, mixture, conc, phr_tf, no_rxn,&
-                    rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                    rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                     ntally_cols)
 
                IF (iresult.NE.0) THEN
@@ -5667,7 +7488,7 @@
                indx = isoln(solnnum(0,4,0,is,0,0,0),nchemdat,nmru,&
                     nac,clark_segs,ires,ichemdat,imru,inac,ihydro)
                iresult = update_chem(indx,totvol,2,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,not_rxn)
                IF (iresult.NE.0) THEN
                   PRINT *, 'Errors updating mole matrix:'
                   STOP
@@ -5679,40 +7500,42 @@
 !     temporarily to return initial concentrations. This solution will
 !     be overwritten in the next section
 !     
-            solns(1) = solnnum(0,4,0,is,0,0,0) ! t0 O-horizon solution
-            mixture = solnnum(1,4,0,is,0,0,0) ! Temp t+1 O-horizon solution
-            fracs(1) = 1.0
             totvol  = vmix_can(is,10) ! output to canopy
-            indx = isoln(mixture,nchemdat,nmru,nac,clark_segs,&
-                 ires,ichemdat,imru,inac,ihydro)
+            if(totvol.gt.0) then ! execute only on day of leaves on
+                solns(1) = solnnum(0,4,0,is,0,0,0) ! t0 O-horizon solution
+                mixture = solnnum(1,4,0,is,0,0,0) ! Temp t+1 O-horizon solution
+                fracs(1) = 1.0
+                indx = isoln(mixture,nchemdat,nmru,nac,clark_segs,&
+                     ires,ichemdat,imru,inac,ihydro)
 
-!            iresult = fill_ent(n_user,mixture,nchemdat,nmru,
-!     $           nac,clark_segs,src_init)
-!            if(iresult.ne.0) then
-!               PRINT *, 'Errors assigning phreeq entities:'
-!               CALL OutputErrorString(id)
-!               STOP
-!            end if
+    !            iresult = fill_ent(n_user,mixture,nchemdat,nmru,
+    !     $           nac,clark_segs,src_init)
+    !            if(iresult.ne.0) then
+    !               PRINT *, 'Errors assigning phreeq entities:'
+    !               CALL OutputErrorString(id)
+    !               STOP
+    !            end if
 
-            iresult = phr_mix(ID,1, solns, fracs,  mixture,&
-                 fill_factor, mixture, conc, phr_tf, no_rxn,&
-                 rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
-                 ntally_cols)
+                iresult = phr_mix(ID,1, solns, fracs,  mixture,&
+                     fill_factor, mixture, conc, phr_tf, no_rxn,&
+                     rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
+                     ntally_cols)
             
-            IF (iresult.NE.0) THEN
-               PRINT *, 'Errors during phr_mix:'
-               CALL OutputErrorString(id)
-               STOP
-            ENDIF
-!     No ET volumes for this layer
-!     Update volume/mole matrix with  volumes and masses
-            totvol = vmix_can(is,10)
-            iresult = update_chem(indx,totvol,3,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
-            IF (iresult.NE.0) THEN
-               PRINT *, 'Errors updating mole matrix:'
-               STOP
-            ENDIF
+                IF (iresult.NE.0) THEN
+                   PRINT *, 'Errors during phr_mix:'
+                   CALL OutputErrorString(id)
+                   STOP
+                ENDIF
+    !     No ET volumes for this layer
+    !     Update volume/mole matrix with  volumes and masses
+    !            totvol = vmix_can(is,10)
+                iresult = update_chem(indx,totvol,3,conc,pH,tempc,&
+                                   tally_table,n_ent,not_m,not_b,ires,not_rxn)
+                IF (iresult.NE.0) THEN
+                   PRINT *, 'Errors updating mole matrix:'
+                   STOP
+                ENDIF
+            end if
 !     
 !     Create t+1 O-horizon solution for export to transient hill
 !     reservoir. Note that the initial volume is reduced by the 
@@ -5748,7 +7571,7 @@
 ! Mix
                iresult = phr_mix(ID,2, solns, fracs,  solns(1),&
                     fill_factor, mixture, conc, phr_tf, n_user,&
-                    rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                    rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                     ntally_cols)
 
                IF (iresult.NE.0) THEN
@@ -5762,7 +7585,7 @@
 !     Append outputs to hill reservoir to the outputs written 
 !     the day of leaves-on
             iresult = update_chem(indx,totvol,3,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,yes_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -5788,7 +7611,7 @@
 
             iresult = phr_mix(ID,1, solns, fracs,  mixture,&
                  fill_factor, mixture, conc, phr_tf, n_user,&
-                 rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                 rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                  ntally_cols)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors during phr_mix:'
@@ -5800,7 +7623,7 @@
             indx = isoln(mixture,nchemdat,nmru,nac,clark_segs,&
                  ires,ichemdat,imru,inac,ihydro)
             iresult = update_chem(indx,0D0,-1,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,yes_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -5827,7 +7650,7 @@
 
          iresult = phr_mix(ID,1, solns, fracs,  mixture,&
               fill_factor, mixture, conc, phr_tf, no_rxn,&
-              rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+              rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
               ntally_cols)
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors during phr_mix:'
@@ -5841,7 +7664,7 @@
          indx = isoln(mixture,nchemdat,nmru,nac,clark_segs,&
               ires,ichemdat,imru,inac,ihydro)
          iresult = update_chem(indx,totvol,3,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,not_rxn)
 
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors updating mole matrix:'
@@ -5904,7 +7727,7 @@
 ! Mix
                iresult = phr_mix(ID,4, solns, fracs,  mixture,&
                     fill_factor, mixture, conc, phr_tf, no_rxn,&
-                    rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                    rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                     ntally_cols)
 
                IF (iresult.NE.0) THEN
@@ -5915,7 +7738,7 @@
                indx = isoln(solnnum(0,5,0,is,ia,0,0),nchemdat,nmru,&
                     nac,clark_segs,ires,ichemdat,imru,inac,ihydro)
                iresult = update_chem(indx,totvol,2,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,not_rxn)
                IF (iresult.NE.0) THEN
                   PRINT *, 'Errors updating mole matrix:'
                   STOP
@@ -5953,12 +7776,12 @@
 ! Mix
 !               iresult = phr_mix(ID,3, solns, fracs,  solns(1),
 !     $              fill_factor, mixture, conc, phr_tf, n_user,
-!     $              rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,
+!     $              rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,
 !     $              ntally_cols)
 !
                 iresult = phr_mix(ID,2, solns, fracs,  solns(1),&
                     fill_factor, mixture, conc, phr_tf, no_rxn,&
-                    rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                    rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                     ntally_cols)
               IF (iresult.NE.0) THEN
                   PRINT *, 'Errors during phr_mix:'
@@ -6005,7 +7828,7 @@
                end if
                iresult = phr_mix(ID,2, solns, fracs,  solns(1),&
                     fill_factor, mixture, conc, phr_tf, n_user,&
-                    rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                    rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                     ntally_cols)
 
                IF (iresult.NE.0) THEN
@@ -6030,7 +7853,7 @@
 !     tracked in the next section
                totvol = vmix_uz(ia,is,3)
                iresult = update_chem(indx,totvol,3,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,yes_rxn)
                IF (iresult.NE.0) THEN
                   PRINT *, 'Errors updating mole matrix:'
                   STOP
@@ -6086,7 +7909,7 @@
 ! Mix
             iresult = phr_mix(ID,validnacs, solns, fracs,  mixture,&
                  fill_factor, mixture, conc, phr_tf, no_rxn,&
-                 rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                 rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                  ntally_cols)
 
             IF (iresult.NE.0) THEN
@@ -6096,7 +7919,7 @@
             ENDIF
 !     Update volume/mole matrix for uz2can transient reservoir
             iresult = update_chem(indx,totvol,0,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,not_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -6125,7 +7948,7 @@
 ! Mix
             iresult = phr_mix(ID,3, solns, fracs,  mixture,&
                  fill_factor, mixture, conc, phr_tf, no_rxn,&
-                 rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                 rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                  ntally_cols)
 
             IF (iresult.NE.0) THEN
@@ -6139,7 +7962,7 @@
                  ires,ichemdat,imru,inac,ihydro)
      
             iresult = update_chem(indx,totvol,2,conc,pH,tempc,&
-                 tally_table,n_ent,0,0,ires)
+                 tally_table,n_ent,not_m,not_b,ires,not_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -6167,7 +7990,7 @@
 ! Mix
             iresult = phr_mix(ID,2, solns, fracs,  solns(1),&
                  fill_factor, mixture, conc, phr_tf, no_rxn,&
-                 rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                 rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                  ntally_cols)
 
             IF (iresult.NE.0) THEN
@@ -6217,7 +8040,7 @@
 
                iresult = phr_mix(ID,2, solns, fracs,  solns(1),&
                  fill_factor, mixture, conc, phr_tf, n_user,&
-                 rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                 rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                  ntally_cols)
                IF (iresult.NE.0) THEN
                  PRINT *, 'Errors during phr_mix:'
@@ -6241,7 +8064,7 @@
 !     for and that the final masses after reaction are assigned.
 
             iresult = update_chem(indx,0D0,3,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,yes_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -6278,7 +8101,7 @@
 !
 !$$$            iresult = phr_mix(ID,validnacs, solns, fracs, index_conservative,
 !$$$     $            fill_factor, index_reaction, *****conc_conservative****,
-!$$$     $            phr_tf, n_user,rxnmols,tempc,ph,ph_5,tsec,
+!$$$     $            phr_tf, n_user,rxnmols,tempc,ph,ph_final,tsec,
 !$$$     $            tally_table,ntally_rows,ntally_cols)
 !$$$
 !            iresult = fill_ent(n_user,mixture,nchemdat,nmru,
@@ -6298,7 +8121,7 @@
 ! Mix
             iresult = phr_mix(ID,validnacs, solns, fracs,  mixture,&
                  fill_factor, mixture, conc, phr_tf, no_rxn,rxnmols,&
-                 tempc,ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
+                 tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
 
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors during phr_mix:'
@@ -6307,7 +8130,7 @@
             ENDIF
 !     Update volume/mole matrix for uz2sat transient reservoir
                iresult = update_chem(indx,totvol,0,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,not_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -6317,7 +8140,7 @@
                  nac,clark_segs,ires,ichemdat,imru,inac,ihydro)
             totvol = vmix_qdf(is,2)
             iresult = update_chem(indx,totvol,2,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,not_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -6375,7 +8198,7 @@
 ! Mix
             iresult = phr_mix(ID,2, solns, fracs,  solns(1),&
                  fill_factor, mixture, conc, phr_tf, n_user,&
-                 rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                 rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                  ntally_cols)
 
 
@@ -6384,9 +8207,10 @@
                CALL OutputErrorString(id)
                STOP
             ENDIF
-!     Update volume/mole matrix for qdf outputs
-               iresult = update_chem(indx,totvol,3,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+!     Update volume/mole matrix for qdf outputs. Update rxns in final volume
+            totvol = vmix_qdf(is,3)
+            iresult = update_chem(indx,totvol,3,conc,pH,tempc,&
+                            tally_table,n_ent,not_m,not_b,ires,yes_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -6406,7 +8230,7 @@
 
             iresult = phr_mix(ID,1, solns, fracs, solns(1),&
                  fill_factor, mixture, conc, phr_tf, n_user,&
-                 rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                 rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                  ntally_cols)
 
             IF (iresult.NE.0) THEN
@@ -6419,7 +8243,7 @@
             indx = isoln(mixture,nchemdat,nmru,nac,clark_segs,&
                  ires,ichemdat,imru,inac,ihydro)
             iresult = update_chem(indx,0D0,-1,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,yes_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -6497,7 +8321,7 @@
 ! Mix
                iresult = phr_mix(ID,6, solns, fracs,  mixture,&
                     fill_factor, mixture, conc, phr_tf, no_rxn,&
-                    rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                    rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                     ntally_cols)
 
                IF (iresult.NE.0) THEN
@@ -6516,7 +8340,7 @@
 !     Update c_chem with input volumes and masses
 !
                     iresult = update_chem(indx,totvol,2,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,not_rxn)
                IF (iresult.NE.0) THEN
                   PRINT *, 'Errors updating mole matrix:'
                   STOP
@@ -6552,7 +8376,7 @@
                end if
 ! Mix
             iresult = phr_mix(ID,2, solns, fracs, solns(1),fill_factor, &
-                 mixture, conc, phr_tf, n_user,rxnmols,tempc,ph,ph_5,tsec,&
+                 mixture, conc, phr_tf, n_user,rxnmols,tempc,ph,ph_final,tsec,&
                  tally_table,ntally_rows,ntally_cols)
 
             IF (iresult.NE.0) THEN
@@ -6567,7 +8391,7 @@
             totvol = vmix_sat(is,3)-vmix_sat2uz(is)-vmix_well(is)
             
             iresult = update_chem(indx,totvol,3,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,yes_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -6582,7 +8406,7 @@
                indx = isoln(mixture,nchemdat,nmru,nac,clark_segs,&
                     ires,ichemdat,imru,inac,ihydro)
                iresult = update_chem(indx,totvol,2,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,not_rxn)
                IF (iresult.NE.0) THEN
                   PRINT *, 'Errors updating mole matrix:'
                   STOP
@@ -6603,7 +8427,7 @@
 
             iresult = phr_mix(ID,1, solns, fracs,&
                  solns(1),fill_factor, mixture, conc, phr_tf, &
-                 n_user,rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                 n_user,rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                  ntally_cols)
 
             IF (iresult.NE.0) THEN
@@ -6616,7 +8440,7 @@
             indx = isoln(mixture,nchemdat,nmru,nac,clark_segs,&
                  ires,ichemdat,imru,inac,ihydro)
             iresult = update_chem(indx,0D0,-1,conc,pH,tempc,&
-                 tally_table,n_ent,indxm,indxb,ires)
+                 tally_table,n_ent,not_m,not_b,ires,yes_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -6638,9 +8462,9 @@
               c_chem_mru(is)%M(k,out)+ conc(k)*totvol*a_thousand   ! conc in Moles/L
             c_chem_basin%M(k,out)=&
               c_chem_basin%M(k,out)+ conc(k)*totvol*a_thousand
-            ch_mru_out_permil(is,k)=ch_mru_out_permil(is,k)+&
+            ch_mru_permil_out(is,k)=ch_mru_permil_out(is,k)+&
               c_chem_mru(is)%delta(k,out)*totvol
-            ch_basin_out_permil(k)=ch_basin_out_permil(k)+&
+            ch_basin_permil_out(k)=ch_basin_permil_out(k)+&
               c_chem_basin%delta(k,out)*totvol
           end do
         end if ! totvol.gt.0
@@ -6728,7 +8552,7 @@
 ! Mix
             iresult = phr_mix(ID,2, solns, fracs,  solns(1),&
                  fill_factor, mixture, conc, phr_tf, n_user,rxnmols,&
-                 tempc,ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
+                 tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
 
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors during phr_mix:'
@@ -6739,7 +8563,7 @@
 ! Update c_chem with output volumes and masses
             totvol = vmix_satpref(is,3)
             iresult = update_chem(indx,totvol,3,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,yes_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -6759,7 +8583,7 @@
 !
             iresult = phr_mix(ID,1, solns, fracs,mixture,&
                  fill_factor, mixture, conc, phr_tf, n_user,rxnmols,&
-                 tempc,ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
+                 tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
 
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors during phr_mix:'
@@ -6771,7 +8595,7 @@
 !            indx = isoln(mixture,nchemdat,nmru,nac,clark_segs,
 !     $           ires,ichemdat,imru,inac,ihydro)
             iresult = update_chem(indx,0D0,-1,conc,pH,tempc,&
-                               tally_table,n_ent,0,0,ires)
+                               tally_table,n_ent,not_m,not_b,ires,yes_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
@@ -6836,7 +8660,7 @@
 ! Mix
             iresult = phr_mix(ID,4, solns, fracs,  mixture,&
                  fill_factor, mixture, conc, phr_tf, no_rxn,&
-                 rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                 rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                  ntally_cols)
 
             IF (iresult.NE.0) THEN
@@ -6852,22 +8676,22 @@
             indx = isoln(mixture,nchemdat,nmru,nac,clark_segs,&
                  ires,ichemdat,imru,inac,ihydro)
             iresult = update_chem(indx,totvol,2,conc,pH,tempc,&
-                            tally_table,n_ent,0,0,ires)
+                            tally_table,n_ent,not_m,not_b,ires,not_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
             ENDIF
             iresult = update_chem(indx,totvol,3,conc,pH,tempc,&
-                            tally_table,n_ent,indxm,0,ires)
+                            tally_table,n_ent,yes_m,not_b,ires,not_rxn)
             IF (iresult.NE.0) THEN
                PRINT *, 'Errors updating mole matrix:'
                STOP
             ENDIF
-            mru_out_vol(is)=mru_out_vol(is)+totvol
-            do k=1,nsolute
-              ch_mru_out_permil(is,k)=ch_mru_out_permil(is,k)+&
-                   c_chem_mru(is)%delta(k,out)*totvol
-            end do
+            !mru_out_vol(is)=mru_out_vol(is)+totvol
+            !do k=1,nsolute
+            !  ch_mru_permil_out(is,k)=ch_mru_permil_out(is,k)+&
+            !       c_chem_mru(is)%delta(k,out)*totvol
+            !end do
           endif ! totvol.gt.0.0
 
 ! Add section here if the transient hill
@@ -6932,7 +8756,7 @@
 ! Mix
          iresult = phr_mix(ID,nmru, solns, fracs,  mixture,&
               fill_factor, mixture, conc, phr_tf, no_rxn,rxnmols,&
-              tempc,ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
+              tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
 
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors during phr_mix:'
@@ -6946,8 +8770,8 @@
 ! Record stream inputs in c_chem. Append with upstream later
          indx = isoln(solnnum(0,99,0,0,0,ih,0),nchemdat,nmru,&
               nac,clark_segs,ires,ichemdat,imru,inac,ihydro)
-         iresult = update_chem(indx,totvol,2,conc,pH_5,tempc,&
-                               tally_table,n_ent,0,0,ires)
+         iresult = update_chem(indx,totvol,2,conc,ph_final,tempc,&
+                               tally_table,n_ent,not_m,not_b,ires,not_rxn)
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors updating mole matrix:'
             STOP
@@ -6955,7 +8779,7 @@
 !
 !     Mix hillslope with previous solution
 !     
-         mixture = solnnum(1,99,0,0,0,ih-1,0) ! defaults to basin at ih=1
+         mixture = solnnum(1,99,0,0,0,ih-1,0) ! defaults to outlet at ih=1
 
          solns(1) = solnnum(0,14,0,1,0,0,0) ! hillslope inputs
          fracs(1) = totvol/str_vol
@@ -6993,7 +8817,7 @@
 ! Mix
          iresult = phr_mix(ID,2, solns, fracs,  solns(2),&
               fill_factor, mixture, conc, phr_tf, n_user,rxnmols,&
-              tempc,ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
+              tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
 
          IF (iresult.NE.0) THEN
             PRINT *, 'Errors during phr_mix:'
@@ -7015,7 +8839,7 @@
           do k=1,nsolute
             c_chem_basin%M(k,out)=&
               c_chem_basin%M(k,out)+ conc(k)*totvol*a_thousand
-            ch_basin_out_permil(k)=ch_basin_out_permil(k)+&
+            ch_basin_permil_out(k)=ch_basin_permil_out(k)+&
                   c_chem_basin%delta(k,out)*totvol
           end do
         end if ! totvol.gt.0
@@ -7028,139 +8852,369 @@
 !
 ! Update c_chem to reflect outputs
 !
-          iresult = update_chem(indx,str_vol,3,conc,pH_5,tempc,&
-                                tally_table,n_ent,0,0,ires)
+          iresult = update_chem(indx,str_vol,3,conc,ph_final,tempc,&
+                                tally_table,n_ent,not_m,not_b,ires,yes_rxn)
           IF (iresult.NE.0) THEN
              PRINT *, 'Errors updating mole matrix:'
              STOP
           ENDIF
           indx = isoln(solnnum(0,99,0,0,0,ih-1,0),nchemdat,nmru,&
                  nac,clark_segs,ires,ichemdat,imru,inac,ihydro)
-          iresult = update_chem(indx,str_vol,2,conc,pH_5,tempc,&
-                                   tally_table,n_ent,0,0,ires)
+          iresult = update_chem(indx,str_vol,2,conc,ph_final,tempc,&
+                                   tally_table,n_ent,not_m,not_b,ires,not_rxn)
           IF (iresult.NE.0) THEN
              PRINT *, 'Errors updating mole matrix:'
              STOP
           ENDIF
-        else   ! export last segment
-! Mix once to erase reactions from last stream segment  
-!            mixture = isoln(solnnum(0,99,0,0,0,1,0),nchemdat,nmru,
-!     $           nac,clark_segs,ires,ichemdat,imru,inac,ihydro)
-!            indx = chbas_soln
-!            solns(1) = mixture
-!            fracs(1) = 1.0
-!            iresult = phr_mix(ID,1, solns, fracs,  mixture,
-!     $        fill_factor, mixture, conc, phr_tf, no_rxn,rxnmols,
-!     $        tempc,ph,ph_5,tsec,tally_table,ntally_rows,ntally_cols)
-          iresult = update_chem(indx,str_vol,3,conc,pH_5,tempc,&
-                             tally_table,n_ent,0,indxb,ires)
+        else   ! export last segment.
+          iresult = update_chem(indx,str_vol,3,conc,ph_final,tempc,&
+                             tally_table,n_ent,not_m,yes_b,ires,yes_rxn)
           IF (iresult.NE.0) THEN
              PRINT *, 'Errors updating mole matrix:'
              STOP
           ENDIF
-          basin_out_vol=basin_out_vol+str_vol
-          do k=1,nsolute
-            ch_basin_out_permil(k)=ch_basin_out_permil(k)+&
-                  c_chem_basin%delta(k,out)*str_vol
+          ch_outlet_m3 = str_vol
+          ch_outlet_tempC = tempc
+          ch_outlet_pH = ph_final
+          nis=0
+          do n = 1, nsolute
+              ch_outlet_M(n) = conc(n)*str_vol*a_thousand
+              ch_outlet_g(n) = conc(n)*str_vol*phq_lut(sol_id(n)%phq)%M2mg
+              ch_outlet_eq(n) = conc(n)*str_vol*phq_lut(sol_id(n)%phq)%M2meq
+              if(str_vol.gt.0.) then
+                  ch_outlet_mML(n) = ch_outlet_M(n) / str_vol
+                  ch_outlet_mgL(n) = ch_outlet_g(n) / str_vol
+                  ch_outlet_meqL(n) = ch_outlet_eq(n) / str_vol
+              else
+                  ch_outlet_mML(n) = 0D0
+                  ch_outlet_mgL(n) = 0D0
+                  ch_outlet_meqL(n) = 0D0
+              end if
+              ch_outlet_mMm2(n) =  ch_outlet_M(n) / basin_area / a_thousand
+              ch_outlet_mgm2(n) = ch_outlet_g(n) / basin_area / a_thousand
+              ch_outlet_meqm2(n) = ch_outlet_eq(n) / basin_area / a_thousand
+              if(sol_id(n)%iso) then ! Record delta of isotope, in permil
+                nis=nis+1
+                ch_outlet_permil(n)=conc1(nsolute+nis)
+              end if
           end do
+          !basin_out_vol=basin_out_vol+str_vol
+          !do k=1,nsolute
+          !  ch_basin_permil_out(k)=ch_basin_permil_out(k)+&
+          !        c_chem_basin%delta(k,out)*str_vol
+          !end do
         end if
 
  20   continue                  ! end clark_segs loop
 
-
 ! Assign composite uz volumes (uzgen), then compute 5 values for each 
 ! reservoir, (ignoring temp and precip)
 !
-      do 200 k = 1,nmru ! composite uz variables
-        c_chem_uzgen(k)%vol(init) = vmix_uzgen(k,1)
-        c_chem_uzgen(k)%vol(in) = vmix_uzgen(k,2)
-        c_chem_uzgen(k)%vol(out) = vmix_uzgen(k,3)
-        c_chem_uzgen(k)%vol(ET) = vmix_uzgen(k,6)
-!        c_chem(i)%vol(fin) = vmix_uzgen(k,4) ! Calculated below
-        c_chem_uzrip(k)%vol(init) = vmix_uzrip(k,1)
-        c_chem_uzrip(k)%vol(in) = vmix_uzrip(k,2)
-        c_chem_uzrip(k)%vol(out) = vmix_uzrip(k,3)
-        c_chem_uzrip(k)%vol(ET) = vmix_uzrip(k,6)
-!        c_chem(i)%vol(fin) = vmix_uzrip(k,4) ! Calculated below
-        c_chem_uzup(k)%vol(init) = vmix_uzup(k,1)
-        c_chem_uzup(k)%vol(in) = vmix_uzup(k,2)
-        c_chem_uzup(k)%vol(out) = vmix_uzup(k,3)
-        c_chem_uzup(k)%vol(ET) = vmix_uzup(k,6)
-!        c_chem(i)%vol(fin) = vmix_uzup(k,4) ! Calculated below
- 200  continue
-        k=nchemdat+2 !DI water and concentrations in the chemdat file do not have volumes associated
-!                     with them so track volumes beginning with the canopy of the first MRU
-!      do 205 i = k,nphrsolns-nmru-1 ! last indices (nmru+1) are basin and mru assigned below
-      do 205 i = k,nphrsolns ! last indices (nmru+1) are basin and mru assigned below
-        minvol = .TRUE.
-        c_chem(i)%vol(fin) = c_chem(i)%vol(init)+&
-          c_chem(i)%vol(in)-c_chem(i)%vol(out)-&
-          c_chem(i)%vol(ET)
-        if(abs(c_chem(i)%vol(fin)).lt.0.001D0) minvol = .FALSE.  ! c_chem volumes in cubic meters
-!        if(.not.water) print*,'5 volume for ',c_indx(i,1),
-!     $    ' less than 1 liter on time step ',nstep,'. 5 '//
-!     $    'concentrations and volumes set to zero.'
-        do 205 j = 1, nsolute
-          if(.not.minvol) then
-            c_chem(i)%M(j,fin) = 0D0
-            c_chem(i)%vol(fin) = 0D0
-          else if(c_chem(i)%M(j,fin).eq.0D0) then ! This updates final masses for conservative mixing. If reactions involved, update_chem has already set the final value.
-            c_chem(i)%M(j,fin)=c_chem(i)%M(j,init) + c_chem(i)%M(j,in) -&
-            c_chem(i)%M(j,out)+ c_chem(i)%M(j,rxn)
-          end if
- 205  continue
+!      do 200 k = 1,nmru ! composite uz variables
+!        c_chem_uzgen(k)%vol(init) = vmix_uzgen(k,1)
+!        c_chem_uzgen(k)%vol(in) = vmix_uzgen(k,2)
+!        c_chem_uzgen(k)%vol(out) = vmix_uzgen(k,3)
+!        c_chem_uzgen(k)%vol(ET) = vmix_uzgen(k,6)
+!!        c_chem(i)%vol(fin) = vmix_uzgen(k,4) ! Calculated below
+!        c_chem_uzrip(k)%vol(init) = vmix_uzrip(k,1)
+!        c_chem_uzrip(k)%vol(in) = vmix_uzrip(k,2)
+!        c_chem_uzrip(k)%vol(out) = vmix_uzrip(k,3)
+!        c_chem_uzrip(k)%vol(ET) = vmix_uzrip(k,6)
+!!        c_chem(i)%vol(fin) = vmix_uzrip(k,4) ! Calculated below
+!        c_chem_uzup(k)%vol(init) = vmix_uzup(k,1)
+!        c_chem_uzup(k)%vol(in) = vmix_uzup(k,2)
+!        c_chem_uzup(k)%vol(out) = vmix_uzup(k,3)
+!        c_chem_uzup(k)%vol(ET) = vmix_uzup(k,6)
+!!        c_chem(i)%vol(fin) = vmix_uzup(k,4) ! Calculated below
+! 200  continue
+!        k=nchemdat+2 !DI water and concentrations in the chemdat file do not have volumes associated
+!!                     with them so track volumes beginning with the canopy of the first MRU
+!!      do 205 i = k,nphrsolns-nmru-1 ! last indices (nmru+1) are basin and mru assigned below
+!      do 205 i = k,nphrsolns ! last indices (nmru+1) are basin and mru assigned below
+!        minvol = .TRUE.
+!        c_chem(i)%vol(fin) = c_chem(i)%vol(init)+&
+!          c_chem(i)%vol(in)-c_chem(i)%vol(out)-&
+!          c_chem(i)%vol(ET)
+!        if(abs(c_chem(i)%vol(fin)).lt.0.001D0) minvol = .FALSE.  ! c_chem volumes in cubic meters
+!!        if(.not.water) print*,'5 volume for ',c_indx(i,1),
+!!     $    ' less than 1 liter on time step ',nstep,'. 5 '//
+!!     $    'concentrations and volumes set to zero.'
+!        do 205 j = 1, nsolute
+!          if(.not.minvol) then
+!            c_chem(i)%M(j,fin) = 0D0
+!            c_chem(i)%vol(fin) = 0D0
+!          else if(c_chem(i)%M(j,fin).eq.0D0) then ! This updates final masses for conservative mixing. If reactions involved, update_chem has already set the final value.
+!            c_chem(i)%M(j,fin)=c_chem(i)%M(j,init) + c_chem(i)%M(j,in) -&
+!            c_chem(i)%M(j,out)+ c_chem(i)%M(j,rxn)
+!          end if
+! 205  continue
 !
-! Basin and MRU summaries
+! Summary variables for composite reservoirs (basin, mru, uz, and stream)
 !
-
-!      i = chbas_soln
-      c_chem_basin%vol(init) = vmix_basin(1)
-      c_chem_basin%vol(in) = vmix_basin(2)
-      c_chem_basin%vol(out) = vmix_basin(3)
-      c_chem_basin%vol(ET) = vmix_basin(6)
-      c_chem_basin%vol(fin) = vmix_basin(4)
-      do 206 j = 1, nsolute  ! better to make this a sum of the reacted reservoirs
-        c_chem_basin%M(j,fin) =&
-         c_chem_basin%M(j,init) + c_chem_basin%M(j,in)-c_chem_basin%M(j,out)+&
-         c_chem_basin%M(j,rxn)
-206   continue
-      vol_in = c_chem_basin%vol(in)
-      vol_out = c_chem_basin%vol(out)
-      ch_basin_vol_m3 = c_chem_basin%vol(fin)
-      ch_basin_out_tempC = c_chem_basin%Temp(fin)
-      ch_basin_out_pH = c_chem_basin%pH(fin)
-
+!      i = chbas_soln  These need to be compared with vmix volumes, not assigned
+!      c_chem_basin%vol(init) = vmix_basin(1)
+!      c_chem_basin%vol(in) = vmix_basin(2)
+!      c_chem_basin%vol(out) = vmix_basin(3)
+!      c_chem_basin%vol(ET) = vmix_basin(6)
+!      c_chem_basin%vol(fin) = vmix_basin(4)
+!!      do 206 j = 1, nsolute  ! better to make this a sum of the reacted reservoirs ! Done
+!!        c_chem_basin%M(j,fin) =&
+!!         c_chem_basin%M(j,init) + c_chem_basin%M(j,in)-c_chem_basin%M(j,out)+&
+!!         c_chem_basin%M(j,rxn)
+!!206   continue
+!      ch_basin_m3_in = c_chem_basin%vol(in)
+!      ch_basin_m3_out = c_chem_basin%vol(out)
+!      ch_basin_m3_final = c_chem_basin%vol(fin)
+!      ch_basin_tempC_final = c_chem_basin%Temp(fin)/ch_basin_m3_final
+!      ch_basin_pH_final = c_chem_basin%pH(fin)
+!
+! Assign composite volumes, temperature, and pH to composite reservoirs
+! basin composite
+      ch_basin_m3_in = c_chem_basin%vol(in)
+      if(ch_basin_m3_in.gt.0.) then
+        ch_basin_tempC_in = c_chem_basin%Temp(in)/ch_basin_m3_in
+        ch_basin_pH_in = c_chem_basin%pH(in)/ch_basin_m3_in
+      else
+        ch_basin_tempC_in = 0D0
+        ch_basin_pH_in = 0D0
+      end if
+      ch_basin_m3_out = c_chem_basin%vol(out)
+      ch_basin_tempC_out = c_chem_basin%Temp(out)/ch_basin_m3_out
+      ch_basin_pH_out = c_chem_basin%pH(out)/ch_basin_m3_out
+      ch_basin_m3_ET = c_chem_basin%vol(ET)
+      ch_basin_m3_final =  c_chem_basin%vol(fin)
+      ch_basin_tempC_final =  c_chem_basin%Temp(fin)/ch_basin_m3_final
+      ch_basin_pH_final =  c_chem_basin%pH(fin)/ch_basin_m3_final 
+! stream composite
+      ch_hyd_m3_in = c_chem_hyd%vol(in)
+      if(ch_hyd_m3_in.gt.0.) then
+        ch_hyd_tempC_in = c_chem_hyd%Temp(in)/ch_hyd_m3_in 
+        ch_hyd_pH_in = c_chem_hyd%pH(in)/ch_hyd_m3_in 
+      else
+        ch_hyd_tempC_in = 0D0
+        ch_hyd_pH_in = 0D0
+      end if
+      ch_hyd_m3_out = c_chem_hyd%vol(out)
+      ch_hyd_tempC_out = c_chem_hyd%Temp(out)/ch_hyd_m3_out
+      ch_hyd_pH_out = c_chem_hyd%pH(out)/ch_hyd_m3_out
+      ch_hyd_m3_final =  c_chem_hyd%vol(fin)
+      ch_hyd_tempC_final =  c_chem_hyd%Temp(fin)/ch_hyd_m3_final 
+      ch_hyd_pH_final =  c_chem_hyd%pH(fin)/ch_hyd_m3_final 
+      do is = 1,nmru
+! mru composites
+        ch_mru_m3_in(is) = c_chem_mru(is)%vol(in)
+        if(ch_mru_m3_in(is).gt.0.) then
+            ch_mru_tempC_in(is) = c_chem_mru(is)%Temp(in)/ch_mru_m3_in(is) 
+            ch_mru_pH_in(is) = c_chem_mru(is)%pH(in)/ch_mru_m3_in(is)
+        else
+            ch_mru_tempC_in(is) = 0D0
+            ch_mru_pH_in(is) = 0D)
+        endif
+        ch_mru_m3_out(is) = c_chem_mru(is)%vol(out)
+        ch_mru_tempC_out(is) = c_chem_mru(is)%Temp(out)/ch_mru_m3_out(is)
+        ch_mru_pH_out(is) = c_chem_mru(is)%pH(out)/ch_mru_m3_out(is)
+        ch_mru_m3_ET(is) = c_chem_mru(is)%vol(ET)
+        ch_mru_m3_final(is) =  c_chem_mru(is)%vol(fin)
+        ch_mru_tempC_final(is) =  c_chem_mru(is)%Temp(fin)/ch_mru_m3_final(is) 
+        ch_mru_pH_final(is) =  c_chem_mru(is)%pH(fin)/ch_mru_m3_final(is) 
+! UZ composites
+        ch_uzgen_m3_in(is) = c_chem_uzgen(is)%vol(in)
+        if(ch_uzgen_m3_in(is).gt.0.) then
+            ch_uzgen_tempC_in(is) = c_chem_uzgen(is)%Temp(in)/ch_uzgen_m3_in(is) 
+            ch_uzgen_pH_in(is) = c_chem_uzgen(is)%pH(in)/ch_uzgen_m3_in(is) 
+        else
+            ch_uzgen_tempC_in(is) = 0D0
+            ch_uzgen_pH_in(is) = 0D0
+        endif
+        ch_uzgen_m3_out(is) = c_chem_uzgen(is)%vol(out)
+        ch_uzgen_tempC_out(is) = c_chem_uzgen(is)%Temp(out)/ch_uzgen_m3_out(is)
+        ch_uzgen_pH_out(is) = c_chem_uzgen(is)%pH(out)/ch_uzgen_m3_out(is)
+        ch_uzgen_m3_ET(is) = c_chem_uzgen(is)%vol(ET)
+        ch_uzgen_m3_final(is) =  c_chem_uzgen(is)%vol(fin)
+        ch_uzgen_tempC_final(is) =  c_chem_uzgen(is)%Temp(fin)/ch_uzgen_m3_final(is) 
+        ch_uzgen_pH_final(is) =  c_chem_uzgen(is)%pH(fin)/ch_uzgen_m3_final(is) 
+! UZ riparian comoposites
+        ch_uzrip_m3_in(is) = c_chem_uzrip(is)%vol(in)
+        if(ch_uzrip_m3_in(is).gt.0.) then
+            ch_uzrip_tempC_in(is) = c_chem_uzrip(is)%Temp(in)/ch_uzrip_m3_in(is) 
+            ch_uzrip_pH_in(is) = c_chem_uzrip(is)%pH(in)/ch_uzrip_m3_in(is) 
+        else
+            ch_uzrip_tempC_in(is) = 0D0
+            ch_uzrip_pH_in(is) = 0D0
+        endif
+        ch_uzrip_m3_out(is) = c_chem_uzrip(is)%vol(out)
+        ch_uzrip_tempC_out(is) = c_chem_uzrip(is)%Temp(out)/ch_uzrip_m3_out(is)
+        ch_uzrip_pH_out(is) = c_chem_uzrip(is)%pH(out)/ch_uzrip_m3_out(is)
+        ch_uzrip_m3_ET(is) = c_chem_uzrip(is)%vol(ET)
+        ch_uzrip_m3_final(is) =  c_chem_uzrip(is)%vol(fin)
+        ch_uzrip_tempC_final(is) =  c_chem_uzrip(is)%Temp(fin)/ch_uzrip_m3_final(is) 
+        ch_uzrip_pH_final(is) =  c_chem_uzrip(is)%pH(fin)/ch_uzrip_m3_final(is) 
+! UZ upland composites
+        ch_uzup_m3_in(is) = c_chem_uzup(is)%vol(in)
+        if(ch_uzup_m3_in(is).gt.0.) then
+            ch_uzup_tempC_in(is) = c_chem_uzup(is)%Temp(in)/ch_uzup_m3_in(is) 
+            ch_uzup_pH_in(is) = c_chem_uzup(is)%pH(in)/ch_uzup_m3_in(is) 
+        else
+            ch_uzup_tempC_in(is) = 0D0
+            ch_uzup_pH_in(is) = 0D0
+        endif
+        ch_uzup_m3_out(is) = c_chem_uzup(is)%vol(out)
+        ch_uzup_tempC_out(is) = c_chem_uzup(is)%Temp(out)/ch_uzup_m3_out(is)
+        ch_uzup_pH_out(is) = c_chem_uzup(is)%pH(out)/ch_uzup_m3_out(is)
+        ch_uzup_m3_ET(is) = c_chem_uzup(is)%vol(ET)
+        ch_uzup_m3_final(is) =  c_chem_uzup(is)%vol(fin)
+        ch_uzup_tempC_final(is) =  c_chem_uzup(is)%Temp(fin)/ch_uzup_m3_final(is) 
+        ch_uzup_pH_final(is) =  c_chem_uzup(is)%pH(fin)/ch_uzup_m3_final(is) 
+      end do
+      !double precision, save, allocatable ::&
+      !  ch_basin_M_in(:),ch_basin_M_out(:),ch_basin_M_rxn(:),ch_basin_M_final(:),&
+      !  ch_basin_g_in(:),ch_basin_g_out(:),ch_basin_g_rxn(:),ch_basin_g_final(:),&
+      !  ch_basin_eq_in(:),ch_basin_eq_out(:),ch_basin_eq_rxn(:),ch_basin_eq_final(:),&
+      !  ch_basin_mMm2_in(:),ch_basin_mMm2_out(:),ch_basin_mMm2_rxn(:),ch_basin_mMm2_final(:),&
+      !  ch_basin_mgm2_in(:),ch_basin_mgm2_out(:),ch_basin_mgm2_rxn(:),ch_basin_mgm2_final(:),&
+      !  ch_basin_meqm2_in(:),ch_basin_meqm2_out(:),ch_basin_meqm2_rxn(:),ch_basin_meqm2_final(:),&
+      !  ch_basin_mML_in(:),ch_basin_mML_out(:),ch_basin_mML_final(:),&
+      !  ch_basin_mgL_in(:),ch_basin_mgL_out(:),ch_basin_mgL_final(:),&
+      !  ch_basin_meqL_in(:),ch_basin_meqL_out(:),ch_basin_meqL_final(:),&
+      !  ch_basin_permil_in(:),ch_basin_permil_out(:),ch_basin_permil_ET(:),ch_basin_permil_final(:)
+      !
+      !double precision, save :: &
+      !  ch_basin_m3_in,ch_basin_m3_out,ch_basin_m3_ET,ch_basin_m3_final,&
+      !  ch_basin_tempC_in,ch_basin_tempC_out,ch_basin_tempC_final,&
+      !  ch_basin_pH_in,ch_basin_pH_out,ch_basin_pH_final
+! Composite moles and volumes recorded in Update_Chem, convert to mass, equivalents, and concentrations
+!
+      nis=0
       do n = 1,nsolute
-         ch_basin_mass_g(n) =&
-              c_chem_basin%M(n,fin)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
-         ch_basin_rxn_g(n) =&
-              c_chem_basin%M(n,rxn)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
-         ch_basin_in_g(n) =&
-              c_chem_basin%M(n,in)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
-         ch_basin_in_gm2(n) =&
+!composite basin
+        if(ch_basin_m3_in.gt.0.) then
+         ch_basin_M_in(n) = c_chem_basin%M(n,in)
+         ch_basin_g_in(n) = c_chem_basin%M(n,in)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
+         ch_basin_eq_in(n) = c_chem_basin%M(n,in)*phq_lut(sol_id(n)%phq)%M2meq/a_thousand
+         ch_basin_mMm2_in(n) = c_chem_basin_M_in / basin_area / a_thousand 
+         ch_basin_mgm2_in(n) = c_chem_basin_g_in / basin_area / a_thousand 
+         ch_basin_meqm2_in(n) = c_chem_basin_eq_in / basin_area / a_thousand 
+         ch_basin_mML_in(n) = c_chem_basin_M_in/ch_basin_m3_in
+         ch_basin_mgL_in(n) = c_chem_basin_g_in/ch_basin_m3_in
+         ch_basin_meqL_in(n) = c_chem_basin_eq_in/ch_basin_m3_in
+        else
+         ch_basin_M_in(n) = 0D0
+         ch_basin_g_in(n) = 0D0
+         ch_basin_eq_in(n) = 0D0
+         ch_basin_mMm2_in(n) = 0D0
+         ch_basin_mgm2_in(n) = 0D0
+         ch_basin_meqm2_in(n) = 0D0
+         ch_basin_mML_in(n) = 0D0
+         ch_basin_mgL_in(n) = 0D0
+         ch_basin_meqL_in(n) = 0D0
+        endif
+        ch_basin_M_out(n) = c_chem_basin%M(n,out)
+        ch_basin_g_out(n) = c_chem_basin%M(n,out)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
+        ch_basin_eq_out(n) = c_chem_basin%M(n,out)*phq_lut(sol_id(n)%phq)%M2meq/a_thousand
+        ch_basin_mMm2_out(n) = c_chem_basin_M_out / basin_area / a_thousand 
+        ch_basin_mgm2_out(n) = c_chem_basin_g_out / basin_area / a_thousand 
+        ch_basin_meqm2_out(n) = c_chem_basin_eq_out / basin_area / a_thousand 
+        ch_basin_mML_out(n) = c_chem_basin_M_out/ch_basin_m3_out
+        ch_basin_mgL_out(n) = c_chem_basin_g_out/ch_basin_m3_out
+        ch_basin_meqL_out(n) = c_chem_basin_eq_out/ch_basin_m3_out
+        ch_basin_M_rxn(n) = c_chem_basin%M(n,rxn)
+        ch_basin_g_rxn(n) = c_chem_basin%M(n,rxn)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
+        ch_basin_eq_rxn(n) = c_chem_basin%M(n,rxn)*phq_lut(sol_id(n)%phq)%M2meq/a_thousand
+        ch_basin_mMm2_rxn(n) = c_chem_basin_M_rxn / basin_area / a_thousand 
+        ch_basin_mgm2_rxn(n) = c_chem_basin_g_rxn / basin_area / a_thousand 
+        ch_basin_meqm2_rxn(n) = c_chem_basin_eq_rxn / basin_area / a_thousand 
+        ch_basin_mML_final(n) = c_chem_basin_M_final/ch_basin_m3_final
+        ch_basin_mgL_final(n) = c_chem_basin_g_final/ch_basin_m3_final
+        ch_basin_meqL_final(n) = c_chem_basin_eq_final/ch_basin_m3_final
+        ch_basin_M_final(n) = c_chem_basin%M(n,fin)
+        ch_basin_g_final(n) = c_chem_basin%M(n,fin)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
+        ch_basin_eq_final(n) = c_chem_basin%M(n,fin)*phq_lut(sol_id(n)%phq)%M2meq/a_thousand
+        ch_basin_mMm2_final(n) = c_chem_basin_M_final / basin_area / a_thousand 
+        ch_basin_mgm2_final(n) = c_chem_basin_g_final / basin_area / a_thousand 
+        ch_basin_meqm2_final(n) = c_chem_basin_eq_final / basin_area / a_thousand 
+! composite stream
+        if(ch_hyd_m3_in.gt.0.) then
+         ch_hyd_M_in(n) = c_chem_hyd%M(n,in)
+         ch_hyd_g_in(n) = c_chem_hyd%M(n,in)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
+         ch_hyd_eq_in(n) = c_chem_hyd%M(n,in)*phq_lut(sol_id(n)%phq)%M2meq/a_thousand
+         ch_hyd_mMm2_in(n) = c_chem_hyd_M_in / basin_area / a_thousand 
+         ch_hyd_mgm2_in(n) = c_chem_hyd_g_in / basin_area / a_thousand 
+         ch_hyd_meqm2_in(n) = c_chem_hyd_eq_in / basin_area / a_thousand 
+         ch_hyd_mML_in(n) = c_chem_hyd_M_in/ch_hyd_m3_in
+         ch_hyd_mgL_in(n) = c_chem_hyd_g_in/ch_hyd_m3_in
+         ch_hyd_meqL_in(n) = c_chem_hyd_eq_in/ch_hyd_m3_in
+        else
+         ch_hyd_M_in(n) = 0D0
+         ch_hyd_g_in(n) = 0D0
+         ch_hyd_eq_in(n) = 0D0
+         ch_hyd_mMm2_in(n) = 0D0
+         ch_hyd_mgm2_in(n) = 0D0
+         ch_hyd_meqm2_in(n) = 0D0
+         ch_hyd_mML_in(n) = 0D0
+         ch_hyd_mgL_in(n) = 0D0
+         ch_hyd_meqL_in(n) = 0D0
+        endif
+        ch_hyd_M_out(n) = c_chem_hyd%M(n,out)
+        ch_hyd_g_out(n) = c_chem_hyd%M(n,out)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
+        ch_hyd_eq_out(n) = c_chem_hyd%M(n,out)*phq_lut(sol_id(n)%phq)%M2meq/a_thousand
+        ch_hyd_mMm2_out(n) = c_chem_hyd_M_out / basin_area / a_thousand 
+        ch_hyd_mgm2_out(n) = c_chem_hyd_g_out / basin_area / a_thousand 
+        ch_hyd_meqm2_out(n) = c_chem_hyd_eq_out / basin_area / a_thousand 
+        ch_hyd_mML_out(n) = c_chem_hyd_M_out/ch_hyd_m3_out
+        ch_hyd_mgL_out(n) = c_chem_hyd_g_out/ch_hyd_m3_out
+        ch_hyd_meqL_out(n) = c_chem_hyd_eq_out/ch_hyd_m3_out
+        ch_hyd_M_rxn(n) = c_chem_hyd%M(n,rxn)
+        ch_hyd_g_rxn(n) = c_chem_hyd%M(n,rxn)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
+        ch_hyd_eq_rxn(n) = c_chem_hyd%M(n,rxn)*phq_lut(sol_id(n)%phq)%M2meq/a_thousand
+        ch_hyd_mMm2_rxn(n) = c_chem_hyd_M_rxn / basin_area / a_thousand 
+        ch_hyd_mgm2_rxn(n) = c_chem_hyd_g_rxn / basin_area / a_thousand 
+        ch_hyd_meqm2_rxn(n) = c_chem_hyd_eq_rxn / basin_area / a_thousand 
+        ch_hyd_mML_final(n) = c_chem_hyd_M_final/ch_hyd_m3_final
+        ch_hyd_mgL_final(n) = c_chem_hyd_g_final/ch_hyd_m3_final
+        ch_hyd_meqL_final(n) = c_chem_hyd_eq_final/ch_hyd_m3_final
+        ch_hyd_M_final(n) = c_chem_hyd%M(n,fin)
+        ch_hyd_g_final(n) = c_chem_hyd%M(n,fin)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
+        ch_hyd_eq_final(n) = c_chem_hyd%M(n,fin)*phq_lut(sol_id(n)%phq)%M2meq/a_thousand
+        ch_hyd_mMm2_final(n) = c_chem_hyd_M_final / basin_area / a_thousand 
+        ch_hyd_mgm2_final(n) = c_chem_hyd_g_final / basin_area / a_thousand 
+        ch_hyd_meqm2_final(n) = c_chem_hyd_eq_final / basin_area / a_thousand 
+        if(sol_id(n)%iso) then ! Record delta of isotope, in permil
+           nis=nis+1
+           if(ch_basin_m3_in.gt.0.) then
+             ch_hyd_permil_in = c_chem_hyd%permil(in)/ch_hyd_m3_in
+             ch_basin_permil_in = c_chem_basin%permil(in)/ch_basin_m3_in
+           else
+             ch_hyd_permil_in = 0D0
+             ch_basin_permil_in = 0D0
+           end if
+           ch_basin_permil_out = c_chem_basin%permil(out)/ch_basin_m3_out
+           ch_basin_permil_final =  c_chem_basin%permil(fin)/ch_basin_m3_final 
+           ch_hyd_permil_out = c_chem_hyd%permil(out)/ch_hyd_m3_out
+           ch_hyd_permil_final =  c_chem_hyd%permil(fin)/ch_hyd_m3_final 
+         end if
+         do is=1,nmru
+         nis = 0
+
+         
+         
+         ch_basin_gm2_in_(n) =&
               ch_basin_in_g(n)/basin_area/a_million
-         ch_basin_out_g(n) =&
-              c_chem_basin%M(n,out)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
-         ch_basin_out_gm2(n) =&
+         ch_basin_gm2_out(n) =&
               ch_basin_out_g(n)/basin_area/a_million
-         ch_basin_net_g(n) =&
-              ch_basin_out_g(n)-ch_basin_in_g(n)
-         ch_basin_net_gm2(n) =&
-              ch_basin_out_gm2(n)-ch_basin_in_gm2(n)
-         if(ch_basin_vol_m3.gt.0.0)then
-            ch_basin_conc_mgL(n) = ch_basin_mass_g(n)/ch_basin_vol_m3
+         if(ch_basin_m3_final.gt.0.0)then
+            ch_basin_mgL_final(n) = ch_basin_g_final(n)/ch_basin_m3_final
          else
-            ch_basin_conc_mgL(n) = 0.0
+            ch_basin_mgL_final(n) = 0.0
          end if
          if(vol_in.gt.0.0)then
 !           print*, 'Diff in basin vol_in and totvols = ',
 !     $    vol_in - basin_in_vol, (vol_in - basin_in_vol)/basin_in_vol
            ch_basin_in_mgL(n) = ch_basin_in_g(n)/vol_in
 ! permil inputs and outputs were weighted by volumes so divide by total volume to get mean    
-           ch_basin_in_permil(n)= ch_basin_in_permil(n)/basin_in_vol
+           ch_basin_permil_in(n)= ch_basin_permil_in(n)/basin_in_vol
          else
             ch_basin_in_mgL(n) = 0.0
-            ch_basin_in_permil(n)=0D0
+            ch_basin_permil_in(n)=0D0
          end if
 
          if(vol_out.gt.0.0)then
@@ -7169,10 +9223,10 @@
             ch_basin_out_mgL(n) =&
              ch_basin_out_g(n)/vol_out
 ! permil inputs and outputs were weighted by volumes so divide by total volume to get mean    
-            ch_basin_out_permil(n)= ch_basin_out_permil(n)/basin_out_vol
+            ch_basin_permil_out(n)= ch_basin_permil_out(n)/basin_out_vol
          else
             ch_basin_out_mgL(n) = 0.0
-            ch_basin_out_permil(n)=0D0
+            ch_basin_permil_out(n)=0D0
          end if
       end do
 
@@ -7220,19 +9274,19 @@
 !     $    vol_in - mru_in_vol(j),(vol_in - mru_in_vol(j))/mru_in_vol(j)
              ch_mru_in_mgL(j,n) = ch_mru_in_g(j,n)/vol_in
 ! permil inputs and outputs were weighted by volumes so divide by total volume to get mean    
-             ch_mru_in_permil(j,n)= ch_mru_in_permil(j,n)/mru_in_vol(j)
+             ch_mru_permil_in(j,n)= ch_mru_permil_in(j,n)/mru_in_vol(j)
            else
              ch_mru_in_mgL(j,n) = 0.0
-             ch_mru_in_permil(j,n)=0D0
+             ch_mru_permil_in(j,n)=0D0
             end if
            if(vol_out.gt.0.0)then
 !            print*, 'MRU Diff in vol_out and totvols = ',
 !     $      vol_out - mru_out_vol(j),(vol_out - mru_out_vol(j))/vol_out
             ch_mru_out_mgL(j,n) = ch_mru_out_g(j,n)/vol_out
-            ch_mru_out_permil(j,n)=ch_mru_out_permil(j,n)/mru_out_vol(j)
+            ch_mru_permil_out(j,n)=ch_mru_permil_out(j,n)/mru_out_vol(j)
            else
              ch_mru_out_mgL(j,n) = 0.0
-             ch_mru_out_permil(j,n)=0D0
+             ch_mru_permil_out(j,n)=0D0
            end if
  207  continue
 
@@ -7764,19 +9818,28 @@
 !
 !           c_chem field(s)
 !  imetric -    updated     - Comment
-!    1            1           Equilibrium masses after init rxn in 1.
-!    0           2,3          Transient reservoir so in=out, no rxn
-!   -1           4,5          Static volume, reactions in 4 w/
-!                             final mass and vols in 5.
-!    3          3,4,5         Export initial concentrations to update 3;
-!                              React (4) and store final mass and vols in 5.
+!    1            1           Solutions after initial mix and one day of kinetics.
+!    0            2           Transient reservoir so record volumes and moles
+!                             as inputs and use the final in=out, no rxn.
+!                             Cumlative mass and vols in 5.
+!    2            2           Inputs into one of the 9 reservoir types (8 hillslope, 1 stream)
+!    3          3,4,5         Conservative concentrations used to update 3. If react
+!                             is .TRUE. then update reaciton in 4 along with ElemFrac and store 
+!                             final mass and vols in 5. If react is .FALSE. volume
+!                             represents the export of a conservatively mixed solution.
+!   -1           4,5          Static volume, reactions in 4 w/ finals in 5
 !
 ! Reactions are documented in the tally table. Tally_table has one row
-! for each solute species germane to the phreeq.pqi file. Note that
-! this may exceed the number of solutes defined by nsolute since congruous
-! weathering of minerals may produce a variety of elements. An extra row
-! at the bottom indicated how many moles of each entity are present in
-! a given reservoir.
+! for each element and valence state that appears in solutions and entities
+! defined in the phreeq.pqi file. Note that this usually exceeds the number
+! of solutes defined by nsolute since congruous weathering of minerals may 
+! produce a variety of elements. Also, if one of the nsolutes of interest is
+! specified as a valence state, S(6) for example, then the moles yielded by
+! each reactive entity referes to the elemental form, S for example. The
+! percentage of the elemental form that is accounted for by the valence state
+! is recorded in %ElemFrac. An extra row at the bottom indicated how many 
+! moles of entity per kg of water remain in the reservoir at the end of a time step.
+!
 ! Each column in tally_table represents one or more phreeqc entity type.
 ! The first two cols are solution concentrations, in Moles per liter; the 
 ! first after conservative mixing, the second after reactions (so n_ent(1) always 
@@ -7817,21 +9880,21 @@
 ! c_chem is the master storage table with the following 5 fields (metrics)
 ! describing mass (in moles) for each the nsolutes
 ! initial, inputs, outputs, reaction gains/losses, ending mass
-! tempc and pH are recorded for the final mix (either
-! static (-1) or final (3)
+! tempc, pH, and deltas are recorded for the inputs, outputs, and final
+! using volume weighted averages.
 !
 ! Initial and final volumes for the index being updated 
 ! c_chem(indx)%vol(init) and c_chem(indx)%vol(fin)
 ! must be set before entering this routine in order to
 ! compute the reaction and final masses.
 !
-! Update solutes for mru and basin composite indices when indxm (the MRU ID) or
-! indxb (usually set to 0 or 1) are nonzero respectively. The UZ composite indices
-! uzgen, uzrip, and uzup, are updated using the riaprian boolean from TOPMOD. Similarly
+! Update solutes for mru and basin composite indices when 'mru' or
+! 'basin' are .TRUE. The UZ composite indices uzgen, uzrip, and uzup, 
+! are updated using the riaprian boolean from TOPMOD. Similarly
 ! the stream composite is updated with hillslope inputs and basin discharge.
 !
       integer function update_chem(indx,totvol,imetric,&
-            conc1,pH,tempc,tally_table,n_ent,indxmru,indxbas,restype)
+            conc1,pH,tempc,tally_table,n_ent,mru,basin,restype,react)
 
       USE WEBMOD_IO, ONLY: phreeqout, debug
       USE WEBMOD_TOPMOD, ONLY : riparian
@@ -7845,10 +9908,11 @@
       implicit none
 
 !      integer sol_id(ntally_rows,2)
-      integer i,j,k,n, indx,im,imetric,n_ent(:), nis,test,restype,indxmru, indxbas
-      logical react,step1,notstream,snow
+      integer i,j,k,ke,n, indx,im,imx,imetric,n_ent(:),nis,test,restype
+      logical step1,notstream,snow, mru, basin, react
       double precision vol,totvol, conc1(:),pH,tempc,tally_table(:,:)
-
+      double precision vwtempc, vwpH, vwdelta, Moles, M_cons, M_rxn
+      double precision M_diff,M_elem, M_elem_sum, M_diff_e, M_ElemFrac
 
       data step1/.true./
       save step1
@@ -7864,7 +9928,7 @@
 ! /Debug
          !end do
          if(phr_tf) write(debug%lun,'(A)')'nstep yr mo dy index In_Out metric indxmru indxbas '// &
-           'totvol vol_init vol_in vol_out vol_rxn vol_fin Cl_init Cl_in Cl_out Cl_rxn Cl_fin'
+           'react totvol vol_init vol_in vol_out vol_rxn vol_fin Cl_init Cl_in Cl_out Cl_rxn Cl_fin'
          step1=.false.
       end if  ! step1
 
@@ -7874,11 +9938,11 @@
       if (phr_tf) then
 ! for nsolute = 11
         write(debug%lun,123) nstep,(datetime(i),i=1,3),indx, &
-           ' in ',imetric, indxmru, indxbas, totvol,(c_chem(indx)%vol(i),i=1,5), &
+           ' in ',imetric, mru, basin, react, totvol,(c_chem(indx)%vol(i),i=1,5), &
            ((c_chem(indx)%M(i,j),j=1,5),i=7,11)
 ! for nsolute = 1
 !        write(26,123) nstep,(datetime(i),i=1,3),indx, &
-!           ' in ',imetric, indxmru, indxbas, totvol,(c_chem(indx)%vol(i),i=1,5), &
+!           ' in ',imetric, mru, basin, totvol,(c_chem(indx)%vol(i),i=1,5), &
 !           (c_chem(indx)%M(1,j),j=1,5)
       end if
 !
@@ -7896,214 +9960,167 @@
       snow = .FALSE.
       if(restype.eq.2) snow = .TRUE.
 !
-!     Update only one slot based on concentrations
+!  im can equal 1 (init), 2 (inputs and transient reservoirs), 
+!  3 (output or 'output and react'), or -1(static react), . 'If' logic in order of frequency.
 !
-      j=1
       im = imetric
-      if(imetric.eq.0) then ! unless imetric = 0, then update both inputs and outputs
-        im = 2
-        j=2
+      if(imetric.eq.0) im = 2      ! Transient reservoirs record only as inputs.
+      if(imetric.eq.-1) im = 5     ! Static reaction in unchanged reservoir volume
+      if(im.eq.3.or.im.eq.2) then ! input or output, update only one slot (plus reaction if react is true)
+        vol=totvol
+        c_chem(indx)%vol(im) = c_chem(indx)%vol(im)+vol
+        c_chem(indx)%Temp(im) = c_chem(indx)%Temp(im)+tempc*vol
+        c_chem(indx)%pH(im) = c_chem(indx)%pH(im)+pH*vol
+      else  ! Assign inital or final volumes (im = 1 or 5)
+        vol = c_chem(indx)%vol(im) 
+        c_chem(indx)%Temp(im) = tempc
+        c_chem(indx)%pH(im) = pH
       end if
+      vwtempc=vol*tempc
+      vwpH=vol*pH
 !
-! This loop duplicates imports and exports for transient reservoirs (imetric=0).
-! Otherwise only one pass through.
-      do 5 i=1,j
-      
-! Debug
-!        write(chemout_file_unit,1000)c_indx(indx,1), indx, indxmru,
-!     $     indxbas, totvol, imetric, im, restype 
-! 1000 format(I10, 3I5,f12.2,3I5)
-! \Debug
+!     Update composite volumes, temps, and pH for basin, mru, riparian and stream.
+!
+      if(basin) then
+        c_chem_basin%vol(im) = c_chem_basin%vol(im) + vol
+        c_chem_basin%Temp(im) = c_chem_basin%Temp(im) + vwtempc
+        c_chem_basin%pH(im) = c_chem_basin%pH(im) + vwpH
+      end if
+      if(mru) then
+        c_chem_mru(is)%vol(im) = c_chem_mru(is)%vol(im) + vol
+        c_chem_mru(is)%Temp(im) = c_chem_mru(is)%Temp(im) + vwtempc
+        c_chem_mru(is)%pH(im) = c_chem_mru(is)%pH(im) + vwpH
+      end if
+      if(restype.eq.5) then
+        c_chem_uzgen(is)%vol(im) = c_chem_uzgen(is)%vol(im) + vol
+        c_chem_uzgen(is)%Temp(im) = c_chem_uzgen(is)%Temp(im) + vwtempc
+        c_chem_uzgen(is)%pH(im) = c_chem_uzgen(is)%pH(im) + vwpH
+        if(riparian(ia,is))then
+          c_chem_uzrip(is)%vol(im) = c_chem_uzrip(is)%vol(im) + vol
+          c_chem_uzrip(is)%Temp(im) = c_chem_uzrip(is)%Temp(im) + vwtempc
+          c_chem_uzrip(is)%pH(im) = c_chem_uzrip(is)%pH(im) + vwpH
+        else
+          c_chem_uzup(is)%vol(im) = c_chem_uzup(is)%vol(im) + vol
+          c_chem_uzup(is)%Temp(im) = c_chem_uzup(is)%Temp(im) + vwtempc
+          c_chem_uzup(is)%pH(im) = c_chem_uzup(is)%pH(im) + vwpH
+        endif
+      if(restype.eq.99) &
+        c_chem_hyd%vol(im) = c_chem_hyd%vol(im) + vol
+        c_chem_hyd%Temp(im) = c_chem_hyd%Temp(im) + vwtempc
+        c_chem_hyd%pH(im) = c_chem_hyd%pH(im) + vwpH
+      endif
 !     
-!     Update volumes,
+!     Moles of solute and deltas of isotopes for static and dynamic reservoirs
 !
-         if(im.eq.1) then
-           vol = c_chem(indx)%vol(init)
-         else if(im.eq.-1) then
-           vol = c_chem(indx)%vol(fin)   ! check if this should in 'in' instead of 'fin'
-         else
-           c_chem(indx)%vol(im) =&
-               c_chem(indx)%vol(im)+totvol
-         end if
-!     
-!     masses and isotopes,
-!
-         nis=0  ! counter for number of isotopes tracked
-         do 10 n = 1,nsolute
-           if(im.eq.1) then ! initial masses use the reaction concentrations in the 2nd column of the tally table
-             if(sol_id(n)%iso) then  ! record inital isotopic composition
-               nis=nis+1
-               c_chem(indx)%delta(n,1)=conc1(nsolute+nis)
-             end if
-             k=sol_id(n)%tally
-             c_chem(indx)%M(n,1) = tally_table(k,2)*vol*a_thousand
-           else if(im.ne.-1) then
-             c_chem(indx)%M(n,im)= c_chem(indx)%M(n,im)+ & !Imports and exports use conservative mixing&
-              conc1(n)*totvol*a_thousand !This should cover snowpack chem on days of no snowpack.
-             if(sol_id(n)%iso) then ! track input and output deltas which should only occur on a single input or output.
-               nis=nis+1
-               c_chem(indx)%delta(n,im)=conc1(nsolute+nis)
-             end if
-           end if
-           if(restype.eq.5) then ! sum uz inputs&
-            c_chem_uzgen(is)%M(n,im)=c_chem_uzgen(is)%M(n,im)+ &
-              c_chem(indx)%M(n,im)
-              if(riparian(ia,is)) then
-                 c_chem_uzrip(is)%M(n,im)=c_chem_uzrip(is)%M(n,im)+ &
-                  c_chem(indx)%M(n,im)
-              else
-                   c_chem_uzup(is)%M(n,im)=c_chem_uzup(is)%M(n,im)+ &
-                 c_chem(indx)%M(n,im)
-              endif
-            endif
-           if(indxmru.ne.0) & ! sum mru inputs and outputs&
-            c_chem_mru(is)%M(n,im)=c_chem_mru(is)%M(n,im)+ &
-                                    c_chem(indx)%M(n,im)
-           if(indxbas.ne.0)  & ! sum basin inputs and outputs&
-            c_chem_basin%M(n,im)=c_chem_basin%M(n,im)+ &
-                                    c_chem(indx)%M(n,im)
- 10      continue
-!
-!     and temp and pH.
-!
-! Record temp and pH if imetric > 0
-         if(im.gt.0) then
-           c_chem(indx)%Temp = tempc
-           c_chem(indx)%pH = ph
-         endif
-         if(indxmru.ne.0) then
-           c_chem_mru(indxmru)%Temp = tempc
-           c_chem_mru(indxmru)%pH = ph
-         endif
-         if(indxbas.ne.0) then
-           c_chem_basin%Temp = tempc
-           c_chem_basin%pH = ph
-         endif
-!
-! Duplicate in and out values (2&3) if imetric = 0   
-!
-         if(imetric.eq.0) im = im + 1
- 5    continue
-!     
-!     Compute reaction totals for imetric = -1 or 3 (static or last export). Snow always has a 3 and a -1 to accomodate
-!     incongruent melting so only count reactions during last -1 step. All other reservoirs have either a 3 OR a -1, not both.
-!
-!     Accumulate reactions, temp, and pH for unchanged reservoirs and final exports
-!
-      if(imetric.eq.-1.or.(imetric.eq.3.and..not.snow)) then
-          vol = c_chem(indx)%vol(fin)  ! reactions take place in 5 volumes
-          if(snow.and.imetric.eq.3)  vol = c_chem(indx)%vol(out) ! not needed since no_rxn in melt step
-          react = .FALSE.
-          if(indxmru.ne.0) then ! record temp, pH, and del values of mru exports
-             c_chem_mru(indxmru)%Temp = tempc
-             c_chem_mru(indxmru)%pH = ph
-             nis=0            
-             do n = 1,nsolute
-               if(sol_id(n)%iso) then
-                 nis=nis+1
-                 c_chem_mru(indxmru)%delta(n,out)=conc1(nsolute+nis)
-               end if
-             end do
-          endif
-          if(indxbas.ne.0) then ! record temp, pH, and del values of basin exports
-             c_chem(indxbas)%Temp = tempc
-             c_chem(indxbas)%pH = ph
-             nis=0            
-             do n = 1,nsolute
-               if(sol_id(n)%iso) then
-                 nis=nis+1
-                 c_chem(indxbas)%delta(n,out)=conc1(nsolute+nis)
-               end if
-             end do
-          endif
-          do 21 n = 1, nsolute
+      nis=0  ! counter for number of isotopes tracked (currently limited to two: 18O and D).
+      do 10 n = 1,nsolute
+          if(im.eq.3.or.im.eq.2) then ! input or output, update only one slot (plus reaction if react is true)
+            Moles = conc1(n)*totvol*a_thousand !This should cover snowpack chem on days of no snowpack.
+            c_chem(indx)%M(n,im)= c_chem(indx)%M(n,im)+ Moles !Imports and exports use conservative mixing
+          else  ! Assign inital or final Moles (im = 1 or 5) which use second column of tally table. 
+                ! Details of reactions recorded in next section [do 20 ....]
             k=sol_id(n)%tally
-!            c_chem(indx)%M(n,rxn) = 0D0
-            do 11 j = 3, ntally_cols  ! first two cols are conc. of conservative and reactive solutions
-              c_chem(indx)%Rxn(n,j) = tally_table(k,j)*mult(j)*vol*a_thousand  ! track solute production or consumption for each entitiy
-              c_chem(indx)%M(n,rxn) = c_chem(indx)%M(n,rxn)+ c_chem(indx)%Rxn(n,j) ! sum of entity reactions for each solute
-              if(abs(c_chem(indx)%M(n,rxn)).gt.0.01) react = .TRUE.
-!  sum reactions for basin, mru, and uz; mru only, if not stream. Note that the
-!  indices are those shared through the PHREEQMMS_MOD. Reactions do not occur
-!  in transient mixes (mrures>9).
-              c_chem_basin%Rxn(n,j) = c_chem_basin%Rxn(n,j)+&
-                c_chem(indx)%Rxn(n,j)
-              c_chem_basin%M(n,rxn) = c_chem_basin%M(n,rxn)+&
-                c_chem(indx)%Rxn(n,j)
-              if(notstream) then
-                  c_chem_mru(is)%Rxn(n,j) = c_chem_mru(is)%Rxn(n,j)+&
-                    c_chem(indx)%Rxn(n,j)
-                  c_chem_mru(is)%M(n,rxn) = c_chem_mru(is)%M(n,rxn)+&
-                    c_chem(indx)%Rxn(n,j)
-              else
-                  c_chem_hyd%Rxn(n,j) = c_chem_hyd%Rxn(n,j)+&
-                    c_chem(indx)%Rxn(n,j)
-                  c_chem_hyd%M(n,rxn) = c_chem_hyd%M(n,rxn)+&
-                    c_chem(indx)%Rxn(n,j)
-			  endif
-              if(restype.eq.5) then ! sum uz inputs&
-                  c_chem_uzgen(is)%Rxn(n,j) = c_chem_uzgen(is)%Rxn(n,j)+&
-                    c_chem(indx)%Rxn(n,j)
-                  c_chem_uzgen(is)%M(n,rxn) = c_chem_uzgen(is)%M(n,rxn)+&
-                    c_chem(indx)%Rxn(n,j)
-                if(riparian(ia,is)) then
-                  c_chem_uzrip(is)%Rxn(n,j) = c_chem_uzrip(is)%Rxn(n,j)+&
-                    c_chem(indx)%Rxn(n,j)
-                  c_chem_uzrip(is)%M(n,rxn) = c_chem_uzrip(is)%M(n,rxn)+&
-                    c_chem(indx)%Rxn(n,j)
-                else
-                  c_chem_uzup(is)%Rxn(n,j) = c_chem_uzup(is)%Rxn(n,j)+&
-                    c_chem(indx)%Rxn(n,j)
-                  c_chem_uzup(is)%M(n,rxn) = c_chem_uzup(is)%M(n,rxn)+&
-                    c_chem(indx)%Rxn(n,j)
-                endif
-            endif
-11          continue
-21        continue
-          do 31 j = 3, ntally_cols  ! Record entity masses per kilogram of water in reservoir. These remain at zero for basin, mru, and riparian pseudo reservoirs
-            c_chem(indx)%Mass(j) = tally_table(ntally_rows+1,j)
-31        continue
-      end if
-!
-!     Use 5 concentration to establish 5 masses and record isotopes
-!     This will avoid drift errors in 5 masses from additions.
-!     im for 5 mix is either a 3 or a -1. The last one will 
-!     stick (important for the incongruous melting)
-!
-      if(im.ne.1.and.im.eq.3.or.im.eq.-1) then 
-        nis=0
-        do 15 n = 1, nsolute
-          if(sol_id(n)%iso) then
-            nis=nis+1
-            c_chem(indx)%delta(n,fin)=conc1(nsolute+(3*nis-2))
+            Moles = tally_table(k,2)*vol*a_thousand
+            c_chem(indx)%M(n,im) = Moles
           end if
-          k=sol_id(n)%tally
-          c_chem(indx)%M(n,fin) = tally_table(k,2)*vol*a_thousand
-   15   continue
-      end if  
-!  debug
-!      write(25,121)nstep,indx,indxb, imetric,
-!     $     (c_chem_basin%M(5,im),c_chem_basin%vol(im),im = 1,5)
-! 121  format(I4, 2I10, i4, 10F12.1)
-!      if (indx.gt.200) write(25,122)nstep,indx,indxb, imetric,
-!     $     (c_chem(indx)%M(5,im),c_chem(indx)%vol(im),im = 1,5)
-! 122  format(I4, 2I10, i4, 10F12.1)
-
+          if(sol_id(n)%iso) then ! track input and output deltas which should only occur on a single input or output.
+            nis=nis+1
+            c_chem(indx)%delta(n,im)=conc1(nsolute+nis)  ! isotopic compositions are not affected by 
+                                      ! reactions so record deltas returned by phr_mix into the conc vector
+                                      ! that contains results of a conservative mix.
+          end if
+          vwdelta=vol*c_chem(indx)%delta(n,im)
+    !
+    !     Update Moles and deltas for basin, mru, riparian and stream.
+    !
+          if(basin) then
+            c_chem_basin%M(n,im) = c_chem_basin%M(n,im) + Moles
+            c_chem_basin%delta(n,im) = c_chem_basin%delta(n,im) + vwdelta
+          end if
+          if(mru) then
+            c_chem_mru(is)%M(n,im) = c_chem_mru(is)%M(n,im) + Moles
+            c_chem_mru(is)%delta(n,im) = c_chem_mru(is)%delta(n,im) + vwdelta
+          end if
+          if(restype.eq.5) then
+            c_chem_uzgen(is)%M(n,im) = c_chem_uzgen(is)%M(n,im) + Moles
+            c_chem_uzgen(is)%delta(n,im) = c_chem_uzgen(is)%delta(n,im) + vwdelta
+            if(riparian(ia,is))then
+              c_chem_uzrip(is)%M(n,im) = c_chem_uzrip(is)%M(n,im) + Moles
+              c_chem_uzrip(is)%delta(n,im) = c_chem_uzrip(is)%delta(n,im) + vwdelta
+            else
+              c_chem_uzup(is)%M(n,im) = c_chem_uzup(is)%M(n,im) + Moles
+              c_chem_uzup(is)%delta(n,im) = c_chem_uzup(is)%delta(n,im) + vwdelta
+            endif
+          if(restype.eq.99) &
+            c_chem_hyd%M(n,im) = c_chem_hyd%M(n,im) + Moles
+            c_chem_hyd%delta(n,im) = c_chem_hyd%delta(n,im) + vwdelta
+          endif
+ 10   continue
+!     
+!     Compute reaction totals and percentage of elemental yields that are accounted for by solute of interest.
+!Moles, M_rxn,M_diff,M_elem, M_elem_tot, M_diff_e, M_ElemFrac
+      if(react) then
+        vol = c_chem(indx)%vol(fin)  ! reactions take place in final volume
+        do 20 n = 1,nsolute
+          k=sol_id(n)%tally ! row of solute
+          ke=sol_id(n)%tally_e ! row of element (unvalenced solute)
+          M_cons = conc1(n) ! molality of solute after conservative mix
+          M_rxn = tally_table(k,2) ! molality of solute after 24 hours of reaction with defined entities
+          M_diff = M_rxn - M_cons ! composite production (+) or consumption (-) of solute by reactions
+!
+! Track elements produced or consumed by entities
+!
+          M_elem_sum = 0D0
+          do j = 3, ntally_cols
+              M_elem  = tally_table(ke,j)*mult(j)
+              M_elem_sum = M_elem_sum + M_elem
+              c_chem(indx)%Rxn(n,j) = M_elem *vol*a_thousand
+! composite reservoirs
+              c_chem_basin%Rxn(n,j) = c_chem_basin%Rxn(n,j) +  M_elem *vol*a_thousand
+              if(restype.lt.10) then ! Mru reservoir
+                c_chem_mru(is)%Rxn(n,j) = c_chem_mru(is)%Rxn(n,j) + M_elem *vol*a_thousand
+              end if
+              if(restype.eq.5) then
+                c_chem_uzgen(is)%Rxn(n,j) = c_chem_uzgen(is)%Rxn(n,j) + M_elem *vol*a_thousand
+                if(riparian(ia,is))then
+                  c_chem_uzrip(is)%Rxn(n,j) = c_chem_uzrip(is)%Rxn(n,j) + M_elem *vol*a_thousand
+                else
+                  c_chem_uzup(is)%Rxn(n,j) = c_chem_uzup(is)%Rxn(n,j) + M_elem *vol*a_thousand
+                endif
+              if(restype.eq.99) &
+                c_chem_hyd%Rxn(n,j) = c_chem_hyd%Rxn(n,j) + M_elem *vol*a_thousand
+              endif
+              
+          end do
+          if (M_elem_sum.gt.0D0) then
+              c_chem(indx)%ElemFrac(n) = M_diff/M_elem_sum*100D0
+          else
+              c_chem(indx)%ElemFrac(n) = 0D0
+          endif
+20      continue
+!
+! Track moles of entities remaining at end of time step. This is check of equilibrium and will not be 
+! available for composite reservoirs
+!
+        do j = 3, ntally_cols
+            c_chem(indx)%Mass(j) = tally_table(ntally_rows+1,j)
+        end do
+      end if
       
       if (phr_tf) then
 ! for nsolute = 11
         write(debug%lun,123) nstep,(datetime(i),i=1,3),indx, &
-           ' out ',imetric, indxmru, indxbas, totvol,(c_chem(indx)%vol(i),i=1,5), &
+           ' out ',imetric,mru, basin, react, totvol,(c_chem(indx)%vol(i),i=1,5), &
            ((c_chem(indx)%M(i,j),j=1,5),i=7,11)
 ! for nsolute = 1
 !        write(26,123) nstep,(datetime(i),i=1,3),indx, &
-!           ' in ',imetric, indxmru, indxbas, totvol,(c_chem(indx)%vol(i),i=1,5), &
+!           ' in ',imetric, mru, basin, totvol,(c_chem(indx)%vol(i),i=1,5), &
 !           (c_chem(indx)%M(1,j),j=1,5)
       end if
 ! // debug
 
       update_chem = 0
- 123  format(5I5,A,3I5,1X,31E14.6)
+ 123  format(5I5,A,I5,3L4,1X,31E14.6)
 
       RETURN
       END
@@ -8284,7 +10301,7 @@
    
       USE WEBMOD_PHREEQ_MMS, only : aline, one, a_thousand, rxn, iso_n,&
              almost_one, fill_factor, phr_tf, no_rxn, n_ent,&
-             rxnmols, tempc, pH, ph_5, tsec, tally_table, ires,&
+             rxnmols, tempc, pH, ph_final, tsec, tally_table, ires,&
              ntally_rows, ntally_cols, conc, &
              ln_10, c_chem,ID, SETOUTPUTFILEON, SETERRORFILEON, &
              SETLOGFILEON, SETSELECTEDOUTPUTFILEON, res_D_permil, evap_D_permil, &
@@ -8391,7 +10408,7 @@
       fracs(1) = 1.0
       iresult = phr_mix(ID,1, solns, fracs,  solns(1),&
                  fill_factor, solns(1), conc, phr_tf, no_rxn,&
-                 rxnmols,tempc,ph,ph_5,tsec,tally_table,ntally_rows,&
+                 rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                  ntally_cols)
       IF (iresult.NE.0) THEN
          PRINT *, 'Errors during phr_mix:'
@@ -8415,9 +10432,9 @@
 !
 !      iresult = test(resindx, evapvol, i, conc)
 !     $, pH,tempc,
-!     $                         tally_table,n_ent,indxm,indxb,ires)
+!     $                         tally_table,n_ent,yes_m,yes_b,ires,not_rxn)
 !      iresult = update_chem(resindx,evapvol,4,conc,pH,tempc,&
-!                               tally_table,n_ent,indxm,indxb,ires)
+!                               tally_table,n_ent,yes_m,yes_b,ires,not_rxn)
 !      IF (iresult.NE.0) THEN
 !        PRINT *, 'Errors updating mole matrix:'
 !        STOP
@@ -8430,7 +10447,7 @@
 !
 !      integer function test(conc1)
 !!     $, pH,tempc,
-!!     $                         tally_table,n_ent,indxm,indxb,ires)
+!!     $                         tally_table,n_ent,yes_m,yes_b,ires,not_rxn)
 !      double precision, intent (inout) :: conc1(:) ! , e !, pH, tempc, tally_table(:,:)
 !      integer :: i, j !, n_ent(:), indxm, indxb, ires
 !      test = 0

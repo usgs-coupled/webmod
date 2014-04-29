@@ -595,8 +595,8 @@ c
 
          print*,'The file ',data_path,' describing time series of '//
      $      'input and/or observed concentrations could not be '//
-     $      'found or inputs of constant concentrations input have ' //
-     $      'been selected with  (described in the pqi file).'
+     $      'found or inputs of constant input concentrations have ' //
+     $      'been selected from the pqi file.'
          chemdat_flag = 0
       end if
 
