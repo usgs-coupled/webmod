@@ -222,6 +222,11 @@ void setup_cont (void) {
 		lval = (long *)umalloc (sizeof (long));
 		lval[0] = 0;
 		decl_control_int_array ("nhrOutON_OFF", 1, lval);
+
+
+		lval = (long *)umalloc (sizeof (long));
+		lval[0] = 0;
+		decl_control_int_array ("segmentOutON_OFF", 1, lval);
 /*
 **	file names
 */
