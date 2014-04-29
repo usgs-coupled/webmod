@@ -59,13 +59,14 @@
 //#define MAXTOKLEN 128    /* max no of chars in token */
 //#define MAXLNLEN 256     /* max file line length */
 //#ifndef MAXPATHLEN
-//#define MAXPATHLEN 256   /* max no of chars in a path */
+#define MAXPATHLEN 512   /* max no of chars in a path */
 //#endif
 
 #define MAX_NDIMEN 3       /* max no. of dimensions for a var or param */
+#define MAXVARLEN 32       /* max no. of chars in variable string */
 //#define MAXKEYLEN 50       /* max no. of chars in key string */
 //#define MAXDIMLEN 50       /* max no. of chars in dimen string */
-#define MAXSTATVARS 200     /* max no. of statistic variables */
+//#define MAXSTATVARS 200     /* max no. of statistic variables */
 //#define MAXDISPVARS 200    /* max no. of display variables */
 //#define MAXINFOLEN 80      /* max no. of chars in run info string */
 

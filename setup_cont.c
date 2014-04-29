@@ -218,6 +218,10 @@ void setup_cont (void) {
 		lval = (long *)umalloc (sizeof (long));
 		lval[0] = 0;
 		decl_control_int_array ("windspeed_cbh_flag", 1, lval);
+
+		lval = (long *)umalloc (sizeof (long));
+		lval[0] = 0;
+		decl_control_int_array ("nhrOutON_OFF", 1, lval);
 /*
 **	file names
 */
@@ -263,6 +267,7 @@ void setup_cont (void) {
 		decl_control_string ("sro_to_dprst_dynamic", "dynsrotodprst");
 		decl_control_string ("sro_to_imperv_dynamic", "dynsrotoimperv");
 		decl_control_string ("csv_output_file", "prms_summary.csv");
+        decl_control_string ("nhruOutBaseFileName", "nhruout_path");
 /*
 **	run start and end times
 */
@@ -318,6 +323,16 @@ void setup_cont (void) {
 		lval[0] = 0;
         decl_control_int_array ("nmapOutVars", 1, lval);
 
+/*
+**	nhru_summary
+*/
+        lval = (long *)umalloc (sizeof (long));
+		lval[0] = 0;
+        decl_control_int_array ("nhruOutON_OFF", 1, lval);
+        lval = (long *)umalloc (sizeof (long));
+		lval[0] = 0;
+        decl_control_int_array ("nhruOutVars", 1, lval);
+		
 /*
 **	graphics display
 */
