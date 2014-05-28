@@ -3031,7 +3031,8 @@ c Recharge to preferential flow and recharge weighted by recharge from
 c each wetness index bin. Also add the volume of unsaturated zone pore
 c water incorporated into the saturated zone from a rising water table.
 c
-        vmix_uz2sat(ia,is) = v_rech_loc + v_qdf_loc  
+!        vmix_uz2sat(ia,is) = v_rech_loc + v_qdf_loc  
+        vmix_uz2sat(ia,is) = v_rech_loc
         vmix_uz(ia,is,3) = vmix_uz2can(ia,is) +
      $       vmix_uz2sat(ia,is) + v_qdf_loc   !transpiration + local recharge + preferential flow
 

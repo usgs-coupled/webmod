@@ -151,14 +151,6 @@
            INTEGER :: reset_DI
          END FUNCTION reset_DI
       END INTERFACE
-      
-!      INTERFACE
-!         FUNCTION TEST(conc1)
-!         double precision, intent (inout) :: conc1(:) 
-!         INTEGER :: TEST
-!         END FUNCTION TEST
-!      END INTERFACE
-
        
 !  Functions
 !      INTEGER, EXTERNAL :: phreeq_id,chemflag, isoln, chemflag
@@ -3753,7 +3745,7 @@
         c_chem(i)%Temp = 0D0
         c_chem(i)%pH = 0D0
         c_chem(i)%M = 0D0
-        c_chem(i)%delta = -1000D0
+        c_chem(i)%delta = 0D0
         c_chem(i)%Rxn = 0D0
         c_chem(i)%Mass = 0D0
         c_chem(i)%MassDiff = 0D0
@@ -3793,7 +3785,7 @@
         c_chem_mru(i)%temp = 0D0
         c_chem_mru(i)%pH = 0D0
         c_chem_mru(i)%M = 0D0
-        c_chem_mru(i)%delta = -1000D0
+        c_chem_mru(i)%delta = 0D0
         c_chem_mru(i)%Rxn = 0D0
         c_chem_mru(i)%Mass = 0D0
         c_chem_mru(i)%MassDiff = 0D0
@@ -3802,7 +3794,7 @@
         c_chem_uzgen(i)%Temp = 0D0
         c_chem_uzgen(i)%pH = 0D0
         c_chem_uzgen(i)%M = 0D0
-        c_chem_uzgen(i)%delta = -1000D0
+        c_chem_uzgen(i)%delta = 0D0
         c_chem_uzgen(i)%Rxn = 0D0
         c_chem_uzgen(i)%Mass = 0D0
         c_chem_uzgen(i)%MassDiff = 0D0
@@ -3811,7 +3803,7 @@
         c_chem_uzrip(i)%Temp = 0D0
         c_chem_uzrip(i)%pH = 0D0
         c_chem_uzrip(i)%M = 0D0
-        c_chem_uzrip(i)%delta = -1000D0
+        c_chem_uzrip(i)%delta = 0D0
         c_chem_uzrip(i)%Rxn = 0D0
         c_chem_uzrip(i)%Mass = 0D0
         c_chem_uzrip(i)%MassDiff = 0D0
@@ -3820,7 +3812,7 @@
         c_chem_uzup(i)%Temp = 0D0
         c_chem_uzup(i)%pH = 0D0
         c_chem_uzup(i)%M = 0D0
-        c_chem_uzup(i)%delta = -1000D0
+        c_chem_uzup(i)%delta = 0D0
         c_chem_uzup(i)%Rxn = 0D0
         c_chem_uzup(i)%Mass = 0D0
         c_chem_uzup(i)%MassDiff = 0D0
@@ -3845,7 +3837,7 @@
       c_chem_basin%Temp = 0D0
       c_chem_basin%pH = 0D0
       c_chem_basin%M = 0D0
-      c_chem_basin%delta = -1000
+      c_chem_basin%delta = 0D0
       c_chem_basin%Rxn = 0D0
       c_chem_basin%Mass = 0D0
       c_chem_basin%MassDiff = 0D0
@@ -3854,7 +3846,7 @@
       c_chem_hyd%Temp = 0D0
       c_chem_hyd%pH = 0D0
       c_chem_hyd%M = 0D0
-      c_chem_hyd%delta = -1000
+      c_chem_hyd%delta = 0D0
       c_chem_hyd%Rxn = 0D0
       c_chem_hyd%Mass = 0D0
       c_chem_hyd%MassDiff = 0D0
@@ -3868,15 +3860,18 @@
             STOP
          ENDIF
          do j = 1,nsolute
-           if(sol_name(j).eq.tally_row_label(i))&
-               sol_id(j)%tally = i
-           if(parse(sol_name(j), '(').eq.tally_row_label(i))&  ! flag the elemental form for tracking masses of entities
-               sol_id(j)%tally_e = i
-           if(sol_name(j).eq.'Alkalinity'.and.tally_row_label(i).eq.&  ! Need to understand what's going on between Alk and C
-             'C')then
-               sol_id(j)%tally = i
-               sol_id(j)%tally_e = i
-           end if
+           if(sol_name(j).eq.tally_row_label(i)) sol_id(j)%tally = i ! flag the valenced state
+           if(parse(sol_name(j), '(').eq.tally_row_label(i)) sol_id(j)%tally_e = i  ! flag the elemental form for tracking masses of entities
+           !if(sol_name(j).eq.'Alkalinity')then
+           !    sol_id(j)%tally = i
+           !    sol_id(j)%tally_e = i
+           !end if
+              
+           !if(sol_name(j).eq.'Alkalinity'.and.tally_row_label(i).eq.&  ! Need to understand what's going on between Alk and C
+           !  'C')then
+           !    sol_id(j)%tally = i
+           !    sol_id(j)%tally_e = i
+           !end if
          end do
       end do
       tally_row_label(ntally_rows + 1) = "Moles"
@@ -4521,7 +4516,7 @@
          end do
 50050 continue
 
-! Initialize c_chem volumes with 1 liter, Temp=25degC, ph=7, del value -1000 and solute mass = zero, 
+! Initialize c_chem volumes with 1 liter, Temp=25degC, ph=7, delta value 0 and solute mass = zero, 
       do i = 1,nphrsolns
          c_chem(i)%vol(init)=1.0e-3
          c_chem(i)%Temp(init)=25.D0
@@ -4529,7 +4524,7 @@
          do j = 1, nsolute
             do k = 1,5 ! Init, in, out, rxn|ET, 5
               c_chem(i)%M(j,k) = 0.D0
-              c_chem(i)%delta(j,k) = -1000.D0
+              c_chem(i)%delta(j,k) = 0D0
             end do
           end do
       end do
@@ -4628,7 +4623,7 @@
                        'for chvar number ',ivar
                   chvar_conv(ivar,nsolute+1) =&
                        mru_area(imru)*a_million
-               else if (ires.lt.16) then ! all reservoirs other but streams
+               else if (ires.lt.16) then ! all other reservoirs but streams
                  if(ires.eq.15.and.imru.eq.0) then  ! basin (should be done with basin variables but this allows a double check)
                   print*,'Loads calculated using basin area ',&
                        'for chvar number ',ivar
@@ -4705,11 +4700,7 @@
          CALL OutputErrorString(id)
          STOP
       end if
-! debug
-!      conc = 0.0
-!      iresult = test(conc)
-      
-!      write(chemout_file_unit,'(A)')'is, mixture, conc,' 
+!
       iresult = phr_mix(ID,1, src(1), fracs,  dest(1),&
            fill_factor, dest(1), conc, phr_tf, n_user,rxnmols,tempc,&
            ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
@@ -4719,9 +4710,6 @@
          CALL OutputErrorString(id)
 !!         STOP
       ENDIF
-! debug
-!      iresult = test(conc)
-
 !
 ! Typical concentrations for each external source (irrigation and/or groundwater)
 !
@@ -5944,7 +5932,7 @@
  170  format('s_hyd',I3.3)
 
 210 format('Volume of water, in cubic meters,',&
-       ' difference and remaining moles of Entity, per cubic meter at end of day.',&
+       ' difference and remaining moles of Entity, per kilogram of water at end of day.',&
        /  'nstep Year Mo Dy        Volume', 50A30)      
  211 format('There are no reactive entities in transient reservoirs')
 !
@@ -6031,7 +6019,7 @@
       real depvol, irrig_frac
       real dt
       
-      double precision str_vol, vol_in, vol_out
+      double precision str_vol, vol_in, vol_out, M_Elem_Sum
       double precision chvar_conv_t(nchemvar,nsolute+1)
  
 !      double precision cconc_precipM(nsolute)
@@ -6364,10 +6352,10 @@
                  c_chem(i)%M(j,rxn) = 0.0
                  c_chem(i)%M(j,fin) = 0.0
                  c_chem(i)%delta(j,init) = c_chem(i)%delta(j,fin)
-                 c_chem(i)%delta(j,in) = -1000.0
-                 c_chem(i)%delta(j,out) = -1000.0
-                 c_chem(i)%delta(j,rxn) = -1000.0
-                 c_chem(i)%delta(j,fin) = -1000.0
+                 c_chem(i)%delta(j,in) = 0.0
+                 c_chem(i)%delta(j,out) = 0.0
+                 c_chem(i)%delta(j,rxn) = 0.0
+                 c_chem(i)%delta(j,fin) = 0.0
  203        continue
       else
          step1=.false.
@@ -6501,8 +6489,8 @@
          iphrq_mru = is
          mru_in_vol(is)=0D0
          mru_out_vol(is)=0D0
-         delta_D = -1000D0
-         delta_18O = -1000D0
+         delta_D = 0D0
+         delta_18O = 0D0
          do n=1,nsolute
              ch_mru_permil_in(is,n)=0D0
              ch_mru_permil_out(is,n)=0D0
@@ -7222,17 +7210,15 @@
                  evap=vmix_snow(is,6)
                  ison=iso_n(is)
                  rh=relhum(1)
-!                 iresult = test(conc)
                  iresult=fractionate(snow,indx,evap,totvol,ison,rh,tempc)  ! Rayleigh fractionation of evaporated (or sublimated) water
-!                 iresult = test(conc)
                  IF (iresult.NE.0) THEN
                   PRINT *, 'Errors during sublimation fractionation'
                   CALL OutputErrorString(id)
                   STOP
                  ENDIF
                elseif(n_iso.ne.0) then  ! No sublimation but isotopes tracked. Assign deltas to reservoirs for use in pulse computations
-                 res_D_permil = -1000D0
-                 res_18O_permil = -1000D0
+                 res_D_permil = 0D0
+                 res_18O_permil = 0D0
                  i = 1
                  do while(i.le.n_iso)
                    id_len = length(sol_name(iso_list(i)))
@@ -8662,8 +8648,14 @@
 !     
 ! The following section executes on days when there is
 !     flux from the hillslope to the drainage system
-!     (vmix_hill(is,3) >0). This should be every step.
+!     (vmix_hill(is,3) >0). This should be every step when
+!     using exponential decay (T_decay=0) but hillslope 
+!     export can equal zero when using linear (T_decay=0)
+!     or parabolic (T_decay=0) transmissivity profiles.
 !
+        mixture = solnnum(1,10,0,is,0,0,0)
+        indx = isoln(mixture,nchemdat,nmru,nac,clark_segs, &
+               ires,ichemdat,imru,inac,ihydro)
         if(vmix_hill(is,3).gt.0.0) then
 
 ! Inputs: No need to use temporary input reservoir number 14
@@ -8674,7 +8666,7 @@
 ! residual volume so res 15 and its associated two-part mixing
 ! would be needed.
 !
-          mixture = solnnum(1,10,0,is,0,0,0)
+!          mixture = solnnum(1,10,0,is,0,0,0)
           totvol = vmix_hill(is,2)
 
           if (totvol.gt.0.0) then ! Outputs to stream
@@ -8723,15 +8715,7 @@
 !$$$     $        (solns(ik),fracs(ik),ik=1,5)
 !$$$         write(*,199)(conc(ik),ik=1,nsolute)
 
-!     Update volume/mole matrix in two calls to allow mru and basin accounting of transient hillslope outputs
-            indx = isoln(mixture,nchemdat,nmru,nac,clark_segs,&
-                 ires,ichemdat,imru,inac,ihydro)
-            iresult = update_chem(indx,totvol,2,conc,pH,tempc,&
-                            tally_table,n_ent,not_m,not_b,ires,not_rxn)
-            IF (iresult.NE.0) THEN
-               PRINT *, 'Errors updating mole matrix:'
-               STOP
-            ENDIF
+!     Update transient hillslope outputs as exports from MRU. Will total as a negative in 5th column of restype 10
             iresult = update_chem(indx,totvol,3,conc,pH,tempc,&
                             tally_table,n_ent,yes_m,not_b,ires,not_rxn)
             IF (iresult.NE.0) THEN
@@ -8789,12 +8773,13 @@
          totvol = 0.0
          do 22 is = 1,nmru
             totvol = totvol + vmix_hillexp(ih,is)  ! hillslope inputs
- 22      continue
-         do 24 is = 1,nmru
-            solns(is) = solnnum(1,10,0,is,0,0,0)
-            fracs(is) = vmix_hillexp(ih,is)/totvol
-            if(fracs(is).lt.0)fracs(is)=0.0
- 24      continue
+22       continue
+         if(totvol.gt.0.0) then
+           do 24 is = 1,nmru
+              solns(is) = solnnum(1,10,0,is,0,0,0)
+              fracs(is) = vmix_hillexp(ih,is)/totvol
+              if(fracs(is).lt.0)fracs(is)=0.0
+ 24        continue
 !         iresult = fill_ent(n_user,mixture,nchemdat,nmru,
 !     $        nac,clark_segs,src_init)
 !         if(iresult.ne.0) then
@@ -8805,81 +8790,86 @@
 
 ! Check for negative fractions
 
-               iresult=checkfracs(nmru,solns,fracs,mixture)
-               if(iresult.ne.0) then
-                  PRINT*,'Errors with mixing fractions'
-               end if
+           iresult=checkfracs(nmru,solns,fracs,mixture)
+           if(iresult.ne.0) then
+             PRINT*,'Errors with mixing fractions'
+           end if
 ! Mix
-         iresult = phr_mix(ID,nmru, solns, fracs,  mixture,&
+           iresult = phr_mix(ID,nmru, solns, fracs,  mixture,&
               fill_factor, mixture, conc, phr_tf, no_rxn,rxnmols,&
               tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
 
-         IF (iresult.NE.0) THEN
+           IF (iresult.NE.0) THEN
             PRINT *, 'Errors during phr_mix:'
             CALL OutputErrorString(id)
             STOP
-         ENDIF
+           ENDIF
 !$$$         write(*,198)(datetime(j),j=1,3), mixture,
 !$$$     $        (solns(ik),fracs(ik),ik=1,nmru)
 !$$$         write(*,199)(conc(ik),ik=1,nsolute)
 
-! Record stream inputs in c_chem. Append with upstream later
+! Record stream inputs in c_chem. Append with upstream after reactions in updatechem
          !indx = isoln(solnnum(0,99,0,0,0,ih,0),nchemdat,nmru,&
          !     nac,clark_segs,ires,ichemdat,imru,inac,ihydro)
-         iresult = update_chem(indx,totvol,2,conc,ph_final,tempc,&
-                               tally_table,n_ent,not_m,not_b,ires,not_rxn)
-         IF (iresult.NE.0) THEN
-            PRINT *, 'Errors updating mole matrix:'
-            STOP
-         ENDIF
+           iresult = update_chem(indx,totvol,2,conc,ph_final,tempc,&
+                         tally_table,n_ent,not_m,not_b,ires,not_rxn)
+           IF (iresult.NE.0) THEN
+             PRINT *, 'Errors updating mole matrix:'
+             STOP
+           ENDIF
+         end if ! totvol of hillslope exports > 0
 !
 !     Mix hillslope with previous solution
 !     
          mixture = solnnum(1,99,0,0,0,ih-1,0) ! defaults to outlet at ih=1
 
          solns(1) = solnnum(0,14,0,1,0,0,0) ! hillslope inputs
-         fracs(1) = totvol/str_vol  ! will equal 1.0 for segment farthest from outlet
-         if(fracs(1).lt.0)then
-            print*,'negative fraction for hillslope input ',&
-                 ' set to zero. It was equal to ',fracs(1)
-            fracs(1)=0.0
+         if(str_vol.gt.0.0) then
+           fracs(1) = totvol/str_vol  ! will equal 1.0 for segment farthest from outlet
+         else
+           if(fracs(1).lt.0.0) then
+              print*,'negative stream volume',&
+                   ' set to zero. It was equal to ',fracs(1)
+           end if
+           fracs(1) = 0.0
          end if
          
-         totvol = str_vol-totvol ! total - inputs = orig vol of segment
-         
-         solns(2) = solnnum(0,99,0,0,0,ih,0) ! orig chem in upstream section
-         fracs(2) = totvol/str_vol
-         if(fracs(2).lt.0)then
-            print*,'negative fraction for stream seg ',&
-                 ih,' set to zero. It was equal to ',fracs(2)
-            fracs(2)=0.0
-         end if
+         totvol = str_vol-totvol ! (total with input, diversion, and leakage) - inputs = orig vol of segment
 
+         if(str_vol.gt.zero) then
+           solns(2) = solnnum(0,99,0,0,0,ih,0) ! orig chem in upstream section
+           fracs(2) = totvol/str_vol
+           if(fracs(2).lt.0)then
+              print*,'negative fraction for stream seg ',&
+                   ih,' set to zero. It was equal to ',fracs(2)
+              fracs(2)=0.0
+           end if
+!
 ! fill entities with those of the upstream hydro segment (solns(2))
-         iresult = fill_ent(n_user,solns(2),nchemdat,nmru,&
-              nac,clark_segs,src_init)
-         if(iresult.ne.0) then
-            PRINT *, 'Errors assigning phreeq entities:'
-            CALL OutputErrorString(id)
-            STOP
-         end if
+           iresult = fill_ent(n_user,solns(2),nchemdat,nmru,&
+                nac,clark_segs,src_init)
+           if(iresult.ne.0) then
+              PRINT *, 'Errors assigning phreeq entities:'
+              CALL OutputErrorString(id)
+              STOP
+           end if
 
 ! Check for negative fractions
 
-               iresult=checkfracs(2,solns,fracs,mixture)
-               if(iresult.ne.0) then
-                  PRINT*,'Errors with mixing fractions'
-               end if
+                 iresult=checkfracs(2,solns,fracs,mixture)
+                 if(iresult.ne.0) then
+                    PRINT*,'Errors with mixing fractions'
+                 end if
 ! Mix
-         iresult = phr_mix(ID,2, solns, fracs,  solns(2),&
-              fill_factor, mixture, conc, phr_tf, n_user,rxnmols,&
-              tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
+           iresult = phr_mix(ID,2, solns, fracs,  solns(2),&
+                fill_factor, mixture, conc, phr_tf, n_user,rxnmols,&
+                tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
 
-         IF (iresult.NE.0) THEN
-            PRINT *, 'Errors during phr_mix:'
-            CALL OutputErrorString(id)
-            STOP
-         ENDIF
+           IF (iresult.NE.0) THEN
+              PRINT *, 'Errors during phr_mix:'
+              CALL OutputErrorString(id)
+              STOP
+           ENDIF
 !$$$         write(*,198)(datetime(j),j=1,3), mixture,
 !$$$     $        (solns(ik),fracs(ik),ik=1,2)
 !$$$         write(*,199)(conc(ik),ik=1,nsolute)
@@ -8887,87 +8877,103 @@
 !
 ! Export stream diversions and channel losses as exports of conservative mix
 !
-        totvol = vmix_diversion(ih)+vmix_chan_loss(ih)
-        iresult = update_chem(indx,totvol,3,conc,ph_final,tempc,&
-                              tally_table,n_ent,not_m,yes_b,ires,not_rxn)
-        IF (iresult.NE.0) THEN
-           PRINT *, 'Errors updating mole matrix:'
-           STOP
-        ENDIF
-        
-        !if(totvol.gt.0.0) then
-        !  c_chem_basin%vol(out)= &
-        !    c_chem_basin%vol(out)+totvol
-        !    basin_out_vol=basin_out_vol+totvol
-        !  do k=1,nsolute
-        !    c_chem_basin%M(k,out)=&
-        !      c_chem_basin%M(k,out)+ conc(k)*totvol*a_thousand
-        !    ch_basin_permil_out(k)=ch_basin_permil_out(k)+&
-        !          c_chem_basin%delta(k,out)*totvol
-        !  end do
-        !end if ! totvol.gt.0
+          totvol = vmix_diversion(ih)+vmix_chan_loss(ih)
+          iresult = update_chem(indx,totvol,3,conc,ph_final,tempc,&
+                                tally_table,n_ent,not_m,yes_b,ires,not_rxn)
+          IF (iresult.NE.0) THEN
+             PRINT *, 'Errors updating mole matrix:'
+             STOP
+          ENDIF
+          
+          !if(totvol.gt.0.0) then
+          !  c_chem_basin%vol(out)= &
+          !    c_chem_basin%vol(out)+totvol
+          !    basin_out_vol=basin_out_vol+totvol
+          !  do k=1,nsolute
+          !    c_chem_basin%M(k,out)=&
+          !      c_chem_basin%M(k,out)+ conc(k)*totvol*a_thousand
+          !    ch_basin_permil_out(k)=ch_basin_permil_out(k)+&
+          !          c_chem_basin%delta(k,out)*totvol
+          !  end do
+          !end if ! totvol.gt.0
 
 ! Remove diversions and channel losses, then include reaction products
 ! and update outputs and record as inputs to the next segment.
 ! If the outlet segment (ih=1) record as basin output.
 !
-        str_vol = str_vol - totvol
-        if (ih.gt.1) then
+          str_vol = str_vol - totvol
+          if (ih.gt.1) then
 !
 ! Update c_chem to reflect outputs
 !
-          iresult = update_chem(indx,str_vol,3,conc,ph_final,tempc,&
-                                tally_table,n_ent,not_m,not_b,ires,yes_rxn)
-          IF (iresult.NE.0) THEN
-             PRINT *, 'Errors updating mole matrix:'
-             STOP
-          ENDIF
-          indx = isoln(solnnum(0,99,0,0,0,ih-1,0),nchemdat,nmru,&
-                 nac,clark_segs,ires,ichemdat,imru,inac,ihydro)
-          iresult = update_chem(indx,str_vol,2,conc,ph_final,tempc,&
-                                   tally_table,n_ent,not_m,not_b,ires,not_rxn)
-          IF (iresult.NE.0) THEN
-             PRINT *, 'Errors updating mole matrix:'
-             STOP
-          ENDIF
-        else   ! export last segment.
-          iresult = update_chem(indx,str_vol,3,conc,ph_final,tempc,&
-                             tally_table,n_ent,not_m,yes_b,ires,yes_rxn)
-          IF (iresult.NE.0) THEN
-             PRINT *, 'Errors updating mole matrix:'
-             STOP
-          ENDIF
-          ch_outlet_m3 = str_vol
-          ch_outlet_tempC = tempc
-          ch_outlet_pH = ph_final
-          nis=0
-          do n = 1, nsolute
-              ch_outlet_M(n) = conc(n)*str_vol*a_thousand
-              ch_outlet_g(n) = conc(n)*str_vol*phq_lut(sol_id(n)%phq)%M2mg
-              ch_outlet_eq(n) = conc(n)*str_vol*phq_lut(sol_id(n)%phq)%M2meq
-              if(str_vol.gt.0.) then
-                  ch_outlet_mML(n) = ch_outlet_M(n) / str_vol
-                  ch_outlet_mgL(n) = ch_outlet_g(n) / str_vol
-                  ch_outlet_meqL(n) = ch_outlet_eq(n) / str_vol
-              else
-                  ch_outlet_mML(n) = 0D0
-                  ch_outlet_mgL(n) = 0D0
-                  ch_outlet_meqL(n) = 0D0
-              end if
-              ch_outlet_mMm2(n) =  ch_outlet_M(n) / basin_area / a_thousand
-              ch_outlet_mgm2(n) = ch_outlet_g(n) / basin_area / a_thousand
-              ch_outlet_meqm2(n) = ch_outlet_eq(n) / basin_area / a_thousand
-              if(sol_id(n)%iso) then ! Record delta of isotope, in permil
-                nis=nis+1
-                ch_outlet_permil(n)=conc(nsolute+nis)
-              end if
-          end do
-          !basin_out_vol=basin_out_vol+str_vol
-          !do k=1,nsolute
-          !  ch_basin_permil_out(k)=ch_basin_permil_out(k)+&
-          !        c_chem_basin%delta(k,out)*str_vol
-          !end do
-        end if
+            iresult = update_chem(indx,str_vol,3,conc,ph_final,tempc,&
+                                  tally_table,n_ent,not_m,not_b,ires,yes_rxn)
+            IF (iresult.NE.0) THEN
+               PRINT *, 'Errors updating mole matrix:'
+               STOP
+            ENDIF
+            indx = isoln(solnnum(0,99,0,0,0,ih-1,0),nchemdat,nmru,&
+                   nac,clark_segs,ires,ichemdat,imru,inac,ihydro)
+            iresult = update_chem(indx,str_vol,2,conc,ph_final,tempc,&
+                                     tally_table,n_ent,not_m,not_b,ires,not_rxn)
+            IF (iresult.NE.0) THEN
+               PRINT *, 'Errors updating mole matrix:'
+               STOP
+            ENDIF
+          else   ! export last segment.
+            iresult = update_chem(indx,str_vol,3,conc,ph_final,tempc,&
+                               tally_table,n_ent,not_m,yes_b,ires,yes_rxn)
+            IF (iresult.NE.0) THEN
+               PRINT *, 'Errors updating mole matrix:'
+               STOP
+            ENDIF
+            ch_outlet_m3 = str_vol
+            ch_outlet_tempC = tempc
+            ch_outlet_pH = ph_final
+            nis=0
+            do n = 1, nsolute
+                ch_outlet_M(n) = conc(n)*str_vol*a_thousand
+                ch_outlet_g(n) = conc(n)*str_vol*phq_lut(sol_id(n)%phq)%M2mg
+                ch_outlet_eq(n) = conc(n)*str_vol*phq_lut(sol_id(n)%phq)%M2meq
+                ch_outlet_mML(n) = ch_outlet_M(n) / str_vol
+                ch_outlet_mgL(n) = ch_outlet_g(n) / str_vol
+                ch_outlet_meqL(n) = ch_outlet_eq(n) / str_vol
+                ch_outlet_mMm2(n) =  ch_outlet_M(n) / basin_area / a_thousand
+                ch_outlet_mgm2(n) = ch_outlet_g(n) / basin_area / a_thousand
+                ch_outlet_meqm2(n) = ch_outlet_eq(n) / basin_area / a_thousand
+                if(sol_id(n)%iso) then ! Record delta of isotope, in permil
+                  nis=nis+1
+                  ch_outlet_permil(n)=conc(nsolute+nis)
+                end if
+            end do
+            !basin_out_vol=basin_out_vol+str_vol
+            !do k=1,nsolute
+            !  ch_basin_permil_out(k)=ch_basin_permil_out(k)+&
+            !        c_chem_basin%delta(k,out)*str_vol
+            !end do
+           end if
+         else if(ih.eq.1) then ! basin export equal to zero.
+            ch_outlet_m3 = 0D0
+            ch_outlet_tempC = 0D0
+            ch_outlet_pH = 0D0
+            nis=0
+            do n = 1, nsolute
+                ch_outlet_M(n) = 0D0
+                ch_outlet_g(n) = 0D0
+                ch_outlet_eq(n) = 0D0
+                ch_outlet_mML(n) = 0D0
+                ch_outlet_mgL(n) = 0D0
+                ch_outlet_meqL(n) = 0D0
+                ch_outlet_mMm2(n) = 0D0
+                ch_outlet_mgm2(n) = 0D0
+                ch_outlet_meqm2(n) = 0D0
+                if(sol_id(n)%iso) then ! Record delta of isotope, in permil
+                  nis=nis+1
+                  ch_outlet_permil(n)= 0D0
+                end if
+            end do
+         else ! Do nothing for dry segments upstream of outlet.
+         end if    
 
  20   continue                  ! end clark_segs loop
 
@@ -9019,7 +9025,7 @@
 !      c_chem_basin%vol(init) = vmix_basin(1)
 !      c_chem_basin%vol(in) = vmix_basin(2)
 !      c_chem_basin%vol(out) = vmix_basin(3)
-       c_chem_basin%vol(ET) = vmix_basin(6)
+!       c_chem_basin%vol(ET) = vmix_basin(6)
 !      c_chem_basin%vol(fin) = vmix_basin(4)
 !!      do 206 j = 1, nsolute  ! better to make this a sum of the reacted reservoirs ! Done
 !!        c_chem_basin%M(j,fin) =&
@@ -9180,6 +9186,8 @@
       !  ch_basin_tempC_in,ch_basin_tempC_out,ch_basin_tempC_final,&
       !  ch_basin_pH_in,ch_basin_pH_out,ch_basin_pH_final
 ! Composite moles and volumes recorded in Update_Chem, convert to mass, loads, and concentrations
+! ElemFrac is the fraction reaction gains or losses for a specific, charged or uncharged ion, that
+! is accounted for by production or consumption of the element by all entities.
 !
       nis=0
       do n = 1,nsolute
@@ -9211,9 +9219,9 @@
         ch_basin_mMm2_out(n) = ch_basin_M_out(n) / basin_area / a_thousand 
         ch_basin_mgm2_out(n) = ch_basin_g_out(n) / basin_area / a_thousand 
         ch_basin_meqm2_out(n) = ch_basin_eq_out(n) / basin_area / a_thousand 
-        ch_basin_mML_out(n) = ch_basin_M_in(n)/ch_basin_m3_out
-        ch_basin_mgL_out(n) = ch_basin_g_in(n)/ch_basin_m3_out
-        ch_basin_meqL_out(n) = ch_basin_eq_in(n)/ch_basin_m3_out
+        ch_basin_mML_out(n) = ch_basin_M_out(n)/ch_basin_m3_out
+        ch_basin_mgL_out(n) = ch_basin_g_out(n)/ch_basin_m3_out
+        ch_basin_meqL_out(n) = ch_basin_eq_out(n)/ch_basin_m3_out
         ch_basin_M_rxn(n) = c_chem_basin%M(n,rxn)
         ch_basin_g_rxn(n) = c_chem_basin%M(n,rxn)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
         ch_basin_eq_rxn(n) = c_chem_basin%M(n,rxn)*phq_lut(sol_id(n)%phq)%M2meq/a_thousand
@@ -9223,14 +9231,23 @@
         ch_basin_mML_final(n) = ch_basin_M_final(n)/ch_basin_m3_final
         ch_basin_mgL_final(n) = ch_basin_g_final(n)/ch_basin_m3_final
         ch_basin_meqL_final(n) = ch_basin_eq_final(n)/ch_basin_m3_final
-        ch_basin_ElemFrac(n) = c_chem_basin%ElemFrac(n)/ch_basin_m3_final
+!        ch_basin_ElemFrac(n) = c_chem_basin%ElemFrac(n)/ch_basin_m3_final
         ch_basin_M_final(n) = c_chem_basin%M(n,fin)
         ch_basin_g_final(n) = c_chem_basin%M(n,fin)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
         ch_basin_eq_final(n) = c_chem_basin%M(n,fin)*phq_lut(sol_id(n)%phq)%M2meq/a_thousand
         ch_basin_mMm2_final(n) = ch_basin_M_final(n) / basin_area / a_thousand 
         ch_basin_mgm2_final(n) = ch_basin_g_final(n) / basin_area / a_thousand 
         ch_basin_meqm2_final(n) = ch_basin_eq_final(n) / basin_area / a_thousand
-        
+        M_elem_sum = 0D0
+        do j=3,ntally_cols
+          M_elem_sum = M_elem_sum + c_chem_basin%Rxn(n,j)
+        end do
+        if(M_elem_sum.gt.0.0) then ! this should eliminate ElemFrac for isotopes too
+          ch_basin_ElemFrac(n) = c_chem_basin%M(n,rxn)/M_elem_sum
+        else
+          ch_basin_ElemFrac(n) = 0D0
+        end if
+          
 ! composite stream
         if(ch_hyd_m3_in.gt.0.) then
          ch_hyd_M_in(n) = c_chem_hyd%M(n,in)
@@ -9271,14 +9288,23 @@
         ch_hyd_mML_final(n) = ch_hyd_M_final(n)/ch_hyd_m3_final
         ch_hyd_mgL_final(n) = ch_hyd_g_final(n)/ch_hyd_m3_final
         ch_hyd_meqL_final(n) = ch_hyd_eq_final(n)/ch_hyd_m3_final
-        ch_hyd_ElemFrac(n) = c_chem_hyd%ElemFrac(n)/ch_hyd_m3_final
+!        ch_hyd_ElemFrac(n) = c_chem_hyd%ElemFrac(n)/ch_hyd_m3_final
         ch_hyd_M_final(n) = c_chem_hyd%M(n,fin)
         ch_hyd_g_final(n) = c_chem_hyd%M(n,fin)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
         ch_hyd_eq_final(n) = c_chem_hyd%M(n,fin)*phq_lut(sol_id(n)%phq)%M2meq/a_thousand
         ch_hyd_mMm2_final(n) = ch_hyd_M_final(n) / basin_area / a_thousand 
         ch_hyd_mgm2_final(n) = ch_hyd_g_final(n) / basin_area / a_thousand 
         ch_hyd_meqm2_final(n) = ch_hyd_eq_final(n) / basin_area / a_thousand 
-        if(sol_id(n)%iso) then ! Record delta of isotope, in permil
+        M_elem_sum = 0D0
+        do j=3,ntally_cols
+          M_elem_sum = M_elem_sum + c_chem_hyd%Rxn(n,j)
+        end do
+        if(M_elem_sum.gt.0.0) then ! this should eliminate ElemFrac for isotopes too
+          ch_hyd_ElemFrac(n) = c_chem_hyd%M(n,rxn)/M_elem_sum
+        else
+          ch_hyd_ElemFrac(n) = 0D0
+        end if
+          if(sol_id(n)%iso) then ! Record delta of isotope, in permil
            nis=nis+1
            if(ch_basin_m3_in.gt.0.) then
              ch_basin_permil_in = c_chem_basin%delta(n,in)/ch_basin_m3_in
@@ -9324,9 +9350,9 @@
             ch_mru_mMm2_out(is,n) = ch_mru_M_out(is,n) / mru_area(is) / a_thousand 
             ch_mru_mgm2_out(is,n) = ch_mru_g_out(is,n) / mru_area(is) / a_thousand 
             ch_mru_meqm2_out(is,n) = ch_mru_eq_out(is,n) / mru_area(is) / a_thousand 
-            ch_mru_mML_out(is,n) = ch_mru_M_in(is,n)/ch_mru_m3_out(is)
-            ch_mru_mgL_out(is,n) = ch_mru_g_in(is,n)/ch_mru_m3_out(is)
-            ch_mru_meqL_out(is,n) = ch_mru_eq_in(is,n)/ch_mru_m3_out(is)
+            ch_mru_mML_out(is,n) = ch_mru_M_out(is,n)/ch_mru_m3_out(is)
+            ch_mru_mgL_out(is,n) = ch_mru_g_out(is,n)/ch_mru_m3_out(is)
+            ch_mru_meqL_out(is,n) = ch_mru_eq_out(is,n)/ch_mru_m3_out(is)
             ch_mru_M_rxn(is,n) = c_chem_mru(is)%M(n,rxn)
             ch_mru_g_rxn(is,n) = c_chem_mru(is)%M(n,rxn)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
             ch_mru_eq_rxn(is,n) = c_chem_mru(is)%M(n,rxn)*phq_lut(sol_id(n)%phq)%M2meq/a_thousand
@@ -9336,13 +9362,23 @@
             ch_mru_mML_final(is,n) = ch_mru_M_final(is,n)/ch_mru_m3_final(is)
             ch_mru_mgL_final(is,n) = ch_mru_g_final(is,n)/ch_mru_m3_final(is)
             ch_mru_meqL_final(is,n) = ch_mru_eq_final(is,n)/ch_mru_m3_final(is)
-            ch_mru_ElemFrac(is,n) = c_chem_mru(is)%ElemFrac(n)/ch_mru_m3_final(is)
+!            ch_mru_ElemFrac(is,n) = c_chem_mru(is)%ElemFrac(n)/ch_mru_m3_final(is)
             ch_mru_M_final(is,n) = c_chem_mru(is)%M(n,fin)
             ch_mru_g_final(is,n) = c_chem_mru(is)%M(n,fin)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
             ch_mru_eq_final(is,n) = c_chem_mru(is)%M(n,fin)*phq_lut(sol_id(n)%phq)%M2meq/a_thousand
             ch_mru_mMm2_final(is,n) = ch_mru_M_final(is,n) / mru_area(is) / a_thousand 
             ch_mru_mgm2_final(is,n) = ch_mru_g_final(is,n) / mru_area(is) / a_thousand 
             ch_mru_meqm2_final(is,n) = ch_mru_eq_final(is,n) / mru_area(is) / a_thousand
+            M_elem_sum = 0D0
+            do j=3,ntally_cols
+              M_elem_sum = M_elem_sum + c_chem_mru(is)%Rxn(n,j)
+            end do
+            if(M_elem_sum.gt.0.0) then ! this should eliminate ElemFrac for isotopes too
+              ch_mru_ElemFrac(is,n) = c_chem_mru(is)%M(n,rxn)/M_elem_sum
+            else
+              ch_mru_ElemFrac(is,n) = 0D0
+            end if
+
 ! composite UZ
             if(ch_uzgen_m3_in(is).gt.0.) then
              ch_uzgen_M_in(is,n) = c_chem_uzgen(is)%M(n,in)
@@ -9371,9 +9407,9 @@
             ch_uzgen_mMm2_out(is,n) = ch_uzgen_M_out(is,n) / mru_area(is) / a_thousand 
             ch_uzgen_mgm2_out(is,n) = ch_uzgen_g_out(is,n) / mru_area(is) / a_thousand 
             ch_uzgen_meqm2_out(is,n) = ch_uzgen_eq_out(is,n) / mru_area(is) / a_thousand 
-            ch_uzgen_mML_out(is,n) = ch_uzgen_M_in(is,n)/ch_uzgen_m3_out(is)
-            ch_uzgen_mgL_out(is,n) = ch_uzgen_g_in(is,n)/ch_uzgen_m3_out(is)
-            ch_uzgen_meqL_out(is,n) = ch_uzgen_eq_in(is,n)/ch_uzgen_m3_out(is)
+            ch_uzgen_mML_out(is,n) = ch_uzgen_M_out(is,n)/ch_uzgen_m3_out(is)
+            ch_uzgen_mgL_out(is,n) = ch_uzgen_g_out(is,n)/ch_uzgen_m3_out(is)
+            ch_uzgen_meqL_out(is,n) = ch_uzgen_eq_out(is,n)/ch_uzgen_m3_out(is)
             ch_uzgen_M_rxn(is,n) = c_chem_uzgen(is)%M(n,rxn)
             ch_uzgen_g_rxn(is,n) = c_chem_uzgen(is)%M(n,rxn)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
             ch_uzgen_eq_rxn(is,n) = c_chem_uzgen(is)%M(n,rxn)*phq_lut(sol_id(n)%phq)%M2meq/a_thousand
@@ -9390,7 +9426,16 @@
             ch_uzgen_mMm2_final(is,n) = ch_uzgen_M_final(is,n) / mru_area(is) / a_thousand 
             ch_uzgen_mgm2_final(is,n) = ch_uzgen_g_final(is,n) / mru_area(is) / a_thousand 
             ch_uzgen_meqm2_final(is,n) = ch_uzgen_eq_final(is,n) / mru_area(is) / a_thousand
-! composite UZ riparian
+            M_elem_sum = 0D0
+            do j=3,ntally_cols
+              M_elem_sum = M_elem_sum + c_chem_uzgen(is)%Rxn(n,j)
+            end do
+            if(M_elem_sum.gt.0.0) then ! this should eliminate ElemFrac for isotopes too
+              ch_uzgen_ElemFrac(is,n) = c_chem_uzgen(is)%M(n,rxn)/M_elem_sum
+            else
+              ch_uzgen_ElemFrac(is,n) = 0D0
+            end if
+            ! composite UZ riparian
             if(ch_uzrip_m3_in(is).gt.0.) then
              ch_uzrip_M_in(is,n) = c_chem_uzrip(is)%M(n,in)
              ch_uzrip_g_in(is,n) = c_chem_uzrip(is)%M(n,in)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
@@ -9418,9 +9463,9 @@
             ch_uzrip_mMm2_out(is,n) = ch_uzrip_M_out(is,n) / uz_area(1,is) / a_thousand 
             ch_uzrip_mgm2_out(is,n) = ch_uzrip_g_out(is,n) / uz_area(1,is) / a_thousand 
             ch_uzrip_meqm2_out(is,n) = ch_uzrip_eq_out(is,n) / uz_area(1,is) / a_thousand 
-            ch_uzrip_mML_out(is,n) = ch_uzrip_M_in(is,n)/ch_uzrip_m3_out(is)
-            ch_uzrip_mgL_out(is,n) = ch_uzrip_g_in(is,n)/ch_uzrip_m3_out(is)
-            ch_uzrip_meqL_out(is,n) = ch_uzrip_eq_in(is,n)/ch_uzrip_m3_out(is)
+            ch_uzrip_mML_out(is,n) = ch_uzrip_M_out(is,n)/ch_uzrip_m3_out(is)
+            ch_uzrip_mgL_out(is,n) = ch_uzrip_g_out(is,n)/ch_uzrip_m3_out(is)
+            ch_uzrip_meqL_out(is,n) = ch_uzrip_eq_out(is,n)/ch_uzrip_m3_out(is)
             ch_uzrip_M_rxn(is,n) = c_chem_uzrip(is)%M(n,rxn)
             ch_uzrip_g_rxn(is,n) = c_chem_uzrip(is)%M(n,rxn)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
             ch_uzrip_eq_rxn(is,n) = c_chem_uzrip(is)%M(n,rxn)*phq_lut(sol_id(n)%phq)%M2meq/a_thousand
@@ -9430,13 +9475,22 @@
             ch_uzrip_mML_final(is,n) = ch_uzrip_M_final(is,n)/ch_uzrip_m3_final(is)
             ch_uzrip_mgL_final(is,n) = ch_uzrip_g_final(is,n)/ch_uzrip_m3_final(is)
             ch_uzrip_meqL_final(is,n) = ch_uzrip_eq_final(is,n)/ch_uzrip_m3_final(is)
-            ch_uzrip_ElemFrac(is,n) = c_chem_uzrip(is)%ElemFrac(n)/ch_uzrip_m3_final(is)
+!            ch_uzrip_ElemFrac(is,n) = c_chem_uzrip(is)%ElemFrac(n)/ch_uzrip_m3_final(is)
             ch_uzrip_M_final(is,n) = c_chem_uzrip(is)%M(n,fin)
             ch_uzrip_g_final(is,n) = c_chem_uzrip(is)%M(n,fin)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
             ch_uzrip_eq_final(is,n) = c_chem_uzrip(is)%M(n,fin)*phq_lut(sol_id(n)%phq)%M2meq/a_thousand
             ch_uzrip_mMm2_final(is,n) = ch_uzrip_M_final(is,n) / uz_area(1,is) / a_thousand 
             ch_uzrip_mgm2_final(is,n) = ch_uzrip_g_final(is,n) / uz_area(1,is) / a_thousand 
             ch_uzrip_meqm2_final(is,n) = ch_uzrip_eq_final(is,n) / uz_area(1,is) / a_thousand
+            M_elem_sum = 0D0
+            do j=3,ntally_cols
+              M_elem_sum = M_elem_sum + c_chem_uzrip(is)%Rxn(n,j)
+            end do
+            if(M_elem_sum.gt.0.0) then ! this should eliminate ElemFrac for isotopes too
+              ch_uzrip_ElemFrac(is,n) = c_chem_uzrip(is)%M(n,rxn)/M_elem_sum
+            else
+              ch_uzrip_ElemFrac(is,n) = 0D0
+            end if
 ! composite UZ uplands
             if(ch_uzup_m3_in(is).gt.0.) then
              ch_uzup_M_in(is,n) = c_chem_uzup(is)%M(n,in)
@@ -9465,9 +9519,9 @@
             ch_uzup_mMm2_out(is,n) = ch_uzup_M_out(is,n) / uz_area(2,is) / a_thousand 
             ch_uzup_mgm2_out(is,n) = ch_uzup_g_out(is,n) / uz_area(2,is) / a_thousand 
             ch_uzup_meqm2_out(is,n) = ch_uzup_eq_out(is,n) / uz_area(2,is) / a_thousand 
-            ch_uzup_mML_out(is,n) = ch_uzup_M_in(is,n)/ch_uzup_m3_out(is)
-            ch_uzup_mgL_out(is,n) = ch_uzup_g_in(is,n)/ch_uzup_m3_out(is)
-            ch_uzup_meqL_out(is,n) = ch_uzup_eq_in(is,n)/ch_uzup_m3_out(is)
+            ch_uzup_mML_out(is,n) = ch_uzup_M_out(is,n)/ch_uzup_m3_out(is)
+            ch_uzup_mgL_out(is,n) = ch_uzup_g_out(is,n)/ch_uzup_m3_out(is)
+            ch_uzup_meqL_out(is,n) = ch_uzup_eq_out(is,n)/ch_uzup_m3_out(is)
             ch_uzup_M_rxn(is,n) = c_chem_uzup(is)%M(n,rxn)
             ch_uzup_g_rxn(is,n) = c_chem_uzup(is)%M(n,rxn)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
             ch_uzup_eq_rxn(is,n) = c_chem_uzup(is)%M(n,rxn)*phq_lut(sol_id(n)%phq)%M2meq/a_thousand
@@ -9477,14 +9531,22 @@
             ch_uzup_mML_final(is,n) = ch_uzup_M_final(is,n)/ch_uzup_m3_final(is)
             ch_uzup_mgL_final(is,n) = ch_uzup_g_final(is,n)/ch_uzup_m3_final(is)
             ch_uzup_meqL_final(is,n) = ch_uzup_eq_final(is,n)/ch_uzup_m3_final(is)
-            ch_uzup_ElemFrac(is,n) = c_chem_uzup(is)%ElemFrac(n)/ch_uzup_m3_final(is)
+!            ch_uzup_ElemFrac(is,n) = c_chem_uzup(is)%ElemFrac(n)/ch_uzup_m3_final(is)
             ch_uzup_M_final(is,n) = c_chem_uzup(is)%M(n,fin)
             ch_uzup_g_final(is,n) = c_chem_uzup(is)%M(n,fin)*phq_lut(sol_id(n)%phq)%M2mg/a_thousand
             ch_uzup_eq_final(is,n) = c_chem_uzup(is)%M(n,fin)*phq_lut(sol_id(n)%phq)%M2meq/a_thousand
             ch_uzup_mMm2_final(is,n) = ch_uzup_M_final(is,n) / uz_area(2,is) / a_thousand 
             ch_uzup_mgm2_final(is,n) = ch_uzup_g_final(is,n) / uz_area(2,is) / a_thousand 
             ch_uzup_meqm2_final(is,n) = ch_uzup_eq_final(is,n) / uz_area(2,is) / a_thousand
-
+            M_elem_sum = 0D0
+            do j=3,ntally_cols
+              M_elem_sum = M_elem_sum + c_chem_uzup(is)%Rxn(n,j)
+            end do
+            if(M_elem_sum.gt.0.0) then ! this should eliminate ElemFrac for isotopes too
+              ch_uzup_ElemFrac(is,n) = c_chem_uzup(is)%M(n,rxn)/M_elem_sum
+            else
+              ch_uzup_ElemFrac(is,n) = 0D0
+            end if
             if(sol_id(n)%iso) then ! Record delta of isotope, in permil
               if(ch_mru_m3_in(is).gt.0.) then
                 ch_mru_permil_in(is,n) = c_chem_mru(is)%delta(n,in)/ch_mru_m3_in(is)
@@ -9517,8 +9579,8 @@
             end if  
           end do
         end do
-!         ch_basin_gm2_in_(n) =&
-!              ch_basin_in_g(n)/basin_area/a_million
+          
+          !              ch_basin_in_g(n)/basin_area/a_million
 !         ch_basin_gm2_out(n) =&
 !              ch_basin_out_g(n)/basin_area/a_million
 !         if(ch_basin_m3_final.gt.0.0)then
@@ -9787,8 +9849,8 @@
  100  FORMAT(A,I10)
  110  FORMAT(A)
  120  FORMAT(A,1PG15.7E2)
- 123  format(2I5,2I3,5(E14.6),A14,6(E14.6),50(E30.6))
- 127  format(2I5,2I3,E14.6,50(E30.6))
+ 123  format(2I5,2I3,5(E14.6),A14,6(E14.6),50(E30.10))
+ 127  format(2I5,2I3,E14.6,50(E30.10))
  198  format(/,3i4,i10,6(/,i10,1x,f8.4))
  199  format(3(e10.4,1X))
  295  format(63(e10.4,1X))
@@ -10154,7 +10216,7 @@
       END
 !
 ! Function update_chem() updates the c_chem matrix after a mixture.
-! The volume and conc values will be used to update one of the five fields
+! The volume and conc values will be used to update one or two of the five fields
 ! that are the last index in c_chem (init, in, out, reaction or ET, and
 ! final). The argument 'imetric' dictates which of the fields is to be updated.
 !
@@ -10162,20 +10224,29 @@
 !  imetric -    updated     - Comment
 !    1            1           Solutions after initial mix and one day of kinetics.
 !    0            2           Transient reservoir so record volumes and moles
-!                             as inputs and use the final in=out, no rxn.
-!                             Cumlative mass and vols in 5.
+!                             as inputs The cuumlative mass and vols will be summed
+!                             in field 5 at the bottom of the phreeqmms_run.
 !    2            2           Inputs into one of the 9 reservoir types (8 hillslope, 1 stream)
 !    3          3,4,5         Conservative concentrations used to update 3. If react
-!                             is .TRUE. then update reaciton in 4 along with ElemFrac and store 
+!                             is .TRUE. then update reaction in 4 along with ElemFrac and store 
 !                             final mass and vols in 5. If react is .FALSE. volume
 !                             represents the export of a conservatively mixed solution.
 !   -1           4,5          Static volume, reactions in 4 w/ finals in 5
 !
-! Reactions are documented in the tally table. Tally_table has one row
-! for each element and valence state that appears in solutions and entities
-! defined in the phreeq.pqi file. Note that this usually exceeds the number
-! of solutes defined by nsolute since congruous weathering of minerals may 
-! produce a variety of elements. Also, if one of the nsolutes of interest is
+! 
+! Seven of the nine reservoir types will have have imetric set to '3' with .REACT. = .TRUE.
+! or a '-1' (static reaction) as the last step in the possible reservoir scenarios.
+! Snowpack and stream reservoirs are exceptions. To accomodate incongrous melting, snowpack
+! exports the melt with a 3, then undergoes a static reaction in the remaining pack.
+! Consistent with one-dimensional Clark routing, streams react then export to the next
+! downstream segment, becoming inputs to that segment with the final segment exporting
+! out of the basin.
+!
+! A description of the geochemical reactions are passed from PHREEQC to WEBMOD
+! in the tally table. Tally_table has one row for each element and valence state that
+! appears in solutions and entities defined in the phreeq.pqi file. Note that this usually
+! exceeds the number of solutes defined by nsolute since congruous weathering of minerals
+! may produce a variety of elements. Also, if one of the nsolutes of interest is
 ! specified as a valence state, S(6) for example, then the moles yielded by
 ! each reactive entity referes to the elemental form, S for example. The
 ! percentage of the elemental form that is accounted for by the valence state
@@ -10250,7 +10321,7 @@
       implicit none
 
 !      integer sol_id(ntally_rows,2)
-      integer i,j,k,ke,n, indx,im,imx,imetric,n_ent(:),nis,test,restype
+      integer i,j,k,ke,n, indx,im,imx,imetric,n_ent(:),nis,restype
       logical step1,stream,snow, unsat, mru, mrubnd, basbnd, react  ! stream, snow, unsat, and mru indicate what type of reservoir, snow and unsat being special types of mru.
                                                                       ! mrumnd, and basinbnd indicate that an input or output enters or leaves through an mru or a basin boundary
       double precision vol,totvol, conc1(:),pH,tempc,tally_table(:,:)
@@ -10264,25 +10335,16 @@
 
 !
       if(step1) then
-         !do i = 1,ntally_cols
-         !   mult(i) =1D0
-         !   if(i.gt.2+n_ent(2)) mult(i) = -1D0
-! Debug
-! /Debug
-         !end do
          if(phr_tf) write(debug%lun,'(A)')'nstep yr mo dy index In_Out metric mrubnd basbnd '// &
-           'react totvol vol_init vol_in vol_out vol_rxn vol_fin Cl_init Cl_in Cl_out Cl_rxn Cl_fin'
+           'react totvol vol_init vol_in vol_out vol_rxn vol_fin Sol_init Sol_in Sol_out Sol_rxn Sol_fin Elem_Frac'
          step1=.false.
       end if  ! step1
 
-! Debug
-      test =  0 ! Snowpack
-     
       if (phr_tf) then
 ! for nsolute = 11
         write(debug%lun,123) nstep,(datetime(i),i=1,3),indx, &
            ' in ',imetric, mrubnd, basbnd, react, totvol,(c_chem(indx)%vol(i),i=1,5), &
-           ((c_chem(indx)%M(i,j),j=1,5),i=7,11)
+           ((c_chem(indx)%M(i,j),j=1,5),c_chem(indx)%ElemFrac(i) ,i=7,11) ,((c_chem(indx)%Rxn(i,j),j=3,ntally_cols),i=7,11)
       end if
 !
 ! / Debug
@@ -10291,17 +10353,21 @@
 !
 ! Assign booleans to match restype
 !
-      stream = .FALSE.
+      mru = .FALSE.
       snow = .FALSE.
+      unsat = .FALSE.
+      stream = .FALSE.
+      if(restype.gt.0.and.restype.lt.10) then
+          mru=.true.
+          if(restype.eq.2) snow = .TRUE.
+          if(restype.eq.5) unsat = .TRUE.
+      end if
       if(restype.eq.99) stream = .TRUE.
 !
-! Check if snowpack, which has special treatment of melt and final pack to simulate incongruous melting
-!
-
-      if(restype.eq.2) snow = .TRUE.
-!
-!  im can equal 1 (init), 2 (inputs and transient reservoirs), 
-!  3 (output or 'output and react'), or -1(static react), . 'If' logic in order of frequency.
+!  im can equal 1 (init), 2 (inputs and '0' most transient reservoirs ), 
+!  3 (output conservative for snowmelt transient hillslope, and most reservoits, output 
+!  and react as final step for most others, react and output for streams), or -1(static react).
+! 'If' logic in order of frequency.
 !
       im = imetric
       if(imetric.eq.0) im = 2      ! Transient reservoirs record only as inputs.
@@ -10314,7 +10380,7 @@
       else  ! Assign initial or final volumes (im = 1 or 5)
         if(im.eq.1) then ! Adhere to volumes passed in for inits as *%vol(fin) makes no sense in these cases.
             vol = totvol
-        else
+        else ! assign the final volume that must be set in the main before calling the update_chem
             vol  = c_chem(indx)%vol(fin)
         end if
         c_chem(indx)%Temp(im) = tempc
@@ -10335,21 +10401,21 @@
         c_chem_mru(is)%Temp(im) = c_chem_mru(is)%Temp(im) + vwtempc
         c_chem_mru(is)%pH(im) = c_chem_mru(is)%pH(im) + vwpH
       end if
-      if(restype.eq.5) then
+      if(unsat) then
         c_chem_uzgen(is)%vol(im) = c_chem_uzgen(is)%vol(im) + vol
         c_chem_uzgen(is)%Temp(im) = c_chem_uzgen(is)%Temp(im) + vwtempc
         c_chem_uzgen(is)%pH(im) = c_chem_uzgen(is)%pH(im) + vwpH
-        if(riparian(ia,is))then
+        if(riparian(ia,is))then ! riparian
           c_chem_uzrip(is)%vol(im) = c_chem_uzrip(is)%vol(im) + vol
           c_chem_uzrip(is)%Temp(im) = c_chem_uzrip(is)%Temp(im) + vwtempc
           c_chem_uzrip(is)%pH(im) = c_chem_uzrip(is)%pH(im) + vwpH
-        else
+        else ! uplands
           c_chem_uzup(is)%vol(im) = c_chem_uzup(is)%vol(im) + vol
           c_chem_uzup(is)%Temp(im) = c_chem_uzup(is)%Temp(im) + vwtempc
           c_chem_uzup(is)%pH(im) = c_chem_uzup(is)%pH(im) + vwpH
         endif
       end if
-      if(restype.eq.99.and..not.react.or.ih.eq.1) then ! Other '2's and '3' represent internal fluxes
+      if(ih.eq.1.or.stream.and..not.react) then ! This should catch inputs, diversions, and export from basin.
         c_chem_hyd%vol(im) = c_chem_hyd%vol(im) + vol
         c_chem_hyd%Temp(im) = c_chem_hyd%Temp(im) + vwtempc
         c_chem_hyd%pH(im) = c_chem_hyd%pH(im) + vwpH
@@ -10359,7 +10425,7 @@
 !
       nis=0  ! counter for number of isotopes tracked (currently limited to two: 18O and D).
       do 10 n = 1,nsolute
-          if(im.eq.3.or.im.eq.2.and..not.stream) then ! input or output
+          if(.not.stream.and.im.eq.3.or.im.eq.2) then ! input or output
             Moles = conc1(n)*totvol*a_thousand !This should cover snowpack chem on days of no snowpack.
             c_chem(indx)%M(n,im)= c_chem(indx)%M(n,im)+ Moles !Imports and exports use conservative mixing when reac
           else if(.not.stream) then  ! Assign inital or final Moles (im = 1 or 5) which use second column of tally table. 
@@ -10370,22 +10436,30 @@
           else ! stream inits (1), inputs (2) and outputs (3). 
                ! Stream reservoirs are distinct in that they react then export on the last '3'. 
                ! All other reservoirs export then react in remaining, final volume.
-            if(.not.react) then
+            if(.not.react) then ! stream imports from hillslope and exports to irrigation and channel leakage
               Moles = conc1(n)*totvol*a_thousand 
               c_chem(indx)%M(n,im)= c_chem(indx)%M(n,im)+ Moles ! unreacted imports and exports
-            else ! this is a stream reaction then export that is to be reflected as inputs into the next dowstream section.
-                 ! The soln assignments have the downstream section as indx-1 in the c_chem matrix. The composition of the exported waters
-                 ! is indx equal to ih=0.
+            else ! this is an initial stream reaction or a react then export that is to be reflected as inputs into the next dowstream section.
+                 ! The soln assignments have the downstream section as indx-1 in the c_chem matrix. The composition of the waters
+                 ! waters is stored in indx equal to ih=0 (solnnum 300000000).
               k=sol_id(n)%tally
               Moles = tally_table(k,2)*vol*a_thousand
               c_chem(indx)%M(n,im)= c_chem(indx)%M(n,im)+ Moles
+              if(im.eq.3) then ! place the same solution as an input and initial for the downstream section
+                c_chem(indx-1)%M(n,in)= c_chem(indx)%M(n,im)+ Moles
+                c_chem(indx-1)%M(n,init)= Moles
+              endif
             endif
-          end if
+          endif
           if(sol_id(n)%iso) then ! track input and output deltas which should only occur on a single input or output.
             nis=nis+1
             c_chem(indx)%delta(n,im)=c_chem(indx)%delta(n,im) + conc1(nsolute+nis)*vol  ! isotopic compositions are not affected by 
                                       ! reactions so record deltas returned by phr_mix into the conc vector
                                       ! that contains results of a conservative mix.
+            if(stream.and.react) then
+              c_chem(indx-1)%delta(n,in) = conc1(nsolute+nis)*vol
+              c_chem(indx-1)%delta(n,init)= conc1(nsolute+nis)
+            endif
           end if
           vwdelta=vol*conc1(nsolute+nis)
     !
@@ -10393,26 +10467,26 @@
     !
           if(basbnd) then
             c_chem_basin%M(n,im) = c_chem_basin%M(n,im) + Moles
-            c_chem_basin%delta(n,im) = c_chem_basin%delta(n,im) + vwdelta
+            if(sol_id(n)%iso) c_chem_basin%delta(n,im) = c_chem_basin%delta(n,im) + vwdelta
           end if
           if(mrubnd) then
             c_chem_mru(is)%M(n,im) = c_chem_mru(is)%M(n,im) + Moles
-            c_chem_mru(is)%delta(n,im) = c_chem_mru(is)%delta(n,im) + vwdelta
+            if(sol_id(n)%iso) c_chem_mru(is)%delta(n,im) = c_chem_mru(is)%delta(n,im) + vwdelta
           end if
-          if(restype.eq.5) then
+          if(unsat) then
             c_chem_uzgen(is)%M(n,im) = c_chem_uzgen(is)%M(n,im) + Moles
-            c_chem_uzgen(is)%delta(n,im) = c_chem_uzgen(is)%delta(n,im) + vwdelta
+            if(sol_id(n)%iso) c_chem_uzgen(is)%delta(n,im) = c_chem_uzgen(is)%delta(n,im) + vwdelta
             if(riparian(ia,is))then
               c_chem_uzrip(is)%M(n,im) = c_chem_uzrip(is)%M(n,im) + Moles
-              c_chem_uzrip(is)%delta(n,im) = c_chem_uzrip(is)%delta(n,im) + vwdelta
+              if(sol_id(n)%iso) c_chem_uzrip(is)%delta(n,im) = c_chem_uzrip(is)%delta(n,im) + vwdelta
             else
               c_chem_uzup(is)%M(n,im) = c_chem_uzup(is)%M(n,im) + Moles
-              c_chem_uzup(is)%delta(n,im) = c_chem_uzup(is)%delta(n,im) + vwdelta
+              if(sol_id(n)%iso) c_chem_uzup(is)%delta(n,im) = c_chem_uzup(is)%delta(n,im) + vwdelta
             endif
           endif
-          if(restype.eq.99) then
+          if(stream.and..not.react.or.ih.eq.1) then
             c_chem_hyd%M(n,im) = c_chem_hyd%M(n,im) + Moles
-            c_chem_hyd%delta(n,im) = c_chem_hyd%delta(n,im) + vwdelta
+            if(sol_id(n)%iso) c_chem_hyd%delta(n,im) = c_chem_hyd%delta(n,im) + vwdelta
           endif
   10  continue
 !
@@ -10428,11 +10502,11 @@
 !     Compute reaction totals and percentage of elemental yields that are accounted for by solute of interest.
 !
       if(react) then ! The last mix of every stream and MRU reservoir that is not a transient mix (restype < 10) includes 24 hours of reaction. Also account for isotopes in evaporation here.
-        vol = c_chem(indx)%vol(fin)  ! reactions take place in final volume
-        if(restype.eq.99)then
+        vol = c_chem(indx)%vol(fin)  ! reactions take place in final volume except for streams that are detailed below
+        c_chem_basin%vol(ET) = c_chem_basin%vol(ET) + c_chem(indx)%vol(ET)
+        if(stream)then
           if(ih.gt.1) then ! ih=1 is the outlet reservoir that gets exported so don't count it as a basin or hyd composite volume.
             vol = vmix_stream(ih-1) ! except for stream reservoirs that react in the the original volume plus inputs (the ih-1 index)
-            
             c_chem_basin%vol(fin) = c_chem_basin%vol(fin) + vol
             c_chem_hyd%vol(fin) = c_chem_hyd%vol(im) + vol
           else ! outlet so react in discharged volume but no longer included in composite volume
@@ -10441,14 +10515,18 @@
         else ! all other reservoirs that react accumulate final volumes in basin and mru composites
           c_chem_basin%vol(fin) = c_chem_basin%vol(fin) + vol
           c_chem_mru(is)%vol(fin) = c_chem_mru(is)%vol(fin) + vol
-        end if
-        if(restype.eq.5) then
-          c_chem_uzgen(is)%vol(im) = c_chem_uzgen(is)%vol(im) + vol
-          if(riparian(ia,is))then
-              c_chem_uzrip(is)%vol(im) = c_chem_uzrip(is)%vol(im) + vol
-          else
-              c_chem_uzup(is)%vol(im) = c_chem_uzup(is)%vol(im) + vol
-          endif
+          c_chem_mru%vol(ET) = c_chem_mru%vol(ET) + c_chem(indx)%vol(ET)
+          if(unsat) then
+            c_chem_uzgen(is)%vol(fin) = c_chem_uzgen(is)%vol(fin) + vol
+            c_chem_uzgen%vol(ET) = c_chem_uzgen%vol(ET) + c_chem(indx)%vol(ET)
+            if(riparian(ia,is))then
+              c_chem_uzrip(is)%vol(fin) = c_chem_uzrip(is)%vol(fin) + vol
+              c_chem_uzrip%vol(ET) = c_chem_uzrip%vol(ET) + c_chem(indx)%vol(ET)
+            else
+              c_chem_uzup(is)%vol(fin) = c_chem_uzup(is)%vol(fin) + vol
+              c_chem_uzup%vol(ET) = c_chem_uzup%vol(ET) + c_chem(indx)%vol(ET)
+            endif
+          end if
         endif
         do 20 n = 1,nsolute
           k=sol_id(n)%tally ! row of solute
@@ -10467,22 +10545,22 @@
 ! composite reservoirs
           c_chem_basin%M(n,rxn) = c_chem_basin%M(n,rxn) +  M_diff
           c_chem_basin%M(n,fin) = c_chem_basin%M(n,fin) +  M_rxn
-          if(restype.lt.10) then ! Mru reservoir
-          c_chem_mru(is)%M(n,rxn) = c_chem_mru(is)%M(n,rxn) + M_diff
-          c_chem_mru(is)%M(n,fin) = c_chem_mru(is)%M(n,fin) + M_rxn
-          end if
-          if(restype.eq.5) then
-            c_chem_uzgen(is)%M(n,rxn) = c_chem_uzgen(is)%M(n,rxn) + M_diff
-            c_chem_uzgen(is)%M(n,fin) = c_chem_uzgen(is)%M(n,fin) + M_rxn
-            if(riparian(ia,is))then
+          if(mru) then ! Mru reservoir
+            c_chem_mru(is)%M(n,rxn) = c_chem_mru(is)%M(n,rxn) + M_diff
+            c_chem_mru(is)%M(n,fin) = c_chem_mru(is)%M(n,fin) + M_rxn
+            if(unsat) then
+              c_chem_uzgen(is)%M(n,rxn) = c_chem_uzgen(is)%M(n,rxn) + M_diff
+              c_chem_uzgen(is)%M(n,fin) = c_chem_uzgen(is)%M(n,fin) + M_rxn
+              if(riparian(ia,is))then
                 c_chem_uzrip(is)%M(n,rxn) = c_chem_uzrip(is)%M(n,rxn) + M_diff
                 c_chem_uzrip(is)%M(n,fin) = c_chem_uzrip(is)%M(n,fin) + M_rxn
-            else
+              else
                 c_chem_uzup(is)%M(n,rxn) = c_chem_uzup(is)%M(n,rxn) + M_diff
                 c_chem_uzup(is)%M(n,fin) = c_chem_uzup(is)%M(n,fin) + M_rxn
-            endif
+              endif
+           end if
           endif
-          if(restype.eq.99) then
+          if(stream) then
             c_chem_hyd%M(n,rxn) = c_chem_hyd%M(n,rxn) + M_diff
             c_chem_hyd%M(n,fin) = c_chem_hyd%M(n,fin) + M_rxn
           endif
@@ -10499,18 +10577,18 @@
               c_chem(indx)%Rxn(n,j) = M_elem
 ! composite reservoirs
               c_chem_basin%Rxn(n,j) = c_chem_basin%Rxn(n,j) +  M_elem
-              if(restype.lt.10) then ! Mru reservoir
+              if(mru) then ! Mru reservoir
                 c_chem_mru(is)%Rxn(n,j) = c_chem_mru(is)%Rxn(n,j) + M_elem
-              end if
-              if(restype.eq.5) then
-                c_chem_uzgen(is)%Rxn(n,j) = c_chem_uzgen(is)%Rxn(n,j) + M_elem
-                if(riparian(ia,is))then
-                  c_chem_uzrip(is)%Rxn(n,j) = c_chem_uzrip(is)%Rxn(n,j) + M_elem
-                else
-                  c_chem_uzup(is)%Rxn(n,j) = c_chem_uzup(is)%Rxn(n,j) + M_elem
-                endif
+                if(unsat) then
+                  c_chem_uzgen(is)%Rxn(n,j) = c_chem_uzgen(is)%Rxn(n,j) + M_elem
+                  if(riparian(ia,is))then
+                    c_chem_uzrip(is)%Rxn(n,j) = c_chem_uzrip(is)%Rxn(n,j) + M_elem
+                  else
+                    c_chem_uzup(is)%Rxn(n,j) = c_chem_uzup(is)%Rxn(n,j) + M_elem
+                  endif
+                end if
               endif
-              if(restype.eq.99) &
+              if(stream) &
                 c_chem_hyd%Rxn(n,j) = c_chem_hyd%Rxn(n,j) + M_elem
             end do
           end if
@@ -10520,18 +10598,18 @@
               c_chem(indx)%ElemFrac(n) = 0D0
           endif
           c_chem_basin%ElemFrac(n) = c_chem_basin%ElemFrac(n) +  c_chem(indx)%ElemFrac(n) * vol
-          if(restype.lt.10) then ! Mru reservoir
+          if(mru) then ! Mru reservoir
             c_chem_mru(is)%ElemFrac(n) = c_chem_mru(is)%ElemFrac(n) + c_chem(indx)%ElemFrac(n) * vol
-          end if
-          if(restype.eq.5) then
-          c_chem_uzgen(is)%ElemFrac(n) = c_chem_uzgen(is)%ElemFrac(n) + c_chem(indx)%ElemFrac(n) * vol
-            if(riparian(ia,is))then
-                c_chem_uzrip(is)%ElemFrac(n) = c_chem_uzrip(is)%ElemFrac(n) + c_chem(indx)%ElemFrac(n) * vol
-            else
-                c_chem_uzup(is)%ElemFrac(n) = c_chem_uzup(is)%ElemFrac(n) + c_chem(indx)%ElemFrac(n) * vol
-            endif
+            if(unsat) then
+             c_chem_uzgen(is)%ElemFrac(n) = c_chem_uzgen(is)%ElemFrac(n) + c_chem(indx)%ElemFrac(n) * vol
+              if(riparian(ia,is))then
+                  c_chem_uzrip(is)%ElemFrac(n) = c_chem_uzrip(is)%ElemFrac(n) + c_chem(indx)%ElemFrac(n) * vol
+              else
+                  c_chem_uzup(is)%ElemFrac(n) = c_chem_uzup(is)%ElemFrac(n) + c_chem(indx)%ElemFrac(n) * vol
+              endif
+            end if
           endif
-          if(restype.eq.99) &
+          if(stream) &
           c_chem_hyd%ElemFrac(n) = c_chem_hyd%ElemFrac(n) + c_chem(indx)%ElemFrac(n) * vol
 20      continue
 !
@@ -10548,12 +10626,12 @@
 ! for nsolute = 11
         write(debug%lun,123) nstep,(datetime(i),i=1,3),indx, &
            ' out ',imetric,mrubnd, basbnd, react, totvol,(c_chem(indx)%vol(i),i=1,5), &
-           ((c_chem(indx)%M(i,j),j=1,5),i=7,11)
+           ((c_chem(indx)%M(i,j),j=1,5),c_chem(indx)%ElemFrac(i) ,i=7,11) ,((c_chem(indx)%Rxn(i,j),j=3,ntally_cols),i=7,11)
       end if
 ! // debug
 
       update_chem = 0
- 123  format(5I5,A,I5,3L4,1X,31E14.6)
+ 123  format(5I5,A,I5,3L4,1X,120E15.7)
 
       RETURN
       END
@@ -10757,17 +10835,12 @@
       double precision :: evapvol, resvol, resv, evap_frac, rh, tempevap, tot_16O, tot_H
       double precision :: log_a, eps_eq, eps_diff,ison,fracs(1)
       double precision :: delta_res0, delta_res, delta_evap_permil,evap_D_M,evap_18O_M
-!      integer :: test
 !
-!      allocate(conc1(size(conc)))
-!      conc1 = conc
-!      
-!      iresult = test(conc)
       fractionate = 1
-      res_D_permil = -1000D0
-      evap_D_permil = -1000D0
-      res_18O_permil = -1000D0
-      evap_18O_permil = -1000D0
+      res_D_permil = 0D0
+      evap_D_permil = 0D0
+      res_18O_permil = 0D0
+      evap_18O_permil = 0D0
       tot_H = tally_table(2,2)  ! total moles of protium in reservoir (normalized to near 1 kg)
       tot_16O = tally_table(3,2) ! total moles of 16O in reservoir (normalized to near 1 kg)
       resvol = resv
@@ -10859,29 +10932,10 @@
           end if
    15   continue
       
-!
-!      iresult = test(resindx, evapvol, i, conc)
-!     $, pH,tempc,
-!     $                         tally_table,n_ent,yes_m,yes_b,ires,not_rxn)
-!      iresult = update_chem(resindx,evapvol,4,conc,pH,tempc,&
-!                               tally_table,n_ent,yes_m,yes_b,ires,not_rxn)
-!      IF (iresult.NE.0) THEN
-!        PRINT *, 'Errors updating mole matrix:'
-!        STOP
-!      ENDIF
-!
       fractionate = 0
  120  FORMAT(A,1PG15.7E2)
       RETURN
       END FUNCTION fractionate
-!
-!      integer function test(conc1)
-!!     $, pH,tempc,
-!!     $                         tally_table,n_ent,yes_m,yes_b,ires,not_rxn)
-!      double precision, intent (inout) :: conc1(:) ! , e !, pH, tempc, tally_table(:,:)
-!      integer :: i, j !, n_ent(:), indxm, indxb, ires
-!      test = 0
-!      end function test
 !
 !
 ! Create pure water with specific isotopic signature at specified temperature
@@ -10900,14 +10954,14 @@
 !
       reset_DI = 1
 !
-! solution 2 will be used for concentrating melt and producing propoer deltas. DI, or solution 1 is mass corrected to more accurately track basin exports
+! solution 2 will be used for concentrating melt and 0producing propoer deltas. DI, or solution 1 is mass corrected to more accurately track basin exports
 !
       iresult = accumulateline(ID, "solution 2")
       WRITE (aline,*)'-temp ', tempc
-      if(delta_D.ne.-1000) then
+      if(delta_D.ne.0D0) then
           write(aline,*)"D ",delta_D
           iresult = AccumulateLine(ID, aline)
-      elseif(delta_18O.ne.-1000) then
+      elseif(delta_18O.ne.0D0) then
           write(aline,*)"[18O] ",delta_18O
           iresult = AccumulateLine(ID, aline)
       endif

@@ -2378,8 +2378,8 @@ c
            srzwet(ia,is) = srz(ia,is)
            srz(ia,is) = 0
            !qexfil(is) = qexfil(is) - ((sd(ia,is)+srzwet(ia,is)) * acf)
-           qexfil(is) = 0
-!           sd(ia,is) = 0  ! this reverts to original topmodel. Set to zero below for all cases
+           !qexfil(is) = 0
+!           sd(ia,is) = 0  ! this reverts to original topmodel. Set to zero below for all cases of sd<0
         else
            srzwet(ia,is) = abs(sd(ia,is))
            srz(ia,is) = srz(ia,is) - srzwet(ia,is)
@@ -2533,7 +2533,8 @@ c$$$      end if
 C  END OF A/TANB LOOP
       end if
  30   CONTINUE
-
+C We have eliminated exfiltration to return to original TOPMODEL with only root zone wetting from Sat zone
+      qexfil(is) = 0      
 C
 C  ADD INFILTRATION EXCESS
       QOFS(is)=QOF(is)
