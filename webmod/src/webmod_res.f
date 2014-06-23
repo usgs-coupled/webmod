@@ -301,6 +301,7 @@ c      double precision, save :: vmix_imp(:,:)
 c$$$      double precision, save, allocatable :: vmix_rz(MAXMNR_3D)  ! possible root zone for later
       double precision, save, allocatable :: vmix_uz(:,:,:)  ! combination of root zone and suz
       double precision, save, allocatable :: vmix_uz2can(:,:)  ! UZ to canopy
+      double precision, save, allocatable :: vmix_uz2qdf(:,:)  ! Direct flow
       double precision, save, allocatable :: vmix_uz2sat(:,:)  ! Recharge water
       double precision, save, allocatable :: vmix_sat2uz(:)  ! Water transferred from sat to uz
       double precision, save, allocatable :: vmix_uzgen(:,:)
@@ -564,7 +565,13 @@ c
      $     'water transpired to canopy',
      $     'm3',vmix_uz2can).ne.0) return
 c
-c Unsaturated zone mixing box for recharge and direct flow
+c Unsaturated zone mixing box for direct flow
+      allocate(vmix_uz2qdf(nac,nmru))
+      if(declvar('webr', 'vmix_uz2qdf', 'nac,nmru',
+     $     nac*nmru, 'double', 'volumes to mix for direct flow',
+     $     'm3',vmix_uz2qdf).ne.0) return
+c
+c Unsaturated zone mixing box for recharge
 c
       allocate(vmix_uz2sat(nac,nmru))
       if(declvar('webr', 'vmix_uz2sat', 'nac,nmru',
@@ -1263,10 +1270,12 @@ c
       integer, external :: length      
       integer is, ia, ih, filelen
       real acf
+      logical v_alloc
 
       webrinit = 1
 
       resstep1=.true.
+      v_alloc=.TRUE. ! limit allocations to the first time through the mru loop
 
 
 c  Get the areas of pervious versus impervious from the basin_topg module.
@@ -1516,6 +1525,7 @@ c
      $             basin_sssto_cm + vmix_uz(ia,is,1) 
               vmix_uz2can(ia,is) = 0.0
               vmix_uz2sat(ia,is) = 0.0
+              vmix_uz2qdf(ia,is) = 0.0
 
  75         continue
 c
@@ -1673,20 +1683,23 @@ c composite basin volumes
           write(vf_mru(i)%lun,10)
 ! additional reservoir files
           if(print_type.eq.2) then
-            allocate(vf_uzgen(nmru))
-            allocate(vf_uzrip(nmru))
-            allocate(vf_uzup(nmru))
-            allocate(vf_can(nmru))
-            allocate(vf_snow(nmru))
+              if(v_alloc) then ! only allocate once
+                allocate(vf_uzgen(nmru))
+                allocate(vf_uzrip(nmru))
+                allocate(vf_uzup(nmru))
+                allocate(vf_can(nmru))
+                allocate(vf_snow(nmru))
 !        allocate(vf_imperv(nmru))
-            allocate(vf_transp(nmru))
-            allocate(vf_ohoriz(nmru))
-            allocate(vf_uz(nmru,nac))
-            allocate(vf_qdf(nmru))
-            allocate(vf_sat(nmru))
-            allocate(vf_satpref(nmru))
-            allocate(vf_hill(nmru))
-            allocate(vf_uz2sat(nmru))
+                allocate(vf_transp(nmru))
+                allocate(vf_ohoriz(nmru))
+                allocate(vf_uz(nmru,nac))
+                allocate(vf_qdf(nmru))
+                allocate(vf_sat(nmru))
+                allocate(vf_satpref(nmru))
+                allocate(vf_hill(nmru))
+                allocate(vf_uz2sat(nmru))
+                v_alloc=.FALSE.
+              end if
 ! composite uz
           write(filename,30)i
           filelen=length(filename)
@@ -2982,7 +2995,6 @@ c wilting point and the field capacity for the same depth, and any readily
 c draining water between field capacity and saturation that has not yet
 c been delivered to the saturated zone (suz). Therefore, water table
 c fluxtuations in the root zone will result in a uz2sat value of zero.
-c When the water table drops below the root zone depth, uz2sat will be
 c negative as water below field capacity that was located in the saturated
 c zone is now considered part of the unsaturated zone. Conversely, a rising
 c water table below the root-zone depth will result in a positive uz2sat value
@@ -3033,8 +3045,10 @@ c water incorporated into the saturated zone from a rising water table.
 c
 !        vmix_uz2sat(ia,is) = v_rech_loc + v_qdf_loc  
         vmix_uz2sat(ia,is) = v_rech_loc
+        vmix_uz2qdf(ia,is) = v_qdf_loc
+        
         vmix_uz(ia,is,3) = vmix_uz2can(ia,is) +
-     $       vmix_uz2sat(ia,is) + v_qdf_loc   !transpiration + local recharge + preferential flow
+     $       v_rech_loc + v_qdf_loc   !transpiration + local recharge + preferential flow
 
         if(uz2sat(ia,is).gt.0)  then
 c track volume of recharge from UZ (not including bypass)

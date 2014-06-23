@@ -707,21 +707,21 @@ c to depth in centimeters
 
       if(print_freq.gt.0) then
 
-      nstep = getstep()
+        nstep = getstep()
 
-      if(nstep.eq.0) then
+        if(nstep.eq.0) then
 
 
-         last_basin_stor = 0.
-         last_chan_stor = 0.
+           last_basin_stor = 0.
+           last_chan_stor = 0.
 c
 c set all lastper flags to 1 so that variables are
 c zeroed at the beginning of the time step
 c
 
-        do 3 i = 1,5
-           lastper(i) = 1
- 3      end do
+          do 3 i = 1,5
+             lastper(i) = 1
+ 3        end do
 
 
 C******Set unit print switch      
@@ -1075,22 +1075,21 @@ c$$$      double precision timestep,stepcheck,wyday,cday, jday
 
       if(print_freq.gt.0) then
 
-      call dattim('now', nowtime)
+        call dattim('now', nowtime)
 c$$$      wyday = julian('now', 'water')
 c$$$      cday = julian('now','calendar')
-      jday = djulian('now', 'absolute')
-      year = nowtime(1)
-      mo = nowtime(2)
-      day = nowtime(3)
-      hr = nowtime(4)
-      min = nowtime(5)
-      sec = nowtime(6)
-
+        jday = djulian('now', 'absolute')
+        year = nowtime(1)
+        mo = nowtime(2)
+        day = nowtime(3)
+        hr = nowtime(4)
+        min = nowtime(5)
+        sec = nowtime(6)
 c      jday = jday+rhr/24.+rmin/1440.+rsec/86400.
 
-      nstep = getstep()
+        nstep = getstep()
 
-      timestep = deltim()
+        timestep = deltim()
 
 
 c     Zero accumlator variables of last time step was end of period
@@ -1341,7 +1340,7 @@ c       month, year, and run totals
       wat_bal_cm_sum(i) = wat_bal_cm_sum(i) + wat_bal_cm
       do 125 jj = 1,5
             obj_func_sum(jj,i) = obj_func_sum(jj,i) + obj_func(jj)
- 125     continue
+ 125     end do
  130  end do
 
 c Begin unit value reporting

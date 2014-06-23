@@ -3297,7 +3297,7 @@
 
 ! Mixing variables from webmod_res
       USE WEBMOD_RESMOD, ONLY : vmix_can, vmix_snow, vmix_ohoriz, &
-        vmix_uz, vmix_uz2can, vmix_uz2sat, vmix_sat2uz, vmix_uzgen,&
+        vmix_uz, vmix_uz2can, vmix_uz2qdf, vmix_uz2sat, vmix_sat2uz, vmix_uzgen,&
         vmix_uzrip, vmix_uzup, vmix_qdf, vmix_well, vmix_sat, vmix_satpref,&
         vmix_hill,  vmix_mru, vmix_hillexp, vmix_stream, vmix_diversion, &
         vmix_chan_loss, vmix_basin, uz2sat_vol, basin_qsim_cm
@@ -3317,7 +3317,7 @@
         end function webmod_callback
       end interface
 
-      logical filflg
+      logical filflg, s_alloc, e_alloc
       real dt
 
       integer k, l, ir, it, path_len, file_len, filelen ! made is, ia, and ih global (in module) for mru, nac, and hyd query in update_chem
@@ -3347,6 +3347,8 @@
       if(chem_sim.eq.1) then
 !
       step1 = .true.
+      s_alloc = .true.
+      e_alloc = .true.
 !
 !     Phreeqc debug flag. If parameter x_debug_start.ge.1 then
 !     print out mixing fractions, error files, etc during initialization
@@ -5317,20 +5319,23 @@
           write(sf_mru(i)%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
 ! additional reservoir files
           if(print_type.eq.2) then
-            allocate(sf_uzgen(nmru))
-            allocate(sf_uzrip(nmru))
-            allocate(sf_uzup(nmru))
-            allocate(sf_can(nmru))
-            allocate(sf_snow(nmru))
+            if(s_alloc) then
+                allocate(sf_uzgen(nmru))
+                allocate(sf_uzrip(nmru))
+                allocate(sf_uzup(nmru))
+                allocate(sf_can(nmru))
+                allocate(sf_snow(nmru))
 !        allocate(sf_imperv(nmru))
-            allocate(sf_transp(nmru))
-            allocate(sf_ohoriz(nmru))
-            allocate(sf_uz(nmru,nac))
-            allocate(sf_qdf(nmru))
-            allocate(sf_sat(nmru))
-            allocate(sf_satpref(nmru))
-            allocate(sf_hill(nmru))
-            allocate(sf_uz2sat(nmru))
+                allocate(sf_transp(nmru))
+                allocate(sf_ohoriz(nmru))
+                allocate(sf_uz(nmru,nac))
+                allocate(sf_qdf(nmru))
+                allocate(sf_sat(nmru))
+                allocate(sf_satpref(nmru))
+                allocate(sf_hill(nmru))
+                allocate(sf_uz2sat(nmru))
+                s_alloc=.FALSE.
+            end if
 ! composite uz
           write(filename,30)i
           filelen=length(filename)
@@ -5623,20 +5628,23 @@
           write(ef_mru(i)%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
 ! additional reservoir files
           if(print_type.eq.2) then
-            allocate(ef_uzgen(nmru))
-            allocate(ef_uzrip(nmru))
-            allocate(ef_uzup(nmru))
-            allocate(ef_can(nmru))
-            allocate(ef_snow(nmru))
-!        allocate(ef_imperv(nmru))
-            allocate(ef_transp(nmru))
-            allocate(ef_ohoriz(nmru))
-            allocate(ef_uz(nmru,nac))
-            allocate(ef_qdf(nmru))
-            allocate(ef_sat(nmru))
-            allocate(ef_satpref(nmru))
-            allocate(ef_hill(nmru))
-            allocate(ef_uz2sat(nmru))
+            if(e_alloc) then
+                allocate(ef_uzgen(nmru))
+                allocate(ef_uzrip(nmru))
+                allocate(ef_uzup(nmru))
+                allocate(ef_can(nmru))
+                allocate(ef_snow(nmru))
+    !        allocate(ef_imperv(nmru))
+                allocate(ef_transp(nmru))
+                allocate(ef_ohoriz(nmru))
+                allocate(ef_uz(nmru,nac))
+                allocate(ef_qdf(nmru))
+                allocate(ef_sat(nmru))
+                allocate(ef_satpref(nmru))
+                allocate(ef_hill(nmru))
+                allocate(ef_uz2sat(nmru))
+                e_alloc = .FALSE.
+            end if
 ! composite uz
           write(filename,230)i
           filelen=length(filename)
@@ -5995,7 +6003,7 @@
           irrig_frac_ext, irrig_frac_sat, irrig_frac_hyd, mru_ppt, mru_dep
       USE WEBMOD_TOPMOD, ONLY : gw_loss,qpref_max, st, quz, srzwet, riparian_thresh, uz_area, riparian
       USE WEBMOD_RESMOD, ONLY : vmix_can, vmix_snow, vmix_ohoriz, &
-          vmix_uz, vmix_uz2can, vmix_uz2sat, vmix_sat2uz, vmix_uzgen,&
+          vmix_uz, vmix_uz2can, vmix_uz2qdf, vmix_uz2sat, vmix_sat2uz, vmix_uzgen,&
           vmix_uzrip, vmix_uzup, vmix_qdf, vmix_well, vmix_sat, vmix_satpref, &
           vmix_hill, vmix_mru, vmix_hillexp, vmix_stream, vmix_diversion, &
           vmix_chan_loss, vmix_basin, uz2sat_vol,basin_qsim_cm, &
@@ -6117,6 +6125,9 @@
 
       if(getvar('webr', 'vmix_uz2can', nac*nmru, 'double', &
            vmix_uz2can) .ne.0) return
+
+      if(getvar('webr', 'vmix_uz2qdf', nac*nmru, 'double', &
+           vmix_uz2qdf) .ne.0) return
 
       if(getvar('webr', 'vmix_uz2sat', nac*nmru, 'double', &
            vmix_uz2sat) .ne.0) return
@@ -8128,7 +8139,7 @@
                if(vmix_uz2sat(ij,is).gt.0) then
                   validnacs = validnacs + 1
                   solns(validnacs)=solnnum(1,5,0,is,ij,0,0)
-                  fracs(validnacs)=vmix_uz2sat(ij,is)/totvol
+                  fracs(validnacs)=(vmix_uz2sat(ij,is)+vmix_uz2qdf(ij,is))/totvol
                end if
  28         continue
 
@@ -8650,8 +8661,8 @@
 !     flux from the hillslope to the drainage system
 !     (vmix_hill(is,3) >0). This should be every step when
 !     using exponential decay (T_decay=0) but hillslope 
-!     export can equal zero when using linear (T_decay=0)
-!     or parabolic (T_decay=0) transmissivity profiles.
+!     export can equal zero when using parabolic (T_decay=1)
+!     or linear (T_decay=2) transmissivity profiles.
 !
         mixture = solnnum(1,10,0,is,0,0,0)
         indx = isoln(mixture,nchemdat,nmru,nac,clark_segs, &

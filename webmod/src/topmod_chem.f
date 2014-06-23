@@ -169,20 +169,19 @@ c             of reservoir drainage (Maillet, 1905). ST values will be the
 c             topographic index TI=a/tanB that will be converted to ln(TI), TI,
 c             or sqrt(TI) if T_decay equals (0) exponential K and T - original 
 c             TOPMODEL, incised streams in humid, low-relief terrain; 
-c             (1) constant K -> linear T - mountain headwaters; or 
-c             (2) linear K, parabolic T - intermediate terrain like Ambroise's 
-c             Ringelbach catchment. K for (1) and (2) is zero below depth SZM,
+c             (1) linear K, parabolic T - intermediate terrain like Ambroise's 
+c             Ringelbach catchment; or (2) constant K -> linear T - mountain headwaters
+c             like Andrews Creek. K for (1) and (2) is zero below depth SZM,
 c             in meters of saturation deficit. T0 is unconstrained for T_decay = 0
 c             and constrained my for T_decay = 1 or 2. The parameter T0 that was ln(To)
 c             in the original TMOD9502.F is now simply 'To' the transmissivity at
-c             saturation.
+c             saturation, in square meters per hour.
 c
-c   17dec13 - Changed TL(is), the mean ln(a/tanB), from a calculated variable to a 
-c             parameter as the distributions of TWI (a/tanB; T_decay=1)
-c             and sqrt(TWI) (T_decay=2) are not normally distributed as ln(TWI) is,
-c             so the computed TL is far from the actual mean. The user must put in the
-c             ST values and TL values consistant with T_decay. Both should be available
-c             as simple statistics of the surface in GIS.
+c   17dec13 - TL(is), originally designated as areal mean of the natural logarithm of the
+c             topographic wetness index (TWI=ln(a/tanB)) is now a parameter rather than a 
+c             value estimated from a simple integral of the ST and AC values. TL(is) can 
+c             be computed in a GIS as the mean value of ln(TWI) for exponential T (T_decay=0);
+c             sqrt(TWI) for parabolic T (T_decay = 1); or simply TWI for linear T (T_decay = 2)
 c             
 c
 c***********************************************************************
@@ -217,9 +216,9 @@ c     distribution of vertical conductivity (XK0)
       integer, save :: nsc, nmru, nac, nobs
       integer, save :: nxkbin, ngw_ext, nirrig_int
 !   Declared Parameters
-      integer, save :: INFEX, T_decay, iout, qobsta  !, topout_file_unit
+      integer, save :: INFEX, iout, qobsta  ! removed topout_file_unit
       integer, save :: irrsched,irrsrc,gwsched
-      integer, save, allocatable :: nacsc(:), cov_type(:)
+      integer, save, allocatable :: nacsc(:), cov_type(:), T_decay(:)
       real, save :: basin_area, irrig_dep_max, pump_coeff
       real, save, allocatable :: SZM(:), TD(:), To(:)
       real, save, allocatable :: XK0(:),HF(:),DTH(:)
@@ -1136,7 +1135,7 @@ c
      +   '0.1', '0.002', '100',
      +   'Transmissivity at saturation',
      +   'Transmissivity at saturation. Decreases '//
-     +   'per T_decay: 0-exponential; 1-linear; 2-parabolic.',
+     +   'per T_decay: 0-exponential; 1-parabolic; 2-linear.',
      +   'm^2/h').ne.0) return
 
       ALLOCATE (szm(Nmru))
@@ -1209,11 +1208,11 @@ c
      +   'Switch for infiltration excess computation (1=y, 0=n).',
      +   'none').ne.0) return
 
-      if(declparam('topc', 'T_decay', 'one', 'integer',
+      if(declparam('topc', 'T_decay', 'nmru', 'integer',
      +   '0', '0', '2',  
-     +   'Transmissivity decay: (0) exponential; (1) linear; (2) '//
-     +   'parabolic.','Transmissivity decay: (0) exponential; (1)'//
-     +   ' linear; (2) parabolic. ','none').ne.0) return
+     +   'Transmissivity decay: (0) exponential; (1) parabolic; (2) '//
+     +   'linear.','Transmissivity decay: (0) exponential; (1)'//
+     +   ' parabolic; (2) linear. ','none').ne.0) return
 
       ALLOCATE (hf(Nmru))
       if(declparam('topc', 'hf', 'nmru', 'real',
@@ -1247,15 +1246,16 @@ c
       ALLOCATE (tl(Nmru))
       if(declparam('topc', 'tl', 'nmru', 'real', 
      +   '10.0', '1.0', '10000000',
-     + 'Mean ln(TWI),TWI, or sqrt(TWI) for MRU',
-     + 'Mean ln(TWI),TWI, or sqrt(TWI) for MRU',
+     + 'Mean ln(TWI), sqrt(TWI), or TWI for MRU',
+     + 'Mean ln(TWI), sqrt(TWI), or TWI for MRU',
      + 'depends on T_Decay. TWI in m2/hr').ne.0) return
 
       ALLOCATE (st(nac,Nmru))
       if(declparam('topc', 'st', 'nac,nmru', 'real',
-     +   '5', '0', '25',
-     +   'The ln(a/tanB) value.',
-     +   'The ln(a/tanB) value.',
+     +   '5', '0', '25000',
+     +   'The value of the transformed wetness index',
+     +   'The value of the transformed wetness index; '//
+     +   'ln, sqrt, or normal depending on T_decay',
      +   'none').ne.0) return
 
       allocate(riparian_thresh(nmru))
@@ -1526,7 +1526,7 @@ c$$$
       if(getparam('topc', 'infex', 1, 'integer', INFEX)
      +   .ne.0) return
 
-      if(getparam('topc', 'T_decay', 1, 'integer', T_decay)
+      if(getparam('topc', 'T_decay', nmru, 'integer', T_decay)
      +   .ne.0) return
 
       if(getparam('basin', 'tl', nmru, 'real', TL)
@@ -1660,8 +1660,8 @@ c
 *
 *  CALCULATION of AREAL INTEGRAL OF LN(A/TANB) obsolete as the mean value
 *  of LN(A/TANB), A/TANB, or SQRT(A/TANB) is read in as a parameter with units dependent
-*  on T_Decay: 0-exponential K and T; 1- constant K, linear T; and
-c  2 - parabolic K and T.
+*  on T_Decay: 0-exponential K and T; 1- parabolic K and T; and
+c  2 - constant K, linear T.
 *  ST values of a/tanB should be ordered from high to low with ST(1)
 *  as an upper limit such that AC(1) should be zero, with AC(2) representing
 *  the area between ST(1) and ST(2)
@@ -1669,8 +1669,8 @@ c  2 - parabolic K and T.
 *  
 *
 !      TL(is)=0.
-      if(T_decay.lt.0.or.T_decay.gt.2) then
-        print*,'Error: T_decay parameter is set to ',T_decay,
+      if(T_decay(is).lt.0.or.T_decay(is).gt.2) then
+        print*,'Error: T_decay parameter is set to ',T_decay(is),
      $        ' which is outside the range of 0 to 2. Correct ',
      $        ' and rerun.'
         return
@@ -1737,16 +1737,16 @@ c tak
       T0DT = ALOG(To(is)) + ALOG(DT)
 
 *  Calculate SZQ parameter - baseflow discharge when SBAR=0 for the
-*  subcatchment for 0-exponential, 1-linear, or 2-parabolic transmissivity decay
+*  subcatchment for 0-exponential, 1-parabolic, or 2-linear transmissivity decay
 
 c      SZQ(is) = EXP(T0DT-TL(is))
 
-      if(T_decay.eq.0) then
+      if(T_decay(is).eq.0) then
         SZQ(is) = EXP(T0DT-TL(is))
-      elseif(T_decay.eq.1) then
-        SZQ(is) = To(is)*DT/TL(is)
-      else  ! only 0, 1, and 2 allowed per check when calculating TL
+      elseif(T_decay(is).eq.1) then
         SZQ(is) = To(is)*DT/(TL(is)**2)
+      else  ! only 0, 1, and 2 allowed per check when calculating TL
+        SZQ(is) = To(is)*DT/TL(is)
       endif
 c      WRITE(80,604)TCH(NCH),(AR(IR,is),IR=1,NR)
 c  604 FORMAT(1X,'SUBCATCHMENT ROUTING DATA'/
@@ -1924,7 +1924,7 @@ c
 c            SD(IA,is)=SBAR0(is)+(SZM(is)*(TL(is)-ST(IA,is)))
 !     $           *resp_coef(is)
 c T_decay is limited to 0,1,or 2 earlier. SD for both 1 and 2 is the same
-c         if ST and TL are for (0) ln(a/tanB), (1) a/tanB, and (2) sqrt(a/tanB)
+c    if ST and TL are for (0) ln(a/tanB), (1) sqrt(a/tanB), and  (2) a/tanB.
 c
             if(T_decay.eq.0) then
               SD(IA,is)=SBAR0(is)+(SZM(is)*(TL(is)-ST(IA,is)))
@@ -2637,9 +2637,9 @@ c      QB(is)=SZQ(is)*EXP(-SBAR(is)/SZM(is))
       if(T_decay.eq.0) then
         QB(is)=SZQ(is)*EXP(-SBAR(is)/SZM(is))
       elseif(T_decay.eq.1) then
-        QB(is)=SZQ(is)*(1-SBAR(is)/SZM(is))
-      elseif(T_decay.eq.2) then
         QB(is)=SZQ(is)*(1-SBAR(is)/SZM(is))**2
+      elseif(T_decay.eq.2) then
+        QB(is)=SZQ(is)*(1-SBAR(is)/SZM(is))
       endif
 c
 c  Limit QB to minimum flow to avoid negative QB when wells lower water
