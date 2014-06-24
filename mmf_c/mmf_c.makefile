@@ -1409,13 +1409,13 @@ x64/gccRelease/src/write_vstats.o: src/write_vstats.c
 # Creates the intermediate and output folders for each configuration...
 .PHONY: create_folders
 create_folders:
-	mkdir -p gccDebug/source
+	mkdir -p gccDebug/src
 	mkdir -p ../gccDebug
-	mkdir -p x64/gccDebug/source
+	mkdir -p x64/gccDebug/src
 	mkdir -p ../x64/gccDebug
-	mkdir -p gccRelease/source
+	mkdir -p gccRelease/src
 	mkdir -p ../gccRelease
-	mkdir -p x64/gccRelease/source
+	mkdir -p x64/gccRelease/src
 	mkdir -p ../x64/gccRelease
 
 # Cleans intermediate and output files (objects, libraries, executables)...
