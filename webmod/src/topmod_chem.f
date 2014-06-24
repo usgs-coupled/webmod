@@ -1208,6 +1208,7 @@ c
      +   'Switch for infiltration excess computation (1=y, 0=n).',
      +   'none').ne.0) return
 
+      ALLOCATE (T_decay(Nmru))
       if(declparam('topc', 'T_decay', 'nmru', 'integer',
      +   '0', '0', '2',  
      +   'Transmissivity decay: (0) exponential; (1) parabolic; (2) '//
@@ -1926,7 +1927,7 @@ c            SD(IA,is)=SBAR0(is)+(SZM(is)*(TL(is)-ST(IA,is)))
 c T_decay is limited to 0,1,or 2 earlier. SD for both 1 and 2 is the same
 c    if ST and TL are for (0) ln(a/tanB), (1) sqrt(a/tanB), and  (2) a/tanB.
 c
-            if(T_decay.eq.0) then
+            if(T_decay(is).eq.0) then
               SD(IA,is)=SBAR0(is)+(SZM(is)*(TL(is)-ST(IA,is)))
             else
               SD(IA,is)=SZM(is)-ST(IA,is)*(SZM(is)-SBAR0(is))/TL(is)
@@ -2347,7 +2348,7 @@ C  CALCULATE LOCAL STORAGE DEFICIT and associated fluxes
 c
 !      SD(IA,is)=SBAR(is)+(SZM(is)*(TL(is)-ST(IA,is)))*resp_coef(is)
 c         SD(IA,is)=SBAR(is)+SZM(is)*(TL(is)-ST(IA,is))
-         if(T_decay.eq.0) then
+         if(T_decay(is).eq.0) then
            SD(IA,is)=SBAR(is)+(SZM(is)*(TL(is)-ST(IA,is)))
          else
            SD(IA,is)=SZM(is)-ST(IA,is)*(SZM(is)-SBAR(is))/TL(is)
@@ -2634,11 +2635,11 @@ c      quz(is)=quz(is)-qdf(is)
 
 c      QB(is)=SZQ(is)*EXP(-SBAR(is)/SZM(is))
 
-      if(T_decay.eq.0) then
+      if(T_decay(is).eq.0) then
         QB(is)=SZQ(is)*EXP(-SBAR(is)/SZM(is))
-      elseif(T_decay.eq.1) then
+      elseif(T_decay(is).eq.1) then
         QB(is)=SZQ(is)*(1-SBAR(is)/SZM(is))**2
-      elseif(T_decay.eq.2) then
+      elseif(T_decay(is).eq.2) then
         QB(is)=SZQ(is)*(1-SBAR(is)/SZM(is))
       endif
 c
@@ -2709,7 +2710,7 @@ c      z_wt_local(ia,is) = 0.0
         else
           ACF=0.5*(AC(IA,is)+AC(IA+1,is))
         endif
-        if(T_decay.eq.0) then
+        if(T_decay(is).eq.0) then
            sd_temp=SBAR(is)+(SZM(is)*(TL(is)-ST(IA,is)))
          else
            sd_temp=SZM(is)-ST(IA,is)*(SZM(is)-SBAR(is))/TL(is)
