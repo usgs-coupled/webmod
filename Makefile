@@ -13,12 +13,12 @@ webm: mmf_c IPhreeqcMMS webmod
 
 .PHONY: webmod
 webmod:
-	make --directory="webmod/" --file=Makefile
+	$(MAKE) -C webmod --file=Makefile
 
 # Builds project 'mmf_c'...
 .PHONY: mmf_c
 mmf_c: 
-	make --directory="mmf_c/" --file=mmf_c.makefile
+	$(MAKE) -C mmf_c --file=mmf_c.makefile
 
 # Builds project 'IPhreeqc'...
 ###.PHONY: IPhreeqc
@@ -28,11 +28,12 @@ mmf_c:
 # Builds project 'IPhreeqcMMS'...
 .PHONY: IPhreeqcMMS
 IPhreeqcMMS: 
-	make --directory="IPhreeqcMMS/" --file=Makefile
+	$(MAKE) -C IPhreeqcMMS
 
 # Cleans all projects...
 .PHONY: clean
 clean:
-	make --directory="mmf_c/" --file=mmf_c.makefile clean
-	make --directory="IPhreeqcMMS/" --file=Makefile clean
+	$(MAKE) -C mmf_c --file=mmf_c.makefile clean
+	$(MAKE) -C IPhreeqcMMS clean
+	$(MAKE) -C webmod --file=Makefile clean
 
