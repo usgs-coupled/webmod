@@ -3,9 +3,9 @@
                      fill_factor,index_rxn,conc_conserv,files_on, &
                      n_user,rxnmols,tempc,ph,ph_final,tsec,array, &
                      arr_rows,arr_cols)
-#if defined(_WIN32)
-      USE IFPORT   ! to enable 'SYSTEM' calls
-#endif
+! #if defined(_WIN32)
+!       USE IFPORT   ! to enable 'SYSTEM' calls
+! #endif
       USE WEBMOD_IO, ONLY: nowtime
       USE WEBMOD_PHREEQ_MMS, ONLY: xdebug_start, xdebug_stop, nsolute 
       USE WEBMOD_OBSCHEM, ONLY : n_iso

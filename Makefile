@@ -118,6 +118,13 @@ SOBJS = \
 	IPhreeqcLib.o \
 	CSelectedOutput.o \
 	IPhreeqc.o 
+MMSC_OBJS = \
+	cdecl.o \
+	fortran.o \
+	IPhreeqcMMS.o \
+	IPhreeqcMMSLib.o \
+	stdcall.o
+#MOBJS are compiled in WEBMOD Makefile
 MOBJS = \
 	phr_mix.o \
 	phr_multicopy.o \
@@ -125,16 +132,17 @@ MOBJS = \
 
 all: $(TARGET)
 
-$(TARGET): $(POBJS) $(SOBJS) lib 
-	$(AR) rcs $(TARGET) $(POBJS) $(SOBJS) 
+$(TARGET): $(POBJS) $(SOBJS) $(MMSC_OBJS) lib 
+	$(AR) rcs $(TARGET) $(POBJS) $(SOBJS) $(MMSC_OBJS)
 #	$(RANLIB) $(TARGET)	
 
 lib:
 	mkdir -p lib
 
 clean:
-	$(RM) $(POBJS) $(SOBJS) $(MOBJS)
-
+	cd gccDebug/src; $(RM) *.o *.d
+	cd gccRelease/src; $(RM)  *.o *.d
+	$(RM)  *.o *.d
 
 # POBJS
 -include dependencies
