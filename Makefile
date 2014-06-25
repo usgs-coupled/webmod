@@ -20,15 +20,10 @@ webmod:
 mmf_c: 
 	$(MAKE) -C mmf_c --file=mmf_c.makefile
 
-# Builds project 'IPhreeqc'...
-###.PHONY: IPhreeqc
-###IPhreeqc: 
-###	make --directory="IPhreeqcMMS/IPhreeqc/" --file=IPhreeqc.makefile
-
 # Builds project 'IPhreeqcMMS'...
 .PHONY: IPhreeqcMMS
 IPhreeqcMMS: 
-	$(MAKE) -C IPhreeqcMMS
+	$(MAKE) -C IPhreeqcMMS --file=Makefile
 
 # Cleans all projects...
 .PHONY: clean

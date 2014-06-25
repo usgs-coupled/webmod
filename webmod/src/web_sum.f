@@ -652,9 +652,9 @@ c
 
       integer function sumbinit()
 
-#if defined(_WIN32)
-      USE IFPORT
-#endif
+c$$$#if defined(_WIN32)
+c$$$      USE IFPORT
+c$$$#endif
       USE WEBMOD_SUM
       USE WEBMOD_RESMOD, ONLY : basin_sto_cm, basin_chan_sto_cm,
      $  basin_intcp_sto_cm,basin_pweqv_cm,basin_sssto_cm,

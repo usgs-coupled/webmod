@@ -375,9 +375,9 @@ c
 
       integer function obsc_init()
 
-#if defined(_WIN32)
-      USE IFPORT
-#endif
+c$$$#if defined(_WIN32)
+c$$$      USE IFPORT
+c$$$#endif
       USE WEBMOD_OBSCHEM
 C      intrinsic getenv
       logical filflg,tph

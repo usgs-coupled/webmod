@@ -135,7 +135,7 @@
                                              ! in accumulated reactions for this reservoir and any
                                              ! other pertinent composite reservoir (basin, MRU, UZ, or stream)
       DATA yes_m,yes_b,yes_rxn/3*.TRUE./
-      DATA not_m,not_b,not_rxn/2*.FALSE./
+      DATA not_m,not_b,not_rxn/3*.FALSE./
       INTERFACE
          FUNCTION fractionate(phase,indx,evap,totvol,ison,rh,tempevap)
            INTEGER :: phase, indx
@@ -726,9 +726,9 @@
       USE WEBMOD_PHREEQ_MMS
       USE WEBMOD_OBSCHEM, ONLY : n_iso
 
-#if defined(_WIN32)
-      USE IFPORT
-#endif
+! #if defined(_WIN32)
+!       USE IFPORT
+! #endif
 
       phreeqmms_decl = 1
 ! Get dimensions
@@ -3287,9 +3287,9 @@
 !****************************************************************************
 
       integer function phreeqmms_init()
-#if defined(_WIN32)
-      USE IFPORT
-#endif
+! #if defined(_WIN32)
+!       USE IFPORT
+! #endif
       USE WEBMOD_PHREEQ_MMS
       USE WEBMOD_OBSCHEM, ONLY :phq_lut,sol_id,sol_name,n_iso,iso_list
       USE WEBMOD_IO, only: phreeqout, chemout, print_type, chemout,nf,vse_lun
@@ -3663,7 +3663,7 @@
  20   continue
  150  close(16)
       close(17)
-      I = SYSTEM('type '//phreeqmms_pqi)
+!      I = SYSTEM('type '//phreeqmms_pqi)
  135  format(A160)
  136  format(A)
 !

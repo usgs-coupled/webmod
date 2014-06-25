@@ -130,9 +130,9 @@ c
 
       integer function ioinit()
 
-#if defined(_WIN32)
-      USE IFPORT
-#endif
+!#if defined(_WIN32)
+!      USE IFPORT
+!#endif
       USE WEBMOD_IO
       INTEGER, EXTERNAL ::open_res_files
       integer ret, chem_sim, nmru, nac, nhydro
@@ -393,12 +393,12 @@ c     ioclean
       return
       end
 
-      integer function WhatTime(IsIt)  ! used for debugging
-#if defined(_WIN32)
-        USE IFPORT
-#endif
-      integer, intent(OUT) :: IsIt(3)
-      call itime(IsIt)        ! now(1)=hour, (2)=minute, (3)=second
-      return
-      END FUNCTION WhatTime
+c$$$      integer function WhatTime(IsIt)  ! used for debugging
+c$$$!#if defined(_WIN32)
+c$$$!        USE IFPORT
+c$$$!#endif
+c$$$      integer, intent(OUT) :: IsIt(3)
+c$$$      call itime(IsIt)        ! now(1)=hour, (2)=minute, (3)=second
+c$$$      return
+c$$$      END FUNCTION WhatTime
 

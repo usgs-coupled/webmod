@@ -24,13 +24,11 @@ Release_Implicitly_Linked_Objects=
 
 # Compiler flags...
 Debug_Compiler_Flags=-O0 
-Debug_Compiler_Flags=-O0 
-Release_Compiler_Flags=-O2 
 Release_Compiler_Flags=-O2 
 
 # Builds all configurations for this project...
 .PHONY: build_all_configurations
-build_all_configurations: Debug Debug Release Release 
+build_all_configurations: Debug Release 
 
 # Builds the Debug configuration...
 .PHONY: Debug
