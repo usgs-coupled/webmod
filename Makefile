@@ -1,9 +1,12 @@
 
+CC         = gcc
 CXX        = g++
 FC         = /opt/intel/bin/ifort
-CPPFLAGS   = -g -Wall -DSWIG_SHARED_OBJ
-CPPFLAGS   = -O2 -Wall -DSWIG_SHARED_OBJ
+CPPFLAGS   = -g -Wall
+CPPFLAGS   = -O2 -Wall
+DEFS       = -DFC_FUNC\(name,NAME\)=name\ \#\#\ _ -DFC_FUNC_\(name,NAME\)=name\ \#\#\ _ -DSWIG_SHARED_OBJ 
 TARGET     = lib/libphreeqcmms.a
+
 
 TARGET_ARCH = -IIPhreeqc/include -I./src -I./IPhreeqc/src -I./IPhreeqc/src/phreeqcpp
 
@@ -22,13 +25,13 @@ VPATH=src:IPhreeqc/src/phreeqcpp:IPhreeqc/src
 	$(FC) $(FFLAGS) $(TARGET_ARCH) -c -o $@ $<
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -o $@ $<
+	$(CC) $(DEFS) $(CFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -o $@ $<
 
 %.o: %.cxx
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -o $@ $<
+	$(CXX) $(DEFS) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -o $@ $<
 
 %.o: %.cpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -o $@ $<
+	$(CXX) $(DEFS) $(CXXFLAGS) $(CPPFLAGS) $(TARGET_ARCH) -c -o $@ $<
 
 
 POBJS =	\
@@ -107,7 +110,9 @@ POBJS =	\
 	SSassemblage.o \
 	spread.o \
 	SScomp.o \
-	Solution.o 
+	Solution.o \
+	fwrap.o \
+	Var.o
 SOBJS = \
 	IPhreeqcF.o \
 	IPhreeqcLib.o \
