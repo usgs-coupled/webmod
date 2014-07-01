@@ -219,7 +219,8 @@ c
 !
 ! Debug file
 !
-      Debug%file='./output/Debug'
+      !Debug%file='./output/Debug'
+      Debug%file='./Debug'
       inquire(file=Debug%file,exist=filflg)
       if (filflg) then
         open(newunit=debug%lun,file=debug%file,status='old')
