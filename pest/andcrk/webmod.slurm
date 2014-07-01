@@ -2,7 +2,7 @@
 #SBATCH -p Prod
 ##SBATCH -p Debug
 #SBATCH -A Water
-#SBATCH -n 9
+#SBATCH -n 20
 ##SBATCH -w compute87
 #SBATCH --output=andcrk.pest.out
 #SBATCH --mem-per-cpu=1000M
@@ -19,7 +19,7 @@ module load mpi/openmpi-1.5.4
 ./clean
 
 TEMP_DIRS=/home/dlpark/WEB_PEST
-PROJECT_DIR=/home/dlpark/WEB_PEST/
+PROJECT_DIR=/home/dlpark/andcrk_pest/
 WEBMOD_BIN_DIR=/home/dlpark/WEB_PEST/
 TSPROC_BIN_DIR=/home/dlpark/WEB_PEST/
 PEST_BIN_DIR=
@@ -34,15 +34,18 @@ sed -e "s%@PROJECT_DIR@%${PROJECT_DIR}%" tsproc.in.tpl > tsproc.in
 sed -e "s%@PROJECT_DIR@%${PROJECT_DIR}%" par2par_andcrk.tpl.tpl > par2par_andcrk.tpl
 cp andcrk.statvar.full andcrk.statvar
 
-./tsproc.exe < ./tsproc.in
+${TSPROC_BIN_DIR}tsproc.exe < ./tsproc.in
 
 sed "s/CONTEXT pest_prep/CONTEXT model_run/" ./andcrk_tsproc.dat > t
 mv t ./andcrk_tsproc.dat
 
-#sed "s/30   .005  4   4  .005   4/1   .005  4   4  .005   4/" ./andcrk.pst > t
+
+sed "s/* parameter groups/* singular value decomposition\n1\n4 5e-7\n0\n* parameter groups/" ./andcrk.pst > t
+mv t ./andcrk.pst
+#sed "s/30   .005  4   4  .005   4/2   .005  4   4  .005   4/" ./andcrk.pst > t
 #mv t ./andcrk.pst
 
-for i in {1..9}
+for i in {1..20}
 do
     rm -rf ${TEMP_DIRS}/andcrk$i
     mkdir ${TEMP_DIRS}/andcrk$i
