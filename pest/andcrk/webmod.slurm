@@ -40,8 +40,11 @@ sed "s/CONTEXT pest_prep/CONTEXT model_run/" ./andcrk_tsproc.dat > t
 mv t ./andcrk_tsproc.dat
 
 
-sed "s/* parameter groups/* singular value decomposition\n1\n4 5e-7\n0\n* parameter groups/" ./andcrk.pst > t
+# Don't forget to adjust number of parameters in singular value decomposition
+sed "s/* parameter groups/* singular value decomposition\n1\n18 5e-7\n0\n* parameter groups/" ./andcrk.pst > t
 mv t ./andcrk.pst
+
+# For trial runs
 #sed "s/30   .005  4   4  .005   4/2   .005  4   4  .005   4/" ./andcrk.pst > t
 #mv t ./andcrk.pst
 
