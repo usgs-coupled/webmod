@@ -28,7 +28,7 @@
 \*--------------------------------------------------------------------*/
 int print_params (void) {
 
-  char pathname[MAXDATALNLEN], *infostr;
+  char pathname[MAXPATHLEN], *infostr;
   FILE *param_file;
   PARAM *param;
   DIMEN *dim;

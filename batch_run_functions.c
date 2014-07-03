@@ -24,8 +24,8 @@
   static long nstatVars, naniVars;
   static char **statVar_names, **statVar_element;
   static char **aniVar_names;
-  static char statvar_path[MAXDATALNLEN];
-  static char ani_path[MAXDATALNLEN];
+  static char statvar_path[MAXPATHLEN];
+  static char ani_path[MAXPATHLEN];
   static char buf[256];
   static long i, j, stats_flag, ani_out_flag;
   static char  *err_message, *c;

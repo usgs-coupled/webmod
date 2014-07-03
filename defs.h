@@ -45,7 +45,7 @@
 #define MAX(a,b) (a > b) ? a : b
 #endif
 
-#define MAXDATALNLEN 10000 /* max no. of chars in input file line */
+#define MAXDATALNLEN 12000 /* max no. of chars in input file line */
 
 #define ENDOFFILE 2L
 #define ENDOFDATA 1L
@@ -57,10 +57,10 @@
 //                      is the length that we need to read data lines in the data file.
 //#define MAXENVLEN 256    /* max env file line length */
 //#define MAXTOKLEN 128    /* max no of chars in token */
-//#define MAXLNLEN 256     /* max file line length */
-//#ifndef MAXPATHLEN
-#define MAXPATHLEN 512   /* max no of chars in a path */
-//#endif
+#define MAXCTRLLINELEN 256 /* max length of a line in a Control File */
+#ifndef MAXPATHLEN
+#define MAXPATHLEN 256   /* max no of chars in a path */
+#endif
 
 #define MAX_NDIMEN 3       /* max no. of dimensions for a var or param */
 #define MAXVARLEN 32       /* max no. of chars in variable string */

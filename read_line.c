@@ -407,7 +407,7 @@ int control_var_size (char *key) {
  | FUNCTION     : FILE_with_next_ts
  | COMMENT      : Determine the file with the next time step.
  | PARAMETERS   : None
- | RETURN VALUE : Proiter to file data structure
+ | RETURN VALUE : Pointer to file data structure
  | RESTRICTIONS : None
 \*--------------------------------------------------------------------*/
 FILE_DATA * FILE_with_next_ts (void) {

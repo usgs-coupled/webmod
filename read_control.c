@@ -68,7 +68,7 @@ static char *rc (char *control_name) {
    double   *dptr;
    float   *fptr;
    long   *lptr;
-   char   line[MAXDATALNLEN], *key;
+   char   line[MAXCTRLLINELEN], *key;
    static char      buf[256];
 
 /*
@@ -79,7 +79,7 @@ static char *rc (char *control_name) {
       return (buf);
    }
 
-   if (!fgets_rc(line, MAXDATALNLEN, control_file)) {
+   if (!fgets_rc(line, MAXCTRLLINELEN, control_file)) {
       fclose (control_file);
       (void)sprintf (buf, "read_control: Problems reading %s", control_name);
       return (buf);
@@ -94,7 +94,7 @@ static char *rc (char *control_name) {
 **   Space fwd to #### header.
 */
       while (strncmp(line, "####", 4)) {
-         if (fgets_rc(line, MAXDATALNLEN, control_file) == NULL) {
+         if (fgets_rc(line, MAXCTRLLINELEN, control_file) == NULL) {
             fclose(control_file);
             return(NULL);
          }
@@ -102,7 +102,7 @@ static char *rc (char *control_name) {
 /*
 **   get key
 */
-      if (!fgets_rc (line, MAXDATALNLEN, control_file)) {
+      if (!fgets_rc (line, MAXCTRLLINELEN, control_file)) {
          (void)sprintf (buf, "read_control: reading key; Early end-of-file");
          printf ("read_control: reading key; Early end-of-file\n");
          return (buf);
@@ -116,7 +116,7 @@ static char *rc (char *control_name) {
 /*
 **   get size
 */
-      if (!fgets_rc (line, MAXDATALNLEN, control_file)) {
+      if (!fgets_rc (line, MAXCTRLLINELEN, control_file)) {
          (void)sprintf (buf,"read_control: reading size; key = %s", key);
          return (buf);
       }
@@ -128,7 +128,7 @@ static char *rc (char *control_name) {
 /*
 **   get type
 */
-      if (!fgets_rc (line, MAXDATALNLEN, control_file)) {
+      if (!fgets_rc (line, MAXCTRLLINELEN, control_file)) {
          (void)sprintf (buf, "WARNING: reading type; key = %s", key);
          return (buf);
       }
@@ -159,7 +159,7 @@ static char *rc (char *control_name) {
 			dptr = (double *)umalloc (sizeof (double) * size);
             cp->start_ptr = (void *)dptr;
             for (i = 0; i < size; i++) {
-               if (fgets_rc(line, MAXDATALNLEN, control_file) == NULL) {
+               if (fgets_rc(line, MAXCTRLLINELEN, control_file) == NULL) {
                   (void)sprintf (buf, "read_control: key is %s.\n, file: %s", key, control_name);
                   printf ("read_control CRASH reading control file: key is %s.\n, file: %s\n", key, control_name);
                   return (buf);
@@ -172,7 +172,7 @@ static char *rc (char *control_name) {
 			fptr = (float *)umalloc (sizeof (float) * size);
             cp->start_ptr = (void *)fptr;
             for (i = 0; i < size; i++) {
-               if (fgets_rc(line, MAXDATALNLEN, control_file) == NULL) {
+               if (fgets_rc(line, MAXCTRLLINELEN, control_file) == NULL) {
                   (void)sprintf (buf, "read_control: key is %s.\n, file: %s", key, control_name);
                   printf ("read_control CRASH reading control file: key is %s.\n, file: %s\n", key, control_name);
                   return (buf);
@@ -185,7 +185,7 @@ static char *rc (char *control_name) {
 			lptr = (long *)umalloc (sizeof (long) * size);
             cp->start_ptr = (void *)lptr;
             for (i = 0; i < size; i++) {
-               if (fgets_rc(line, MAXDATALNLEN, control_file) == NULL) {
+               if (fgets_rc(line, MAXCTRLLINELEN, control_file) == NULL) {
                   (void)sprintf (buf, "read_control: key is %s.\n, file: %s", key, control_name);
                   printf ("read_control CRASH reading control file: key is %s.\n, file: %s\n", key, control_name);
                   return (buf);
@@ -197,7 +197,7 @@ static char *rc (char *control_name) {
          case M_STRING:
 			cp->start_ptr = umalloc (sizeof (char *) * size);
             for (i = 0; i < size; i++) {
-               if (fgets_rc(line, MAXDATALNLEN, control_file) == NULL) {
+               if (fgets_rc(line, MAXCTRLLINELEN, control_file) == NULL) {
                   (void)sprintf (buf, "read_control: key is %s.\n, file: %s", key, control_name);
                   printf ("read_control CRASH reading control file: key is %s.\n, file: %s\n", key, control_name);
                   return (buf);

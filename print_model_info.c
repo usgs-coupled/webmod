@@ -27,7 +27,7 @@
 \*--------------------------------------------------------------------*/
 int print_model_info (void) {
 
-  char pathname[MAXDATALNLEN];
+  char pathname[MAXPATHLEN];
   FILE *model_info_file;
   int i, j;
   MODULE_DATA *module;

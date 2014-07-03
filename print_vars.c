@@ -27,7 +27,7 @@
 \*--------------------------------------------------------------------*/
 int print_vars (void) {
 
-  char pathname[MAXDATALNLEN], *infostr;
+  char pathname[MAXPATHLEN], *infostr;
   FILE *var_file;
   PUBVAR *var;
   long i, j;

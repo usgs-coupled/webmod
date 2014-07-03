@@ -48,7 +48,7 @@ int main (int argc, char *argv[]) {
    char	*err;
    static int      num_param_files = 0;
    char   **fname;
-   char pathname[MAXDATALNLEN];
+   char pathname[MAXPATHLEN];
 
 	/*
 	**  List of modules that are used by the model. This is

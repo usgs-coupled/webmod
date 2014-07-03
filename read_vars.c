@@ -38,8 +38,8 @@ int read_vars (char *var_file_name) {
 	double *dvalptr;
 	float *fvalptr;
 	long *lvalptr;
-	char line[MAXDATALNLEN], key[MAXDATALNLEN];
-	char dimen[MAXDATALNLEN];
+	char line[MAXVARLEN], key[MAXVARLEN];
+	char dimen[MAXVARLEN];
 	char *pathname;
 	char *endptr;
 
@@ -57,7 +57,7 @@ int read_vars (char *var_file_name) {
 /*
 * read in run info string
 */
-   if (fgets(line, MAXDATALNLEN, var_file) == NULL) {
+   if (fgets(line, MAXVARLEN, var_file) == NULL) {
       fclose(var_file);
       return(0);
    }
@@ -66,7 +66,7 @@ int read_vars (char *var_file_name) {
 /*
 * read in last nstep
 */
-   if (fgets(line, MAXDATALNLEN, var_file) == NULL) {
+   if (fgets(line, MAXVARLEN, var_file) == NULL) {
       fclose(var_file);
       return(0);
    }
@@ -76,7 +76,7 @@ int read_vars (char *var_file_name) {
 /*
 * read in last time step
 */
-   if (fgets(line, MAXDATALNLEN, var_file) == NULL) {
+   if (fgets(line, MAXVARLEN, var_file) == NULL) {
       fclose(var_file);
       return(0);
    }
@@ -90,7 +90,7 @@ int read_vars (char *var_file_name) {
 /*
 * read in last delta time
 */
-   if (fgets(line, MAXDATALNLEN, var_file) == NULL) {
+   if (fgets(line, MAXVARLEN, var_file) == NULL) {
       fclose(var_file);
       return(0);
    }
@@ -108,7 +108,7 @@ int read_vars (char *var_file_name) {
 */
    (void)strcpy(line, " ");
    while (strncmp(line, "####", 4)) {
-      if (fgets(line, MAXDATALNLEN, var_file) == NULL) {
+      if (fgets(line, MAXVARLEN, var_file) == NULL) {
          fclose(var_file);
          return(0);
       }
@@ -124,7 +124,7 @@ int read_vars (char *var_file_name) {
 * get dimen name
 */
 
-      if(fgets(key, MAXDATALNLEN, var_file) == NULL) {
+      if(fgets(key, MAXVARLEN, var_file) == NULL) {
          (void)fprintf(stderr, "ERROR - read_var, reading dimen name.\n");
          (void)fprintf(stderr, "Early end-of-file, file '%s'\n", var_file_name);
          return(1);
@@ -143,7 +143,7 @@ int read_vars (char *var_file_name) {
 /*
 * get dimen size
 */
-         if(fgets(line, MAXDATALNLEN, var_file) == NULL) {
+         if(fgets(line, MAXVARLEN, var_file) == NULL) {
             (void)fprintf(stderr, "ERROR - read_var, reading dimen size.\n");
             fprintf(stderr,"Early end-of-file, file '%s'\n",var_file_name);
             return(1);
@@ -185,7 +185,7 @@ variables:
 */
       (void)strcpy(line, " ");
       while (strncmp(line, "####", 4)) {
-         if (fgets(line, MAXDATALNLEN, var_file) == NULL) {
+         if (fgets(line, MAXVARLEN, var_file) == NULL) {
             fclose(var_file);
             return(0);
          }
@@ -194,7 +194,7 @@ variables:
 /*
 * get key
 */
-      if(fgets(key, MAXDATALNLEN, var_file) == NULL) {
+      if(fgets(key, MAXVARLEN, var_file) == NULL) {
          (void)fprintf(stderr, "ERROR - read_var, reading var key.\n");
          (void)fprintf(stderr, "Early end-of-file, file '%s'\n", var_file_name);
          return(1);
@@ -205,7 +205,7 @@ variables:
 /*
 * get number of dimensions
 */
-         if(fgets(line, MAXDATALNLEN, var_file) == NULL) {
+         if(fgets(line, MAXVARLEN, var_file) == NULL) {
             (void)fprintf(stderr, "ERROR - read_var, reading var ndimen.\n");
             fprintf(stderr, "Early end-of-file, file '%s'\n", var_file_name);
             return(1);
@@ -224,7 +224,7 @@ variables:
 */
 
          for (i = 0; i < var->ndimen; i++) {
-            if(fgets(dimen, MAXDATALNLEN, var_file) == NULL) {
+            if(fgets(dimen, MAXVARLEN, var_file) == NULL) {
                (void)fprintf(stderr, "ERROR - read_var, reading var dimen.\n");
                (void)fprintf(stderr, "Early end-of-file, file '%s'\n", var_file_name);
                return(1);
@@ -247,7 +247,7 @@ variables:
 * get var size
 */
 
-         if(fgets(line, MAXDATALNLEN, var_file) == NULL) {
+         if(fgets(line, MAXVARLEN, var_file) == NULL) {
             (void)fprintf(stderr, "ERROR - read_var, reading var size.\n");
             (void)fprintf(stderr, "Early end-of-file, file '%s'\n", var_file_name);
             return(1);
@@ -272,7 +272,7 @@ variables:
 /*
 * get type
 */
-         if(fgets(line, MAXDATALNLEN, var_file) == NULL) {
+         if(fgets(line, MAXVARLEN, var_file) == NULL) {
             (void)fprintf(stderr, "ERROR - read_var, reading var type.\n");
             (void)fprintf(stderr, "Early end-of-file, file '%s'\n", var_file_name);
             return(1);
@@ -342,7 +342,7 @@ variables:
 \*--------------------------------------------------------------------*/
 static int read_var_line (char *key, char *line, FILE *var_file, char *var_file_name) {
 
-	if (fgets(line, MAXDATALNLEN, var_file) == NULL) {
+	if (fgets(line, MAXVARLEN, var_file) == NULL) {
 		(void)fprintf(stderr,
 		    "ERROR - read_var, reading data.\n");
 		(void)fprintf(stderr,

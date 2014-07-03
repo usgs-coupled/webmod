@@ -63,7 +63,7 @@ char * CHECK_disp_vars (void) {
        static char	err_message[256];
 	int		status = 0;
 	int		i, j;
-	char	buf[MAXDATALNLEN], buf0[MAXDATALNLEN], buf1[MAXDATALNLEN], buf2[MAXDATALNLEN];
+	char	buf[MAXVARLEN], buf0[MAXVARLEN], buf1[MAXVARLEN], buf2[MAXVARLEN];
 	char	*dv_name, *dv_index, *ptr;
 
 	for (i = 0; i < *(control_lvar ("ndispGraphs")); i++) {

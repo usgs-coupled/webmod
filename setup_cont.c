@@ -221,12 +221,11 @@ void setup_cont (void) {
 
 		lval = (long *)umalloc (sizeof (long));
 		lval[0] = 0;
-		decl_control_int_array ("nhrOutON_OFF", 1, lval);
-
+		decl_control_int_array ("segmentOutON_OFF", 1, lval);
 
 		lval = (long *)umalloc (sizeof (long));
 		lval[0] = 0;
-		decl_control_int_array ("segmentOutON_OFF", 1, lval);
+        decl_control_int_array ("ignore_data_file_end", 1, lval);
 /*
 **	file names
 */
@@ -269,8 +268,8 @@ void setup_cont (void) {
 		decl_control_string ("soilrechr_dynamic", "dynsoilrechr");
 		decl_control_string ("soilmoist_dynamic", "dynsoilmoist");
 		decl_control_string ("radtrncf_dynamic", "dynradtrncf");
-		decl_control_string ("sro_to_dprst_dynamic", "dynsrotodprst");
-		decl_control_string ("sro_to_imperv_dynamic", "dynsrotoimperv");
+		decl_control_string ("sro2dprst_perv_dynamic", "dynsrotodprst");
+		decl_control_string ("sro2dprst_imperv_dynamic", "dynsrotoimperv");
 		decl_control_string ("csv_output_file", "prms_summary.csv");
         decl_control_string ("nhruOutBaseFileName", "nhruout_path");
 /*
