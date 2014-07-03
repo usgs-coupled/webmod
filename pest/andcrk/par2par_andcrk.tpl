@@ -85,5 +85,5 @@ knitrs = ( knitru + k_decr_nit)
 
 
 * template files
-/home/dlpark/andcrk_pest/params_andcrk.tpl andcrk.params
-/home/dlpark/andcrk_pest/pqi_andcrk.tpl andcrk.dat.pqi
+/home/rmwebb/andcrk_pest/params_andcrk.tpl andcrk.params
+/home/rmwebb/andcrk_pest/pqi_andcrk.tpl andcrk.dat.pqi
