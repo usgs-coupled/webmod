@@ -18,8 +18,8 @@ module load mpi/openmpi-1.5.4
 
 ./clean
 
-TEMP_DIRS=/home/dlpark/WEB_PEST
-PROJECT_DIR=/home/dlpark/andcrk_pest/
+TEMP_DIRS=/home/rmwebb/WEB_PEST
+PROJECT_DIR=/home/rmwebb/andcrk_pest/
 WEBMOD_BIN_DIR=/home/dlpark/WEB_PEST/
 TSPROC_BIN_DIR=/home/dlpark/WEB_PEST/
 PEST_BIN_DIR=
@@ -36,15 +36,17 @@ cp andcrk.statvar.full andcrk.statvar
 
 ${TSPROC_BIN_DIR}tsproc.exe < ./tsproc.in
 
-sed "s/CONTEXT pest_prep/CONTEXT model_run/" ./andcrk_tsproc.dat > t
-mv t ./andcrk_tsproc.dat
+sed -i "s/CONTEXT pest_prep/CONTEXT model_run/" ./andcrk_tsproc.dat
 
+# Line 6 of the pst file RLAMBDA1 .....	
+sed -i "6s/.*/20.0  -3.0    0.3    0.03     -10  999  LAMFORGIVE/" ./andcrk.pst
+# Line 13. SVD block MAXSING EIGTHRESH. Replace the 18 with MAXSING the maximum number of adjustable variables (number of singlular valuess at which truncation occurs)
+sed -i "13s/.*/18 5e-7/" ./andcrk.pst
+# Line 14 EIGWRITE. 0 if not using SVD output file
+sed -i "14s/.*/0/" ./andcrk.pst
 
-# Don't forget to adjust number of parameters in singular value decomposition
-sed "s/* parameter groups/* singular value decomposition\n1\n18 5e-7\n0\n* parameter groups/" ./andcrk.pst > t
-mv t ./andcrk.pst
-
-# For trial runs
+# Use this sed copy to t form if run on machine that throws error with -i (in place replace to same file)
+# For trial runs, this only does two opimization iterations
 #sed "s/30   .005  4   4  .005   4/2   .005  4   4  .005   4/" ./andcrk.pst > t
 #mv t ./andcrk.pst
 
