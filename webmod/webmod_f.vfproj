@@ -92,7 +92,7 @@
 		<File RelativePath="src\temp_1sta_prms.f"/>
 		<File RelativePath="src\top2clark.f"/>
 		<File RelativePath="src\topmod_chem.f"/>
-		<File RelativePath="src\web_sum.f"/>
+		<File RelativePath=".\src\web_sum.F"/>
 		<File RelativePath="src\webmod_res.f"/>
 		<File RelativePath=".\src\xyz_dist_web.f"/></Filter></Files>
 	<Globals/></VisualStudioProject>

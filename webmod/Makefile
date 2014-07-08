@@ -123,7 +123,7 @@ gccDebug/src/webmod_res.o: src/webmod_res.f src/fmodules.inc gccDebug/src/topmod
 		$(Debug_Include_Path) -o gccDebug/src/webmod_res.o
 
 gccDebug/src/web_sum.o: src/web_sum.f src/fmodules.inc gccDebug/src/webmod_res.o                      #       MODULE WEBMOD_SUM
-	$(F_COMPILER) $(Debug_Preprocessor_Definitions) $(Debug_Compiler_Flags) -c src/web_sum.f \
+	$(F_COMPILER) $(Debug_Preprocessor_Definitions) $(Debug_Compiler_Flags) -c src/web_sum.F \
 		$(Debug_Include_Path) -o gccDebug/src/web_sum.o
 
 gccDebug/src/xyz_dist_web.o: src/xyz_dist_web.f src/fmodules.inc 
