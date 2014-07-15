@@ -122,7 +122,7 @@ gccDebug/src/webmod_res.o: src/webmod_res.f src/fmodules.inc gccDebug/src/topmod
 	$(F_COMPILER) $(Debug_Preprocessor_Definitions) $(Debug_Compiler_Flags) -c src/webmod_res.f \
 		$(Debug_Include_Path) -o gccDebug/src/webmod_res.o
 
-gccDebug/src/web_sum.o: src/web_sum.f src/fmodules.inc gccDebug/src/webmod_res.o                      #       MODULE WEBMOD_SUM
+gccDebug/src/web_sum.o: src/web_sum.F src/fmodules.inc gccDebug/src/webmod_res.o                      #       MODULE WEBMOD_SUM
 	$(F_COMPILER) $(Debug_Preprocessor_Definitions) $(Debug_Compiler_Flags) -c src/web_sum.F \
 		$(Debug_Include_Path) -o gccDebug/src/web_sum.o
 
@@ -263,8 +263,8 @@ gccRelease/src/webmod_res.o: src/webmod_res.f src/fmodules.inc gccRelease/src/to
 	$(F_COMPILER) $(Release_Preprocessor_Definitions) $(Release_Compiler_Flags) -c src/webmod_res.f \
 		$(Release_Include_Path) -o gccRelease/src/webmod_res.o
 
-gccRelease/src/web_sum.o: src/web_sum.f src/fmodules.inc gccRelease/src/webmod_res.o                      #       MODULE WEBMOD_SUM
-	$(F_COMPILER) $(Release_Preprocessor_Definitions) $(Release_Compiler_Flags) -c src/web_sum.f \
+gccRelease/src/web_sum.o: src/web_sum.F src/fmodules.inc gccRelease/src/webmod_res.o                      #       MODULE WEBMOD_SUM
+	$(F_COMPILER) $(Release_Preprocessor_Definitions) $(Release_Compiler_Flags) -c src/web_sum.F \
 		$(Release_Include_Path) -o gccRelease/src/web_sum.o
 
 gccRelease/src/xyz_dist_web.o: src/xyz_dist_web.f src/fmodules.inc 
