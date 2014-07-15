@@ -182,6 +182,10 @@ c             topographic wetness index (TWI=ln(a/tanB)) is now a parameter rath
 c             value estimated from a simple integral of the ST and AC values. TL(is) can 
 c             be computed in a GIS as the mean value of ln(TWI) for exponential T (T_decay=0);
 c             sqrt(TWI) for parabolic T (T_decay = 1); or simply TWI for linear T (T_decay = 2)
+c
+c   14jul14 - Make pmac_sat a fraction of pmacro rather than a fraction of mru_dep. Aids in
+c             calibration as pmac_sat with limits of zero and 1.0; can never be larger than pmacro.
+c
 c             
 c
 c***********************************************************************
@@ -984,9 +988,8 @@ c pmacro is the percentage of potential infiltration after
 c surface control (Hortonian) that bypasses the root zone.
 c A fraction of pmacro, pmac_sat, completely bypasses the entire
 c unsaturated zone such that solutes deposited in precip and/or
-c irrigation mix immediately with saturated zone waters.
-c pmac_sat is also a fraction of potential infiltration and
-c has an upper limit of pmacro.
+c irrigation mix immediately with saturated zone waters. The flow
+c that bypasses the entire unsaturated zone is qvpref.
 c
       ALLOCATE (pmacro(Nmru))
       if(declparam('topc','pmacro', 'nmru',
@@ -997,13 +1000,21 @@ c
      +   'fraction') .ne.0) return
 
       ALLOCATE (pmac_sat(Nmru))
+c       if(declparam('topc','pmac_sat', 'nmru',
+c     +   'real', '0.0', '0.0', '1.0',
+c     +   'Fraction of potential infiltration that bypasses '//
+c     $   'the root zone and mixes immediately with the saturated zone',
+c     $   'Fraction of potential infiltration '//
+c     $   'that bypasses the root zone and mixes immediately '//
+c     $   'with the saturated zone',
+c     +   'fraction') .ne.0) return
+
       if(declparam('topc','pmac_sat', 'nmru',
      +   'real', '0.0', '0.0', '1.0',
-     +   'Fraction of potential infiltration that bypasses '//
-     $   'the root zone and mixes immediately with the saturated zone',
-     $   'Fraction of potential infiltration '//
-     $   'that bypasses the root zone and mixes immediately '//
-     $   'with the saturated zone',
+     +   'Fraction of pmacro that mixes immediately '//
+     +   'with the saturated zone',
+     +   'Fraction of pmacro that mixes immediately '//
+     +   'with the saturated zone',
      +   'fraction') .ne.0) return
 
       if(declparam('topc', 'qobsta', 'one', 'integer',
@@ -1578,15 +1589,15 @@ c$$$ 8000 format(1x,'Subcatchment  ', i3)
       do 50 is = 1, nsc
 c
 c Test that both pmacro is >= pmac_sat and that
-c both are <= 1.
-c     
-         if(pmacro(is).gt.1.0.or.pmacro(is).lt.0.0.or..not.
-     $        pmacro(is).ge.pmac_sat(is).and.pmac_sat(is).ge.0.0) then
-          write(*,*)'ERROR: PMACRO must be greater than PMAC_SAT and '//
-     $         'both must be between zero and one ',
-     $         'Check values for MRU ',is
-            return
-         end if
+c both are <= 1.  ! Not need as pmac_sat is now a fraction of pmacro
+c
+c         if(pmacro(is).gt.1.0.or.pmacro(is).lt.0.0.or..not.
+c     $        pmacro(is).ge.pmac_sat(is).and.pmac_sat(is).ge.0.0) then
+c          write(*,*)'ERROR: PMACRO must be greater than PMAC_SAT and '//
+c     $         'both must be between zero and one ',
+c     $         'Check values for MRU ',is
+c            return
+c         end if
 
 
 c$$$      write(topout_file_unit, 8000) is
@@ -1836,9 +1847,9 @@ c
      $     'SZQ: Baseflow discharge when average soil moisture '/
      $     '  deficit=0, in m/DT'/
      $     'PMACRO: Fraction of infiltration that bypasses root zone'/
-     $     'PMAC_SAT: Fraction of infiltration that bypasses'/
-     $     '  the root zone and the unsaturated zone (Max=PMACRO)'/
-     $     'QDFFRAC: Fraction of infiltration diverted to stream'/
+     $     'PMAC_SAT: Fraction of PMACRO that bypasses'/
+     $     '  the root zone and the unsaturated zone (0-1.0)'/
+     $     'QDFFRAC: Fraction of recharge diverted to stream'/
      $     'S_TH_WP: Soil moisture at wilting point(cm3/cm3)'/
      $     'S_TH_0: Initial soil moisture(cm3/cm3)'/
      $     'S_TH_FC: Soil moisture at field capacity(cm3/cm3)'/
@@ -2322,7 +2333,8 @@ c
 c   Also remove from P the amount of water that bypasses both the
 c   root zone and the unsaturated zone storage, qvpref - RMTW
 c
-      qvpref(is) = p * pmac_sat(is)
+c      qvpref(is) = p * pmac_sat(is)
+      qvpref(is) = p * pmac_sat(is)*pmacro(is)
       p = p - qvpref(is)
 C
 c
@@ -2394,12 +2406,15 @@ c         endif
       ENDIF
 C
 C  ROOT ZONE CALCULATIONS
+c      SRZ(IA,is) = SRZ(IA,is) - (1.0-pmacro(is))*(P+qvpref(is))
       SRZ(IA,is) = SRZ(IA,is) - (1.0-pmacro(is))*(P+qvpref(is))
       IF(SRZ(IA,is).LT.0.)THEN
         SUZ(IA,is) = SUZ(IA,is) - SRZ(IA,is)
         SRZ(IA,is) = 0.
       ENDIF
-      suz(ia,is) = suz(ia,is)+ (pmacro(is)-pmac_sat(is))*(P+qvpref(is))
+c      suz(ia,is) = suz(ia,is)+ (pmacro(is)-pmac_sat(is))*(P+qvpref(is))
+      suz(ia,is) = suz(ia,is)+ (pmacro(is)*(1.0-pmac_sat(is))*
+     +             (P+qvpref(is)))
 C
 C  UZ CALCULATIONS
       IF(SUZ(IA,is).GT.SD(IA,is))THEN
