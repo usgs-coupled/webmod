@@ -292,7 +292,7 @@ C   Local for init section
 C   Local for run section
       real, save :: DT, XKAREA, sbar_norm, sat_head, rate
       real, save :: POBS, P
-      real, save :: z_wt_quick, qprefwt
+      real, save :: z_wt_quick, qprefwt, qpref_zmin
       real, save, allocatable :: last_uz_dep(:,:), last_srz(:,:)
       real, save, allocatable :: last_suz(:,:)
       real, save, allocatable :: EX(:)
@@ -2684,11 +2684,16 @@ c      z_wt_quick = z_wt(is)
 c
 c  Calculate qpref such that it cannot drain to an elevation below the tile drain
 c
-      if(qpref(is).gt.z_wt_quick-s_satpref_zmin(is))
-     $   qpref(is)=z_wt_quick-s_satpref_zmin(is)+(-QUZ(is)-qvpref(is)
-     $     +QB(is)+qwet(is)+qexfil(is)+(irrig_sat_mru(is)*inch2m)-
-     $     gw_in1(is)-gw_in2(is) + gw_loss(is))/s_drain(is)
-      if(qpref(is).lt.0) qpref(is) = 0.0
+c      if(qpref(is).gt.z_wt_quick-s_satpref_zmin(is))
+c     $   qpref(is)=z_wt_quick-s_satpref_zmin(is)+(-QUZ(is)-qvpref(is)
+c     $     +QB(is)+qwet(is)+qexfil(is)+(irrig_sat_mru(is)*inch2m)-
+c     $     gw_in1(is)-gw_in2(is) + gw_loss(is))/s_drain(is)
+      qpref_zmin = (z_wt_quick-s_satpref_zmin(is))*s_drain(is)-
+     $     QUZ(is)-qvpref(is)+QB(is)+qwet(is)+qexfil(is)+
+     $     (irrig_sat_mru(is)*inch2m)-gw_in1(is)-gw_in2(is)+gw_loss(is)
+      if(qpref_zmin.lt.qpref(is).and.qpref_zmin.gt.0)
+     $    qpref(is) = qpref_zmin 
+c      if(qpref(is).lt.0) qpref(is) = 0.0
 
       
 c      QB(is)=SZQ(is)*EXP(-SBAR(is)/SZM(is))
