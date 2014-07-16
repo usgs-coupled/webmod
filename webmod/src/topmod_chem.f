@@ -2684,7 +2684,7 @@ c      z_wt_quick = z_wt(is)
 c
 c  Calculate qpref such that it cannot drain to an elevation below the tile drain
 c
-      if(qpref(is).gt.s_satpref_zmin(is)- z_wt_quick)
+      if(qpref(is).gt.z_wt_quick-s_satpref_zmin(is))
      $   qpref(is)=z_wt_quick-s_satpref_zmin(is)+(-QUZ(is)-qvpref(is)
      $     +QB(is)+qwet(is)+qexfil(is)+(irrig_sat_mru(is)*inch2m)-
      $     gw_in1(is)-gw_in2(is) + gw_loss(is))/s_drain(is)
