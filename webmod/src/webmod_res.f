@@ -1266,7 +1266,7 @@ c
 
       USE WEBMOD_RESMOD
       USE WEBMOD_TOPMOD, ONLY : riparian
-      USE WEBMOD_IO, ONLY : print_type, nf, vse_lun
+      USE WEBMOD_IO, ONLY : print_vse, nf, vse_lun
       integer, external :: length      
       integer is, ia, ih, filelen
       real acf
@@ -1642,9 +1642,9 @@ c
       basin_gw_sto_cm = basin_gw_sto_cm * m3cm
       basin_chan_sto_cm = basin_chan_sto_cm * m3cm
 c
-c Open volume files if print_type= 1 (basin and mru) or 2 (all reservoirs)
+c Open volume files if print_vse= 1 (basin and mru) or 2 (all reservoirs)
 c
-      if(print_type.ge.1) then
+      if(print_vse.ge.1) then
 !        nf=0
 c composite basin volumes
         IF(control_string(out_dir,'output_dir').NE.0) RETURN
@@ -1662,7 +1662,7 @@ c composite basin volumes
         vse_lun(nf)=vf_bas%lun
         write(vf_bas%lun,10)
 !
-!open mru volume files (only compsite mru if print_type = 1)
+!open mru volume files (only compsite mru if print_vse = 1)
 !
         allocate(vf_mru(nmru))
         do i = 1, nmru
@@ -1682,7 +1682,7 @@ c composite basin volumes
           vse_lun(nf)=vf_mru(i)%lun
           write(vf_mru(i)%lun,10)
 ! additional reservoir files
-          if(print_type.eq.2) then
+          if(print_vse.eq.2) then
               if(v_alloc) then ! only allocate once
                 allocate(vf_uzgen(nmru))
                 allocate(vf_uzrip(nmru))
@@ -1913,10 +1913,10 @@ c composite basin volumes
           nf=nf+1
           vse_lun(nf)=vf_uz2sat(i)%lun
           write(vf_uz2sat(i)%lun,13)('UZ',j,j=1,nac)
-          endif !print_type=2, mru section
+          endif !print_vse=2, mru section
       enddo ! mru loop
 ! volumes of water exported to stream segments from each MRU on that day
-      if(print_type.eq.2) then
+      if(print_vse.eq.2) then
           allocate(vf_hillexp(nhydro))
           do i = 1, nhydro
           write(filename,170)i
@@ -1949,8 +1949,8 @@ c composite basin volumes
         nf=nf+1
         vse_lun(nf)=vf_hyd%lun
         write(vf_hyd%lun,17)('hyd',i,i=1,nhydro)
-        endif ! print_type=2, hydro section
-      endif ! print_type=1 
+        endif ! print_vse=2, hydro section
+      endif ! print_vse=1 
       
       webrinit = 0
 !     '12345678911234567892123456783123456789412
@@ -2007,7 +2007,7 @@ c
       integer function webrrun()
 
       USE WEBMOD_RESMOD
-      USE WEBMOD_IO, only: phreeqout, print_type
+      USE WEBMOD_IO, only: phreeqout, print_vse
       USE WEBMOD_TOPMOD, only: z_wt_local, srzwet, riparian
 
 c variables and parameters from other modules
@@ -3470,15 +3470,15 @@ c
       basin_qsim_m3s = basin_qsim_cm*basin_area/8.64/fac
 
 c
-c Write output volume files when print_type >= 1
+c Write output volume files when print_vse >= 1
 c
-      if(print_type.ge.1) then
+      if(print_vse.ge.1) then
        write(vf_bas%lun,123) nstep,(datetime(i),i=1,3),
      $      (vmix_basin(i),i=1,21)
         do is=1,nmru
           write(vf_mru(is)%lun,123) nstep,(datetime(i),i=1,3),
      $      (vmix_mru(is,i),i=1,21)
-          if(print_type.eq.2) then
+          if(print_vse.eq.2) then
           write(vf_uzgen(is)%lun,123) nstep,(datetime(i),i=1,3),
      $      (vmix_uzgen(is,i),i=1,21)
           write(vf_uzrip(is)%lun,123) nstep,(datetime(i),i=1,3),

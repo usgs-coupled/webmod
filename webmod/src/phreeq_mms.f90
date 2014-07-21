@@ -3292,7 +3292,7 @@
 ! #endif
       USE WEBMOD_PHREEQ_MMS
       USE WEBMOD_OBSCHEM, ONLY :phq_lut,sol_id,sol_name,n_iso,iso_list
-      USE WEBMOD_IO, only: phreeqout, chemout, print_type, chemout,nf,vse_lun
+      USE WEBMOD_IO, only: phreeqout, chemout, print_vse, chemout,nf,vse_lun
 
 
 ! Mixing variables from webmod_res
@@ -5274,14 +5274,14 @@
 !$$$      ENDIF
 !
 ! Concentrations in discharge are always printed in the *.chemout file when chem_sim=1
-! Write additional headers for solutes (s_) and entities (e_) when print_type.ge.1
-! if print_type = 1 additional files for solutes and entities for basin and mrus. 
-! if print_type = 2 additional files for solutes and entities for all reservoirs
+! Write additional headers for solutes (s_) and entities (e_) when print_vse.ge.1
+! if print_vse = 1 additional files for solutes and entities for basin and mrus. 
+! if print_vse = 2 additional files for solutes and entities for all reservoirs
 !
 !
-! Open solute files if print_type= 1 (basin and mru) or 2 (all reservoirs)
+! Open solute files if print_vse= 1 (basin and mru) or 2 (all reservoirs)
 !
-      if(print_type.ge.1) then
+      if(print_vse.ge.1) then
 ! composite basin solutes
         IF(control_string(out_dir,'output_dir').NE.0) RETURN
         path_len = index(out_dir,CHAR(0))-1   ! CHAR(0) is end of strings returned from control_string call
@@ -5298,7 +5298,7 @@
         vse_lun(nf)=sf_bas%lun
         write(sf_bas%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
 !
-!open mru solute files (only compsite mru if print_type = 1)
+!open mru solute files (only compsite mru if print_vse = 1)
 !
         allocate(sf_mru(nmru))
         do i = 1, nmru
@@ -5318,7 +5318,7 @@
           vse_lun(nf)=sf_mru(i)%lun
           write(sf_mru(i)%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
 ! additional reservoir files
-          if(print_type.eq.2) then
+          if(print_vse.eq.2) then
             if(s_alloc) then
                 allocate(sf_uzgen(nmru))
                 allocate(sf_uzrip(nmru))
@@ -5549,10 +5549,10 @@
           nf=nf+1
           vse_lun(nf)=sf_uz2sat(i)%lun
           write(sf_uz2sat(i)%lun,13)('UZ',j,j=1,nac)
-          endif !print_type=2, mru section
+          endif !print_vse=2, mru section
       enddo ! mru loop
 ! solutes in stream segments 
-      if(print_type.eq.2) then
+      if(print_vse.eq.2) then
           allocate(sf_hydseg(nhydro))
           do i = 1, nhydro
           write(filename,170)i
@@ -5585,12 +5585,12 @@
         nf=nf+1
         vse_lun(nf)=sf_hyd%lun
         write(sf_hyd%lun,18)('hyd',i,i=1,nhydro)
-        endif ! print_type=2, hydro section
-      endif ! print_type=1 
+        endif ! print_vse=2, hydro section
+      endif ! print_vse=1 
 ! 
-!  Open entity files if print_type= 1 (basin and mru) or 2 (all reservoirs)
+!  Open entity files if print_vse= 1 (basin and mru) or 2 (all reservoirs)
 ! 
-      if(print_type.ge.1) then
+      if(print_vse.ge.1) then
 !  composite basin entities
         IF(control_string(out_dir,'output_dir').NE.0) RETURN
         path_len = index(out_dir,CHAR(0))-1   ! CHAR(0) is end of strings returned from control_string call
@@ -5607,7 +5607,7 @@
         vse_lun(nf)=ef_bas%lun
         write(ef_bas%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
 !
-!open mru entity files (only compsite mru if print_type = 1)
+!open mru entity files (only compsite mru if print_vse = 1)
 !
         allocate(ef_mru(nmru))
         do i = 1, nmru
@@ -5627,7 +5627,7 @@
           vse_lun(nf)=ef_mru(i)%lun
           write(ef_mru(i)%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
 ! additional reservoir files
-          if(print_type.eq.2) then
+          if(print_vse.eq.2) then
             if(e_alloc) then
                 allocate(ef_uzgen(nmru))
                 allocate(ef_uzrip(nmru))
@@ -5858,10 +5858,10 @@
           nf=nf+1
           vse_lun(nf)=ef_uz2sat(i)%lun
           write(ef_uz2sat(i)%lun,211)
-          endif !print_type=2, mru section
+          endif !print_vse=2, mru section
       enddo ! mru loop
 ! Moles of entities in each stream segments at end of day
-      if(print_type.eq.2) then
+      if(print_vse.eq.2) then
           allocate(ef_hydseg(nhydro))
           do i = 1, nhydro
           write(filename,370)i
@@ -5894,8 +5894,8 @@
         nf=nf+1
         vse_lun(nf)=ef_hyd%lun
         write(ef_hyd%lun,211)
-        endif ! print_type=2, hydro section
-       endif ! print_type=1 !
+        endif ! print_vse=2, hydro section
+       endif ! print_vse=1 !
       endif ! if chem_sim.eq
 
       phr_tf=.false. ! Make debug flag false until xdebug_start is reached
@@ -5989,7 +5989,7 @@
 
       USE WEBMOD_PHREEQ_MMS
 !      USE WEBMOD_INTCP, ONLY : covden_win
-      USE WEBMOD_IO, ONLY : phreeqout, chemout, print_type, debug
+      USE WEBMOD_IO, ONLY : phreeqout, chemout, print_vse, debug
       USE WEBMOD_OBSHYD, ONLY : relhum
       USE WEBMOD_OBSCHEM, ONLY : phq_lut, sol_id, sol_name,unit_lut,&
           n_iso, iso_list,c_precip_pH,c_precipT,cconc_precipM, &
@@ -9729,7 +9729,7 @@
 !
 ! Populate detailed solute output files
 !
-      if(print_type.ge.1) then !  composite solute fluxes for basin, mrus, and stream reservoirs. No entity summaries for cumulative fluxes
+      if(print_vse.ge.1) then !  composite solute fluxes for basin, mrus, and stream reservoirs. No entity summaries for cumulative fluxes
        do j = 1,nsolute
          write(sf_bas%lun,123) nstep,(datetime(i),i=1,3),&
           (c_chem_basin%vol(i), i=1,5), sol_name(j), (c_chem_basin%M(j,i), i=1,5),ch_basin_ElemFrac(j),&
@@ -9744,7 +9744,7 @@
           (c_chem_hyd%Rxn(j,i), i=3,ntally_cols) ! first 2 tally cols are mixes (conservative and with reaction)
        end do
 
-        if(print_type.eq.2) then ! solutes and entities for all reservoirs
+        if(print_vse.eq.2) then ! solutes and entities for all reservoirs
 ! solutes
          do j=1,nsolute
           do is=1,nmru
@@ -9842,8 +9842,8 @@
              (c_chem(i_hyd(is))%vol(5)), (c_chem(i_hyd(is))%MassDiff(i), i=3,ntally_cols),&
               (c_chem(i_hyd(is))%Mass(i), i=3,ntally_cols)
          end do
-        end if ! print_type eq 2
-       end if! print_type ge 1
+        end if ! print_vse eq 2
+       end if! print_vse ge 1
       end if                    ! landing point if no chemical simulations to be done
 ! debug
       !if(nstep.eq.1) write(debug%lun,'(A)')'nstep   yr   mo   dy      Canopy      Canopy    Snowpack    Snowpack     O_Horiz     O_Horiz        UZ->        UZ->'//&

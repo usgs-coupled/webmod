@@ -26,10 +26,10 @@ c***********************************************************************
 !      integer, SAVE:: topout_file_unit, chemout_file_unit, phreeqout ! standard output, in addition to MMS files *.out, *.statvar, etc
       integer, save:: endper, yrdays, modays(12),nowtime(6)
       integer, save, allocatable :: vse_lun(:) ! LUNs for volume, solute, and entitity files
-      integer, save:: print_type, nf  ! In addition to the four standard files, additional detailed files
+      integer, save:: print_vse, nf  ! In addition to the four standard files, additional detailed files
                                       ! may be output: nf files include volume files output in webmod_res and 
                                       ! chemistry files (solutes and entities) output in phreeq_mms
-      data nf/0/ ! no extra files if print_type = 0. This number increments for each detailed file opened in webmod_res and phreeq_mms
+      data nf/0/ ! no extra files if print_vse = 0. This number increments for each detailed file opened in webmod_res and phreeq_mms
       TYPE :: outfiles   ! file names, shortnames, and logical unit numbers for input and output files.
          character(60) :: file   ! Output file
          integer       :: lun        ! integer returned by NEWUNIT
@@ -106,6 +106,15 @@ c upon a restart(init file). Data section is only read on first
 c run so reset to true in the init section. Can be conditioned
 c on savevar condition later.
 c
+
+      if(declparam('sumb', 'print_vse', 'one', 'integer', 
+     +   '1', '0', '2',
+     +   'Scope of geochemical output files (vse)',
+     +   'Scope of geochemical output files (vse): 0 = none;'//
+     +   '                  1 = basin and MRUs;            '//
+     +   '                  2 = all reservoirs.                ',
+     +   'none').ne.0)return
+
       if(declvar('io', 'endper', 'one', 1, 'integer', 
      $     'Composite flag indicating the end of a given period: '//
      $     'Run(16)+Year(8)+Month(4)+Day(2)+storm(1)',
@@ -153,14 +162,8 @@ c End-period variables
       nhydro = getdim('nhydro')
       IF (nhydro.EQ.-1) RETURN
 
-! Get print_type (ahead of web_sum) so that it can be used to output detailed vol and chem files
-!     ! if(get*param('io', 'topout_file_unit', 1, 'integer',
-!     !+   topout_file_unit).ne.0) return
-!     !
-!      if(get*param('io', 'chemout_file_unit', 1, 'integer',
-!     +    chemout_file_unit).ne.0) return
 
-      if(getparam('sumb', 'print_type', 1, 'integer', print_type)
+      if(getparam('sumb', 'print_vse', 1, 'integer', print_vse)
      +   .ne.0) return
 
       if(getparam('phreeqmms', 'chem_sim', 1,
@@ -231,20 +234,20 @@ c
      * form='formatted', status='new')
 !
 ! Detailed output in addition to the four above.
-! When print_type equals 1 or 2, calculate the number of volume files written in webmod_res and
+! When print_vse equals 1 or 2, calculate the number of volume files written in webmod_res and
 ! the number of solute and entity files written in phr3eeq_mms. 'nf' is the the total number of
 ! files to be open, written, and  
-! when print_type = 1 nf includes a summary file for the basin and each mru
-! when print_type = 2 nf includes addition files for each hillslope and stream reservoir
+! when print_vse = 1 nf includes a summary file for the basin and each mru
+! when print_vse = 2 nf includes addition files for each hillslope and stream reservoir
 ! the initial prefixes are for volume (v_), solutes (s_), and entities (e_).
 ! If chemistry in not being simulated (chem_sim=0), no solute or entity files will be written.
 !
-      if(print_type.eq.1) then
+      if(print_vse.eq.1) then
           nf = nmru+1
           if(chem_sim.eq.1) then
               nf = 3*(nmru+1)
           endif
-      elseif(print_type.eq.2) then
+      elseif(print_vse.eq.2) then
           nf=1+nmru*(13+nac)+nhydro+1 ! first is basin, last is stream volumes, others are hillslope reservoirs
           if(chem_sim.eq.1) then
               nf =3*(1+nmru*(13+nac)+nhydro+1)
