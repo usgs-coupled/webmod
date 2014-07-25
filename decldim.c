@@ -166,13 +166,13 @@ long declfix_ (char *dname, ftnint *dval, ftnint *dmax, char *ddescr, ftnlen nam
 
 	return (ret);
 }
-///*--------------------------------------------------------------------*\
-// | FUNCTION     : getmodule
-// | COMMENT		:
-// | PARAMETERS   :
-// | RETURN VALUE : 
-// | RESTRICTIONS :
-//\*--------------------------------------------------------------------*/
+/*--------------------------------------------------------------------*\
+ | FUNCTION     : getmodule
+ | COMMENT		:
+ | PARAMETERS   :
+ | RETURN VALUE : 
+ | RESTRICTIONS :
+\*--------------------------------------------------------------------*/
 //MODULE_DATA * getmodule (char *key) { 
 //	MODULE_DATA *module;
 //	long i;
