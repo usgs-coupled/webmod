@@ -633,6 +633,16 @@
       double precision :: delta_D, delta_18O ! snowmelt_D_depl, snowmelt_18O_depl, and snow_ion_factor
                                              ! used to assign permil deltas for D and 18O after sublimation.
 !
+! Interannual variations of minimum air temperature are used as a proxy of variations of heat stored in the soils
+! resulting from interannual variations of insolation. tmin_c_base is the reference temperature to be compared 
+! with tmin_c_ra, the running average of tmin over the last ra_days computed in the temp module. The difference 
+! between tmin_c_ra and tmin_c_base is multiplied by the heat correction factor, heat_adj, in °C/°C to compute
+! infil_adj, the temperature to be added or subtracted to infil_temp0, the temperature of potential infiltration
+! that is a mix of precipitation, irrigation, and snowmelt. The final adjusted temperature is infil_temp.
+
+!
+      real, save, allocatable :: tmin_c_base(:), heat_adj(:), infil_adj(:),infil_temp0(:),infil_temp(:)
+!
 !  Initialization
 !  These tables assign one or more typical 'sets' for the reservoirs in a MRU or 
 !  hydrologic feature. Each MRU or hydro feature can be assigned to one of these sets
@@ -3217,26 +3227,54 @@
 !         .ne.0) return
 
       allocate(snow_ion_factor(nmru))
-      if(declparam('topc', 'snow_ion_factor', 'nmru', 'real',&
+      if(declparam('phreeqmms', 'snow_ion_factor', 'nmru', 'real',&
          '1.0', '1.0', '10.0',&
          'Maximum ratio of solute concentrations in melt/pack', & 
          'Maximum ratio of solute concentrations in melt/pack', & 
          'ratio melt/pack').ne.0) return
 
       allocate(snowmelt_D_depl(nmru))
-      if(declparam('topc', 'snowmelt_D_depl', 'nmru', 'real',&
+      if(declparam('phreeqmms', 'snowmelt_D_depl', 'nmru', 'real',&
          '-8.0', '-40', '0.0',&
          'Depletion of deuterium in melt versus pack', & 
          'Depletion of deuterium in melt versus pack', & 
          'permil per meltday').ne.0) return
 
       allocate(snowmelt_18O_depl(nmru))
-      if(declparam('topc', 'snowmelt_18O_depl', 'nmru', 'real',&
+      if(declparam('phreeqmms', 'snowmelt_18O_depl', 'nmru', 'real',&
          '-1.0', '-5.0', '0.0',&
          'Depletion of 18O in melt versus pack', & 
          'Depletion of 18O in melt versus pack', & 
          'permil per meltday').ne.0) return
 
+      ALLOCATE (tmin_c_base(nmru))
+      if(declparam('phreeqmms', 'tmin_c_base', 'nmru', 'real',&
+        '-3.0', '-20.', '20.0', &
+        'Base tmin_c_ra for adjusting infiltration temperature', &
+        'Base tmin_c_ra for adjusting infiltration temperature', &
+        'degrees C').ne.0) return
+
+      ALLOCATE (heat_adj(nmru))
+      if(declparam('phreeqmms', 'heat_adj', 'nmru', 'real',&
+        '4.0', '0.0', '20.0', &
+        'Scaling factor for adjusting infiltration temperature', &
+        'Scaling factor for adjusting infiltration temperature', &
+        'deg C / deg C').ne.0) return
+
+      allocate(infil_adj(nmru))
+      if(declvar('phreeqmms', 'infil_adj', 'nmru', nmru,'real',&
+        'Temperature added (+) or subtracted (-) to infiltration',&
+        'degrees C', infil_adj).ne.0) return
+
+      allocate(infil_temp(nmru))
+      if(declvar('phreeqmms', 'infil_temp', 'nmru', nmru,'real',&
+        'Final heat-adjusted temperature of infiltration',&
+        'degrees C', infil_temp).ne.0) return
+
+      allocate(infil_temp0(nmru))
+      if(declvar('phreeqmms', 'infil_temp0', 'nmru', nmru,'real',&
+        'Temperature of infiltration before heat adjustment',&
+        'degrees C', infil_temp0).ne.0) return
 
 ! Other variables
       ALLOCATE(kPa(nmru))
@@ -3291,9 +3329,9 @@
 !       USE IFPORT
 ! #endif
       USE WEBMOD_PHREEQ_MMS
+      USE WEBMOD_TEMP1STA, ONLY : tmin_c_ra
       USE WEBMOD_OBSCHEM, ONLY :phq_lut,sol_id,sol_name,n_iso,iso_list
       USE WEBMOD_IO, only: phreeqout, chemout, print_vse, chemout,nf,vse_lun
-
 
 ! Mixing variables from webmod_res
       USE WEBMOD_RESMOD, ONLY : vmix_can, vmix_snow, vmix_ohoriz, &
@@ -3380,7 +3418,6 @@
 !
 ! Get variables
 !
-
       if(getvar('routec', 'clark_segs', 1, 'integer', clark_segs)&
          .ne.0) return
 
@@ -3539,7 +3576,11 @@
       if(getparam('phreeqmms', 'snowmelt_18O_depl', nmru, 'real',&
            snowmelt_18O_depl) .ne.0) return
 
+      if(getparam('phreeqmms', 'tmin_c_base', nmru, 'real',&
+           tmin_c_base) .ne.0) return
 
+      if(getparam('phreeqmms', 'heat_adj', nmru, 'real',&
+           heat_adj) .ne.0) return
 !
 ! Populate the chvar_lut table according to the parameters
 ! dimensioned by nchemvar
@@ -3928,7 +3969,7 @@
          ENDIF
          j=tally_col_type(i)
          n_ent(j)=n_ent(j)+1 ! The first two columns in the tally table are the Moles of each solute in solution 
-!                              before (col 1) and after (col 2) reactions.
+!                              before (col 1) and after (col 2) reactions (indx_cons and indx_rxn in phr_mix)
          if(i.eq.1) then ! first column is Moles per kilogram in conservative solution
              ent_label(i) = "soln_conservative"
          elseif(i.eq.2) then ! second column is Moles per kilogram after reactions
@@ -5998,7 +6039,7 @@
       USE WEBMOD_POTET, ONLY : transp_on
       ! Mixing variables from webmod_res
 !      USE WEBMOD_PRECIP, ONLY : mru_ppt
-      USE WEBMOD_TEMP1STA, ONLY: tmax_c
+      USE WEBMOD_TEMP1STA, ONLY: tmax_c, tmin_c_ra, ra_days
       USE WEBMOD_IRRIG, ONLY : irrig_ext_mru, irrig_hyd_mru, &
           irrig_frac_ext, irrig_frac_sat, irrig_frac_hyd, mru_ppt, mru_dep
       USE WEBMOD_TOPMOD, ONLY : gw_loss,qpref_max, st, quz, srzwet, riparian_thresh, uz_area, riparian
@@ -7458,7 +7499,13 @@
 !     
 ! End of snowpack fluxes
 !
-
+!
+!     Compute temperature correction for hillslope deposition
+         if(nstep.gt.ra_days) then
+             infil_adj(is)=(tmin_c_ra(is)-tmin_c_base(is))*heat_adj(is)
+         else
+             infil_adj(is)= 0.0
+         endif
 !
 ! O-horizon section. Rinses with overland flow. Need to include
 ! DOC generation and other reactions.
@@ -7526,12 +7573,13 @@
                     fill_factor, mixture, conc, phr_tf, no_rxn,&
                     rxnmols,tempc,ph,ph_final,tsec,tally_table,ntally_rows,&
                     ntally_cols)
-
                IF (iresult.NE.0) THEN
                   PRINT *, 'Errors during phr_mix:'
                   CALL OutputErrorString(id)
                   STOP
                ENDIF
+! infil_adj here
+
 !     Update volume/mole matrix for O-horizon inputs
                indx = isoln(solnnum(0,4,0,is,0,0,0),nchemdat,nmru,&
                     nac,clark_segs,ires,ichemdat,imru,inac,ihydro)
