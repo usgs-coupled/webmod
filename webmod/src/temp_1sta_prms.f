@@ -20,11 +20,12 @@ C   Declared Variables
       real, save :: basin_tmin_f, basin_tmin_c
       real, save :: basin_temp_f, basin_temp_c
       real, save, allocatable :: tmax_f(:),tmax_c(:)
-      real, save, allocatable :: tmin_f(:),tmin_c(:),tmin_c_ra(:)
+      real, save, allocatable :: tmin_f(:),tmin_c(:)
+      real, save, allocatable :: tmin_c_ra(:),tavg_c_ra(:)
       real, save, allocatable :: temp_f(:),temp_c(:)
 C   Declared Parameters
       real, save :: basin_area
-      integer, save ::  ra_days
+      integer, save ::  ra_tmin_days, ra_tavg_days
       integer, save, allocatable ::  mru_tsta(:)
       real, save, allocatable :: tsta_elev(:)
       real, save, allocatable :: tmax_lapse(:),tmin_lapse(:)
@@ -33,7 +34,7 @@ C   Declared Parameters
 
 C   Private Variables
       real, save, allocatable :: elfac(:), tcrn(:), tcrx(:), tcr(:)
-      real, save, allocatable :: tmin_c_array(:,:)
+      real, save, allocatable :: tmin_c_array(:,:),tavg_c_array(:,:)
 
 C   Undeclared Static Variables gotten from from other modules - soltab
       real, save, allocatable :: tsta_max_c(:),tsta_min_c(:)  ! from obs
@@ -127,18 +128,31 @@ c
      +     'degrees C',
      +   tmin_c).ne.0) return
 
-      if(declparam('temp', 'ra_days', 'one', 'integer',
+      if(declparam('temp', 'ra_tmin_days', 'one', 'integer',
      +   '400', '1', '10000',
      +   'Averaging window for tmin_c',
      +   'Averaging window for tmin_c',
      +   'days')
      +    .ne.0) return
       
+      if(declparam('temp', 'ra_tavg_days', 'one', 'integer',
+     +   '400', '1', '10000',
+     +   'Averaging window for tavg_c',
+     +   'Averaging window for tavg_c',
+     +   'days')
+     +    .ne.0) return
+      
       ALLOCATE (tmin_c_ra(nmru))
       if(declvar('temp', 'tmin_c_ra', 'nmru', nmru, 'real', 
      +     'Adjusted daily minimum temperature averaged'//
-     +     ' over ra_days','degrees C',
+     +     ' over ra_timin_days','degrees C',
      +   tmin_c_ra).ne.0) return
+
+      ALLOCATE (tavg_c_ra(nmru))
+      if(declvar('temp', 'tavg_c_ra', 'nmru', nmru, 'real', 
+     +     'Adjusted daily average temperature averaged'//
+     +     ' over ra_tavg_days','degrees C',
+     +   tavg_c_ra).ne.0) return
 
       ALLOCATE (temp_c(nmru))
       if(declvar('temp', 'temp_c', 'nmru', nmru, 'real',
@@ -283,10 +297,14 @@ c
       t1init = 1
     
 
-      if(getparam('temp', 'ra_days', 1, 'integer', ra_days)
+      if(getparam('temp', 'ra_tmin_days', 1, 'integer', ra_tmin_days)
      +   .ne.0) return
 
-      ALLOCATE (tmin_c_array(nmru,ra_days)) ! array of minimum temperatures
+      if(getparam('temp', 'ra_tavg_days', 1, 'integer', ra_tavg_days)
+     +   .ne.0) return
+
+      ALLOCATE (tmin_c_array(nmru,ra_tmin_days)) ! array of minimum temperatures
+      ALLOCATE (tavg_c_array(nmru,ra_tavg_days)) ! array of average temperatures
       
       if(getparam('temp', 'tmin_lapse', nmonths, 'real', tmin_lapse)
      +   .ne.0) return
@@ -323,8 +341,12 @@ c
         k = mru_tsta(j)
         elfac(j) = (mru_elev(j)-tsta_elev(k))/1000.
         tmin_c_ra(j)=0.0
-        do i=1,ra_days
+        tavg_c_ra(j)=0.0
+        do i=1,ra_tmin_days
             tmin_c_array(j,i)=0.0
+        end do
+        do i=1,ra_tavg_days
+            tavg_c_array(j,i)=0.0
         end do
    10 continue
 
@@ -380,13 +402,19 @@ c
         k = mru_tsta(j)
         tmax_c(j) = tsta_max_c(k)-tcrx(j)
         tmin_c(j) = tsta_min_c(k)-tcrn(j)
+        temp_c(j) = tsta_temp_c(k) -tcr(j)
         tmin_c_array(j,1)=tmin_c(j)
         tmin_c_ra(j) = 0
-        do k = 1, ra_days
+        tavg_c_array(j,1)=temp_c(j)
+        tavg_c_ra(j) = 0
+        do k = 1, ra_tmin_days
             tmin_c_ra(j) = tmin_c_ra(j) + tmin_c_array(j,k)
         end do
-        tmin_c_ra(j)= tmin_c_ra(j)/ra_days
-        temp_c(j) = tsta_temp_c(k) -tcr(j)
+        do k = 1, ra_tavg_days
+            tavg_c_ra(j) = tavg_c_ra(j) + tavg_c_array(j,k)
+        end do
+        tmin_c_ra(j)= tmin_c_ra(j)/ra_tmin_days
+        tavg_c_ra(j)= tavg_c_ra(j)/ra_tavg_days
         basin_tmax_c = basin_tmax_c + (tmax_c(j) * mru_area(j))
         basin_tmin_c = basin_tmin_c + (tmin_c(j) * mru_area(j))
         basin_temp_c = basin_temp_c + (temp_c(j) * mru_area(j))
@@ -395,6 +423,7 @@ c
         temp_f(j) = temp_c(j)*1.8+32.
    20 continue
       tmin_c_array=cshift(tmin_c_array,-1,2)
+      tavg_c_array=cshift(tavg_c_array,-1,2)
       basin_tmax_c = basin_tmax_c / basin_area
       basin_tmin_c = basin_tmin_c / basin_area
       basin_temp_c = basin_temp_c / basin_area

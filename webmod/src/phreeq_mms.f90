@@ -635,13 +635,14 @@
 !
 ! Interannual variations of minimum air temperature are used as a proxy of variations of heat stored in the soils
 ! resulting from interannual variations of insolation. tmin_c_base is the reference temperature to be compared 
-! with tmin_c_ra, the running average of tmin over the last ra_days computed in the temp module. The difference 
+! with tmin_c_ra, the running average of tmin over the last ra_tmin_days computed in the temp module. The difference 
 ! between tmin_c_ra and tmin_c_base is multiplied by the heat correction factor, heat_adj, in °C/°C to compute
-! infil_adj, the temperature to be added or subtracted to infil_temp0, the temperature of potential infiltration
-! that is a mix of precipitation, irrigation, and snowmelt. The final adjusted temperature is infil_temp.
+! dep_adj, the temperature to be added or subtracted to dep_temp0, the temperature of potential infiltration
+! that is a mix of precipitation and irrigation. dep_temp0 is assigned the average air temperature, 
+! tavg_c_ra, over the period ra_tavg_days (two weeks?). The final adjusted temperature is dep_temp.
 
 !
-      real, save, allocatable :: tmin_c_base(:), heat_adj(:), infil_adj(:),infil_temp0(:),infil_temp(:)
+      real, save, allocatable :: tmin_c_base(:), heat_adj(:), dep_adj(:),dep_temp0(:),dep_temp(:)
 !
 !  Initialization
 !  These tables assign one or more typical 'sets' for the reservoirs in a MRU or 
@@ -3261,20 +3262,20 @@
         'Scaling factor for adjusting infiltration temperature', &
         'deg C / deg C').ne.0) return
 
-      allocate(infil_adj(nmru))
-      if(declvar('phreeqmms', 'infil_adj', 'nmru', nmru,'real',&
+      allocate(dep_adj(nmru))
+      if(declvar('phreeqmms', 'dep_adj', 'nmru', nmru,'real',&
         'Temperature added (+) or subtracted (-) to infiltration',&
-        'degrees C', infil_adj).ne.0) return
+        'degrees C', dep_adj).ne.0) return
 
-      allocate(infil_temp(nmru))
-      if(declvar('phreeqmms', 'infil_temp', 'nmru', nmru,'real',&
+      allocate(dep_temp(nmru))
+      if(declvar('phreeqmms', 'dep_temp', 'nmru', nmru,'real',&
         'Final heat-adjusted temperature of infiltration',&
-        'degrees C', infil_temp).ne.0) return
+        'degrees C', dep_temp).ne.0) return
 
-      allocate(infil_temp0(nmru))
-      if(declvar('phreeqmms', 'infil_temp0', 'nmru', nmru,'real',&
-        'Temperature of infiltration before heat adjustment',&
-        'degrees C', infil_temp0).ne.0) return
+      allocate(dep_temp0(nmru))
+      if(declvar('phreeqmms', 'dep_temp0', 'nmru', nmru,'real',&
+        'Temperature of infiltration based on average air temperature',&
+        'degrees C', dep_temp0).ne.0) return
 
 ! Other variables
       ALLOCATE(kPa(nmru))
@@ -3329,7 +3330,7 @@
 !       USE IFPORT
 ! #endif
       USE WEBMOD_PHREEQ_MMS
-      USE WEBMOD_TEMP1STA, ONLY : tmin_c_ra
+      USE WEBMOD_TEMP1STA, ONLY : tmin_c_ra, tavg_c_ra
       USE WEBMOD_OBSCHEM, ONLY :phq_lut,sol_id,sol_name,n_iso,iso_list
       USE WEBMOD_IO, only: phreeqout, chemout, print_vse, chemout,nf,vse_lun
 
@@ -6039,7 +6040,7 @@
       USE WEBMOD_POTET, ONLY : transp_on
       ! Mixing variables from webmod_res
 !      USE WEBMOD_PRECIP, ONLY : mru_ppt
-      USE WEBMOD_TEMP1STA, ONLY: tmax_c, tmin_c_ra, ra_days
+      USE WEBMOD_TEMP1STA, ONLY: tmax_c, tmin_c_ra, ra_tmin_days, tavg_c_ra, ra_tavg_days, temp_c
       USE WEBMOD_IRRIG, ONLY : irrig_ext_mru, irrig_hyd_mru, &
           irrig_frac_ext, irrig_frac_sat, irrig_frac_hyd, mru_ppt, mru_dep
       USE WEBMOD_TOPMOD, ONLY : gw_loss,qpref_max, st, quz, srzwet, riparian_thresh, uz_area, riparian
@@ -7500,12 +7501,20 @@
 ! End of snowpack fluxes
 !
 !
-!     Compute temperature correction for hillslope deposition
-         if(nstep.gt.ra_days) then
-             infil_adj(is)=(tmin_c_ra(is)-tmin_c_base(is))*heat_adj(is)
+!     Compute temperature for hillslope deposition
+         if(nstep.gt.ra_tavg_days) then
+             dep_temp0(is) = tavg_c_ra(is)
          else
-             infil_adj(is)= 0.0
+             dep_temp0(is) = temp_c(is)
          endif
+!     Compute temperature correction for hillslope deposition
+         if(nstep.gt.ra_tmin_days) then
+             dep_adj(is)=(tmin_c_ra(is)-tmin_c_base(is))*heat_adj(is)
+         else
+             dep_adj(is)= 0.0
+         endif
+!      Final infiltration temperature. in degrees C
+         dep_temp(is) = dep_temp0(is)+dep_adj(is)
 !
 ! O-horizon section. Rinses with overland flow. Need to include
 ! DOC generation and other reactions.
@@ -7534,6 +7543,18 @@
 !     O-horizon inputs (use temporary input reservoir number 14)
 
             mixture = solnnum(0,14,0,is,0,0,0)
+!
+! Adjust temperature of deposition
+!
+               WRITE (line,100),'SOLUTION_MODIFY ', solnnum(0,11,0,is,0,0,0)
+               iresult = AccumulateLine(id, line)
+               tempc=dep_temp(is)
+               if(tempc.lt.0.) tempc=0.
+               WRITE (line,120),'-temp ', tempc
+               iresult = AccumulateLine(id, line)
+               WRITE (line,110),'END'
+               iresult = AccumulateLine(id, line)
+               iresult = RunAccumulated(id)
 
 !     solnnum(time,res_ID,chemdat, mru, nac,hydro, stat)
             totvol = vmix_ohoriz(is,2)
@@ -7578,8 +7599,6 @@
                   CALL OutputErrorString(id)
                   STOP
                ENDIF
-! infil_adj here
-
 !     Update volume/mole matrix for O-horizon inputs
                indx = isoln(solnnum(0,4,0,is,0,0,0),nchemdat,nmru,&
                     nac,clark_segs,ires,ichemdat,imru,inac,ihydro)
@@ -7793,7 +7812,19 @@
          c_chem(indx)%vol(fin)=vmix_uz(ia,is,4)
              
             if (vmix_uz(ia,is,2).gt.0.0) then
-
+!
+! Adjust temperature of deposition
+!
+               WRITE (line,100),'SOLUTION_MODIFY ', solnnum(0,11,0,is,0,0,0)
+               iresult = AccumulateLine(id, line)
+               tempc=dep_temp(is)
+               if(tempc.lt.0.) tempc=0.
+               WRITE (line,120),'-temp ', tempc
+               iresult = AccumulateLine(id, line)
+               WRITE (line,110),'END'
+               iresult = AccumulateLine(id, line)
+               iresult = RunAccumulated(id)
+!
                mixture = solnnum(0,14,0,is,ia,0,0) ! Sum inputs in temp res 14
                totvol = vmix_uz(ia,is,2)
 
@@ -7831,6 +7862,7 @@
                   CALL OutputErrorString(id)
                   STOP
                ENDIF
+!
                indx = isoln(solnnum(0,5,0,is,ia,0,0),nchemdat,nmru,&
                     nac,clark_segs,ires,ichemdat,imru,inac,ihydro)
                iresult = update_chem(indx,totvol,2,conc,pH,tempc,&
