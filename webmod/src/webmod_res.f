@@ -282,7 +282,8 @@ c***********************************************************************
       integer, save, allocatable :: nacsc(:), mru2chan(:)
       real, save :: c_can_depth, basin_area
       real, save, allocatable :: covden_sum(:),covden_win(:)
-      real, save, allocatable :: s_ohoriz_depth(:), s_root_depth(:)
+!      real, save, allocatable :: s_ohoriz_depth(:), s_root_depth(:)
+      real, save, allocatable :: s_ohoriz_depth(:)
       real, save, allocatable :: s_porosity(:), s_theta_wp(:)
       real, save, allocatable :: s_theta_fc(:), uz_depth(:,:), ac(:,:)
       real, save, allocatable :: qdffrac(:), mru_area(:)
@@ -346,7 +347,7 @@ c
 ! Local variables in init
 !
       real, save, allocatable :: maxchanloss(:), intcp_on(:)
-      real, save, allocatable :: s_theta_0(:),s_rock_depth(:)
+!      real, save, allocatable :: s_theta_0(:),s_rock_depth(:)
       real, save, allocatable :: wei(:), q(:,:)
       real, save, allocatable :: s_satpref_zmax(:), s_satpref_zmin(:)
       real, save, allocatable :: sr0(:),sbar0(:)
@@ -1063,32 +1064,32 @@ c
      +   'cm3/cm3') .ne.0) return
 
 
-      allocate(s_root_depth(nmru))
-      if(declparam('topc', 's_root_depth', 'nmru', 'real',
-     +   '1.8', '0.1', '100',
-     +   'Rooting depth.','Rooting depth from ground surface, '//
-     +   'Available water capacity (moisture content at field '//
-     +   'capacity minus that at wilting point) * root_depth '//
-     +   'equals the maximum soil moisture deficit, srmax: '//
-     +   'smcont_sc. smcont_sc = (srmax - srz)/root_depth.'//
-     +   'Be sure to set root_depth to a value less then '//
-     +   'the depth to bedrock, s_rock_depth',
-     +   'm') .ne.0) return
+!      allocate(s_root_depth(nmru))
+!      if(declparam('topc', 's_root_depth', 'nmru', 'real',
+!     +   '1.8', '0.1', '100',
+!     +   'Rooting depth.','Rooting depth from ground surface, '//
+!     +   'Available water capacity (moisture content at field '//
+!     +   'capacity minus that at wilting point) * root_depth '//
+!     +   'equals the maximum soil moisture deficit, srmax: '//
+!     +   'smcont_sc. smcont_sc = (srmax - srz)/root_depth.'//
+!     +   'Be sure to set root_depth to a value less then '//
+!     +   'the depth to bedrock, s_rock_depth',
+!     +   'm') .ne.0) return
 
-      allocate(s_rock_depth(nmru))
-      if(declparam('topc', 's_rock_depth', 'nmru', 'real',
-     +     '6.0', '0.1', '300.0',
-     +     'Average depth to bedrock for the MRU.','Average depth to '//
-     $     'bedrock. Must be greater than the rooting depth, '//
-     $     's_rock_depth.',
-     +     'm') .ne.0) return
+!      allocate(s_rock_depth(nmru))
+!      if(declparam('topc', 's_rock_depth', 'nmru', 'real',
+!     +     '6.0', '0.1', '300.0',
+!     +     'Average depth to bedrock for the MRU.','Average depth to '//
+!     $     'bedrock. Must be greater than the rooting depth, '//
+!     $     's_rock_depth.',
+!     +     'm') .ne.0) return
 
-      allocate(s_theta_0(nmru))
-      if(declparam('topc','s_theta_0', 'nmru',
-     +   'real', '0.23', '0.01', '0.7',
-     +   'Initial volumetric soil moisture content in the root zone.',
-     +   'Initial volumetric soil moisture content in the root zone.',
-     +   'cm3/cm3') .ne.0) return
+!      allocate(s_theta_0(nmru))
+!      if(declparam('topc','s_theta_0', 'nmru',
+!     +   'real', '0.23', '0.01', '0.7',
+!     +   'Initial volumetric soil moisture content in the root zone.',
+!     +   'Initial volumetric soil moisture content in the root zone.',
+!     +   'cm3/cm3') .ne.0) return
             
       allocate(sbar0(nmru))
       if(declparam('topc', 'sbar0', 'nmru', 'real',
@@ -1265,7 +1266,8 @@ c
       integer function webrinit()
 
       USE WEBMOD_RESMOD
-      USE WEBMOD_TOPMOD, ONLY : riparian
+      USE WEBMOD_TOPMOD, ONLY : riparian, s_theta_0, 
+     $                          s_rock_depth, s_root_depth
       USE WEBMOD_IO, ONLY : print_vse, nf, vse_lun
       integer, external :: length      
       integer is, ia, ih, filelen
@@ -1327,8 +1329,8 @@ c$$$
 c$$$      if(get*param('topc', 'td', nmru, 'real', TD)
 c$$$     +   .ne.0) return
 c$$$      
-      if(getparam('topc', 's_theta_0', nmru, 'real', s_theta_0)
-     +   .ne.0) return
+!      if(getparam('topc', 's_theta_0', nmru, 'real', s_theta_0)
+!     +   .ne.0) return
 
       if(getparam('topc', 's_porosity', nmru, 'real', s_porosity)
      +   .ne.0) return
@@ -1339,11 +1341,11 @@ c$$$
       if(getparam('topc', 's_theta_fc', nmru, 'real', s_theta_fc)
      +   .ne.0) return
 
-      if(getparam('topc', 's_rock_depth', nmru, 'real', s_rock_depth)
-     +   .ne.0) return
+!      if(getparam('topc', 's_rock_depth', nmru, 'real', s_rock_depth)
+!     +   .ne.0) return
 
-      if(getparam('topc', 's_root_depth', nmru, 'real', s_root_depth)
-     +   .ne.0) return
+!      if(getparam('topc', 's_root_depth', nmru, 'real', s_root_depth)
+!     +   .ne.0) return
 
       if(getparam('topc', 's_satpref_zmax', nmru, 'real',
      $     s_satpref_zmax) .ne.0) return
@@ -2008,7 +2010,8 @@ c
 
       USE WEBMOD_RESMOD
       USE WEBMOD_IO, only: phreeqout, print_vse
-      USE WEBMOD_TOPMOD, only: z_wt_local, srzwet, riparian
+      USE WEBMOD_TOPMOD, only: z_wt_local, srzwet, riparian,
+     $                         s_theta_0, s_root_depth
 
 c variables and parameters from other modules
       double precision timestep

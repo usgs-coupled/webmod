@@ -1038,11 +1038,11 @@ c
      +   '1E-8 cm/s.', 'cm3/cm3') .ne.0) return
 
       ALLOCATE (s_theta_0(Nmru))
-      if(declparam('topc','s_theta_0', 'nmru',
-     +   'real', '0.23', '0.01', '0.7',
-     +   'Initial volumetric soil moisture content in the root zone.',
-     +   'Initial volumetric soil moisture content in the root zone.',
-     +   'cm3/cm3') .ne.0) return
+!      if(declparam('topc','s_theta_0', 'nmru',
+!     +   'real', '0.23', '0.01', '0.7',
+!     +   'Initial volumetric soil moisture content in the root zone.',
+!     +   'Initial volumetric soil moisture content in the root zone.',
+!     +   'cm3/cm3') .ne.0) return
 
       ALLOCATE (s_theta_wp(Nmru))
       if(declparam('topc','s_theta_wp', 'nmru',
@@ -1470,8 +1470,8 @@ c$$$
       if(getparam('topc', 's_theta_wp', nmru, 'real', s_theta_wp)
      +   .ne.0) return
 
-      if(getparam('topc', 's_theta_0', nmru, 'real', s_theta_0)
-     +   .ne.0) return
+!      if(getparam('topc', 's_theta_0', nmru, 'real', s_theta_0)
+!     +   .ne.0) return
 
       if(getparam('topc', 's_theta_fc', nmru, 'real', s_theta_fc)
      +   .ne.0) return
@@ -1896,12 +1896,13 @@ c
 
 c Initialize unsaturated zone water content
       do 26 is=1,nsc
-         if(s_theta_0(is).gt.s_theta_fc(is)) then
-            print*,'Error: Initial soil moisture, s_theta_0, ',
-     $        'exceeds field capacity, s_theta_fc, for MRU ',is,
-     $        '. Correct parameters and rerun.'
-            return
-         endif
+!         if(s_theta_0(is).gt.s_theta_fc(is)) then
+!            print*,'Error: Initial soil moisture, s_theta_0, ',
+!     $        'exceeds field capacity, s_theta_fc, for MRU ',is,
+!     $        '. Correct parameters and rerun.'
+!            return
+!         endif
+         s_theta_0(is) =  s_theta_fc(is)
          sr0(is) = (s_theta_fc(is) - s_theta_0(is)) * s_root_depth(is)
          
 c Readily drainable porosity is the difference getween saturated
