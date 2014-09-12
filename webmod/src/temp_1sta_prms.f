@@ -21,11 +21,20 @@ C   Declared Variables
       real, save :: basin_temp_f, basin_temp_c
       real, save, allocatable :: tmax_f(:),tmax_c(:)
       real, save, allocatable :: tmin_f(:),tmin_c(:)
-      real, save, allocatable :: tmin_c_ra(:),tavg_c_ra(:)
+      real, save, allocatable :: trxn_ohoriz_c(:),trxn_uz_c(:)
+      real, save, allocatable :: trxn_sat_c(:)
       real, save, allocatable :: temp_f(:),temp_c(:)
 C   Declared Parameters
       real, save :: basin_area
-      integer, save ::  ra_tmin_days, ra_tavg_days
+      integer, save :: trxn_ohoriz_days
+      integer, save, allocatable :: trxn_ohoriz_stat(:)
+      real, save, allocatable :: trxn_ohoriz_c_adj(:)
+      integer, save :: trxn_uz_days
+      integer, save, allocatable :: trxn_uz_stat(:)
+      real, save, allocatable :: trxn_uz_c_adj(:)
+      integer, save :: trxn_sat_days
+      integer, save, allocatable :: trxn_sat_stat(:)
+      real, save, allocatable :: trxn_sat_c_adj(:)
       integer, save, allocatable ::  mru_tsta(:)
       real, save, allocatable :: tsta_elev(:)
       real, save, allocatable :: tmax_lapse(:),tmin_lapse(:)
@@ -34,8 +43,9 @@ C   Declared Parameters
 
 C   Private Variables
       real, save, allocatable :: elfac(:), tcrn(:), tcrx(:), tcr(:)
-      real, save, allocatable :: tmin_c_array(:,:),tavg_c_array(:,:)
-
+      real, save, allocatable :: trxn_c_array_oh(:,:)
+      real, save, allocatable :: trxn_c_array_uz(:,:)
+      real, save, allocatable :: trxn_c_array_sat(:,:)
 C   Undeclared Static Variables gotten from from other modules - soltab
       real, save, allocatable :: tsta_max_c(:),tsta_min_c(:)  ! from obs
       real, save, allocatable :: tsta_temp_c(:)               ! from obs
@@ -128,32 +138,6 @@ c
      +     'degrees C',
      +   tmin_c).ne.0) return
 
-      if(declparam('temp', 'ra_tmin_days', 'one', 'integer',
-     +   '400', '1', '10000',
-     +   'Averaging window for tmin_c',
-     +   'Averaging window for tmin_c',
-     +   'days')
-     +    .ne.0) return
-      
-      if(declparam('temp', 'ra_tavg_days', 'one', 'integer',
-     +   '400', '1', '10000',
-     +   'Averaging window for tavg_c',
-     +   'Averaging window for tavg_c',
-     +   'days')
-     +    .ne.0) return
-      
-      ALLOCATE (tmin_c_ra(nmru))
-      if(declvar('temp', 'tmin_c_ra', 'nmru', nmru, 'real', 
-     +     'Adjusted daily minimum temperature averaged'//
-     +     ' over ra_timin_days','degrees C',
-     +   tmin_c_ra).ne.0) return
-
-      ALLOCATE (tavg_c_ra(nmru))
-      if(declvar('temp', 'tavg_c_ra', 'nmru', nmru, 'real', 
-     +     'Adjusted daily average temperature averaged'//
-     +     ' over ra_tavg_days','degrees C',
-     +   tavg_c_ra).ne.0) return
-
       ALLOCATE (temp_c(nmru))
       if(declvar('temp', 'temp_c', 'nmru', nmru, 'real',
      +     'MRU adjusted temperature for timestep',
@@ -244,6 +228,92 @@ c
      +   'MRU temperatures',
      +   'none').ne.0) return
 
+!
+! parameters controlling moving averages of temperature to use for reactions in the hillslope
+!
+      ALLOCATE (trxn_ohoriz_stat(nmru))
+      if(declparam('temp', 'trxn_ohoriz_stat', 'nmru', 'integer',
+     +   '2', '1', '3', 
+     +   'Use tmin(1), tavg(2), or tmax(3) for moving average',
+     +   'Use tmin(1), tavg(2), or tmax(3) for moving average',
+     +   'none').ne.0) return
+
+      ALLOCATE (trxn_uz_stat(nmru))
+      if(declparam('temp', 'trxn_uz_stat', 'nmru', 'integer',
+     +   '2', '1', '3', 
+     +   'Use tmin(1), tavg(2), or tmax(3) for moving average', 
+     +   'Use tmin(1), tavg(2), or tmax(3) for moving average', 
+     +   'none').ne.0) return
+ 
+      ALLOCATE (trxn_sat_stat(nmru))
+      if(declparam('temp', 'trxn_sat_stat', 'nmru', 'integer',
+     +   '2', '1', '3', 
+     +   'Use tmin(1), tavg(2), or tmax(3) for moving average', 
+     +   'Use tmin(1), tavg(2), or tmax(3) for moving average', 
+     +   'none').ne.0) return
+      
+      ALLOCATE (trxn_ohoriz_c_adj(nmru))
+      if(declparam('temp', 'trxn_ohoriz_c_adj', 'nmru', 'real',
+     +  '0.0', '-5.0', '5.0',
+     +  'Temperature adjustment to moving average of tmin, '//
+     +  'tavg, or tmax for O-horizon','Temperature adjustment '//
+     +  'to moving average of tmin, tavg, or tmax for O-horizon',
+     +  'degrees C').ne.0) return
+
+      ALLOCATE (trxn_uz_c_adj(nmru))
+      if(declparam('temp', 'trxn_uz_c_adj', 'nmru', 'real',
+     +  '0.0', '-5.0', '5.0',
+     +  'Temperature adjustment to moving average of tmin, '//
+     +  'tavg, or tmax for UZ','Temperature adjustment to moving '//
+     +  'average of tmin, tavg, or tmax for UZ',
+     +  'degrees C').ne.0) return
+
+      ALLOCATE (trxn_sat_c_adj(nmru))
+      if(declparam('temp', 'trxn_sat_c_adj', 'nmru', 'real',
+     +  '0.0', '-5.0', '5.0',
+     +  'Temperature adjustment to moving average of tmin, '//
+     +  'tavg, or tmax for saturated zone','Temperature adjustment '//
+     +  'to moving average of tmin, tavg, or tmax for saturated zone',
+     +  'degrees C').ne.0) return
+
+      if(declparam('temp', 'trxn_ohoriz_days', 'one', 'integer',
+     +   '400', '1', '10000',
+     +   'Temperature averaging window for O-horizon',
+     +   'Temperature averaging window for O-horizon',
+     +   'days')
+     +    .ne.0) return
+      
+      if(declparam('temp', 'trxn_uz_days', 'one', 'integer',
+     +   '400', '1', '10000',
+     +   'Temperature averaging window for UZ',
+     +   'Temperature averaging window for UZ',
+     +   'days')
+     +    .ne.0) return
+      
+      if(declparam('temp', 'trxn_sat_days', 'one', 'integer',
+     +   '400', '1', '10000',
+     +   'Temperature averaging window for saturated zone',
+     +   'Temperature averaging window for saturated zone',
+     +   'days')
+     +    .ne.0) return
+      
+      ALLOCATE (trxn_ohoriz_c(nmru))
+      if(declvar('temp', 'trxn_ohoriz_c', 'nmru', nmru, 'real', 
+     +   'Reaction temperature for O-horizon','degrees C',
+     +   trxn_ohoriz_c).ne.0) return
+
+      ALLOCATE (trxn_uz_c(nmru))
+      if(declvar('temp', 'trxn_uz_c', 'nmru', nmru, 'real', 
+     +   'Reaction temperature for UZ','degrees C',
+     +   trxn_uz_c).ne.0) return
+
+      ALLOCATE (trxn_sat_c(nmru))
+      if(declvar('temp', 'trxn_sat_c', 'nmru', nmru, 'real', 
+     +   'Reaction temperature for saturated zone','degrees C',
+     +   trxn_sat_c).ne.0) return
+!
+! Parameters from other modules
+!
       ALLOCATE (mru_area(nmru))
       if(declparam('temp_1sta', 'mru_area', 'nmru', 'real',
      +   '1.0', '0.01', '1e+09',
@@ -295,17 +365,7 @@ c
       integer j, k
 
       t1init = 1
-    
 
-      if(getparam('temp', 'ra_tmin_days', 1, 'integer', ra_tmin_days)
-     +   .ne.0) return
-
-      if(getparam('temp', 'ra_tavg_days', 1, 'integer', ra_tavg_days)
-     +   .ne.0) return
-
-      ALLOCATE (tmin_c_array(nmru,ra_tmin_days)) ! array of minimum temperatures
-      ALLOCATE (tavg_c_array(nmru,ra_tavg_days)) ! array of average temperatures
-      
       if(getparam('temp', 'tmin_lapse', nmonths, 'real', tmin_lapse)
      +   .ne.0) return
 
@@ -324,9 +384,6 @@ c
       if(getparam('temp', 'tmin_adj', nmru, 'real', tmin_adj)
      +   .ne.0) return
 
-! if(getparam('temp', 'tmin_c_base', nmru, 'real', tmin_c_base)
-!+   .ne.0) return
-!
       if(getparam('temp', 'mru_tsta', nmru, 'integer', mru_tsta)
      +   .ne.0) return
 
@@ -336,18 +393,43 @@ c
       if(getparam('basin', 'basin_area', 1, 'real', basin_area)
      +   .ne.0) return
 
+      if(getparam('temp', 'trxn_ohoriz_days', 1, 'integer',
+     +   trxn_ohoriz_days).ne.0) return
+
+      if(getparam('temp', 'trxn_uz_days', 1, 'integer',
+     +   trxn_uz_days).ne.0) return
+
+      if(getparam('temp', 'trxn_sat_days', 1, 'integer',
+     +   trxn_sat_days).ne.0) return
+
+      if(getparam('temp', 'trxn_ohoriz_stat', nmru, 'integer',
+     +   trxn_ohoriz_stat).ne.0) return
+
+      if(getparam('temp', 'trxn_uz_stat', nmru, 'integer',
+     +   trxn_uz_stat).ne.0) return
+
+      if(getparam('temp', 'trxn_sat_stat', nmru, 'integer',
+     +   trxn_sat_stat).ne.0) return
+
+      if(getparam('temp', 'trxn_ohoriz_c_adj', nmru, 'real',
+     +   trxn_ohoriz_c_adj).ne.0) return
+
+      if(getparam('temp', 'trxn_uz_c_adj', nmru, 'real',
+     +   trxn_uz_c_adj).ne.0) return
+
+      if(getparam('temp', 'trxn_sat_c_adj', nmru, 'real',
+     +   trxn_sat_c_adj).ne.0) return
+
+      ALLOCATE(trxn_c_array_oh(nmru,trxn_ohoriz_days))
+      ALLOCATE(trxn_c_array_uz(nmru,trxn_uz_days))
+      ALLOCATE(trxn_c_array_sat(nmru,trxn_sat_days))
+      trxn_c_array_oh = 0.0
+      trxn_c_array_uz = 0.0
+      trxn_c_array_sat = 0.0
 
       do 10 j=1,nmru
         k = mru_tsta(j)
         elfac(j) = (mru_elev(j)-tsta_elev(k))/1000.
-        tmin_c_ra(j)=0.0
-        tavg_c_ra(j)=0.0
-        do i=1,ra_tmin_days
-            tmin_c_array(j,i)=0.0
-        end do
-        do i=1,ra_tavg_days
-            tavg_c_array(j,i)=0.0
-        end do
    10 continue
 
       t1init = 0
@@ -358,8 +440,10 @@ c
 c***********************************************************************
 c
 c     t1run - Computes maximum, minumum and average temperature
-c               for each MRU based on monthly lapse rate
-c
+c             for each MRU based on monthly lapse rate. Also computes
+c             running averages of tmin, tavg, or tmax to use in assigning
+c             reaction temperatures to the o-horizon, the UZ, and the
+c             saturated zone.
 
       integer function t1run()
  
@@ -403,18 +487,64 @@ c
         tmax_c(j) = tsta_max_c(k)-tcrx(j)
         tmin_c(j) = tsta_min_c(k)-tcrn(j)
         temp_c(j) = tsta_temp_c(k) -tcr(j)
-        tmin_c_array(j,1)=tmin_c(j)
-        tmin_c_ra(j) = 0
-        tavg_c_array(j,1)=temp_c(j)
-        tavg_c_ra(j) = 0
-        do k = 1, ra_tmin_days
-            tmin_c_ra(j) = tmin_c_ra(j) + tmin_c_array(j,k)
+! ohorizon reaction temperatures
+        select case (trxn_ohoriz_stat(j))
+        case (1)
+          trxn_c_array_oh(j,1) = tmin_c(j)
+        case (2)
+          trxn_c_array_oh(j,1) = temp_c(j)
+        case (3)
+          trxn_c_array_oh(j,1) = tmax_c(j)
+        case default
+          print*, 'trxn_ohoriz_stat for MRU ',j,' is outside the'//
+     $            ' range 1-3. Run terminated. Correct and restart.'
+          return
+        end select
+        trxn_ohoriz_c(j) = 0.0
+        do k = 1, trxn_ohoriz_days
+            trxn_ohoriz_c(j) = trxn_ohoriz_c(j) + trxn_c_array_oh(j,k)
         end do
-        do k = 1, ra_tavg_days
-            tavg_c_ra(j) = tavg_c_ra(j) + tavg_c_array(j,k)
+        trxn_ohoriz_c(j) =trxn_ohoriz_c(j)/trxn_ohoriz_days+
+     +                    trxn_ohoriz_c_adj(j)
+! UZ reaction temperatures
+        select case (trxn_uz_stat(j))
+        case (1)
+          trxn_c_array_uz(j,1) = tmin_c(j)
+        case (2)
+          trxn_c_array_uz(j,1) = temp_c(j)
+        case (3)
+          trxn_c_array_uz(j,1) = tmax_c(j)
+        case default
+          print*, 'trxn_uz_stat for MRU ',j,' is outside the'//
+     $            ' range 1-3. Run terminated. Correct and restart.'
+          return
+        end select
+        trxn_uz_c(j) = 0.0
+        do k = 1, trxn_uz_days
+            trxn_uz_c(j) = trxn_uz_c(j) + trxn_c_array_uz(j,k)
         end do
-        tmin_c_ra(j)= tmin_c_ra(j)/ra_tmin_days
-        tavg_c_ra(j)= tavg_c_ra(j)/ra_tavg_days
+        trxn_uz_c(j) =trxn_uz_c(j)/trxn_uz_days+
+     +                    trxn_uz_c_adj(j)
+! saturated zone reaction temperatures
+        select case (trxn_sat_stat(j))
+        case (1)
+          trxn_c_array_sat(j,1) = tmin_c(j)
+        case (2)
+          trxn_c_array_sat(j,1) = temp_c(j)
+        case (3)
+          trxn_c_array_sat(j,1) = tmax_c(j)
+        case default
+          print*, 'trxn_sat_stat for MRU ',j,' is outside the'//
+     $            ' range 1-3. Run terminated. Correct and restart.'
+          return
+        end select
+        trxn_sat_c(j) = 0.0
+        do k = 1, trxn_sat_days
+            trxn_sat_c(j) = trxn_sat_c(j) + trxn_c_array_sat(j,k)
+        end do
+        trxn_sat_c(j) =trxn_sat_c(j)/trxn_sat_days+
+     +                    trxn_sat_c_adj(j)
+!
         basin_tmax_c = basin_tmax_c + (tmax_c(j) * mru_area(j))
         basin_tmin_c = basin_tmin_c + (tmin_c(j) * mru_area(j))
         basin_temp_c = basin_temp_c + (temp_c(j) * mru_area(j))
@@ -422,8 +552,9 @@ c
         tmin_f(j) = tmin_c(j)*1.8+32.
         temp_f(j) = temp_c(j)*1.8+32.
    20 continue
-      tmin_c_array=cshift(tmin_c_array,-1,2)
-      tavg_c_array=cshift(tavg_c_array,-1,2)
+      trxn_c_array_oh=cshift(trxn_c_array_oh,-1,2)
+      trxn_c_array_uz=cshift(trxn_c_array_uz,-1,2)
+      trxn_c_array_sat=cshift(trxn_c_array_sat,-1,2)
       basin_tmax_c = basin_tmax_c / basin_area
       basin_tmin_c = basin_tmin_c / basin_area
       basin_temp_c = basin_temp_c / basin_area
