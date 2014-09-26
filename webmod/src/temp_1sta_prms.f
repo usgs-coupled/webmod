@@ -12,6 +12,8 @@ c ********************************************************************
       IMPLICIT NONE
       include 'fmodules.inc'
 
+C Constant
+      real, PARAMETER :: nearzero = 1.E-10 ! Trap when trxn_**_days is actually equal to an integer
 C   Dimensions
       integer, save :: nmru, nmonths, ntemp
       
@@ -26,13 +28,13 @@ C   Declared Variables
       real, save, allocatable :: temp_f(:),temp_c(:)
 C   Declared Parameters
       real, save :: basin_area
-      integer, save :: trxn_ohoriz_days
+      real, save :: trxn_ohoriz_days
       integer, save, allocatable :: trxn_ohoriz_stat(:)
       real, save, allocatable :: trxn_ohoriz_c_adj(:)
-      integer, save :: trxn_uz_days
+      real, save :: trxn_uz_days
       integer, save, allocatable :: trxn_uz_stat(:)
       real, save, allocatable :: trxn_uz_c_adj(:)
-      integer, save :: trxn_sat_days
+      real, save :: trxn_sat_days
       integer, save, allocatable :: trxn_sat_stat(:)
       real, save, allocatable :: trxn_sat_c_adj(:)
       integer, save, allocatable ::  mru_tsta(:)
@@ -43,9 +45,11 @@ C   Declared Parameters
 
 C   Private Variables
       real, save, allocatable :: elfac(:), tcrn(:), tcrx(:), tcr(:)
+      integer,save :: it_oh_days, it_uz_days, it_sat_days ! integer >= to real days. CEILING()
       real, save, allocatable :: trxn_c_array_oh(:,:)
       real, save, allocatable :: trxn_c_array_uz(:,:)
       real, save, allocatable :: trxn_c_array_sat(:,:)
+      real :: trxn_frac ! it_**_days - trxn_**_days
 C   Undeclared Static Variables gotten from from other modules - soltab
       real, save, allocatable :: tsta_max_c(:),tsta_min_c(:)  ! from obs
       real, save, allocatable :: tsta_temp_c(:)               ! from obs
@@ -276,22 +280,22 @@ c
      +  'to moving average of tmin, tavg, or tmax for saturated zone',
      +  'degrees C').ne.0) return
 
-      if(declparam('temp', 'trxn_ohoriz_days', 'one', 'integer',
-     +   '400', '1', '10000',
+      if(declparam('temp', 'trxn_ohoriz_days', 'one', 'real',
+     +   '7.0', '1.0', '10000.',
      +   'Temperature averaging window for O-horizon',
      +   'Temperature averaging window for O-horizon',
      +   'days')
      +    .ne.0) return
       
-      if(declparam('temp', 'trxn_uz_days', 'one', 'integer',
-     +   '400', '1', '10000',
+      if(declparam('temp', 'trxn_uz_days', 'one', 'real',
+     +   '90.', '1.', '10000.',
      +   'Temperature averaging window for UZ',
      +   'Temperature averaging window for UZ',
      +   'days')
      +    .ne.0) return
       
-      if(declparam('temp', 'trxn_sat_days', 'one', 'integer',
-     +   '400', '1', '10000',
+      if(declparam('temp', 'trxn_sat_days', 'one', 'real',
+     +   '365.', '1.', '10000.',
      +   'Temperature averaging window for saturated zone',
      +   'Temperature averaging window for saturated zone',
      +   'days')
@@ -393,13 +397,13 @@ c
       if(getparam('basin', 'basin_area', 1, 'real', basin_area)
      +   .ne.0) return
 
-      if(getparam('temp', 'trxn_ohoriz_days', 1, 'integer',
+      if(getparam('temp', 'trxn_ohoriz_days', 1, 'real',
      +   trxn_ohoriz_days).ne.0) return
 
-      if(getparam('temp', 'trxn_uz_days', 1, 'integer',
+      if(getparam('temp', 'trxn_uz_days', 1, 'real',
      +   trxn_uz_days).ne.0) return
 
-      if(getparam('temp', 'trxn_sat_days', 1, 'integer',
+      if(getparam('temp', 'trxn_sat_days', 1, 'real',
      +   trxn_sat_days).ne.0) return
 
       if(getparam('temp', 'trxn_ohoriz_stat', nmru, 'integer',
@@ -420,9 +424,13 @@ c
       if(getparam('temp', 'trxn_sat_c_adj', nmru, 'real',
      +   trxn_sat_c_adj).ne.0) return
 
-      ALLOCATE(trxn_c_array_oh(nmru,trxn_ohoriz_days))
-      ALLOCATE(trxn_c_array_uz(nmru,trxn_uz_days))
-      ALLOCATE(trxn_c_array_sat(nmru,trxn_sat_days))
+      
+      it_oh_days=ceiling(trxn_ohoriz_days)
+      it_uz_days=ceiling(trxn_uz_days)
+      it_sat_days=ceiling(trxn_sat_days)
+      ALLOCATE(trxn_c_array_oh(nmru,it_oh_days))
+      ALLOCATE(trxn_c_array_uz(nmru,it_uz_days))
+      ALLOCATE(trxn_c_array_sat(nmru,it_sat_days))
       trxn_c_array_oh = 0.0
       trxn_c_array_uz = 0.0
       trxn_c_array_sat = 0.0
@@ -501,9 +509,15 @@ c             saturated zone.
           return
         end select
         trxn_ohoriz_c(j) = 0.0
-        do k = 1, trxn_ohoriz_days
+        do k = 1, it_oh_days
             trxn_ohoriz_c(j) = trxn_ohoriz_c(j) + trxn_c_array_oh(j,k)
         end do
+! reduce sum by fraction of oldest temperature not to be included in average
+        trxn_frac = it_oh_days-trxn_ohoriz_days
+        if(trxn_frac.gt.nearzero) then ! will not execute if trxn_**_days is very close to an integer
+            trxn_ohoriz_c(j) = trxn_ohoriz_c(j) - 
+     +      trxn_frac*trxn_c_array_oh(j,it_oh_days)
+        endif
         trxn_ohoriz_c(j) =trxn_ohoriz_c(j)/trxn_ohoriz_days+
      +                    trxn_ohoriz_c_adj(j)
 ! UZ reaction temperatures
@@ -520,9 +534,15 @@ c             saturated zone.
           return
         end select
         trxn_uz_c(j) = 0.0
-        do k = 1, trxn_uz_days
+        do k = 1, it_uz_days
             trxn_uz_c(j) = trxn_uz_c(j) + trxn_c_array_uz(j,k)
         end do
+! reduce sum by fraction of oldest temperature not to be included in average
+        trxn_frac = it_uz_days-trxn_uz_days
+        if(trxn_frac.gt.nearzero) then ! will not execute if trxn_**_days is very close to an integer
+            trxn_uz_c(j) = trxn_uz_c(j) - 
+     +      trxn_frac*trxn_c_array_uz(j,it_uz_days)
+        endif
         trxn_uz_c(j) =trxn_uz_c(j)/trxn_uz_days+
      +                    trxn_uz_c_adj(j)
 ! saturated zone reaction temperatures
@@ -539,9 +559,15 @@ c             saturated zone.
           return
         end select
         trxn_sat_c(j) = 0.0
-        do k = 1, trxn_sat_days
+        do k = 1, it_sat_days
             trxn_sat_c(j) = trxn_sat_c(j) + trxn_c_array_sat(j,k)
         end do
+! reduce sum by fraction of oldest temperature not to be included in average
+        trxn_frac = it_sat_days-trxn_sat_days
+        if(trxn_frac.gt.nearzero) then ! will not execute if trxn_**_days is very close to an integer
+            trxn_sat_c(j) = trxn_sat_c(j) - 
+     +      trxn_frac*trxn_c_array_sat(j,it_sat_days)
+        endif
         trxn_sat_c(j) =trxn_sat_c(j)/trxn_sat_days+
      +                    trxn_sat_c_adj(j)
 !
@@ -551,7 +577,8 @@ c             saturated zone.
         tmax_f(j) = tmax_c(j)*1.8+32.
         tmin_f(j) = tmin_c(j)*1.8+32.
         temp_f(j) = temp_c(j)*1.8+32.
-   20 continue
+   20       continue
+            
       trxn_c_array_oh=cshift(trxn_c_array_oh,-1,2)
       trxn_c_array_uz=cshift(trxn_c_array_uz,-1,2)
       trxn_c_array_sat=cshift(trxn_c_array_sat,-1,2)

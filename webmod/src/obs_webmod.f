@@ -271,9 +271,9 @@ c      integer nstep, datetime(6)
       if(nsnow.gt.0) then
         if(readvar('obs','swe').ne.0) return
       endif
-c
+
       if(readvar('obs','relhum').ne.0) return
-c
+
 c kludge to get ICRW paper out      
 c      relhum(1) = 0.34
 c end kludge

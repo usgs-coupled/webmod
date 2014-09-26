@@ -3290,8 +3290,6 @@
 !       USE IFPORT
 ! #endif
       USE WEBMOD_PHREEQ_MMS
-      USE WEBMOD_TEMP1STA, ONLY : trxn_ohoriz_c, trxn_ohoriz_c, trxn_uz_c, &
-                                  trxn_uz_days, trxn_sat_days, trxn_sat_days
       USE WEBMOD_OBSCHEM, ONLY :phq_lut,sol_id,sol_name,n_iso,iso_list
       USE WEBMOD_IO, only: phreeqout, chemout, print_vse, chemout,nf,vse_lun
 
@@ -5086,7 +5084,7 @@
          indx = isoln(dest(8),nchemdat,nmru,nac,clark_segs,&
               ires,ichemdat,imru,inac,ihydro)
          totvol = vmix_sat(is,1)
-         c_chem(indx)%vol(init)=totvol         
+         c_chem(indx)%vol(init)=totvol      
          solns(1) = src(8)
 
          iresult = fill_ent(n_user,dest(8),nchemdat,nmru,&
@@ -5996,7 +5994,7 @@
       ! Mixing variables from webmod_res
 !      USE WEBMOD_PRECIP, ONLY : mru_ppt
       USE WEBMOD_TEMP1STA, ONLY: tmax_c, temp_c, trxn_ohoriz_c, trxn_uz_c, trxn_sat_c,&
-                                trxn_ohoriz_days, trxn_uz_days, trxn_sat_days
+                                it_oh_days, it_uz_days, it_sat_days
       USE WEBMOD_IRRIG, ONLY : irrig_ext_mru, irrig_hyd_mru, &
           irrig_frac_ext, irrig_frac_sat, irrig_frac_hyd, mru_ppt, mru_dep
       USE WEBMOD_TOPMOD, ONLY : gw_loss,qpref_max, st, quz, srzwet, riparian_thresh, uz_area, riparian
@@ -6323,7 +6321,7 @@
 ! Update initial temperatures of o-horizon, UZ, and saturated zone using 
 ! running averages of air temperture computed in temp_1sta_prms
 !
-            if(nstep.ge.trxn_ohoriz_days) then
+            if(nstep.ge.it_oh_days) then
                tempc=trxn_ohoriz_c(is)
                if(tempc.lt.0.) tempc=0.
                WRITE (line,100),'SOLUTION_MODIFY ', solnnum(0,4,0,is,0,0,0)
@@ -6334,7 +6332,7 @@
                iresult = AccumulateLine(id, line)
                iresult = RunAccumulated(id)
             end if
-            if(nstep.ge.trxn_uz_days) then
+            if(nstep.ge.it_uz_days) then
                tempc=trxn_uz_c(is)
                if(tempc.lt.0.) tempc=0.
                do ij = 1,nacsc(is)
@@ -6354,7 +6352,7 @@
                iresult = AccumulateLine(id, line)
                iresult = RunAccumulated(id)
             end if
-            if(nstep.ge.trxn_sat_days) then
+            if(nstep.ge.it_sat_days) then
                tempc=trxn_sat_c(is)
                if(tempc.lt.0.) tempc=0.
                WRITE (line,100),'SOLUTION_MODIFY ', solnnum(0,8,0,is,0,0,0) ! Sat
@@ -7512,17 +7510,17 @@
 ! O-horizon section. Rinses with overland flow. Need to include
 ! DOC generation and other reactions.
 !
-! Update ohorizon temperature using running average of air temperaturd
+! Update ohorizon temperature using running average of air temperature
 !
-         WRITE (line,100),'SOLUTION_MODIFY ', solnnum(0,4,0,is,0,0,0)
-         iresult = AccumulateLine(id, line)
-         tempc=trxn_ohoriz_c(is)
-         if(tempc.lt.0.) tempc=0.
-         WRITE (line,120),'-temp ', tempc
-         iresult = AccumulateLine(id, line)
-         WRITE (line,110),'END'
-         iresult = AccumulateLine(id, line)
-         iresult = RunAccumulated(id)
+         !WRITE (line,100),'SOLUTION_MODIFY ', solnnum(0,4,0,is,0,0,0)
+         !iresult = AccumulateLine(id, line)
+         !tempc=trxn_ohoriz_c(is)
+         !if(tempc.lt.0.) tempc=0.
+         !WRITE (line,120),'-temp ', tempc
+         !iresult = AccumulateLine(id, line)
+         !WRITE (line,110),'END'
+         !iresult = AccumulateLine(id, line)
+         !iresult = RunAccumulated(id)
 !
          mixture = solnnum(1,4,0,is,0,0,0) ! t+1 O-horizon
          indx = isoln(mixture,nchemdat,nmru,nac,clark_segs,&
@@ -7947,7 +7945,7 @@
 !               PRINT *, 'Errors establishing DI solution 1'
 !               STOP
 !            ENDIF
-!            iresult = runaccumulated(ID)   ! assigns depleted deltas to evap using lines accumulated above         
+!            iresult = runaccumulated(ID)
 !            IF (iresult.NE.0) THEN
 !               PRINT *, 'Errors establishing DI solution 1'
 !               STOP
