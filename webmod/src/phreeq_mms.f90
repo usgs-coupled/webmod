@@ -4512,12 +4512,12 @@
             STOP
          ENDIF
 
-      write(phreeqout%lun,'(A)')'row, chemrow, src, dest, '//&
-                'chemvar?, src_init->'
-      write(phreeqout%lun,123)(i,isoln(dest(i),nchemdat,nmru,nac,&
-           clark_segs,ires,ichemdat,imru,inac,ihydro),&
-           src(i),dest(i),c_indx(i,2),(src_init(i,j),j=1,11)&
-              ,i=1,nphrsolns)
+      !write(phreeqout%lun,'(A)')'row, chemrow, src, dest, '//&
+      !          'chemvar?, src_init->'
+      !write(phreeqout%lun,123)(i,isoln(dest(i),nchemdat,nmru,nac,&
+      !     clark_segs,ires,ichemdat,imru,inac,ihydro),&
+      !     src(i),dest(i),c_indx(i,2),(src_init(i,j),j=1,11)&
+      !        ,i=1,nphrsolns)
  123  format(16I10)
  
 !
