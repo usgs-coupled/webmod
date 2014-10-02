@@ -210,15 +210,15 @@ c
 !
 ! select_mixes file
 !
-!      phreeqout%file='./output/select_mixes'
-!      inquire(file=phreeqout%file,exist=filflg)
-!      if (filflg) then
-!        open(newunit=phreeqout%lun,file=phreeqout%file,status='old')
-!        close(unit=phreeqout%lun,status='delete')
-!      endif
+      phreeqout%file='./output/select_mixes'
+      inquire(file=phreeqout%file,exist=filflg)
+      if (filflg) then
+        open(newunit=phreeqout%lun,file=phreeqout%file,status='old')
+        close(unit=phreeqout%lun,status='delete')
+      endif
 !----open the file.
-!      open (newunit=phreeqout%lun,file=phreeqout%file,access=
-!     * 'sequential',form='formatted', status='new')
+      open (newunit=phreeqout%lun,file=phreeqout%file,access=
+     * 'sequential',form='formatted', status='new')
 !
 ! Debug file
 !

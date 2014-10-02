@@ -638,7 +638,10 @@
 !  hydrologic feature. Each MRU or hydro feature can be assigned to one of these sets
 !  using the init_ parameters.
 !
-      integer, save :: init_soln_ppt
+      integer, save :: init_soln_ppt ! initial composition of precipitation. constant composition if not chemdat file.
+      integer, save :: atmos_eq_ph ! Constant partial pressures of O2 and CO2 (EQUILIBRIUM_PHASES # in pqi file) to equilibrate with precipitation and irrigation
+      integer, save :: atm_eqph(nentity)  ! The value atmos_eq_ph will be assigned to the 6th (ET_PURE_PHASE) index of this vector.
+      DATA atm_eqph/nentity*-1/
       integer, save, allocatable ::&
              eq_phset_table(:,:),&
              exchset_table(:,:),&
@@ -2737,7 +2740,10 @@
 ! A value of '0' for ppt_chem indicates that no time series of precipitation
 ! chemistry is available and therefore constant concentrations as defined by 
 ! init_soln_ppt will be used. If ppt_chem = 1 then a time series of precip
-! chemistry will be read from the chemdat file.
+! chemistry will be read from the chemdat file. Whether varying or constant,
+! all deposition and irrigation will be at equilibrium with atmospheric oxygen
+! and carbon dioxide as described by the parameter atmos_eq_ph which points
+! to a EQUILIBRIUM_PHASES block in the pqi file.
 !
       if(declparam('obs_chem', 'ppt_chem', 'one', 'integer',&
            '0', '0', '1',&
@@ -2889,6 +2895,13 @@
          'integer', '1', '1', '100',&
          'Solution ID describing typical precip chemistry.',&
          'Solution ID describing typical precip chemistry. '//&
+         'The solution is described in the .pqi file.',&
+         'none') .ne.0) return
+
+      if(declparam('phreeqmms','atmos_eq_ph', 'one',&
+         'integer', '0', '0', '100',&
+         'EQULIBRIUM_PHASES ID describing atmospheric O2 and CO2.',&
+         'EQULIBRIUM_PHASES ID describing atmospheric O2 and CO2. '//&
          'The solution is described in the .pqi file.',&
          'none') .ne.0) return
 
@@ -3457,6 +3470,9 @@
 
       if(getparam('phreeqmms', 'init_soln_ppt', 1, 'integer',&
            init_soln_ppt) .ne.0) return
+
+      if(getparam('phreeqmms', 'atmos_eq_ph', 1, 'integer',&
+           atmos_eq_ph) .ne.0) return
 
       if(getparam('phreeqmms', 'init_soln_ext', nchem_ext,&
            'integer', init_soln_ext) .ne.0) return
@@ -4375,7 +4391,7 @@
         end do ! 1, nacsc
       enddo  ! 1, nmru
 !
-! populate src_init with initial solutions from pqi file
+! populate src_init with initial solutions and gechemical entities from pqi file
 !
       do 40050 i = 1,nphrsolns
         k = isoln(c_indx(i,1),nchemdat,nmru,nac,clark_segs, &   ! returns the indices of the nphrsolns
@@ -4426,7 +4442,7 @@
             print*,'Reservoir ',c_indx(i,1),' row ',i,&
                    ' was not initialized.'
          end if
-40050 continue
+40050 continue      
 !$$$ *                 n_user/n_ent index
 !$$$ *  Phreeq KEYWORD                    ET_Keyword  ! used in n_user 
 !$$$ *         solution,                   1 Solution    ! no
@@ -4675,8 +4691,19 @@
 !      ph = 7.0      ! pH is initialized in the PQI solutions and updated with each mix and reaction.
       tsec = dt*3600   ! dt in hours
       fill_factor = 1.0
-      iphrq_mru = 1    ! need at least one index for transpiration switch before phrees_mix is called
+      iphrq_mru = 1    ! need at least one index for transpiration switch before phreeq_mix is called
 
+!
+! Assign partial pressures of oxygen and carbon dioxide to equilibrate
+! with all precipitation and irrigation mixed as common deposition.
+!
+      if(atmos_eq_ph.ge.0) then
+        atm_eqph(ET_PURE_PHASE) = atmos_eq_ph
+      else
+          print*, 'Parameter atmos_eq_ph must to an EQUILIBRIUM_PHASES block in the pqi file.',&
+          'Correct the parameter atmos_eq_ph and restart.'
+          return
+      endif
 !
 ! Initialize nchemdat reservoirs (precip, irrigation).
 ! If no chemdat file was found these will be the concentrations
@@ -6811,9 +6838,9 @@
             if(iresult.ne.0) then
               PRINT*,'Errors with mixing fractions'
             end if
-! Mix with no_rxn
+! Mix all inputs and equilibrate with atmospheric oxygen and carbon dioxide
             iresult = phr_mix(ID,ndep, srcdep, fracsdep,  dest(1),&
-                 fill_factor, dest(1), conc, phr_tf, no_rxn,rxnmols,&
+                 fill_factor, dest(1), conc, phr_tf, atm_eqph,rxnmols,&
                  tempc,ph,ph_final,tsec,tally_table,ntally_rows,ntally_cols)
 
             IF (iresult.NE.0) THEN

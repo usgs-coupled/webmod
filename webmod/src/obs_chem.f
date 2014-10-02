@@ -319,7 +319,10 @@ c
 c A value of '0' for ppt_chem indicates that no time series of precipitation
 c chemistry is available and therefore constant concentrations as defined by 
 c init_soln_ppt will be used. If ppt_chem = 1 then a time series of precip
-c chemistry will be read from the chemdat file.
+c chemistry will be read from the chemdat file. Whether varying or constant,
+c all deposition and irrigation will be at equilibrium with atmospheric oxygen
+c and carbon dioxide as described by the parameter atmos_eq_ph which points
+c to a EQUILIBRIUM_PHASES block in the pqi file.
 c
       if(declparam('obs_chem', 'ppt_chem', 'one', 'integer',
      +     '0', '0', '1',
