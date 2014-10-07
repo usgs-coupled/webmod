@@ -1918,7 +1918,7 @@ c composite basin volumes
           endif !print_vse=2, mru section
       enddo ! mru loop
 ! volumes of water exported to stream segments from each MRU on that day
-      if(print_vse.eq.2) then
+      if(print_vse.ge.1) then
           allocate(vf_hillexp(nhydro))
           do i = 1, nhydro
           write(filename,170)i
@@ -3508,11 +3508,10 @@ c
      $      (vmix_hill(is,i),i=1,21)
           write(vf_uz2sat(is)%lun,123) nstep,(datetime(i),i=1,3),
      $      (vmix_uz2sat(i,is),i=1,nac)
-          do ia=1,nac
-            write(vf_uz(is,ia)%lun,123) nstep,(datetime(i),i=1,3),
-     $        (vmix_uz(ia,is,i),i=1,21)
-
-          end do
+            do ia=1,nac
+              write(vf_uz(is,ia)%lun,123) nstep,(datetime(i),i=1,3),
+     $          (vmix_uz(ia,is,i),i=1,21)
+            end do
           end if
         end do
         do is=1,nhydro

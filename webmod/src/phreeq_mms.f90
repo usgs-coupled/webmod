@@ -709,7 +709,7 @@
       ENDIF
 
       if(phreeq_mms.eq.1) then
-         close (phreeqout%lun)
+!         close (phreeqout%lun)
          close (14)
          close (16)
          close (17)
@@ -9968,7 +9968,7 @@
 
       phreeqmms_clean = 1
 
-      close (phreeqout%lun)
+!      close (phreeqout%lun)
       close (unit=14)
       close (unit=16)
       close (unit=17)
