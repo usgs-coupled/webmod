@@ -1,3 +1,6 @@
+
+# Use this module command if needed to point to most recent FORTRAN update
+# webmod-trunk]$ module load intel/composerxe-2013.1.117
 IF_HOME:=/opt/intel/composer_xe_2013.1.117/compiler/lib
 IFORT_LIB_64:=-Xlinker -Bstatic -L$(IF_HOME)/intel64/ -lifport -lifcore -limf -lsvml -lm -lipgo -lirc -lirc_s -Xlinker -Bdynamic -lpthread -ldl
 
