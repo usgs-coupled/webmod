@@ -3,9 +3,9 @@
                      fill_factor,index_rxn,conc_conserv,files_on, &
                      n_user,rxnmols,tempc,ph,ph_final,tsec,array, &
                      arr_rows,arr_cols)
-! #if defined(_WIN32)
-!       USE IFPORT   ! to enable 'SYSTEM' calls
-! #endif
+#if defined(_WIN32)
+      USE IFPORT   ! to enable 'SYSTEM' calls
+#endif
       USE WEBMOD_IO, ONLY: nowtime
       USE WEBMOD_PHREEQ_MMS, ONLY: xdebug_start, xdebug_stop, nsolute 
       USE WEBMOD_OBSCHEM, ONLY : n_iso
@@ -73,7 +73,9 @@
 !        write(26,"(A)")"nstep ent_soln ent_rxn ent_exch ent_surf ent_gas ent_pure_ph "//&
 !           "ent_sld_soln ent_kin rxn indx_cons	indx_rxn	"//&
 !           "A	B	C	NoSolns	S1	S2	S3	S4	S5	S6	S7	S8	S9	S10"
-!        I = SYSTEM('touch .\output\select_mixes')
+#if !defined(_WIN32)
+        I = SYSTEM('touch .\output\select_mixes')
+#endif
 
         step1=.false.
       endif
@@ -163,7 +165,7 @@
 !          index_conserv, index_rxn, (conc_conserv(i), i=1,15)
 !       endif
 !      if(index_rxn.gt.208000000.and.index_rxn.lt.209000000) then
-!      if(files_on) then
+      if(files_on) then
 !        endmix(1) = elapsed_time(2)
 !        et_mix = endmix(1) - startmix(1)  
 !        write(26,1000)nstep, et_hyd, et_mix, startmix(1), endmix(1), &
@@ -174,8 +176,12 @@
 !          ' # of inputs/solns: ',count, (solutions(j),j=1,count)
 !        write(25,130)"Date:  ",(nowtime(i),i=1,3)        
 !        iresult = SetOutputFileOn(ID,.FALSE.)
-!        I = SYSTEM('copy .\output\select_mixes + .\phreeqc.0.out .\output\select_mixes')
-!      endif
+#if defined(_WIN32)
+        I = SYSTEM('copy .\output\select_mixes + .\phreeqc.0.out .\output\select_mixes')
+#else
+        I = SYSTEM('cat .\phreeqc.0.out >> .\output\select_mixes')
+#endif
+      endif
       files_on = fil_temp
       iresult = SetOutputFileOn(ID,files_on)
       et_hold = endmix(1)
