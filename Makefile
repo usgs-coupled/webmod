@@ -1,7 +1,7 @@
 
 CC         = gcc
 CXX        = g++
-FC         = /opt/intel/bin/ifort
+FC         = ifort
 CPPFLAGS   = -g -Wall
 CPPFLAGS   = -O2 -Wall
 DEFS       = -DFC_FUNC\(name,NAME\)=name\ \#\#\ _ -DFC_FUNC_\(name,NAME\)=name\ \#\#\ _ -DSWIG_SHARED_OBJ 
