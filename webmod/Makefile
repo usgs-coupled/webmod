@@ -1,7 +1,7 @@
 # Compiler flags...
 CPP_COMPILER = g++
 C_COMPILER = gcc
-F_COMPILER = /opt/intel/bin/ifort
+F_COMPILER = ifort
 
 # Include paths...
 Debug_Include_Path=-I../IPhreeqcMMS/include -I../IPhreeqcMMS/IPhreeqc/src
@@ -24,8 +24,8 @@ Debug_Implicitly_Linked_Objects=
 Release_Implicitly_Linked_Objects=
 
 # Compiler flags...
-Debug_Compiler_Flags=-O0 
-Release_Compiler_Flags=-O2 
+Debug_Compiler_Flags=-O0 -fpp
+Release_Compiler_Flags=-O2 -fpp
 
 # Builds all configurations for this project...
 .PHONY: build_all_configurations
