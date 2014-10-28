@@ -5,7 +5,7 @@
                      arr_rows,arr_cols)
       USE IFPORT   ! to enable 'SYSTEM' calls
       USE WEBMOD_IO, ONLY: nowtime
-      USE WEBMOD_PHREEQ_MMS, ONLY: xdebug_start, xdebug_stop, nsolute 
+      USE WEBMOD_PHREEQ_MMS, ONLY: xdebug_start, xdebug_stop, nsolute, sel_mix 
       USE WEBMOD_OBSCHEM, ONLY : n_iso
       IMPLICIT NONE
       INCLUDE       'IPhreeqc.f90.inc'
@@ -72,7 +72,8 @@
 !           "ent_sld_soln ent_kin rxn indx_cons	indx_rxn	"//&
 !           "A	B	C	NoSolns	S1	S2	S3	S4	S5	S6	S7	S8	S9	S10"
 #if !defined(_WIN32)
-        I = SYSTEM('touch .\output\select_mixes')
+!        I = SYSTEM('touch .\output\select_mixes')
+        I = SYSTEM('touch '//sel_mix%file)
 #endif
 
         step1=.false.
@@ -175,9 +176,11 @@
 !        write(25,130)"Date:  ",(nowtime(i),i=1,3)        
 !        iresult = SetOutputFileOn(ID,.FALSE.)
 #if defined(_WIN32)
-        I = SYSTEM('copy .\output\select_mixes + .\phreeqc.0.out .\output\select_mixes')
+!        I = SYSTEM('copy .\output\select_mixes + .\phreeqc.0.out .\output\select_mixes')
+        I = SYSTEM('copy '//sel_mix%file//' + .\phreeqc.0.out '//sel_mix%file)
 #else
-        I = SYSTEM('cat .\phreeqc.0.out >> .\output\select_mixes')
+!        I = SYSTEM('cat .\phreeqc.0.out >> .\output\select_mixes')
+        I = SYSTEM('cat .\phreeqc.0.out >> '//sel_mix%file)
 #endif
       endif
       files_on = fil_temp
