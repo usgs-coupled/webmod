@@ -337,7 +337,7 @@ C******Compute potential et for each mru using Hamon formulation
 c          ir = mru_radpl(i)
           dyl = mru_sunhrs(i)
           vpsat = 6.108*EXP(17.26939*tavgc(i)/(tavgc(i)+237.3))
-          vdsat = 216.7*vpsat/(tavgc(i)+273.3)
+          vdsat = 216.7*vpsat/(tavgc(i)+273.2)
           daily_potet(i) = hamon_coef(mo)*dyl*dyl*vdsat
 
 c          write(87,8020) mo,day, i, vpsat, vdsat, dyl,daily_potet(i)

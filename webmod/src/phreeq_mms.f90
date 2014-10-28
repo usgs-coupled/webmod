@@ -177,6 +177,7 @@
 !
       TYPE(outfiles),save :: sf_bas, sf_hyd, ef_bas, ef_hyd  ! solute and entity files, the total number of detailed 
                                             ! volume (webmod_res) solute and entity files is nf.
+      TYPE(outfiles),save :: sel_mix  ! select_mixes file containing detailed phreeqc mixes when xdebug_start > 0
       TYPE(outfiles),save,allocatable :: sf_mru(:), sf_uzgen(:),&
        sf_uzrip(:), sf_uzup(:), sf_can(:), sf_snow(:), &
        sf_transp(:), sf_ohoriz(:), sf_uz(:,:), sf_qdf(:), sf_sat(:),&
@@ -3378,7 +3379,25 @@
       iresult = SetErrorFileOn(ID,phr_tf)
       iresult = SetLogFileOn(ID,phr_tf)
       iresult = SetSelectedOutputFileOn(ID,phr_tf)
-
+!
+! Open selct_mixes if xdebug_start > 0 and solute files if print_vse= 1 (basin and mru) or 2 (all reservoirs)
+!
+      IF(control_string(out_dir,'output_dir').NE.0) RETURN
+      path_len = index(out_dir,CHAR(0))-1   ! CHAR(0) is end of strings returned from control_string call
+      if(xdebug_start.ge.1) then
+        sel_mix%file = out_dir(1:path_len)//'select_mixes'
+        inquire(file=sel_mix%file,exist=filflg)
+        if (filflg) then
+          open(newunit=tmplun,file=sel_mix%file,status='old')
+          close(unit=tmplun,status='delete')
+        endif
+!----open the file and close it so the the system copy can write to it.
+        open (newunit=sel_mix%lun,file=sel_mix%file,access='sequential',&
+          form='formatted', status='new')
+        write(sf_bas%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
+        close (unit = sel_mix%lun)
+      end if
+      
 ! get time step for reaction times
       dt = deltim()
       indx_rxn = 98 ! placekeeper for concentration of mixture after reactions
@@ -5294,6 +5313,7 @@
 !$$$         PRINT *, 'Errors assigning ch_var values:'
 !$$$         STOP
 !$$$      ENDIF
+!
 !
 ! Concentrations in discharge are always printed in the *.chemout file when chem_sim=1
 ! Write additional headers for solutes (s_) and entities (e_) when print_vse.ge.1
@@ -9136,28 +9156,28 @@
              PRINT *, 'Errors updating mole matrix:'
              STOP
           ENDIF
-      i=0
-      if(abs(c_chem_basin%vol(init)- vmix_basin(1)).gt.1.0) then
-             PRINT *, 'Init volume imbalance = ',abs(c_chem_basin%vol(init)- vmix_basin(1)), ' cubic meter.'
-             i = 1
-      end if
-
-      if(abs(c_chem_basin%vol(in)- vmix_basin(2)).gt.1.0) then
-             PRINT *, 'In volume imbalance = ',abs(c_chem_basin%vol(in)- vmix_basin(2)), ' cubic meter.'
-             i = 1
-      end if
-      if(abs(c_chem_basin%vol(out)- vmix_basin(3)).gt.1.0) then
-             PRINT *, 'Out volume imbalance = ',abs(c_chem_basin%vol(out)- vmix_basin(3)), ' cubic meter.'
-             i = 1
-      end if
-      if(abs(c_chem_basin%vol(ET)- vmix_basin(6)).gt.1.0) then
-             PRINT *, 'ET volume imbalance = ',abs(c_chem_basin%vol(ET)- vmix_basin(6)), ' cubic meter.'
-             i = 1
-      end if
-      if(abs(c_chem_basin%vol(fin)- vmix_basin(4)).gt.1.0) then
-             PRINT *, 'Final volume imbalance = ',abs(c_chem_basin%vol(fin)- vmix_basin(4)), ' cubic meter.'
-             i = 1
-      end if
+      !i=0
+      !if(abs(c_chem_basin%vol(init)- vmix_basin(1)).gt.1.0) then
+      !       PRINT *, 'Init volume imbalance = ',abs(c_chem_basin%vol(init)- vmix_basin(1)), ' cubic meter.'
+      !       i = 1
+      !end if
+      !
+      !if(abs(c_chem_basin%vol(in)- vmix_basin(2)).gt.1.0) then
+      !       PRINT *, 'In volume imbalance = ',abs(c_chem_basin%vol(in)- vmix_basin(2)), ' cubic meter.'
+      !       i = 1
+      !end if
+      !if(abs(c_chem_basin%vol(out)- vmix_basin(3)).gt.1.0) then
+      !       PRINT *, 'Out volume imbalance = ',abs(c_chem_basin%vol(out)- vmix_basin(3)), ' cubic meter.'
+      !       i = 1
+      !end if
+      !if(abs(c_chem_basin%vol(ET)- vmix_basin(6)).gt.1.0) then
+      !       PRINT *, 'ET volume imbalance = ',abs(c_chem_basin%vol(ET)- vmix_basin(6)), ' cubic meter.'
+      !       i = 1
+      !end if
+      !if(abs(c_chem_basin%vol(fin)- vmix_basin(4)).gt.1.0) then
+      !       PRINT *, 'Final volume imbalance = ',abs(c_chem_basin%vol(fin)- vmix_basin(4)), ' cubic meter.'
+      !       i = 1
+      !end if
       !if(i.eq.1) then
       !  write(*,'(" Volume problem on step ")')
       !  write(*,*) nstep !BP
