@@ -39,6 +39,7 @@ void setup_cont (void) {
 
         static long start_date[] = {2000,10,1,0,0,0};
         static long end_date[] = {2001,9,30,0,0,0};
+		static long modflow0_date[] = {-999,9,30,0,0,0};
 
 /*
 **	GSFLOW control variables
@@ -268,8 +269,8 @@ void setup_cont (void) {
 		decl_control_string ("soilrechr_dynamic", "dynsoilrechr");
 		decl_control_string ("soilmoist_dynamic", "dynsoilmoist");
 		decl_control_string ("radtrncf_dynamic", "dynradtrncf");
-		decl_control_string ("sro2dprst_perv_dynamic", "dynsrotodprst");
-		decl_control_string ("sro2dprst_imperv_dynamic", "dynsrotoimperv");
+		decl_control_string ("sro_to_dprst_dynamic", "dynsrotodprst");
+		decl_control_string ("sro_to_imperv_dynamic", "dynsrotoimperv");
 		decl_control_string ("csv_output_file", "prms_summary.csv");
         decl_control_string ("nhruOutBaseFileName", "nhruout_path");
 /*
@@ -277,6 +278,7 @@ void setup_cont (void) {
 */
         decl_control_int_array("start_time", 6, start_date);
         decl_control_int_array("end_time", 6, end_date);
+        decl_control_int_array("modflow_time_zero", 6, modflow0_date);
 
 /*
 **	flag for initializing vars from file
