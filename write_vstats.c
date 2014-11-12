@@ -64,8 +64,9 @@ void write_vstats (FILE *statvar_file) {
       break;
 
     case M_LONG:
-
-      (void)fprintf(statvar_file,"%ld ", *(long *)stat_list->value);
+	// markstro test
+    //  (void)fprintf(statvar_file,"%ld ", *(long *)stat_list->value);
+	(void)fprintf(statvar_file,"%ld ", *(int *)stat_list->value);
       break;
 
     }
