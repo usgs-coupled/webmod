@@ -359,8 +359,11 @@ char *single_run_post_run () {
                            break;
 
                         case M_LONG:
+// markstro test
+//                           fprintf (ani_var_files[i], "\t%10ld",
+//                                    *((long *) var->value + j));
                            fprintf (ani_var_files[i], "\t%10ld",
-                                    *((long *) var->value + j));
+                                    *((int *) var->value + j));
                            break;
                      }
                   }
