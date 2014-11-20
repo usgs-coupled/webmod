@@ -15,11 +15,11 @@ Value : 5
 Desc  : Dimension of obj_q
 
 Name  : nac
-Value : 5
+Value : 11
 Desc  : Number of ln(a/tanB) increments
 
 Name  : nac_nmru_nresinp
-Value : 1050
+Value : 2310
 Desc  : Vector of volumes used to calculate mixing ratios needed for simulating new topographic bin solutions
 
 Name  : nchan
@@ -35,7 +35,7 @@ Value : 10
 Desc  : Number of unique solution and/or reaction entities describing variety of typical hillslopes
 
 Name  : nchemobs
-Value : 5
+Value : 1
 Desc  : Number of unique chemical sampling sites
 
 Name  : nchemvar
@@ -212,7 +212,7 @@ Default   : 6
 Name      : C_metric
 Module    : phreeqmms
 Descr     : Chemical metric (1-6) for ch_var
-Help      : Chemical metric for ch_var:  1= Initial,  2= Influent,  3= Exfluent,   4= Reaction gain(+) or loss(-). 5= Final,  6= Net, 
+Help      : Chemical metric for ch_var:  1= Initial,  2= Influent,  3= Exfluent,   4= Reaction gain(+) or loss(-). 5= 5,  6= Net, 
 Ndimen    : 1
 Dimensions: nchemvar - 10
 Size      : 10
@@ -392,6 +392,34 @@ Max       : 0.600000
 Min       : 0.200000
 Default   : 0.300000
 
+Name      : T_decay
+Module    : topc
+Descr     : Transmissivity decay: (0) exponential; (1) parabolic; (2) linear.
+Help      : Transmissivity decay: (0) exponential; (1) parabolic; (2) linear. 
+Ndimen    : 1
+Dimensions: nmru - 10
+Size      : 10
+Type      : long
+Units     : none
+Width     : 0
+Max       : 2
+Min       : 0
+Default   : 0
+
+Name      : To
+Module    : topc
+Descr     : Transmissivity at saturation
+Help      : Transmissivity at saturation. Decreases per T_decay: 0-exponential; 1-parabolic; 2-linear.
+Ndimen    : 1
+Dimensions: nmru - 10
+Size      : 10
+Type      : float
+Units     : m^2/h
+Width     : 8
+Max       : 100.000000
+Min       : 0.002000
+Default   : 0.100000
+
 Name      : UADJ
 Module    : snow
 Descr     : Average 6-hour wind function during rain on snow events
@@ -425,8 +453,8 @@ Module    : topc
 Descr     : Fractional area for each ln(a/tanB) increment.
 Help      : Fractional area for each ln(a/tanB) increment.
 Ndimen    : 2
-Dimensions: nac - 5, nmru - 10
-Size      : 50
+Dimensions: nac - 11, nmru - 10
+Size      : 110
 Type      : float
 Units     : km2/km2
 Width     : 8
@@ -462,6 +490,20 @@ Max       : 3.000000
 Min       : 0.000000
 Default   : 1.000000
 
+Name      : atmos_eq_ph
+Module    : phreeqmms
+Descr     : EQULIBRIUM_PHASES ID describing atmospheric O2 and CO2.
+Help      : EQULIBRIUM_PHASES ID describing atmospheric O2 and CO2. The solution is described in the .pqi file.
+Ndimen    : 1
+Dimensions: one - 1
+Size      : 1
+Type      : long
+Units     : none
+Width     : 14
+Max       : 100
+Min       : 0
+Default   : 0
+
 Name      : basin_area
 Module    : basin
 Descr     : Total basin area
@@ -486,9 +528,9 @@ Size      : 1
 Type      : float
 Units     : m
 Width     : 12
-Max       : 0.001000
+Max       : 0.010000
 Min       : 0.000010
-Default   : 0.000100
+Default   : 0.001000
 
 Name      : c_hyd_indx
 Module    : phreeqmms
@@ -629,20 +671,6 @@ Width     : 9
 Max       : 1
 Min       : 0
 Default   : 1
-
-Name      : chemout_file_unit
-Module    : io
-Descr     : Unit number for file summarizing solute transport
-Help      : Unit number for file summarizing solute transport
-Ndimen    : 1
-Dimensions: one - 1
-Size      : 1
-Type      : long
-Units     : integer
-Width     : 18
-Max       : 99
-Min       : 50
-Default   : 90
 
 Name      : chv
 Module    : routec
@@ -878,7 +906,7 @@ Size      : 12
 Type      : float
 Units     : ????
 Width     : 11
-Max       : 0.008000
+Max       : 0.015000
 Min       : 0.004000
 Default   : 0.005500
 
@@ -1391,8 +1419,8 @@ Default   : 5
 
 Name      : pmac_sat
 Module    : topc
-Descr     : Fraction of potential infiltration that bypasses the root zone and mixes immediately with the saturated zone
-Help      : Fraction of potential infiltration that bypasses the root zone and mixes immediately with the saturated zone
+Descr     : Fraction of pmacro that mixes immediately with the saturated zone
+Help      : Fraction of pmacro that mixes immediately with the saturated zone
 Ndimen    : 1
 Dimensions: nmru - 10
 Size      : 10
@@ -1501,6 +1529,20 @@ Max       : 2
 Min       : 0
 Default   : 1
 
+Name      : print_vse
+Module    : sumb
+Descr     : Scope of geochemical output files (vse)
+Help      : Scope of geochemical output files (vse): 0 = none;                  1 = basin and MRUs;                              2 = all reservoirs.                
+Ndimen    : 1
+Dimensions: one - 1
+Size      : 1
+Type      : long
+Units     : none
+Width     : 11
+Max       : 2
+Min       : 0
+Default   : 1
+
 Name      : q0
 Module    : routec
 Descr     : Initial stream discharge at basin outlet.
@@ -1517,8 +1559,8 @@ Default   : 1.000000
 
 Name      : qdffrac
 Module    : topc
-Descr     : Fraction of infiltration that becomes lateral direct flow.
-Help      : Fraction of infiltration that becomes lateral direct flow.QDF=QDFFRAC*INFILTRATION
+Descr     : Proportion of unsaturated zone drainage that runs off as direct flow.
+Help      : Fraction of unsaturated zone drainage that runs off as direct flow.QDF=QDFFRAC*QUZ
 Ndimen    : 1
 Dimensions: nmru - 10
 Size      : 10
@@ -1695,7 +1737,7 @@ Type      : float
 Units     : cm3/cm3
 Width     : 11
 Max       : 0.800000
-Min       : 0.100000
+Min       : 0.001000
 Default   : 0.400000
 
 Name      : s_rock_depth
@@ -1708,7 +1750,7 @@ Size      : 10
 Type      : float
 Units     : m
 Width     : 13
-Max       : 100.000000
+Max       : 300.000000
 Min       : 0.100000
 Default   : 6.000000
 
@@ -1722,7 +1764,7 @@ Size      : 10
 Type      : float
 Units     : m
 Width     : 13
-Max       : 50.000000
+Max       : 100.000000
 Min       : 0.100000
 Default   : 1.800000
 
@@ -1768,20 +1810,6 @@ Max       : 0.000000
 Min       : -100.000000
 Default   : -5.000000
 
-Name      : s_theta_0
-Module    : topc
-Descr     : Initial volumetric soil moisture content in the root zone.
-Help      : Initial volumetric soil moisture content in the root zone.
-Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
-Type      : float
-Units     : cm3/cm3
-Width     : 10
-Max       : 0.700000
-Min       : 0.010000
-Default   : 0.230000
-
 Name      : s_theta_fc
 Module    : topc
 Descr     : Volumetric soil moisture content at field capacity
@@ -1793,7 +1821,7 @@ Type      : float
 Units     : cm3/cm3
 Width     : 11
 Max       : 0.700000
-Min       : 0.010000
+Min       : 0.001000
 Default   : 0.230000
 
 Name      : s_theta_wp
@@ -1807,7 +1835,7 @@ Type      : float
 Units     : cm3/cm3
 Width     : 11
 Max       : 0.560000
-Min       : 0.010000
+Min       : 0.001000
 Default   : 0.130000
 
 Name      : sbar0
@@ -1883,7 +1911,7 @@ Min       : 0.000000
 Default   : 0.100000
 
 Name      : snow_ion_factor
-Module    : topc
+Module    : phreeqmms
 Descr     : Maximum ratio of solute concentrations in melt/pack
 Help      : Maximum ratio of solute concentrations in melt/pack
 Ndimen    : 1
@@ -1897,7 +1925,7 @@ Min       : 1.000000
 Default   : 1.000000
 
 Name      : snowmelt_18O_depl
-Module    : topc
+Module    : phreeqmms
 Descr     : Depletion of 18O in melt versus pack
 Help      : Depletion of 18O in melt versus pack
 Ndimen    : 1
@@ -1911,7 +1939,7 @@ Min       : -5.000000
 Default   : -1.000000
 
 Name      : snowmelt_D_depl
-Module    : topc
+Module    : phreeqmms
 Descr     : Depletion of deuterium in melt versus pack
 Help      : Depletion of deuterium in melt versus pack
 Ndimen    : 1
@@ -1999,15 +2027,15 @@ Bounded   : nchem_ext
 
 Name      : st
 Module    : topc
-Descr     : The ln(a/tanB) value.
-Help      : The ln(a/tanB) value.
+Descr     : The value of the transformed wetness index
+Help      : The value of the transformed wetness index; ln, sqrt, or normal depending on T_decay
 Ndimen    : 2
-Dimensions: nac - 5, nmru - 10
-Size      : 50
+Dimensions: nac - 11, nmru - 10
+Size      : 110
 Type      : float
 Units     : none
 Width     : 8
-Max       : 25.000000
+Max       : 25000.000000
 Min       : 0.000000
 Default   : 5.000000
 
@@ -2049,23 +2077,9 @@ Size      : 10
 Type      : float
 Units     : m
 Width     : 8
-Max       : 10.000000
-Min       : 0.000000
+Max       : 0.100000
+Min       : 0.010000
 Default   : 0.030000
-
-Name      : t0
-Module    : topc
-Descr     : Mean subcatchment value of ln(T0)
-Help      : Mean subcatchment value of ln(T0) where local transmissivity T=T0*exp(T0-TL)
-Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
-Type      : float
-Units     : ln(m^2/h)
-Width     : 8
-Max       : 4.000000
-Min       : -6.000000
-Default   : -2.000000
 
 Name      : td
 Module    : topc
@@ -2094,6 +2108,20 @@ Width     : 14
 Max       : 1
 Min       : 0
 Default   : 1
+
+Name      : tl
+Module    : topc
+Descr     : Mean ln(TWI), sqrt(TWI), or TWI for MRU
+Help      : Mean ln(TWI), sqrt(TWI), or TWI for MRU
+Ndimen    : 1
+Dimensions: nmru - 10
+Size      : 10
+Type      : float
+Units     : depends on T_Decay. TWI in m2/hr
+Width     : 8
+Max       : 10000000.000000
+Min       : 1.000000
+Default   : 10.000000
 
 Name      : tmax_adj
 Module    : temp
@@ -2179,20 +2207,6 @@ Max       : 15.000000
 Min       : -15.000000
 Default   : 9.800000
 
-Name      : topout_file_unit
-Module    : io
-Descr     : Unit number for TOPMODEL output file
-Help      : Unit number for TOPMODEL output file
-Ndimen    : 1
-Dimensions: one - 1
-Size      : 1
-Type      : long
-Units     : integer
-Width     : 17
-Max       : 99
-Min       : 50
-Default   : 80
-
 Name      : transp_beg
 Module    : potet
 Descr     : Month to begin testing for transpiration
@@ -2234,6 +2248,132 @@ Width     : 12
 Max       : 1000.000000
 Min       : 0.000000
 Default   : 500.000000
+
+Name      : trxn_ohoriz_c_adj
+Module    : temp
+Descr     : Temperature adjustment to moving average of tmin, tavg, or tmax for O-horizon
+Help      : Temperature adjustment to moving average of tmin, tavg, or tmax for O-horizon
+Ndimen    : 1
+Dimensions: nmru - 10
+Size      : 10
+Type      : float
+Units     : degrees C
+Width     : 9
+Max       : 5.000000
+Min       : -5.000000
+Default   : 0.000000
+
+Name      : trxn_ohoriz_days
+Module    : temp
+Descr     : Temperature averaging window for O-horizon
+Help      : Temperature averaging window for O-horizon
+Ndimen    : 1
+Dimensions: one - 1
+Size      : 1
+Type      : float
+Units     : days
+Width     : 9
+Max       : 10000.000000
+Min       : 1.000000
+Default   : 7.000000
+
+Name      : trxn_ohoriz_stat
+Module    : temp
+Descr     : Use tmin(1), tavg(2), or tmax(3) for moving average
+Help      : Use tmin(1), tavg(2), or tmax(3) for moving average
+Ndimen    : 1
+Dimensions: nmru - 10
+Size      : 10
+Type      : long
+Units     : none
+Width     : 9
+Max       : 3
+Min       : 1
+Default   : 2
+
+Name      : trxn_sat_c_adj
+Module    : temp
+Descr     : Temperature adjustment to moving average of tmin, tavg, or tmax for saturated zone
+Help      : Temperature adjustment to moving average of tmin, tavg, or tmax for saturated zone
+Ndimen    : 1
+Dimensions: nmru - 10
+Size      : 10
+Type      : float
+Units     : degrees C
+Width     : 9
+Max       : 5.000000
+Min       : -5.000000
+Default   : 0.000000
+
+Name      : trxn_sat_days
+Module    : temp
+Descr     : Temperature averaging window for saturated zone
+Help      : Temperature averaging window for saturated zone
+Ndimen    : 1
+Dimensions: one - 1
+Size      : 1
+Type      : float
+Units     : days
+Width     : 9
+Max       : 10000.000000
+Min       : 1.000000
+Default   : 365.000000
+
+Name      : trxn_sat_stat
+Module    : temp
+Descr     : Use tmin(1), tavg(2), or tmax(3) for moving average
+Help      : Use tmin(1), tavg(2), or tmax(3) for moving average
+Ndimen    : 1
+Dimensions: nmru - 10
+Size      : 10
+Type      : long
+Units     : none
+Width     : 9
+Max       : 3
+Min       : 1
+Default   : 2
+
+Name      : trxn_uz_c_adj
+Module    : temp
+Descr     : Temperature adjustment to moving average of tmin, tavg, or tmax for UZ
+Help      : Temperature adjustment to moving average of tmin, tavg, or tmax for UZ
+Ndimen    : 1
+Dimensions: nmru - 10
+Size      : 10
+Type      : float
+Units     : degrees C
+Width     : 9
+Max       : 5.000000
+Min       : -5.000000
+Default   : 0.000000
+
+Name      : trxn_uz_days
+Module    : temp
+Descr     : Temperature averaging window for UZ
+Help      : Temperature averaging window for UZ
+Ndimen    : 1
+Dimensions: one - 1
+Size      : 1
+Type      : float
+Units     : days
+Width     : 9
+Max       : 10000.000000
+Min       : 1.000000
+Default   : 90.000000
+
+Name      : trxn_uz_stat
+Module    : temp
+Descr     : Use tmin(1), tavg(2), or tmax(3) for moving average
+Help      : Use tmin(1), tavg(2), or tmax(3) for moving average
+Ndimen    : 1
+Dimensions: nmru - 10
+Size      : 10
+Type      : long
+Units     : none
+Width     : 9
+Max       : 3
+Min       : 1
+Default   : 2
 
 Name      : tsta_elev
 Module    : temp
@@ -2302,7 +2442,7 @@ Type      : float
 Units     : m/hr
 Width     : 8
 Max       : 5.000000
-Min       : 0.010000
+Min       : 0.001000
 Default   : 0.200000
 
 Name      : xk_cv
