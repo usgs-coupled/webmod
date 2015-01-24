@@ -228,8 +228,8 @@ c     distribution of vertical conductivity (XK0)
       real, save, allocatable :: XK0(:),HF(:),DTH(:)
       real, save, allocatable :: AC(:,:), TL(:), ST(:,:)
       real, save, allocatable :: SR0(:), sc_area(:), AREA(:) ! local copies of mru_area and mru_area_frac
-      real, save, allocatable :: resp_hr_full(:), resp_hr_min(:)
-      real, save, allocatable :: resp_coef_min(:), resp_coef(:)
+!      real, save, allocatable :: resp_hr_full(:), resp_hr_min(:)
+!      real, save, allocatable :: resp_coef_min(:), resp_coef(:)
       real, save, allocatable :: xk_cv(:),xk(:,:)
       real, save, allocatable ::  covden_sum(:), covden_win(:)
       real, save, allocatable ::  s_theta_fc(:), s_theta_wp(:)
@@ -561,13 +561,13 @@ c
      + 'm',
      $ sr0).ne.0) return
 
-      ALLOCATE (resp_coef(Nmru))
-      if(declvar('topc', 'resp_coef', 'nmru', nmru, 'real', 
-     + 'static value for response coefficient that throttles '//
-     + 'the redistribution of hillslope moisture content '//
-     + '(sd adjustment). Derived from response parameters.',
-     + 'none',
-     $ resp_coef).ne.0) return
+!      ALLOCATE (resp_coef(Nmru))
+!      if(declvar('topc', 'resp_coef', 'nmru', nmru, 'real', 
+!     + 'static value for response coefficient that throttles '//
+!     + 'the redistribution of hillslope moisture content '//
+!     + '(sd adjustment). Derived from response parameters.',
+!     + 'none',
+!     $ resp_coef).ne.0) return
 
       ALLOCATE (s_drain(Nmru))
       if(declvar('topc', 's_drain', 'nmru', nmru, 'real', 
@@ -1038,11 +1038,11 @@ c
      +   '1E-8 cm/s.', 'cm3/cm3') .ne.0) return
 
       ALLOCATE (s_theta_0(Nmru))
-!      if(declparam('topc','s_theta_0', 'nmru',
-!     +   'real', '0.23', '0.01', '0.7',
-!     +   'Initial volumetric soil moisture content in the root zone.',
-!     +   'Initial volumetric soil moisture content in the root zone.',
-!     +   'cm3/cm3') .ne.0) return
+      if(declparam('topc','s_theta_0', 'nmru',
+     +   'real', '0.23', '0.01', '0.7',
+     +   'Initial volumetric soil moisture content in the root zone.',
+     +   'Initial volumetric soil moisture content in the root zone.',
+     +   'cm3/cm3') .ne.0) return
 
       ALLOCATE (s_theta_wp(Nmru))
       if(declparam('topc','s_theta_wp', 'nmru',
@@ -1291,29 +1291,29 @@ c
      +   'Initial timestep for initialize function.',
      +   'hours').ne.0) return
 
-      ALLOCATE (resp_hr_full(Nmru))
-      if(declparam('topc', 'resp_hr_full', 'nmru', 'real',
-     +   '6', '0', '100',
-     +   'Time step after which the saturation readjustment '//
-     +   'coefficient becomes 1','Time step after which the '//
-     +   'saturation radjustment coefficient become 1 (i.e. '//
-     +   'original TOPMODEL)','hours').ne.0) return
-
-      ALLOCATE (resp_hr_min(Nmru))
-      if(declparam('topc', 'resp_hr_min', 'nmru', 'real',
-     +   '.083', '0', '24',
-     +   'Time step below which the saturation readjustment '//
-     +   'coefficient is set equal to resp_coef_min',
-     +   'Time step below which the saturation readjustment '//
-     +   'coefficient is set equal to resp_coef_min',
-     +   'hours').ne.0) return
-
-      ALLOCATE (resp_coef_min(Nmru))
-      if(declparam('topc', 'resp_coef_min', 'nmru', 'real',
-     +   '.01', '0', '1',
-     +   'Minimum saturation readjustment coefficient',
-     +   'Minimum saturation readjustment coefficient',
-     +   'none').ne.0) return
+!      ALLOCATE (resp_hr_full(Nmru))
+!      if(declparam('topc', 'resp_hr_full', 'nmru', 'real',
+!     +   '6', '0', '100',
+!     +   'Time step after which the saturation readjustment '//
+!     +   'coefficient becomes 1','Time step after which the '//
+!     +   'saturation radjustment coefficient become 1 (i.e. '//
+!     +   'original TOPMODEL)','hours').ne.0) return
+!
+!      ALLOCATE (resp_hr_min(Nmru))
+!      if(declparam('topc', 'resp_hr_min', 'nmru', 'real',
+!     +   '.083', '0', '24',
+!     +   'Time step below which the saturation readjustment '//
+!     +   'coefficient is set equal to resp_coef_min',
+!     +   'Time step below which the saturation readjustment '//
+!     +   'coefficient is set equal to resp_coef_min',
+!     +   'hours').ne.0) return
+!
+!      ALLOCATE (resp_coef_min(Nmru))
+!      if(declparam('topc', 'resp_coef_min', 'nmru', 'real',
+!     +   '.01', '0', '1',
+!     +   'Minimum saturation readjustment coefficient',
+!     +   'Minimum saturation readjustment coefficient',
+!     +   'none').ne.0) return
 
       if(declparam('topc', 'iout', 'one', 'integer',
      +   '1', '0', '2',
@@ -1470,8 +1470,8 @@ c$$$
       if(getparam('topc', 's_theta_wp', nmru, 'real', s_theta_wp)
      +   .ne.0) return
 
-!      if(getparam('topc', 's_theta_0', nmru, 'real', s_theta_0)
-!     +   .ne.0) return
+      if(getparam('topc', 's_theta_0', nmru, 'real', s_theta_0)
+     +   .ne.0) return
 
       if(getparam('topc', 's_theta_fc', nmru, 'real', s_theta_fc)
      +   .ne.0) return
@@ -1502,15 +1502,15 @@ c$$$
 
       if(getparam('topc', 'qdffrac', nmru, 'real', qdffrac)
      +   .ne.0) return
-
-      if(getparam('topc', 'resp_hr_full', nmru, 'real', resp_hr_full)
-     +   .ne.0) return
-
-      if(getparam('topc', 'resp_hr_min', nmru, 'real', resp_hr_min)
-     +   .ne.0) return
-
-      if(getparam('topc', 'resp_coef_min', nmru, 'real',
-     +   resp_coef_min).ne.0) return
+!
+!      if(getparam('topc', 'resp_hr_full', nmru, 'real', resp_hr_full)
+!     +   .ne.0) return
+!
+!      if(getparam('topc', 'resp_hr_min', nmru, 'real', resp_hr_min)
+!     +   .ne.0) return
+!
+!      if(getparam('topc', 'resp_coef_min', nmru, 'real',
+!     +   resp_coef_min).ne.0) return
 c
 c sr0 is now calculated from initial soil moisture content, s_theta_0
 c
@@ -1734,14 +1734,14 @@ c$$$     +      (dt - resp_hr_min(j))/(resp_hr_full(j) - resp_hr_min(j)))
 c$$$      end if
 c$$$ 12   continue
 c      do 12 j=1,nsc
-      if(dt.le.resp_hr_min(is)) then
-         resp_coef(is) = resp_coef_min(is)
-      else if (dt.ge.resp_hr_full(is)) then
-         resp_coef(is) = 1.0
-      else
-         resp_coef(is) = resp_coef_min(is) + ((1.0 - resp_coef_min(is))*
-     $      (dt - resp_hr_min(is))/(resp_hr_full(is) - resp_hr_min(is)))
-      end if
+!      if(dt.le.resp_hr_min(is)) then
+!         resp_coef(is) = resp_coef_min(is)
+!      else if (dt.ge.resp_hr_full(is)) then
+!         resp_coef(is) = 1.0
+!      else
+!         resp_coef(is) = resp_coef_min(is) + ((1.0 - resp_coef_min(is))*
+!     $      (dt - resp_hr_min(is))/(resp_hr_full(is) - resp_hr_min(is)))
+!      end if
 c 12   continue
 c
 c      T0DT = T0(is) + ALOG(DT)
@@ -1896,13 +1896,12 @@ c
 
 c Initialize unsaturated zone water content
       do 26 is=1,nsc
-!         if(s_theta_0(is).gt.s_theta_fc(is)) then
-!            print*,'Error: Initial soil moisture, s_theta_0, ',
-!     $        'exceeds field capacity, s_theta_fc, for MRU ',is,
-!     $        '. Correct parameters and rerun.'
-!            return
-!         endif
-         s_theta_0(is) =  s_theta_fc(is)
+         if(s_theta_0(is).gt.s_theta_fc(is)) then
+            print*,'Error: Initial soil moisture, s_theta_0, ',
+     $        'exceeds field capacity, s_theta_fc, for MRU ',is,
+     $        '. Correct parameters and rerun.'
+            return
+         endif
          sr0(is) = (s_theta_fc(is) - s_theta_0(is)) * s_root_depth(is)
          
 c Readily drainable porosity is the difference getween saturated
@@ -2129,16 +2128,16 @@ c
 c
 c  Alter the hillslope response coeffient in case of new dt
 c
-      do 120 j=1,nsc
-      if(dt.le.resp_hr_min(j)) then
-         resp_coef(j) = resp_coef_min(j)
-      else if (dt.ge.resp_hr_full(j)) then
-         resp_coef(j) = 1.0
-      else
-         resp_coef(j) = resp_coef_min(j) + ((1.0 - resp_coef_min(j))*
-     +      (dt - resp_hr_min(j))/(resp_hr_full(j) - resp_hr_min(j)))
-      end if
- 120  continue
+!      do 120 j=1,nsc
+!      if(dt.le.resp_hr_min(j)) then
+!         resp_coef(j) = resp_coef_min(j)
+!      else if (dt.ge.resp_hr_full(j)) then
+!         resp_coef(j) = 1.0
+!      else
+!         resp_coef(j) = resp_coef_min(j) + ((1.0 - resp_coef_min(j))*
+!     +      (dt - resp_hr_min(j))/(resp_hr_full(j) - resp_hr_min(j)))
+!      end if
+! 120  continue
 c
 c     Calculate metric equivalents of runoff and precip to facilitate
 c     comparison with the predicted flow paths.
