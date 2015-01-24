@@ -3069,8 +3069,8 @@
            ' 1= Initial, '//&
            ' 2= Influent, '//&
            ' 3= Exfluent,  '//&
-           ' 4= Reaction gain(+) or loss(-).'//&
-           ' 5= 5, '//&
+           ' 4= Reaction gain(+) or loss(-), '//&
+           ' 5= Final, '//&
            ' 6= Net, ',&
          'none') .ne.0) return
 
@@ -4531,12 +4531,12 @@
             STOP
          ENDIF
 
-      !write(phreeqout%lun,'(A)')'row, chemrow, src, dest, '//&
-      !          'chemvar?, src_init->'
-      !write(phreeqout%lun,123)(i,isoln(dest(i),nchemdat,nmru,nac,&
-      !     clark_segs,ires,ichemdat,imru,inac,ihydro),&
-      !     src(i),dest(i),c_indx(i,2),(src_init(i,j),j=1,11)&
-      !        ,i=1,nphrsolns)
+      write(chemout%lun,'(A)')'row, chemrow, src, dest, '//&
+                'chemvar?, src_init->'
+      write(chemout%lun,123)(i,isoln(dest(i),nchemdat,nmru,nac,&
+           clark_segs,ires,ichemdat,imru,inac,ihydro),&
+           src(i),dest(i),c_indx(i,2),(src_init(i,j),j=1,11)&
+              ,i=1,nphrsolns)
  123  format(16I10)
  
 !
@@ -10811,7 +10811,7 @@
           else                ! All other metrics point in the imet direction
              moles = c_chem(indx)%M(isol,imet)
           end if
-!     5ly conversions
+!     Finally conversions
           if(unit_type.eq.1) then ! mass only (mg, meq, or mmol)
              ch_var_tmp(ivar,isol)=moles*chvar_conv(ivar,isol)
           else if (unit_type.eq.2) then ! load so divide mass by area
@@ -10849,7 +10849,7 @@
               ch_var_tmp(ivar,isol)= 0.0
             end if
           else if(c_unit.eq.13) then   ! permil isotopes. Change to unit_type 4 if more iso units added (pmc, etc)
-            ch_var_tmp(ivar,isol)= c_chem(indx)%delta(isol,imet)
+            ch_var_tmp(ivar,isol)= c_chem(indx)%delta(isol,imet)/vol
           else 
             print*,'chvar ',ivar,' has invalid units indicated.'
           end if
