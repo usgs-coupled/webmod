@@ -1,13 +1,22 @@
+SOLUTION 1 E.T. or DI
 SOLUTION 0 Precipitation
 	-units	mg/kgw
 	Cl	0.2
-SOLUTION 1 E.T. or DI
+EQUILIBRIUM_PHASES 0 Equilibrate precipitation and irrigation with atmospheric pO2 and pCO2 @ 3500 meters above mean sea level, in log ppm
+	O2(g)         -0.865 100      #
+	CO2(g)        -3.64   10      # ~ PCO2
+END
 SOLUTION 2 Irrigation, channel leakage and initial canopy, snow, and stream
 	-units	mg/kgw
 	Cl	0.8
 SOLUTION 3 All other hillslope reservoirs and upslope groundwater
 	-units	mg/kgw
 	Cl	20
+ 
+EQUILIBRIUM_PHASES 0 Equilibrate precipitation and irrigation with atmospheric pO2 and pCO2 @ 3500 meters above mean sea level, in log ppm
+	O2(g)         -0.865 100      #
+	CO2(g)        -3.64   10      # ~ PCO2
+END
 PRINT
 # -RESET FALSE
 -STATUS FALSE

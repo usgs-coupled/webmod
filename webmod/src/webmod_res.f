@@ -75,7 +75,7 @@ c    10) O-horizon (flushed with overland flow, reservoir leaf-on water)
 c    11) unsaturated zone (root zone, recharge, residual water)
 c    12) shallow unsaturated zone (fixed volume flushed with direct flow)
 c    13) saturated zone (base flow)
-c    14) exfiltrated water (springs or wetlands)
+c    14) exfiltrated water (springs or wetlands)(inactive)
 c    15) deep preferential flow (tile drains or other)
 c    16) hillslope reservoir (mixing box that feeds stream segments)
 c    17) irrigation from well
@@ -192,7 +192,7 @@ c    19) irrigation from external sources
 c    20-21) ground water influx from channel(gw_in1) or upgradient(gw_in2)
 c  other indices zero
 c
-c           Saturated zone output: exfiltration, deep preferential flow, 
+c           Saturated zone output: deep preferential flow, 
 c                                  hill reservoir,irrigation
 c
 c vmix_satpref, preferential flow in the saturated zone (i.e. tile drains)
@@ -207,7 +207,7 @@ c     7) impermeable areas
 c    10) O-horizon
 c    12) qdf, preferential flow in the unsaturated zone
 c    13) qb, baseflow discharge from the saturated zone
-c    14) exfiltration
+c    14) exfiltration (inactive)
 c    15) satpref, preferential flow in the saturated zone
 c  other indices zero
 c
@@ -338,7 +338,7 @@ c
       real, save :: basin_vpref_cm, basin_recharge_cm
       real, save :: basin_uz2sat_cm,basin_sat2uz_cm
       real, save :: basin_qwell_cm,basin_qpref_cm,basin_gwloss_cm
-      real, save :: basin_gwflow_cm,basin_exfil_cm,basin_chan_sto_cm
+      real, save :: basin_gwflow_cm,basin_chan_sto_cm
       real, save :: basin_stflow_cm,basin_chan_div_cm,basin_chan_loss_cm
       real, save :: basin_qsim_cm, basin_qobs_cm
       real, save :: basin_qsim_m3s,basin_qobs_m3s
@@ -370,7 +370,7 @@ c
 !      real, save, allocatable :: z_wt_local(:,:)
       real, save, allocatable :: suz(:,:),srz(:,:)
 !      real, save, allocatable :: srzwet(:,:)
-      real, save, allocatable :: qb(:), qexfil(:)
+      real, save, allocatable :: qb(:)
       real, save, allocatable :: qdf(:), gw_loss(:)
       real, save, allocatable :: qpref(:), acm(:), afx(:)
       real, save, allocatable :: qof(:),qofs(:), quz(:)
@@ -509,8 +509,7 @@ c nresinp in setdim_web.f and nresinp in fmodules_web.inc (to
 c be copied to fmodules.inc). This represents the maximum unique
 c reservoir inputs for a new reservoir, specifically, the new 
 c root_zone composition may be determined by the compositions of
-c the old root_zone, precipitation, snowmelt, throughfall, ET, and
-c exfiltration.
+c the old root_zone, precipitation, snowmelt, throughfall, and ET.
 c
 c Impermeable areas (precip); Use later once impermeable areas
 c are included explicitly (i.e. TR55 or something)
@@ -542,7 +541,7 @@ c
 c
 c Root zone and unsaturated zone to be combined for single UZ chemistry
 c
-c Root Zone (precip, canopy, ET, snowmelt, exfiltration(sat_zone))
+c Root Zone (precip, canopy, ET, snowmelt, sat_zone)
 c
 c Might need this later as a separate reservoir
 c
@@ -550,7 +549,7 @@ c$$$      if(decl*var('webr', 'vmix_rz', 'nmru_nac_nresinp',
 c$$$     $  MAXMNR_3D, 'double', 'volumes to mix for making '//
 c$$$     $  'new root zone solution', 'm3',vmix_rz).ne.0) return
 c
-c Unsaturated zone (precip, canopy, ET, snowmelt, exfiltration(sat_zone))
+c Unsaturated zone (precip, canopy, ET, snowmelt, sat_zon))
 c
       allocate(vmix_uz(nac,nmru,nresinp))
       if(declvar('webr', 'vmix_uz', 'nac_nmru_nresinp',
@@ -654,7 +653,7 @@ c
      $     'volumes to mix for making new deep preferential '//
      $     'flow solution', 'm3',vmix_satpref).ne.0) return
 c
-c Hillslope -(combination of overland flow, exfiltration, direct flow, satpref,
+c Hillslope -(combination of overland flow, direct flow, satpref,
 c    baseflow)
 c
       allocate(vmix_hill(nmru,nresinp))
@@ -915,11 +914,6 @@ c
      + 'cm',
      +  basin_gwflow_cm).ne.0) return
 
-      if(declvar('webr', 'basin_exfil_cm', 'one', 1, 'real',
-     + 'Basin exfiltration',
-     + 'cm',
-     +  basin_exfil_cm).ne.0) return
-
       if(declvar('webr', 'basin_chan_sto_cm', 'one', 1, 'real',
      + 'Basin channel storage',
      + 'cm',
@@ -1116,15 +1110,15 @@ c     +    .ne.0) return
       allocate(nacsc(nmru))
       if(declparam('topc', 'nacsc', 'nmru', 'integer',
      +   '1', '0', '100',
-     +   'Number of ln(a/tanB) increments in the subcatchment.',
-     +   'Number of ln(a/tanB) increments in the subcatchment.',
+     +   'Number of TTI bins in the subcatchment.',
+     +   'Number of TTI bins in the subcatchment.',
      +   'none').ne.0) return
 
       allocate(ac(nac,nmru))
       if(declparam('topc', 'ac', 'nac,nmru', 'real',
      +   '1', '0', '1',
-     +   'Fractional area for each ln(a/tanB) increment.',
-     +   'Fractional area for each ln(a/tanB) increment.',
+     +   'Fractional area for each TTI bin.',
+     +   'Fractional area for each TTI bins',
      +   'km2/km2').ne.0) return      
 
       allocate(s_satpref_zmin(nmru))
@@ -1232,7 +1226,6 @@ c$$$     + .ne.0) return
       allocate (srz(nac,nmru))
 !      allocate (srzwet(nac,nmru))
       allocate (qb(nmru))
-      allocate (qexfil(nmru))
       allocate (gw_loss(nmru))
       allocate (qdf(nmru))
       allocate (qpref(nmru))
@@ -1965,7 +1958,7 @@ c composite basin volumes
      $ '          Final         Precip             ET',
      $ '     Impervious    Throughfall           Melt',
      $ '      O-horizon             UZ        UZ_Pref',
-     $ '       Sat_zone          Exfil       Sat_Pref',
+     $ '       Sat_zone       Sat_Pref',
      $ '      Hillslope           Well      Diversion',
      $ ' Outside_Source           GW_1           GW_2')
 
@@ -2046,7 +2039,7 @@ c
       double precision v_rech_loc, v_rech, v_qdf_loc
       double precision v_uz2sat,v_sat2uz
       double precision v_qwell, v_qpref,v_gw_loss
-      double precision v_qb, v_exfil
+      double precision v_qb
       double precision v_chan_loss
       double precision ppt2hill,irrext2hill,irrsat2hill,irrhyd2hill
       double precision can2hill,melt2hill
@@ -2200,9 +2193,6 @@ c
 
       if(getvar('topc', 'qb', nmru, 'real', 
      +     qb).ne.0) return
-
-      if(getvar('topc', 'qexfil', nmru, 'real', 
-     +     qexfil).ne.0) return
 
 !      if(get*var('topc', 'srzwet', nac*nmru, 'real', 
 !     +     srzwet).ne.0) return
@@ -2367,7 +2357,6 @@ c
       basin_qpref_cm = 0.0
       basin_gwloss_cm = 0.0
       basin_gwflow_cm = 0.0
-      basin_exfil_cm = 0.0
       basin_chan_sto_cm = 0.0
       basin_stflow_cm = 0.0
       basin_chan_div_cm = 0.0
@@ -2457,7 +2446,6 @@ c
       v_qpref = 0.0
       v_gw_loss = 0.0
       v_qb = 0.0
-      v_exfil = 0.0
       v_chan_loss = 0.0
       ppt2hill = 0.0
       irrext2hill = 0.0
@@ -3194,7 +3182,7 @@ c gw2    (21)
            vmix_basin(2) = vmix_basin(2) +
      $          vmix_sat(is,20) + vmix_sat(is,21)
 c
-c Saturated zone outputs (deep preferential flow, exfiltration,
+c Saturated zone outputs (deep preferential flow, 
 c                       loss to deep aquifer, water removed for
 c                       irrigation and stream/hill reservoir)
 c
@@ -3202,12 +3190,10 @@ c
            v_qpref = qpref(is)*mru_area(is)*a_million
            v_gw_loss = gw_loss(is)*mru_area(is)*a_million
            v_qb = qb(is)*mru_area(is)*a_million
-           v_exfil = qexfil(is)*mru_area(is)*a_million
            v_qwell = v_irrsat
 
            vmix_sat(is,3) = vmix_sat2uz(is)+
      $          v_qpref +              ! preferential flow
-     $          v_exfil +              ! exfiltration 
      $          v_qb +                 ! baseflow
      $          v_gw_loss +            ! loss to deep aquifer
      $          v_qwell                ! irrigation
@@ -3256,7 +3242,7 @@ c Inputs:
 c    10) O-horizon
 c    12) qdf, preferential flow in the unsaturated zone
 c    13) qb, baseflow discharge from the saturated zone
-c    14) exfiltration
+c    14) exfiltration (inactive)
 c    15) satpref, preferential flow in the saturated zone
 c
 c overland flow minus recharge to canopy on first day of transpiration
@@ -3267,7 +3253,7 @@ c shallow preferential flow, qdf
 c baseflow, qb
            vmix_hill(is,13) = v_qb
 c exfiltration, qexfil : exfiltration in no longer simulated - RW
-           vmix_hill(is,14) = v_exfil
+           vmix_hill(is,14) = 0
 c deep preferential flow
            vmix_hill(is,15) = vmix_satpref(is,3)
 c
@@ -3308,7 +3294,6 @@ c$$$     $          qdf(is),
 c$$$     $          vmix_hill(is,12)/mru_area(is)/a_million,
 c$$$     $          qb(is),
 c$$$     $          vmix_hill(is,13)/mru_area(is)/a_million,
-c$$$     $          qexfil(is),
 c$$$     $          vmix_hill(is,14)/mru_area(is)/a_million,
 c$$$     $          qpref(is),
 c$$$     $          vmix_hill(is,15)/mru_area(is)/a_million
@@ -3364,7 +3349,6 @@ c$$$     $       vmix_sat(is,4)
         basin_qpref_cm = basin_qpref_cm + v_qpref
         basin_gwloss_cm = basin_gwloss_cm + v_gw_loss
         basin_gwflow_cm = basin_gwflow_cm + v_qb
-        basin_exfil_cm = basin_exfil_cm + v_exfil
         basin_stflow_cm = basin_stflow_cm + vmix_hill(is,3)
 
  10   continue
@@ -3463,7 +3447,6 @@ c
       basin_qpref_cm = basin_qpref_cm * m3cm
       basin_gwloss_cm = basin_gwloss_cm * m3cm
       basin_gwflow_cm = basin_gwflow_cm * m3cm
-      basin_exfil_cm = basin_exfil_cm * m3cm
       basin_chan_sto_cm = basin_chan_sto_cm * m3cm
       basin_stflow_cm = basin_stflow_cm * m3cm
       basin_chan_div_cm = basin_chan_div_cm * m3cm

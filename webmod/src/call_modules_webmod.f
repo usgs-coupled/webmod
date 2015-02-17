@@ -407,7 +407,7 @@ c
      +   'Number of days in a year').ne.0) return
 
       if(decldim('nac', 30, MAXNAC,
-     +   'Number of ln(a/tanB) increments').ne.0)
+     +   'Number of TTI bins').ne.0)
      +    return
 
       if(decldim('nform', 1, MAXFORM,

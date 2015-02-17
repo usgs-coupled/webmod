@@ -16,7 +16,7 @@ Desc  : Dimension of obj_q
 
 Name  : nac
 Value : 11
-Desc  : Number of ln(a/tanB) increments
+Desc  : Number of TTI bins
 
 Name  : nac_nmru_nresinp
 Value : 2310
@@ -212,7 +212,7 @@ Default   : 6
 Name      : C_metric
 Module    : phreeqmms
 Descr     : Chemical metric (1-6) for ch_var
-Help      : Chemical metric for ch_var:  1= Initial,  2= Influent,  3= Exfluent,   4= Reaction gain(+) or loss(-). 5= 5,  6= Net, 
+Help      : Chemical metric for ch_var:  1= Initial,  2= Influent,  3= Exfluent,   4= Reaction gain(+) or loss(-),  5= Final,  6= Net, 
 Ndimen    : 1
 Dimensions: nchemvar - 10
 Size      : 10
@@ -401,7 +401,7 @@ Dimensions: nmru - 10
 Size      : 10
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 2
 Min       : 0
 Default   : 0
@@ -450,8 +450,8 @@ Default   : 0.000000
 
 Name      : ac
 Module    : topc
-Descr     : Fractional area for each ln(a/tanB) increment.
-Help      : Fractional area for each ln(a/tanB) increment.
+Descr     : Fractional area for each TTI bin.
+Help      : Fractional area for each TTI bin.
 Ndimen    : 2
 Dimensions: nac - 11, nmru - 10
 Size      : 110
@@ -1391,8 +1391,8 @@ Bounded   : ntemp
 
 Name      : nacsc
 Module    : topc
-Descr     : Number of ln(a/tanB) increments in the subcatchment.
-Help      : Number of ln(a/tanB) increments in the subcatchment.
+Descr     : Number of TTI bins in the subcatchment.
+Help      : Number of TTI bins in the subcatchment.
 Ndimen    : 1
 Dimensions: nmru - 10
 Size      : 10
@@ -1642,48 +1642,6 @@ Max       : 5.000000
 Min       : 0.200000
 Default   : 1.000000
 
-Name      : resp_coef_min
-Module    : topc
-Descr     : Minimum saturation readjustment coefficient
-Help      : Minimum saturation readjustment coefficient
-Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
-Type      : float
-Units     : none
-Width     : 14
-Max       : 1.000000
-Min       : 0.000000
-Default   : 0.010000
-
-Name      : resp_hr_full
-Module    : topc
-Descr     : Time step after which the saturation readjustment coefficient becomes 1
-Help      : Time step after which the saturation radjustment coefficient become 1 (i.e. original TOPMODEL)
-Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
-Type      : float
-Units     : hours
-Width     : 13
-Max       : 100.000000
-Min       : 0.000000
-Default   : 6.000000
-
-Name      : resp_hr_min
-Module    : topc
-Descr     : Time step below which the saturation readjustment coefficient is set equal to resp_coef_min
-Help      : Time step below which the saturation readjustment coefficient is set equal to resp_coef_min
-Ndimen    : 1
-Dimensions: nmru - 10
-Size      : 10
-Type      : float
-Units     : hours
-Width     : 12
-Max       : 24.000000
-Min       : 0.000000
-Default   : 0.083000
-
 Name      : riparian_thresh
 Module    : topc
 Descr     : UZ bins wetter than this are riparian
@@ -1809,6 +1767,20 @@ Width     : 15
 Max       : 0.000000
 Min       : -100.000000
 Default   : -5.000000
+
+Name      : s_theta_0
+Module    : topc
+Descr     : Initial volumetric soil moisture content in the root zone.
+Help      : Initial volumetric soil moisture content in the root zone.
+Ndimen    : 1
+Dimensions: nmru - 10
+Size      : 10
+Type      : float
+Units     : cm3/cm3
+Width     : 11
+Max       : 0.700000
+Min       : 0.010000
+Default   : 0.230000
 
 Name      : s_theta_fc
 Module    : topc

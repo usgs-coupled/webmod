@@ -1211,106 +1211,367 @@ Type: double
 Desc: Solute concentrations in precipitation
 Units: moles/liter
 
-Name: ch_basin_conc_mgL
+Name: ch_basin_ElemFrac
 Module: phreeqmms
 Ndimen: 1
 Dimensions: nsolute - 1
 Size: 1
 Type: double
-Desc: Average concentration of solute in basin
+Desc: Fraction of elemental production or consumption in the basin that is accounted for by the solute of interest
+Units: decimal
+
+Name: ch_basin_M_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Moles of solute in basin at end of day
+Units: Moles
+
+Name: ch_basin_M_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Moles of solute entering the basin
+Units: Moles
+
+Name: ch_basin_M_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Moles of solute leaving the basin
+Units: Moles
+
+Name: ch_basin_M_rxn
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Moles of solute produced (+) or consumed (-) by reactions in the basin
+Units: Moles
+
+Name: ch_basin_eq_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Equivalents of solute in basin at end of day
+Units: eq
+
+Name: ch_basin_eq_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Equivalents of solute entering the basin
+Units: eq
+
+Name: ch_basin_eq_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Equivalents of solute leaving the basin
+Units: eq
+
+Name: ch_basin_eq_rxn
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Equivalents of solute produced (+) or consumed (-) by reactions in the basin
+Units: eq
+
+Name: ch_basin_g_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Grams of solute in basin at end of day
+Units: grams
+
+Name: ch_basin_g_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Grams of solute entering the basin
+Units: grams
+
+Name: ch_basin_g_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Grams of solute leaving the basin
+Units: grams
+
+Name: ch_basin_g_rxn
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Grams of solute produced (+) or consumed (-) by reactions in the basin
+Units: grams
+
+Name: ch_basin_m3_ET
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: Total volume of evapotranspiration from the basin
+Units: m3
+
+Name: ch_basin_m3_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: Volume of water in basin at end of day
+Units: m3
+
+Name: ch_basin_m3_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: Total volume of water entering the basin
+Units: m3
+
+Name: ch_basin_m3_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: Total volume of water leaving the basin
+Units: m3
+
+Name: ch_basin_mML_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute in basin at end of day
+Units: mMol/L
+
+Name: ch_basin_mML_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute entering the basin
+Units: mMol/L
+
+Name: ch_basin_mML_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute leaving the basin
+Units: mMol/L
+
+Name: ch_basin_mMm2_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute in basin at end of day
+Units: mMol/sq meter
+
+Name: ch_basin_mMm2_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute entering the basin
+Units: mMol/sq meter
+
+Name: ch_basin_mMm2_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute leaving the basin
+Units: mMol/sq meter
+
+Name: ch_basin_mMm2_rxn
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute produced (+) or consumed (-) by reactions in the basin
+Units: mMol/sq meter
+
+Name: ch_basin_meqL_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute in basin at end of day
+Units: meq/L
+
+Name: ch_basin_meqL_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute entering the basin
+Units: meq/L
+
+Name: ch_basin_meqL_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute leaving the basin
+Units: meq/L
+
+Name: ch_basin_meqm2_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute in basin at end of day
+Units: meq/sq meter
+
+Name: ch_basin_meqm2_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute entering the basin
+Units: meq/sq meter
+
+Name: ch_basin_meqm2_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute leaving the basin
+Units: meq/sq meter
+
+Name: ch_basin_meqm2_rxn
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute produced (+) or consumed (-) by reactions in the basin
+Units: meq/sq meter
+
+Name: ch_basin_mgL_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute in basin at end of day
 Units: mg/L
 
-Name: ch_basin_in_g
+Name: ch_basin_mgL_in
 Module: phreeqmms
 Ndimen: 1
 Dimensions: nsolute - 1
 Size: 1
 Type: double
-Desc: Total mass of solute into basin
-Units: g
-
-Name: ch_basin_in_gm2
-Module: phreeqmms
-Ndimen: 1
-Dimensions: nsolute - 1
-Size: 1
-Type: double
-Desc: Area-normalized flux of influents into basin.
-Units: g/m2
-
-Name: ch_basin_in_mgL
-Module: phreeqmms
-Ndimen: 1
-Dimensions: nsolute - 1
-Size: 1
-Type: double
-Desc: Average solute concentration of precip ,ground water influx and irrigation
+Desc: Concentration of solute entering the basin
 Units: mg/L
 
-Name: ch_basin_in_permil
+Name: ch_basin_mgL_out
 Module: phreeqmms
 Ndimen: 1
 Dimensions: nsolute - 1
 Size: 1
 Type: double
-Desc: Average permil value of isotope in precip ,ground water influx and irrigation
-Units: permil
-
-Name: ch_basin_mass_g
-Module: phreeqmms
-Ndimen: 1
-Dimensions: nsolute - 1
-Size: 1
-Type: double
-Desc: Total mass of solute in basin
-Units: g
-
-Name: ch_basin_net_g
-Module: phreeqmms
-Ndimen: 1
-Dimensions: nsolute - 1
-Size: 1
-Type: double
-Desc: Net export of solute from basin.
-Units: g
-
-Name: ch_basin_net_gm2
-Module: phreeqmms
-Ndimen: 1
-Dimensions: nsolute - 1
-Size: 1
-Type: double
-Desc: Net area-normalized flux of effluent from basin.
-Units: g/m2
-
-Name: ch_basin_out_g
-Module: phreeqmms
-Ndimen: 1
-Dimensions: nsolute - 1
-Size: 1
-Type: double
-Desc: Total mass of solute exported from basin
-Units: g
-
-Name: ch_basin_out_gm2
-Module: phreeqmms
-Ndimen: 1
-Dimensions: nsolute - 1
-Size: 1
-Type: double
-Desc: Area-normalized flux of effluent from basin.
-Units: g/m2
-
-Name: ch_basin_out_mgL
-Module: phreeqmms
-Ndimen: 1
-Dimensions: nsolute - 1
-Size: 1
-Type: double
-Desc: Average solute concentration of stream at outlet
+Desc: Concentration of solute leaving the basin
 Units: mg/L
 
-Name: ch_basin_out_pH
+Name: ch_basin_mgm2_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute in basin at end of day
+Units: mg/sq meter
+
+Name: ch_basin_mgm2_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute entering the basin
+Units: mg/sq meter
+
+Name: ch_basin_mgm2_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute leaving the basin
+Units: mg/sq meter
+
+Name: ch_basin_mgm2_rxn
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute produced (+) or consumed (-) by reactions in the basin
+Units: mg/sq meter
+
+Name: ch_basin_pH_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: pH of water in basin at end of day
+Units: pH units
+
+Name: ch_basin_pH_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: pH of water entering the basin
+Units: pH units
+
+Name: ch_basin_pH_out
 Module: phreeqmms
 Ndimen: 1
 Dimensions: one - 1
@@ -1319,16 +1580,61 @@ Type: double
 Desc: pH of water leaving the basin
 Units: pH units
 
-Name: ch_basin_out_permil
+Name: ch_basin_permil_final
 Module: phreeqmms
 Ndimen: 1
 Dimensions: nsolute - 1
 Size: 1
 Type: double
-Desc: Average permil value of isotope of stream at outlet
+Desc: Concentration of solute in basin at end of day
 Units: permil
 
-Name: ch_basin_out_tempC
+Name: ch_basin_permil_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute entering the basin
+Units: permil
+
+Name: ch_basin_permil_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute leaving the basin
+Units: permil
+
+Name: ch_basin_permil_rxn
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Delta of evapotransiration for basin
+Units: permil
+
+Name: ch_basin_tempC_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: Temperature of water in basin at end of day
+Units: deg C
+
+Name: ch_basin_tempC_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: Temperature of water entering the basin
+Units: deg C
+
+Name: ch_basin_tempC_out
 Module: phreeqmms
 Ndimen: 1
 Dimensions: one - 1
@@ -1337,167 +1643,2228 @@ Type: double
 Desc: Temperature of water leaving the basin
 Units: deg C
 
-Name: ch_basin_rxn_g
+Name: ch_hyd_ElemFrac
 Module: phreeqmms
 Ndimen: 1
 Dimensions: nsolute - 1
 Size: 1
 Type: double
-Desc: Total mass of solute created or consumed by reactions in basin
-Units: g
+Desc: Fraction of elemental production or consumption in the stream that is accounted for by the solute of interest
+Units: decimal
 
-Name: ch_basin_vol_m3
+Name: ch_hyd_M_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Moles of solute in stream at end of day
+Units: Moles
+
+Name: ch_hyd_M_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Moles of solute entering the stream
+Units: Moles
+
+Name: ch_hyd_M_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Moles of solute leaving the stream
+Units: Moles
+
+Name: ch_hyd_M_rxn
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Moles of solute produced (+) or consumed (-) by reactions in the stream
+Units: Moles
+
+Name: ch_hyd_eq_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Equivalents of solute in stream at end of day
+Units: eq
+
+Name: ch_hyd_eq_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Equivalents of solute entering the stream
+Units: eq
+
+Name: ch_hyd_eq_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Equivalents of solute leaving the stream
+Units: eq
+
+Name: ch_hyd_eq_rxn
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Equivalents of solute produced (+) or consumed (-) by reactions in the stream
+Units: eq
+
+Name: ch_hyd_g_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Grams of solute in stream at end of day
+Units: grams
+
+Name: ch_hyd_g_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Grams of solute entering the stream
+Units: grams
+
+Name: ch_hyd_g_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Grams of solute leaving the stream
+Units: grams
+
+Name: ch_hyd_g_rxn
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Grams of solute produced (+) or consumed (-) by reactions in the stream
+Units: grams
+
+Name: ch_hyd_m3_final
 Module: phreeqmms
 Ndimen: 1
 Dimensions: one - 1
 Size: 1
 Type: double
-Desc: Total volume of water in the basin
+Desc: Volume of water in stream at end of day
 Units: m3
 
-Name: ch_mru_conc_mgL
-Module: phreeqmms
-Ndimen: 2
-Dimensions: nmru - 22, nsolute - 1
-Size: 22
-Type: double
-Desc: Average concentration of solute in mru
-Units: mg/L
-
-Name: ch_mru_in_g
-Module: phreeqmms
-Ndimen: 2
-Dimensions: nmru - 22, nsolute - 1
-Size: 22
-Type: double
-Desc: Total mass of solute into mru
-Units: g
-
-Name: ch_mru_in_gm2
-Module: phreeqmms
-Ndimen: 2
-Dimensions: nmru - 22, nsolute - 1
-Size: 22
-Type: double
-Desc: Area-normalized flux of influents into mru.
-Units: g/m2
-
-Name: ch_mru_in_mgL
-Module: phreeqmms
-Ndimen: 2
-Dimensions: nmru - 22, nsolute - 1
-Size: 22
-Type: double
-Desc: Average solute concentration of precip, ground water influx, and irrigation
-Units: mg/L
-
-Name: ch_mru_in_permil
-Module: phreeqmms
-Ndimen: 2
-Dimensions: nmru - 22, nsolute - 1
-Size: 22
-Type: double
-Desc: Average permil value of precip, ground water influx, and irrigation
-Units: permil
-
-Name: ch_mru_mass_g
-Module: phreeqmms
-Ndimen: 2
-Dimensions: nmru - 22, nsolute - 1
-Size: 22
-Type: double
-Desc: Total mass of solute in mru
-Units: g
-
-Name: ch_mru_net_g
-Module: phreeqmms
-Ndimen: 2
-Dimensions: nmru - 22, nsolute - 1
-Size: 22
-Type: double
-Desc: Net export of solute from MRU.
-Units: g
-
-Name: ch_mru_net_gm2
-Module: phreeqmms
-Ndimen: 2
-Dimensions: nmru - 22, nsolute - 1
-Size: 22
-Type: double
-Desc: Net area-normalized flux of effluent from mru.
-Units: g/m2
-
-Name: ch_mru_out_g
-Module: phreeqmms
-Ndimen: 2
-Dimensions: nmru - 22, nsolute - 1
-Size: 22
-Type: double
-Desc: Total mass of solute exported from mru
-Units: g
-
-Name: ch_mru_out_gm2
-Module: phreeqmms
-Ndimen: 2
-Dimensions: nmru - 22, nsolute - 1
-Size: 22
-Type: double
-Desc: Area-normalized flux of effluent from mru.
-Units: g/m2
-
-Name: ch_mru_out_mgL
-Module: phreeqmms
-Ndimen: 2
-Dimensions: nmru - 22, nsolute - 1
-Size: 22
-Type: double
-Desc: Average solute concentration of mru discharge
-Units: mg/L
-
-Name: ch_mru_out_pH
+Name: ch_hyd_m3_in
 Module: phreeqmms
 Ndimen: 1
-Dimensions: nmru - 22
-Size: 22
+Dimensions: one - 1
+Size: 1
 Type: double
-Desc: pH of water leaving the mru
+Desc: Total volume of water entering the stream
+Units: m3
+
+Name: ch_hyd_m3_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: Total volume of water leaving the stream
+Units: m3
+
+Name: ch_hyd_mML_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute in stream at end of day
+Units: mMol/L
+
+Name: ch_hyd_mML_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute entering the stream
+Units: mMol/L
+
+Name: ch_hyd_mML_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute leaving the stream
+Units: mMol/L
+
+Name: ch_hyd_mMm2_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute in stream at end of day
+Units: mMol/sq meter
+
+Name: ch_hyd_mMm2_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute entering the stream
+Units: mMol/sq meter
+
+Name: ch_hyd_mMm2_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute leaving the stream
+Units: mMol/sq meter
+
+Name: ch_hyd_mMm2_rxn
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute produced (+) or consumed (-) by reactions in the stream
+Units: mMol/sq meter
+
+Name: ch_hyd_meqL_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute in stream at end of day
+Units: meq/L
+
+Name: ch_hyd_meqL_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute entering the stream
+Units: meq/L
+
+Name: ch_hyd_meqL_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute leaving the stream
+Units: meq/L
+
+Name: ch_hyd_meqm2_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute in stream at end of day
+Units: meq/sq meter
+
+Name: ch_hyd_meqm2_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute entering the stream
+Units: meq/sq meter
+
+Name: ch_hyd_meqm2_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute leaving the stream
+Units: meq/sq meter
+
+Name: ch_hyd_meqm2_rxn
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute produced (+) or consumed (-) by reactions in the stream
+Units: meq/sq meter
+
+Name: ch_hyd_mgL_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute in stream at end of day
+Units: mg/L
+
+Name: ch_hyd_mgL_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute entering the stream
+Units: mg/L
+
+Name: ch_hyd_mgL_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute leaving the stream
+Units: mg/L
+
+Name: ch_hyd_mgm2_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute in stream at end of day
+Units: mg/sq meter
+
+Name: ch_hyd_mgm2_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute entering the stream
+Units: mg/sq meter
+
+Name: ch_hyd_mgm2_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute leaving the stream
+Units: mg/sq meter
+
+Name: ch_hyd_mgm2_rxn
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute produced (+) or consumed (-) by reactions in the stream
+Units: mg/sq meter
+
+Name: ch_hyd_pH_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: pH of water in stream at end of day
 Units: pH units
 
-Name: ch_mru_out_permil
+Name: ch_hyd_pH_in
 Module: phreeqmms
-Ndimen: 2
-Dimensions: nmru - 22, nsolute - 1
-Size: 22
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
 Type: double
-Desc: Average permil value of mru discharge
+Desc: pH of water entering the stream
+Units: pH units
+
+Name: ch_hyd_pH_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: pH of water leaving the stream
+Units: pH units
+
+Name: ch_hyd_permil_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Delta of isotope in stream at end of day
 Units: permil
 
-Name: ch_mru_out_tempC
+Name: ch_hyd_permil_in
 Module: phreeqmms
 Ndimen: 1
-Dimensions: nmru - 22
-Size: 22
+Dimensions: nsolute - 1
+Size: 1
 Type: double
-Desc: Temperature of water leaving the mru
+Desc: Delta of isotope entering the stream
+Units: permil
+
+Name: ch_hyd_permil_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Delta of isotope leaving the stream
+Units: permil
+
+Name: ch_hyd_tempC_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: Temperature of water in stream at end of day
 Units: deg C
 
-Name: ch_mru_rxn_g
+Name: ch_hyd_tempC_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: Temperature of water entering the stream
+Units: deg C
+
+Name: ch_hyd_tempC_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: Temperature of water leaving the stream
+Units: deg C
+
+Name: ch_mru_ElemFrac
 Module: phreeqmms
 Ndimen: 2
 Dimensions: nmru - 22, nsolute - 1
 Size: 22
 Type: double
-Desc: Total mass of solute created or consumed by reactions in mru
-Units: g
+Desc: Fraction of elemental production or consumption in the MRU that is accounted for by the solute of interest
+Units: decimal
 
-Name: ch_mru_vol_m3
+Name: ch_mru_M_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Moles of solute in MRU at end of day
+Units: Moles
+
+Name: ch_mru_M_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Moles of solute entering the MRU
+Units: Moles
+
+Name: ch_mru_M_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Moles of solute leaving the MRU
+Units: Moles
+
+Name: ch_mru_M_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Moles of solute produced (+) or consumed (-) by reactions in the MRU
+Units: Moles
+
+Name: ch_mru_eq_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Equivalents of solute in MRU at end of day
+Units: eq
+
+Name: ch_mru_eq_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Equivalents of solute entering the MRU
+Units: eq
+
+Name: ch_mru_eq_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Equivalents of solute leaving the MRU
+Units: eq
+
+Name: ch_mru_eq_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Equivalents of solute produced (+) or consumed (-) by reactions in the MRU
+Units: eq
+
+Name: ch_mru_g_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Grams of solute in MRU at end of day
+Units: grams
+
+Name: ch_mru_g_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Grams of solute entering the MRU
+Units: grams
+
+Name: ch_mru_g_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Grams of solute leaving the MRU
+Units: grams
+
+Name: ch_mru_g_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Grams of solute produced (+) or consumed (-) by reactions in the MRU
+Units: grams
+
+Name: ch_mru_m3_ET
 Module: phreeqmms
 Ndimen: 1
 Dimensions: nmru - 22
 Size: 22
 Type: double
-Desc: Total volume of water in the mru
+Desc: Total volume of evapotranspiration from the MRU
 Units: m3
+
+Name: ch_mru_m3_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Volume of water in MRU at end of day
+Units: m3
+
+Name: ch_mru_m3_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Total volume of water entering the MRU
+Units: m3
+
+Name: ch_mru_m3_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Total volume of water leaving the MRU
+Units: m3
+
+Name: ch_mru_mML_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute in MRU at end of day
+Units: mMol/L
+
+Name: ch_mru_mML_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute entering the MRU
+Units: mMol/L
+
+Name: ch_mru_mML_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute leaving the MRU
+Units: mMol/L
+
+Name: ch_mru_mMm2_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute in MRU at end of day
+Units: mMol/sq meter
+
+Name: ch_mru_mMm2_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute entering the MRU
+Units: mMol/sq meter
+
+Name: ch_mru_mMm2_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute leaving the MRU
+Units: mMol/sq meter
+
+Name: ch_mru_mMm2_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute produced (+) or consumed (-) by reactions in the MRU
+Units: mMol/sq meter
+
+Name: ch_mru_meqL_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute in MRU at end of day
+Units: meq/L
+
+Name: ch_mru_meqL_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute entering the MRU
+Units: meq/L
+
+Name: ch_mru_meqL_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute leaving the MRU
+Units: meq/L
+
+Name: ch_mru_meqm2_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute in MRU at end of day
+Units: meq/sq meter
+
+Name: ch_mru_meqm2_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute entering the MRU
+Units: meq/sq meter
+
+Name: ch_mru_meqm2_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute leaving the MRU
+Units: meq/sq meter
+
+Name: ch_mru_meqm2_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute produced (+) or consumed (-) by reactions in the MRU
+Units: meq/sq meter
+
+Name: ch_mru_mgL_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute in MRU at end of day
+Units: mg/L
+
+Name: ch_mru_mgL_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute entering the MRU
+Units: mg/L
+
+Name: ch_mru_mgL_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute leaving the MRU
+Units: mg/L
+
+Name: ch_mru_mgm2_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute in MRU at end of day
+Units: mg/sq meter
+
+Name: ch_mru_mgm2_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute entering the MRU
+Units: mg/sq meter
+
+Name: ch_mru_mgm2_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute leaving the MRU
+Units: mg/sq meter
+
+Name: ch_mru_mgm2_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute produced (+) or consumed (-) by reactions in the MRU
+Units: mg/sq meter
+
+Name: ch_mru_pH_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: pH of water in MRU at end of day
+Units: pH units
+
+Name: ch_mru_pH_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: pH of water entering the MRU
+Units: pH units
+
+Name: ch_mru_pH_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: pH of water leaving the MRU
+Units: pH units
+
+Name: ch_mru_permil_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Delta of isotope in MRU at end of day
+Units: permil
+
+Name: ch_mru_permil_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Delta of isotope entering the MRU
+Units: permil
+
+Name: ch_mru_permil_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Delta of isotope leaving the MRU
+Units: permil
+
+Name: ch_mru_tempC_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Temperature of water in MRU at end of day
+Units: deg C
+
+Name: ch_mru_tempC_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Temperature of water entering the MRU
+Units: deg C
+
+Name: ch_mru_tempC_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Temperature of water leaving the MRU
+Units: deg C
+
+Name: ch_outlet_M
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Moles of solute discharged at outlet
+Units: Moles
+
+Name: ch_outlet_eq
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Equivalents of solute discharged at outlet
+Units: eq
+
+Name: ch_outlet_g
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Grams of solute discharged at outlet
+Units: grams
+
+Name: ch_outlet_m3
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: Total volume of water discharged at outlet
+Units: m3
+
+Name: ch_outlet_mML
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute discharged at outlet
+Units: mMol/L
+
+Name: ch_outlet_mMm2
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute at outlet
+Units: mMol/sq meter
+
+Name: ch_outlet_meqL
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute discharged at outlet
+Units: meq/L
+
+Name: ch_outlet_meqm2
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute at outlet
+Units: meq/sq meter
+
+Name: ch_outlet_mgL
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute discharged at outlet
+Units: mg/L
+
+Name: ch_outlet_mgm2
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Load of solute at outlet
+Units: mg/sq meter
+
+Name: ch_outlet_pH
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: pH of water discharged at outlet
+Units: pH units
+
+Name: ch_outlet_permil
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nsolute - 1
+Size: 1
+Type: double
+Desc: Concentration of solute discharged at outlet
+Units: permil
+
+Name: ch_outlet_tempC
+Module: phreeqmms
+Ndimen: 1
+Dimensions: one - 1
+Size: 1
+Type: double
+Desc: Temperature of water discharged at outlet
+Units: deg C
+
+Name: ch_uzgen_ElemFrac
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Fraction of elemental production or consumption in the composite unsaturated zone that is accounted for by the solute of interest
+Units: decimal
+
+Name: ch_uzgen_M_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Moles of solute in all UZ at end of day
+Units: Moles
+
+Name: ch_uzgen_M_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Moles of solute entering all UZ
+Units: Moles
+
+Name: ch_uzgen_M_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Moles of solute leaving all UZ
+Units: Moles
+
+Name: ch_uzgen_M_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Moles of solute produced (+) or consumed (-) by reactions in all UZ
+Units: Moles
+
+Name: ch_uzgen_eq_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Equivalents of solute in all UZ at end of day
+Units: eq
+
+Name: ch_uzgen_eq_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Equivalents of solute entering all UZ
+Units: eq
+
+Name: ch_uzgen_eq_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Equivalents of solute leaving all UZ
+Units: eq
+
+Name: ch_uzgen_eq_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Equivalents of solute produced (+) or consumed (-) by reactions in all UZ
+Units: eq
+
+Name: ch_uzgen_g_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Grams of solute in all UZ at end of day
+Units: grams
+
+Name: ch_uzgen_g_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Grams of solute entering all UZ
+Units: grams
+
+Name: ch_uzgen_g_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Grams of solute leaving all UZ
+Units: grams
+
+Name: ch_uzgen_g_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Grams of solute produced (+) or consumed (-) by reactions in all UZ
+Units: grams
+
+Name: ch_uzgen_m3_ET
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Total volume of evapotranspiration from all UZ
+Units: m3
+
+Name: ch_uzgen_m3_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Volume of water in all UZ at end of day
+Units: m3
+
+Name: ch_uzgen_m3_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Total volume of water entering all UZ
+Units: m3
+
+Name: ch_uzgen_m3_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Total volume of water leaving all UZ
+Units: m3
+
+Name: ch_uzgen_mML_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute in all UZ at end of day
+Units: mMol/L
+
+Name: ch_uzgen_mML_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute entering all UZ
+Units: mMol/L
+
+Name: ch_uzgen_mML_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute leaving all UZ
+Units: mMol/L
+
+Name: ch_uzgen_mMm2_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute in all UZ at end of day
+Units: mMol/sq meter
+
+Name: ch_uzgen_mMm2_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute entering all UZ
+Units: mMol/sq meter
+
+Name: ch_uzgen_mMm2_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute leaving all UZ
+Units: mMol/sq meter
+
+Name: ch_uzgen_mMm2_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute produced (+) or consumed (-) by reactions in all UZ
+Units: mMol/sq meter
+
+Name: ch_uzgen_meqL_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute in all UZ at end of day
+Units: meq/L
+
+Name: ch_uzgen_meqL_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute entering all UZ
+Units: meq/L
+
+Name: ch_uzgen_meqL_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute leaving all UZ
+Units: meq/L
+
+Name: ch_uzgen_meqm2_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute in all UZ at end of day
+Units: meq/sq meter
+
+Name: ch_uzgen_meqm2_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute entering all UZ
+Units: meq/sq meter
+
+Name: ch_uzgen_meqm2_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute leaving all UZ
+Units: meq/sq meter
+
+Name: ch_uzgen_meqm2_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute produced (+) or consumed (-) by reactions in all UZ
+Units: meq/sq meter
+
+Name: ch_uzgen_mgL_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute in all UZ at end of day
+Units: mg/L
+
+Name: ch_uzgen_mgL_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute entering all UZ
+Units: mg/L
+
+Name: ch_uzgen_mgL_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute leaving all UZ
+Units: mg/L
+
+Name: ch_uzgen_mgm2_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute in all UZ at end of day
+Units: mg/sq meter
+
+Name: ch_uzgen_mgm2_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute entering all UZ
+Units: mg/sq meter
+
+Name: ch_uzgen_mgm2_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute leaving all UZ
+Units: mg/sq meter
+
+Name: ch_uzgen_mgm2_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute produced (+) or consumed (-) by reactions in all UZ
+Units: mg/sq meter
+
+Name: ch_uzgen_pH_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: pH of water in all UZ at end of day
+Units: pH units
+
+Name: ch_uzgen_pH_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: pH of water entering all UZ
+Units: pH units
+
+Name: ch_uzgen_pH_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: pH of water leaving all UZ
+Units: pH units
+
+Name: ch_uzgen_permil_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Delta of isotope in all UZ at end of day
+Units: permil
+
+Name: ch_uzgen_permil_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Delta of isotope entering all UZ
+Units: permil
+
+Name: ch_uzgen_permil_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Delta of isotope leaving all UZ
+Units: permil
+
+Name: ch_uzgen_tempC_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Temperature of water in all UZ at end of day
+Units: deg C
+
+Name: ch_uzgen_tempC_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Temperature of water entering all UZ
+Units: deg C
+
+Name: ch_uzgen_tempC_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Temperature of water leaving all UZ
+Units: deg C
+
+Name: ch_uzrip_ElemFrac
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Fraction of elemental production or consumption in the composite riparian unsaturated zone that is accounted for by the solute of interest
+Units: decimal
+
+Name: ch_uzrip_M_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Moles of solute in riparian UZ at end of day
+Units: Moles
+
+Name: ch_uzrip_M_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Moles of solute entering the riparian UZ
+Units: Moles
+
+Name: ch_uzrip_M_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Moles of solute leaving the riparian UZ
+Units: Moles
+
+Name: ch_uzrip_M_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Moles of solute produced (+) or consumed (-) by reactions in the riparian UZ
+Units: Moles
+
+Name: ch_uzrip_eq_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Equivalents of solute in riparian UZ at end of day
+Units: eq
+
+Name: ch_uzrip_eq_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Equivalents of solute entering the riparian UZ
+Units: eq
+
+Name: ch_uzrip_eq_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Equivalents of solute leaving the riparian UZ
+Units: eq
+
+Name: ch_uzrip_eq_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Equivalents of solute produced (+) or consumed (-) by reactions in the riparian UZ
+Units: eq
+
+Name: ch_uzrip_g_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Grams of solute in riparian UZ at end of day
+Units: grams
+
+Name: ch_uzrip_g_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Grams of solute entering the riparian UZ
+Units: grams
+
+Name: ch_uzrip_g_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Grams of solute leaving the riparian UZ
+Units: grams
+
+Name: ch_uzrip_g_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Grams of solute produced (+) or consumed (-) by reactions in the riparian UZ
+Units: grams
+
+Name: ch_uzrip_m3_ET
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Total volume of evapotranspiration from the riparian UZ
+Units: m3
+
+Name: ch_uzrip_m3_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Volume of water in riparian UZ at end of day
+Units: m3
+
+Name: ch_uzrip_m3_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Total volume of water entering the riparian UZ
+Units: m3
+
+Name: ch_uzrip_m3_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Total volume of water leaving the riparian UZ
+Units: m3
+
+Name: ch_uzrip_mML_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute in riparian UZ at end of day
+Units: mMol/L
+
+Name: ch_uzrip_mML_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute entering the riparian UZ
+Units: mMol/L
+
+Name: ch_uzrip_mML_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute leaving the riparian UZ
+Units: mMol/L
+
+Name: ch_uzrip_mMm2_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute in riparian UZ at end of day
+Units: mMol/sq meter
+
+Name: ch_uzrip_mMm2_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute entering the riparian UZ
+Units: mMol/sq meter
+
+Name: ch_uzrip_mMm2_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute leaving the riparian UZ
+Units: mMol/sq meter
+
+Name: ch_uzrip_mMm2_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute produced (+) or consumed (-) by reactions in the riparian UZ
+Units: mMol/sq meter
+
+Name: ch_uzrip_meqL_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute in riparian UZ at end of day
+Units: meq/L
+
+Name: ch_uzrip_meqL_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute entering the riparian UZ
+Units: meq/L
+
+Name: ch_uzrip_meqL_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute leaving the riparian UZ
+Units: meq/L
+
+Name: ch_uzrip_meqm2_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute in riparian UZ at end of day
+Units: meq/sq meter
+
+Name: ch_uzrip_meqm2_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute entering the riparian UZ
+Units: meq/sq meter
+
+Name: ch_uzrip_meqm2_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute leaving the riparian UZ
+Units: meq/sq meter
+
+Name: ch_uzrip_meqm2_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute produced (+) or consumed (-) by reactions in the riparian UZ
+Units: meq/sq meter
+
+Name: ch_uzrip_mgL_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute in riparian UZ at end of day
+Units: mg/L
+
+Name: ch_uzrip_mgL_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute entering the riparian UZ
+Units: mg/L
+
+Name: ch_uzrip_mgL_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute leaving the riparian UZ
+Units: mg/L
+
+Name: ch_uzrip_mgm2_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute in riparian UZ at end of day
+Units: mg/sq meter
+
+Name: ch_uzrip_mgm2_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute entering the riparian UZ
+Units: mg/sq meter
+
+Name: ch_uzrip_mgm2_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute leaving the riparian UZ
+Units: mg/sq meter
+
+Name: ch_uzrip_mgm2_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute produced (+) or consumed (-) by reactions in the riparian UZ
+Units: mg/sq meter
+
+Name: ch_uzrip_pH_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: pH of water in riparian UZ at end of day
+Units: pH units
+
+Name: ch_uzrip_pH_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: pH of water entering the riparian UZ
+Units: pH units
+
+Name: ch_uzrip_pH_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: pH of water leaving the riparian UZ
+Units: pH units
+
+Name: ch_uzrip_permil_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Delta of isotope in riparian UZ at end of day
+Units: permil
+
+Name: ch_uzrip_permil_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Delta of isotope entering the riparian UZ
+Units: permil
+
+Name: ch_uzrip_permil_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Delta of isotope leaving the riparian UZ
+Units: permil
+
+Name: ch_uzrip_tempC_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Temperature of water in riparian UZ at end of day
+Units: deg C
+
+Name: ch_uzrip_tempC_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Temperature of water entering the riparian UZ
+Units: deg C
+
+Name: ch_uzrip_tempC_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Temperature of water leaving the riparian UZ
+Units: deg C
+
+Name: ch_uzup_ElemFrac
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Fraction of elemental production or consumption in the composite upland unsaturated zone that is accounted for by the solute of interest
+Units: decimal
+
+Name: ch_uzup_M_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Moles of solute in upland UZ at end of day
+Units: Moles
+
+Name: ch_uzup_M_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Moles of solute entering the upland UZ
+Units: Moles
+
+Name: ch_uzup_M_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Moles of solute leaving the upland UZ
+Units: Moles
+
+Name: ch_uzup_M_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Moles of solute produced (+) or consumed (-) by reactions in the upland UZ
+Units: Moles
+
+Name: ch_uzup_eq_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Equivalents of solute in upland UZ at end of day
+Units: eq
+
+Name: ch_uzup_eq_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Equivalents of solute entering the upland UZ
+Units: eq
+
+Name: ch_uzup_eq_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Equivalents of solute leaving the upland UZ
+Units: eq
+
+Name: ch_uzup_eq_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Equivalents of solute produced (+) or consumed (-) by reactions in the upland UZ
+Units: eq
+
+Name: ch_uzup_g_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Grams of solute in upland UZ at end of day
+Units: grams
+
+Name: ch_uzup_g_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Grams of solute entering the upland UZ
+Units: grams
+
+Name: ch_uzup_g_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Grams of solute leaving the upland UZ
+Units: grams
+
+Name: ch_uzup_g_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Grams of solute produced (+) or consumed (-) by reactions in the upland UZ
+Units: grams
+
+Name: ch_uzup_m3_ET
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Total volume of evapotranspiration from the upland UZ
+Units: m3
+
+Name: ch_uzup_m3_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Volume of water in upland UZ at end of day
+Units: m3
+
+Name: ch_uzup_m3_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Total volume of water entering the upland UZ
+Units: m3
+
+Name: ch_uzup_m3_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Total volume of water leaving the upland UZ
+Units: m3
+
+Name: ch_uzup_mML_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute in upland UZ at end of day
+Units: mMol/L
+
+Name: ch_uzup_mML_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute entering the upland UZ
+Units: mMol/L
+
+Name: ch_uzup_mML_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute leaving the upland UZ
+Units: mMol/L
+
+Name: ch_uzup_mMm2_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute in upland UZ at end of day
+Units: mMol/sq meter
+
+Name: ch_uzup_mMm2_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute entering the upland UZ
+Units: mMol/sq meter
+
+Name: ch_uzup_mMm2_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute leaving the upland UZ
+Units: mMol/sq meter
+
+Name: ch_uzup_mMm2_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute produced (+) or consumed (-) by reactions in the upland UZ
+Units: mMol/sq meter
+
+Name: ch_uzup_meqL_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute in upland UZ at end of day
+Units: meq/L
+
+Name: ch_uzup_meqL_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute entering the upland UZ
+Units: meq/L
+
+Name: ch_uzup_meqL_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute leaving the upland UZ
+Units: meq/L
+
+Name: ch_uzup_meqm2_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute in upland UZ at end of day
+Units: meq/sq meter
+
+Name: ch_uzup_meqm2_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute entering the upland UZ
+Units: meq/sq meter
+
+Name: ch_uzup_meqm2_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute leaving the upland UZ
+Units: meq/sq meter
+
+Name: ch_uzup_meqm2_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute produced (+) or consumed (-) by reactions in the upland UZ
+Units: meq/sq meter
+
+Name: ch_uzup_mgL_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute in upland UZ at end of day
+Units: mg/L
+
+Name: ch_uzup_mgL_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute entering the upland UZ
+Units: mg/L
+
+Name: ch_uzup_mgL_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Concentration of solute leaving the upland UZ
+Units: mg/L
+
+Name: ch_uzup_mgm2_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute in upland UZ at end of day
+Units: mg/sq meter
+
+Name: ch_uzup_mgm2_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute entering the upland UZ
+Units: mg/sq meter
+
+Name: ch_uzup_mgm2_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute leaving the upland UZ
+Units: mg/sq meter
+
+Name: ch_uzup_mgm2_rxn
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Load of solute produced (+) or consumed (-) by reactions in the upland UZ
+Units: mg/sq meter
+
+Name: ch_uzup_pH_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: pH of water in upland UZ at end of day
+Units: pH units
+
+Name: ch_uzup_pH_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: pH of water entering the upland UZ
+Units: pH units
+
+Name: ch_uzup_pH_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: pH of water leaving the upland UZ
+Units: pH units
+
+Name: ch_uzup_permil_final
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Delta of isotope in upland UZ at end of day
+Units: permil
+
+Name: ch_uzup_permil_in
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Delta of isotope entering the upland UZ
+Units: permil
+
+Name: ch_uzup_permil_out
+Module: phreeqmms
+Ndimen: 2
+Dimensions: nmru - 22, nsolute - 1
+Size: 22
+Type: double
+Desc: Delta of isotope leaving the upland UZ
+Units: permil
+
+Name: ch_uzup_tempC_final
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Temperature of water in upland UZ at end of day
+Units: deg C
+
+Name: ch_uzup_tempC_in
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Temperature of water entering the upland UZ
+Units: deg C
+
+Name: ch_uzup_tempC_out
+Module: phreeqmms
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: double
+Desc: Temperature of water leaving the upland UZ
+Units: deg C
 
 Name: ch_var_01_m3
 Module: phreeqmms
@@ -2561,6 +4928,15 @@ Type: float
 Desc: Area-weighted predicted direct flow for the basin
 Units: meters
 
+Name: qdf_local
+Module: topc
+Ndimen: 2
+Dimensions: nac - 5, nmru - 22
+Size: 110
+Type: float
+Desc: shallow preferential flow from the unsaturated zone
+Units: meters
+
 Name: qexfil
 Module: topc
 Ndimen: 1
@@ -2684,7 +5060,7 @@ Ndimen: 2
 Dimensions: nac - 5, nmru - 22
 Size: 110
 Type: float
-Desc: Local recharge from the unsaturated zone to the shallow preferential flow and the saturated zone
+Desc: Local recharge from the unsaturated zone to the saturated zone
 Units: meters
 
 Name: qvpref
@@ -2731,15 +5107,6 @@ Size: 1
 Type: float
 Desc: Observed relative humidity
 Units: decimal fraction
-
-Name: resp_coef
-Module: topc
-Ndimen: 1
-Dimensions: nmru - 22
-Size: 22
-Type: float
-Desc: static value for response coefficient that throttles the redistribution of hillslope moisture content (sd adjustment). Derived from response parameters.
-Units: none
 
 Name: rex
 Module: topc
@@ -3209,15 +5576,6 @@ Type: float
 Desc: antecedent snowpack temperature index for each MRU
 Units: degrees F
 
-Name: tl
-Module: topc
-Ndimen: 1
-Dimensions: nmru - 22
-Size: 22
-Type: float
-Desc: Mean topographic index for MRU
-Units: ln(a/tanB)
-
 Name: tmax_c
 Module: temp
 Ndimen: 1
@@ -3262,6 +5620,33 @@ Size: 22
 Type: long
 Desc: Switch indicating whether transpiration is occurring, 0=no 1=yes
 Units: none
+
+Name: trxn_ohoriz_c
+Module: temp
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: float
+Desc: Reaction temperature for O-horizon
+Units: degrees C
+
+Name: trxn_sat_c
+Module: temp
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: float
+Desc: Reaction temperature for saturated zone
+Units: degrees C
+
+Name: trxn_uz_c
+Module: temp
+Ndimen: 1
+Dimensions: nmru - 22
+Size: 22
+Type: float
+Desc: Reaction temperature for UZ
+Units: degrees C
 
 Name: tsta_max_c
 Module: obs
@@ -3495,6 +5880,15 @@ Dimensions: nac - 5, nmru - 22
 Size: 110
 Type: double
 Desc: volumes to mix for making water transpired to canopy
+Units: m3
+
+Name: vmix_uz2qdf
+Module: webr
+Ndimen: 2
+Dimensions: nac - 5, nmru - 22
+Size: 110
+Type: double
+Desc: volumes to mix for direct flow
 Units: m3
 
 Name: vmix_uz2sat

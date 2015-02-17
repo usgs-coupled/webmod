@@ -260,14 +260,13 @@ C   Declared Variables
       real, save :: runoffm, precipm, suz_basin, smav_basin
       real, save :: smcont_basin, sbar_basin,rex_basin, qofs_basin
       real, save :: qof_basin, qdf_basin, qb_basin, qout_basin
-      real, save :: basin_infil,basin_surfdep, qexfil_basin, qwet_basin
+      real, save :: basin_infil,basin_surfdep,qwet_basin
       real, save :: afx_basin, acm_basin, z_wt_basin,qvpref_basin
       real, save :: qpref_basin, basin_uz2sat
       real, save, allocatable :: sumqrex(:), sumqofs(:), sumqb(:)
       real, save, allocatable :: sumquz(:), sumqdf(:)
       real, save, allocatable :: srz_sc(:), suz_sc(:), infil(:)
       real, save, allocatable :: smav_sc(:),smcont_sc(:), surfdep(:)
-      real, save, allocatable :: qexfil(:), sumqexfil(:)
       real, save, allocatable :: qwet(:), sumqwet(:)
       real, save, allocatable :: afx(:), z_wt_local(:,:),z_wt(:)
       real, save, allocatable :: qvpref(:), sumqvpref(:)
@@ -511,7 +510,7 @@ c
 
       ALLOCATE (SD(nac,Nmru))
       if(declvar('topc', 'sd', 'nac,nmru', nac*nmru, 'real', 
-     + 'local saturation deficit for each ln(a/tanB) increment',
+     + 'local saturation deficit for each TTI bin',
      + 'meters',
      + SD).ne.0) return
 
@@ -606,7 +605,7 @@ c
       ALLOCATE (z_wt_local(nac,Nmru))
       if(declvar('topc', 'z_wt_local', 'nac,nmru', nac*nmru,
      $ 'real','local water table height above land surface for '//
-     $ 'each ln(a/tanB) increment',
+     $ 'each TTI bin',
      + 'meters',
      + z_wt_local).ne.0) return
 
@@ -625,13 +624,13 @@ c
 
       ALLOCATE (SUZ(nac,Nmru))
       if(declvar('topc', 'suz', 'nac,nmru', nac*nmru, 'real', 
-     + 'unsaturated zone storage for each ln(a/tanB) increment',
+     + 'unsaturated zone storage for each TTI bin',
      + 'meters',
      + SUZ).ne.0) return
 
       ALLOCATE (SRZ(nac,Nmru))
       if(declvar('topc', 'srz', 'nac,nmru', nac*nmru, 'real', 
-     + 'root zone deficit for each ln(a/tanB) increment',
+     + 'root zone deficit for each TTI bin',
      + 'meters',SRZ)
      +   .ne.0) return
 
@@ -670,23 +669,6 @@ c
      + 'Area-weighted loss of water from saturated zone to '//
      $ 'the deep aquifer for the basin',
      $ 'meters',gwl_basin).ne.0) return
-
-      ALLOCATE (qexfil(Nmru))
-      if(declvar('topc', 'qexfil', 'nmru', nmru, 'real', 
-     + 'Exfiltration discharge from oversaturated zones '//
-     + 'for each subcatchment',
-     +  'meters',qexfil).ne.0) return
-
-      ALLOCATE (sumqexfil(Nmru))
-      if(declvar('topc', 'sumqexfil', 'nmru', nmru, 'real', 
-     + 'Sum of exfiltration discharge from oversaturated zones '//
-     + 'for each subcatchment',
-     +  'meters',sumqexfil).ne.0) return
-
-      if(declvar('topc', 'qexfil_basin', 'one', 1, 'real', 
-     + 'Area-weighted exfiltration discharge from saturated'//
-     + 'zone for the basin',
-     +  'meters',qexfil_basin).ne.0) return
 
 c
 c irrig_sat_next will contain the depth of irrigation to be pumped from
@@ -784,7 +766,7 @@ c
       ALLOCATE (srzwet(nac,Nmru))
       if(declvar('topc', 'srzwet', 'nac,nmru', nac*nmru, 'real', 
      + 'depth of water transferred from the ground water to the '//
-     + 'root zone deficit for each ln(a/tanB) increment',
+     + 'root zone deficit for each TTI bin',
      + 'meters',srzwet).ne.0) return
 
       ALLOCATE (qwet(Nmru))
@@ -1243,15 +1225,15 @@ c
       ALLOCATE (nacsc(Nmru))
       if(declparam('topc', 'nacsc', 'nmru', 'integer',
      +   '1', '0', '100',
-     +   'Number of ln(a/tanB) increments in the subcatchment.',
-     +   'Number of ln(a/tanB) increments in the subcatchment.',
+     +   'Number of TTI bins in the subcatchment.',
+     +   'Number of TTI bins in the subcatchment.',
      +   'none').ne.0) return
 
       ALLOCATE (ac(nac,Nmru))
       if(declparam('topc', 'ac', 'nac,nmru', 'real',
      +   '1', '0', '1',
-     +   'Fractional area for each ln(a/tanB) increment.',
-     +   'Fractional area for each ln(a/tanB) increment.',
+     +   'Fractional area for each TTI bin.',
+     +   'Fractional area for each TTI bin.',
      +   'km2/km2').ne.0) return      
 
 
@@ -1603,16 +1585,16 @@ c         end if
 c$$$      write(topout_file_unit, 8000) is
 c$$$ 8000 format(1x,'Subcatchment  ', i3)
 
-*  NAC IS NUMBER OF A/TANB ORDINATES
+*  NAC IS NUMBER OF transformed A/TANB ORDINATES
 c  nsc is number of subcatchments
 *  AREA IS SUBCATCHMENT AREA AS PROPORTION OF TOTAL CATCHMENT 
 c      READ(8,*)(AC(J),ST(J),J=1,NAC)
-*  AC IS DISTRIBUTION OF AREA WITH LN(A/TANB)
-*  ST IS LN(A/TANB) VALUE
+*  AC IS DISTRIBUTION OF AREA WITH transformed (A/TANB)
+*  ST IS transformed (A/TANB) VALUE
 
        tarea = ac(1,is)
       if(tarea.ne.0.0)then
-         write(*,*)'ERROR: The first area for the first ln(a/tanB) ',
+         write(*,*)'ERROR: The first area for the first TTI bin ',
      $        'for mru ', is,'must equal zero. It is currently set to ',
      $         tarea, '. Please correct and rerun.'
          return
@@ -1652,7 +1634,7 @@ c user about using those indices.
    10  continue
 
       if(abs(tarea-1.0).gt.0.0005)then
-         write(*,*)'ERROR: The fractional areas for ln(a/tanB) ',
+         write(*,*)'ERROR: The fractional areas for TTI bin ',
      $        'do not sum to one. Check ac values for MRU ',is
          return
       endif
@@ -1671,14 +1653,12 @@ c
       end if
 *
 *  CALCULATION of AREAL INTEGRAL OF LN(A/TANB) obsolete as the mean value
-*  of LN(A/TANB), A/TANB, or SQRT(A/TANB) is read in as a parameter with units dependent
-*  on T_Decay: 0-exponential K and T; 1- parabolic K and T; and
-c  2 - constant K, linear T.
-*  ST values of a/tanB should be ordered from high to low with ST(1)
+*  of the Transformed Topographic Index (TTI) LN(A/TANB), A/TANB, or SQRT(A/TANB)
+*  is read in as a parameter with units dependent on T_Decay:
+*  0-exponential K and T; 1- parabolic K and T; and 2 - constant K, linear T.
+*  ST values of TTI should be ordered from high to low with ST(1)
 *  as an upper limit such that AC(1) should be zero, with AC(2) representing
 *  the area between ST(1) and ST(2)
-*
-*  
 *
 !      TL(is)=0.
       if(T_decay(is).lt.0.or.T_decay(is).gt.2) then
@@ -1984,7 +1964,6 @@ c      SBAR(is)=-SZM(is)*ALOG(Q0DT/SZQ(is))
       sumqdf(is)=0
       sumqvpref(is)=0
       sumqpref(is)=0
-      sumqexfil(is)=0
       sumqwet(is)=0
       sumgw_loss(is) = 0
 
@@ -2159,7 +2138,6 @@ c
         sumgw_loss(is) = 0.
         SUMAE(is) = 0.
         SUMQ(is) = 0.
-        sumqexfil(is) = 0.
         sumqwet(is) = 0.
         acmax(is) = 0.
         afxmax(is)=0.
@@ -2202,7 +2180,6 @@ C
       gw_in1_basin = 0
       gw_in2_basin = 0
       qb_basin = 0
-      qexfil_basin = 0
       qwet_basin = 0
       qout_basin = 0
       z_wt_basin = 0
@@ -2245,7 +2222,6 @@ c
       REX(is)=0.
       afx(is) = 0.
       acm(is) = 0.
-      qexfil(is)=0.
       qwet(is) = 0.
 c$$$      z_wt(is) = 0.
 C
@@ -2338,7 +2314,7 @@ c      qvpref(is) = p * pmac_sat(is)
       p = p - qvpref(is)
 C
 c
-C  START LOOP ON A/TANB INCREMENTS
+C  START LOOP ON Transformed A/TANB INCREMENTS
 c
       DO 30 IA=1,nacsc(is)
 c
@@ -2390,8 +2366,6 @@ c
         if(abs(sd(ia,is)).ge.srz(ia,is)) then
            srzwet(ia,is) = srz(ia,is)
            srz(ia,is) = 0
-           !qexfil(is) = qexfil(is) - ((sd(ia,is)+srzwet(ia,is)) * acf)
-           !qexfil(is) = 0
 !           sd(ia,is) = 0  ! this reverts to original topmodel. Set to zero below for all cases of sd<0
         else
            srzwet(ia,is) = abs(sd(ia,is))
@@ -2496,7 +2470,7 @@ C***************************************************************
 C
 C
 C  CALCULATION OF FLOW FROM FULLY SATURATED AREA
-C  This section assumes that a/tanB values are ordered from high to low
+C  This section assumes that transformed a/tanB values are ordered from high to low
 C
 !      OF=0.
 !      IF(IA.GT.1)THEN
@@ -2546,11 +2520,10 @@ c$$$     $        (s_root_depth(is)+z_wt_local(ia,is))*s_theta_fc(is)
 c$$$      end if
 
 
-C  END OF A/TANB LOOP
+C  END OF transformed A/TANB LOOP
       end if
  30   CONTINUE
 C We have eliminated exfiltration to return to original TOPMODEL with only root zone wetting from Sat zone
-      qexfil(is) = 0      
 C
 C  ADD INFILTRATION EXCESS
       QOFS(is)=QOF(is)
@@ -2668,7 +2641,7 @@ c  the water table height from the previous time step.
 c  v2.0 add infiltration and subtract recharge and direct flow to avoid 
 c  one day time lag in preferential flow.
       z_wt_quick = z_wt(is) +
-     $     (+QUZ(is)-QB(is)-qwet(is)+qvpref(is)-qexfil(is)
+     $     (+QUZ(is)-QB(is)-qwet(is)+qvpref(is)
      $     -(irrig_sat_mru(is)*inch2m)+
      $     gw_in1(is)+gw_in2(is)-gw_loss(is))/s_drain(is)
 c      z_wt_quick = z_wt(is)
@@ -2686,10 +2659,10 @@ c  Calculate qpref such that it cannot drain to an elevation below the tile drai
 c
 c      if(qpref(is).gt.z_wt_quick-s_satpref_zmin(is))
 c     $   qpref(is)=z_wt_quick-s_satpref_zmin(is)+(-QUZ(is)-qvpref(is)
-c     $     +QB(is)+qwet(is)+qexfil(is)+(irrig_sat_mru(is)*inch2m)-
+c     $     +QB(is)+qwet(is)+(irrig_sat_mru(is)*inch2m)-
 c     $     gw_in1(is)-gw_in2(is) + gw_loss(is))/s_drain(is)
       qpref_zmin = (z_wt_quick-s_satpref_zmin(is))*s_drain(is)-
-     $     QUZ(is)-qvpref(is)+QB(is)+qwet(is)+qexfil(is)+
+     $     QUZ(is)-qvpref(is)+QB(is)+qwet(is)+
      $     (irrig_sat_mru(is)*inch2m)-gw_in1(is)-gw_in2(is)+gw_loss(is)
       if(qpref_zmin.lt.qpref(is).and.qpref_zmin.gt.0)
      $    qpref(is) = qpref_zmin 
@@ -2698,7 +2671,7 @@ c      if(qpref(is).lt.0) qpref(is) = 0.0
       
 c      QB(is)=SZQ(is)*EXP(-SBAR(is)/SZM(is))
 c
-c Adjust tile drain (qpref), QB and qexfil to allow the tile drain
+c Adjust tile drain (qpref), and QB to allow the tile drain
 c to be the dominant flow path when the water table is above the top of the
 c drain. This implies that the conductivity of the tile drain should be higher than
 c the Ksat at the depth of the tile drain.
@@ -2706,15 +2679,13 @@ c
       if(qpref_max(is).gt.0) then
          qprefwt = qpref(is)/qpref_max(is)
          qb(is) = qb(is) - qpref(is)*qprefwt
-!         qexfil(is)=qexfil(is) - qpref(is)*qprefwt
          if(qb(is).lt..00001) qb(is)=.00001
-!         if(qexfil(is).lt..00001) qexfil(is)=.00001
       end if
       
       SBAR(is)=SBAR(is)-QUZ(is)-qvpref(is)+QB(is)+qwet(is)+
-     $     qexfil(is)+qpref(is)+(irrig_sat_mru(is)*inch2m)-
+     $     qpref(is)+(irrig_sat_mru(is)*inch2m)-
      $     gw_in1(is)-gw_in2(is) + gw_loss(is)
-      QOUT(is)=QB(is)+QOF(is)+qdf(is)+qexfil(is)+qpref(is)
+      QOUT(is)=QB(is)+QOF(is)+qdf(is)+qpref(is)
 
 cccccccMove to end so that depth reflect ending water table after ET
 c$$$c Add uz_depth to indicate the final water content in the
@@ -2803,7 +2774,6 @@ c
 C
 C  Sum different flow paths
       SUMQ(is)=SUMQ(is)+QOUT(is)
-      sumqexfil(is) = sumqexfil(is)+qexfil(is)
       sumqwet(is) = sumqwet(is) + qwet(is)
       sumqrex(is)=sumqrex(is)+rex(is)
       sumqofs(is)=sumqofs(is)+qofs(is)
@@ -2885,7 +2855,6 @@ c         qbasinm = qbasinm + (qscm(is)*sc_area(is))
          smav_basin = smav_basin + (smav_sc(is)*area(is))
          smcont_basin = smcont_basin + (smcont_sc(is)*area(is))
          sbar_basin = sbar_basin + (sbar(is)*area(is))
-         qexfil_basin = qexfil_basin + (qexfil(is)*area(is))
          qwet_basin = qwet_basin + (qwet(is)*area(is))
          rex_basin = rex_basin + (rex(is)*area(is))
          afx_basin = afx_basin + (afx(is)*area(is))

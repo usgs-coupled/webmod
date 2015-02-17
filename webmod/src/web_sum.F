@@ -106,7 +106,6 @@ C   Declared Variables
       real, save ::  basin_qpref_cm_sum(5)
       real, save ::  basin_gwloss_cm_sum(5)
       real, save ::  basin_gwflow_cm_sum(5)
-      real, save ::  basin_exfil_cm_sum(5)
       real, save ::  basin_stflow_cm_sum(5)
       real, save ::  basin_chan_div_cm_sum(5)
       real, save ::  basin_chan_loss_cm_sum(5)
@@ -516,13 +515,6 @@ c
      +    'cm',
      +   basin_gwflow_cm_sum).ne.0) return
 
-      if(declvar('sumb', 'basin_exfil_cm_sum', 'five', 5, 'real',
-     +    'Sum of basin exfiltration '//
-     $    'for time step of (1) unit, (2) day, (3) month, '//
-     $    '(4) year, or (5) entire run.',
-     +    'cm',
-     +   basin_exfil_cm_sum).ne.0) return
-
       if(declvar('sumb', 'basin_stflow_cm_sum', 'five', 5, 'real',
      +    'Sum of basin hillslope runoff to channels '//
      $    'for time step of (1) unit, (2) day, (3) month, '//
@@ -912,8 +904,6 @@ c
      $           '(i.e. tile drains)',A,
      $ 'GW_loss   Groundwater loss through aquitard',A,
      $ 'Baseflow  Discharge of groundwater directly to stream',A,
-     $ 'Exfil     Exfiltration delivered to stream',A,
-     $ 'BF+Exfil  Total baseflow plus exfiltration',A,
      $ 'Q_Hill    Combine hillslope inputs into stream',A,
      $ 'Chan_sto  Total water stored in channel',A,
      $ 'Diversion Water diverted from stream for irrigation',A,
@@ -977,7 +967,7 @@ c
      $ 'Soil_evap   GW_sto    GW_in1    GW_in2  ',
      $ '  Qwet      Qvpref    UZ2Sat   Recharge ',
      $ '  Sat2UZ    Qwell    Qsatpref  GW_loss  ',
-     $ ' Baseflow   Exfil    BF+Exfil   Q_Hill  ',
+     $ ' Baseflow   Q_Hill  ',
      $ ' Chan_sto Diversion Chan_loss   Q_sim   ',
      $ '  Q_obs     Q_sim     Q_obs    Wat_bal ')
  2021 format('Year Mo Dy Hr Mi Se W/m2  (C)  (C)   (cm',
@@ -991,7 +981,7 @@ c
      $ '  (cm)      (cm)      (cm)      (cm)    ',
      $ '  (cm)      (cm)      (cm)      (cm)    ',
      $ '  (cm)      (cm)      (cm)      (cm)    ',
-     $ '  (cm)      (cm)      (cm)      (cm)    ',
+     $ '  (cm)      (cm)    ',
      $ '  (cm)      (cm)      (cm)      (cm)    ',
      $ '  (cm)       m3/s      m3/s      (cm)  ')
  2023 format(
@@ -1006,13 +996,13 @@ c
      $ '%%%%%%%%% ========= +++++++++ +++++++++ ',
      $ '********* ********* ********* ********* ',
      $ '********* ********* ********* --------- ',
-     $ '********* ********* ********* ********* ',
+     $ '********* ********* ',
      $ '========= ********* --------- --------- ',
      $ '--------- --------- --------- =========')
 
 
  2022 format(50x,f9.4,71x,f9.4,71x,f9.4,70x,2(1x,f9.4),
-     $     21x,f9.4,141x,f9.4)
+     $     21x,f9.4,121x,f9.4)
 
       sumbinit = 0
 
@@ -1038,7 +1028,7 @@ c     sumbrun - Computes summary values
      + basin_gw2_in_cm, basin_qwet_cm, basin_vpref_cm, basin_uz2sat_cm,
      + basin_recharge_cm, basin_sat2uz_cm, basin_qwell_cm, 
      + basin_qpref_cm, basin_gwloss_cm, basin_gwflow_cm, 
-     + basin_exfil_cm, basin_chan_sto_cm, basin_stflow_cm, 
+     + basin_chan_sto_cm, basin_stflow_cm, 
      + basin_chan_div_cm, basin_chan_loss_cm, basin_qsim_cm, 
      + basin_qsim_m3s, basin_qobs_cm, basin_qobs_m3s, basin_et_cm, 
      + basin_transp_cm
@@ -1134,7 +1124,6 @@ c     First step zeros all since lastper was set to all 1s in init
             basin_qpref_cm_sum(i) = 0.
             basin_gwloss_cm_sum(i) = 0.
             basin_gwflow_cm_sum(i) = 0.
-            basin_exfil_cm_sum(i) = 0.
             basin_stflow_cm_sum(i) = 0.
             basin_chan_div_cm_sum(i) = 0.
             basin_chan_loss_cm_sum(i) = 0.
@@ -1322,7 +1311,6 @@ c       month, year, and run totals
       basin_qpref_cm_sum(i) = basin_qpref_cm_sum(i) + basin_qpref_cm
       basin_gwloss_cm_sum(i) = basin_gwloss_cm_sum(i) + basin_gwloss_cm
       basin_gwflow_cm_sum(i) = basin_gwflow_cm_sum(i) + basin_gwflow_cm
-      basin_exfil_cm_sum(i) = basin_exfil_cm_sum(i) + basin_exfil_cm
       basin_stflow_cm_sum(i) = basin_stflow_cm_sum(i) + basin_stflow_cm
       basin_chan_div_cm_sum(i) = basin_chan_div_cm_sum(i) +
      $     basin_chan_div_cm
@@ -1387,8 +1375,6 @@ c Begin unit value reporting
      $          basin_recharge_cm,basin_sat2uz_cm,
      $          basin_qwell_cm,basin_qpref_cm,
      $          basin_gwloss_cm,basin_gwflow_cm,
-     $          basin_exfil_cm,
-     $          basin_gwflow_cm+basin_exfil_cm,
      $          basin_stflow_cm,basin_chan_sto_cm,
      $          basin_chan_div_cm,basin_chan_loss_cm,
      $          basin_qsim_cm,basin_qobs_cm,
@@ -1466,8 +1452,6 @@ c Begin daily summaries
      $       basin_recharge_cm_sum(2),basin_sat2uz_cm_sum(2),
      $       basin_qwell_cm_sum(2),basin_qpref_cm_sum(2),
      $       basin_gwloss_cm_sum(2),basin_gwflow_cm_sum(2),
-     $       basin_exfil_cm_sum(2),
-     $       basin_gwflow_cm_sum(2)+basin_exfil_cm_sum(2),
      $       basin_stflow_cm_sum(2),basin_chan_sto_cm,
      $       basin_chan_div_cm_sum(2),basin_chan_loss_cm_sum(2),
      $       basin_qsim_cm_sum(2),basin_qobs_cm_sum(2),
@@ -1548,8 +1532,6 @@ c Begin monthly summaries
      $       basin_recharge_cm_sum(3),basin_sat2uz_cm_sum(3),
      $       basin_qwell_cm_sum(3),basin_qpref_cm_sum(3),
      $       basin_gwloss_cm_sum(3),basin_gwflow_cm_sum(3),
-     $       basin_exfil_cm_sum(3),
-     $       basin_gwflow_cm_sum(3)+basin_exfil_cm_sum(3),
      $       basin_stflow_cm_sum(3),basin_chan_sto_cm,
      $       basin_chan_div_cm_sum(3),basin_chan_loss_cm_sum(3),
      $       basin_qsim_cm_sum(3),basin_qobs_cm_sum(3),
@@ -1630,8 +1612,6 @@ c****** Begin yearly summaries
      $       basin_recharge_cm_sum(4),basin_sat2uz_cm_sum(4),
      $       basin_qwell_cm_sum(4),basin_qpref_cm_sum(4),
      $       basin_gwloss_cm_sum(4),basin_gwflow_cm_sum(4),
-     $       basin_exfil_cm_sum(4),
-     $       basin_gwflow_cm_sum(4)+basin_exfil_cm_sum(4),
      $       basin_stflow_cm_sum(4),basin_chan_sto_cm,
      $       basin_chan_div_cm_sum(4),basin_chan_loss_cm_sum(4),
      $       basin_qsim_cm_sum(4),basin_qobs_cm_sum(4),
@@ -1738,8 +1718,6 @@ c****** Print run summary
      $       basin_recharge_cm_sum(5),basin_sat2uz_cm_sum(5),
      $       basin_qwell_cm_sum(5),basin_qpref_cm_sum(5),
      $       basin_gwloss_cm_sum(5),basin_gwflow_cm_sum(5),
-     $       basin_exfil_cm_sum(5),
-     $       basin_gwflow_cm_sum(5)+basin_exfil_cm_sum(5),
      $       basin_stflow_cm_sum(5),basin_chan_sto_cm,
      $       basin_chan_div_cm_sum(5),basin_chan_loss_cm_sum(5),
      $       basin_qsim_cm_sum(5),basin_qobs_cm_sum(5),
@@ -1856,7 +1834,7 @@ C New formats for unit value runs - RW
      $ 'Soil_evap   GW_sto    GW_in1    GW_in2  ',
      $ '  Qwet      Qvpref    UZ2Sat   Recharge ',
      $ '  Sat2UZ    Qwell    Qsatpref  GW_loss  ',
-     $ ' Baseflow   Exfil    BF+Exfil   Q_Hill  ',
+     $ ' Baseflow   Q_Hill  ',
      $ ' Chan_sto Diversion Chan_loss   Q_sim   ',
      $ '  Q_obs     Q_sim     Q_obs    Wat_bal ')
 2021  format(
@@ -1871,7 +1849,7 @@ C New formats for unit value runs - RW
      $ '  (cm)      (cm)      (cm)      (cm)    ',
      $ '  (cm)      (cm)      (cm)      (cm)    ',
      $ '  (cm)      (cm)      (cm)      (cm)    ',
-     $ '  (cm)      (cm)      (cm)      (cm)    ',
+     $ '  (cm)      (cm)    ',
      $ '  (cm)      (cm)      (cm)      (cm)    ',
      $ '  (cm)       m3/s      m3/s      (cm)  ')
  2023 format(
@@ -1886,14 +1864,14 @@ C New formats for unit value runs - RW
      $ '%%%%%%%%% ========= +++++++++ +++++++++ ',
      $ '********* ********* ********* ********* ',
      $ '********* ********* ********* --------- ',
-     $ '********* ********* ********* ********* ',
+     $ '********* ********* ',
      $ '========= ********* --------- --------- ',
      $ '--------- --------- --------- =========')
- 2022 format(i4.4,1x,5(i2.2,1x),3(i4.3,1x),2f7.2,52(1x,f9.4))
- 924  format(i4.4,1x,2(i2.2,1x),9x,3(i4.3,1x),2f7.2,52(1x,f9.4))
- 2024 format(i4.4,1x,i2.2,13x,3(i4.3,1x),2f7.2,52(1x,f9.4))
- 2026 format(i4.4,16x,3(i4.3,1x),2f7.2,52(1x,f9.4))
- 2028 format(' Total for Run ',5x,3(i4.3,1x),2f7.2,52(1x,f9.4))
+ 2022 format(i4.4,1x,5(i2.2,1x),3(i4.3,1x),2f7.2,50(1x,f9.4))
+ 924  format(i4.4,1x,2(i2.2,1x),9x,3(i4.3,1x),2f7.2,50(1x,f9.4))
+ 2024 format(i4.4,1x,i2.2,13x,3(i4.3,1x),2f7.2,50(1x,f9.4))
+ 2026 format(i4.4,16x,3(i4.3,1x),2f7.2,50(1x,f9.4))
+ 2028 format(' Total for Run ',5x,3(i4.3,1x),2f7.2,50(1x,f9.4))
 
       sumbrun = 0
 

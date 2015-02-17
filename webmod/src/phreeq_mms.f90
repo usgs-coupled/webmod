@@ -3204,15 +3204,15 @@
       allocate(nacsc(nmru))
       if(declparam('topc', 'nacsc', 'nmru', 'integer',&
          '1', '0', '100',&
-         'Number of ln(a/tanB) increments in the subcatchment.',&
-         'Number of ln(a/tanB) increments in the subcatchment.',&
+         'Number of TTI bins in the subcatchment.',&
+         'Number of TTI bins in the subcatchment.',&
          'none').ne.0) return
 
       allocate(ac(nac,nmru))
       if(declparam('topc', 'ac', 'nac,nmru', 'real',&
          '1', '0', '1',&
-         'Fractional area for each ln(a/tanB) increment.',&
-         'Fractional area for each ln(a/tanB) increment.',&
+         'Fractional area for each TTI bin.',&
+         'Fractional area for each TTI bin.',&
          'km2/km2').ne.0) return      
 
       allocate(qdffrac(nmru))

@@ -162,7 +162,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : inches
-Width     : 0
+Width     : 10
 Max       : 1000.000000
 Min       : 0.000000
 Default   : 0.000000
@@ -176,7 +176,7 @@ Dimensions: ndeplval - 22
 Size      : 22
 Type      : float
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 1.000000
 Min       : 0.000000
 Default   : 0.500000
@@ -190,7 +190,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : float
 Units     : degrees
-Width     : 0
+Width     : 10
 Max       : 90.000000
 Min       : 0.000000
 Default   : 47.000000
@@ -204,7 +204,7 @@ Dimensions: nchemvar - 10
 Size      : 10
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 99
 Min       : 0
 Default   : 6
@@ -212,13 +212,13 @@ Default   : 6
 Name      : C_metric
 Module    : phreeqmms
 Descr     : Chemical metric (1-6) for ch_var
-Help      : Chemical metric for ch_var:  1= Initial,  2= Influent,  3= Exfluent,   4= Reaction gain(+) or loss(-). 5= Final,  6= Net, 
+Help      : Chemical metric for ch_var:  1= Initial,  2= Influent,  3= Exfluent,   4= Reaction gain(+) or loss(-). 5= 5,  6= Net, 
 Ndimen    : 1
 Dimensions: nchemvar - 10
 Size      : 10
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 6
 Min       : 1
 Default   : 3
@@ -232,7 +232,7 @@ Dimensions: nchemvar - 10
 Size      : 10
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 13
 Min       : 1
 Default   : 7
@@ -246,7 +246,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : inches
-Width     : 0
+Width     : 10
 Max       : 1.000000
 Min       : 0.000000
 Default   : 0.100000
@@ -260,7 +260,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : degrees F
-Width     : 0
+Width     : 10
 Max       : 40.000000
 Min       : 32.000000
 Default   : 32.000000
@@ -274,7 +274,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : mm/(6hr.degrees C)
-Width     : 0
+Width     : 10
 Max       : 2.000000
 Min       : 0.500000
 Default   : 0.600000
@@ -288,7 +288,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : mm/(6hr.degrees C)
-Width     : 0
+Width     : 10
 Max       : 1.000000
 Min       : 0.200000
 Default   : 0.200000
@@ -302,7 +302,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 2
 Min       : 0
 Default   : 1
@@ -317,7 +317,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : inches
-Width     : 0
+Width     : 10
 Max       : 100.000000
 Min       : 0.000000
 Default   : 0.000000
@@ -331,7 +331,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : mm/(6hr.degrees C)
-Width     : 0
+Width     : 10
 Max       : 0.500000
 Min       : 0.050000
 Default   : 0.150000
@@ -345,7 +345,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 0.400000
 Min       : 0.010000
 Default   : 0.050000
@@ -359,7 +359,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : inches
-Width     : 0
+Width     : 10
 Max       : 100.000000
 Min       : 0.000000
 Default   : 5.000000
@@ -373,7 +373,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : inches/day
-Width     : 0
+Width     : 10
 Max       : 0.200000
 Min       : 0.000000
 Default   : 0.000000
@@ -387,10 +387,38 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 0.600000
 Min       : 0.200000
 Default   : 0.300000
+
+Name      : T_decay
+Module    : topc
+Descr     : Transmissivity decay: (0) exponential; (1) parabolic; (2) linear.
+Help      : Transmissivity decay: (0) exponential; (1) parabolic; (2) linear. 
+Ndimen    : 1
+Dimensions: nmru - 22
+Size      : 22
+Type      : long
+Units     : none
+Width     : 10
+Max       : 2
+Min       : 0
+Default   : 0
+
+Name      : To
+Module    : topc
+Descr     : Transmissivity at saturation
+Help      : Transmissivity at saturation. Decreases per T_decay: 0-exponential; 1-parabolic; 2-linear.
+Ndimen    : 1
+Dimensions: nmru - 22
+Size      : 22
+Type      : float
+Units     : m^2/h
+Width     : 10
+Max       : 100.000000
+Min       : 0.002000
+Default   : 0.100000
 
 Name      : UADJ
 Module    : snow
@@ -401,7 +429,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : mm/(mb 6hr)
-Width     : 0
+Width     : 10
 Max       : 0.200000
 Min       : 0.030000
 Default   : 0.050000
@@ -415,7 +443,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : inches
-Width     : 0
+Width     : 10
 Max       : 1000.000000
 Min       : 0.000000
 Default   : 0.000000
@@ -429,7 +457,7 @@ Dimensions: nac - 5, nmru - 22
 Size      : 110
 Type      : float
 Units     : km2/km2
-Width     : 0
+Width     : 10
 Max       : 1.000000
 Min       : 0.000000
 Default   : 1.000000
@@ -443,7 +471,7 @@ Dimensions: ntopchan - 5, nchan - 11
 Size      : 55
 Type      : float
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 1.000000
 Min       : 0.000000
 Default   : 1.000000
@@ -457,10 +485,24 @@ Dimensions: nmonths - 12
 Size      : 12
 Type      : float
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 3.000000
 Min       : 0.000000
 Default   : 1.000000
+
+Name      : atmos_eq_ph
+Module    : phreeqmms
+Descr     : EQULIBRIUM_PHASES ID describing atmospheric O2 and CO2.
+Help      : EQULIBRIUM_PHASES ID describing atmospheric O2 and CO2. The solution is described in the .pqi file.
+Ndimen    : 1
+Dimensions: one - 1
+Size      : 1
+Type      : long
+Units     : none
+Width     : 14
+Max       : 100
+Min       : 0
+Default   : 0
 
 Name      : basin_area
 Module    : basin
@@ -471,7 +513,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : float
 Units     : km2
-Width     : 0
+Width     : 10
 Max       : 1000000000.000000
 Min       : 0.010000
 Default   : 1.000000
@@ -485,10 +527,10 @@ Dimensions: one - 1
 Size      : 1
 Type      : float
 Units     : m
-Width     : 0
-Max       : 0.001000
+Width     : 10
+Max       : 0.010000
 Min       : 0.000010
-Default   : 0.000100
+Default   : 0.001000
 
 Name      : c_hyd_indx
 Module    : phreeqmms
@@ -499,7 +541,7 @@ Dimensions: nchemvar - 10
 Size      : 10
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 99999
 Min       : 0
 Default   : 1
@@ -513,7 +555,7 @@ Dimensions: nchemvar - 10
 Size      : 10
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 999
 Min       : 0
 Default   : 0
@@ -527,7 +569,7 @@ Dimensions: nchemvar - 10
 Size      : 10
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 99
 Min       : 0
 Default   : 1
@@ -541,7 +583,7 @@ Dimensions: nchemvar - 10
 Size      : 10
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 2
 Min       : 0
 Default   : 0
@@ -555,7 +597,7 @@ Dimensions: nchemvar - 10
 Size      : 10
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 99
 Min       : 0
 Default   : 1
@@ -569,7 +611,7 @@ Dimensions: nmonths - 12
 Size      : 12
 Type      : float
 Units     : ccov
-Width     : 0
+Width     : 10
 Max       : 5.000000
 Min       : 0.000000
 Default   : 1.830000
@@ -583,7 +625,7 @@ Dimensions: nmonths - 12
 Size      : 12
 Type      : float
 Units     : ccov per degC
-Width     : 0
+Width     : 10
 Max       : -0.010000
 Min       : -0.500000
 Default   : -0.130000
@@ -597,7 +639,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : float
 Units     : cfs/mi
-Width     : 0
+Width     : 10
 Max       : 100.000000
 Min       : 0.000000
 Default   : 0.000000
@@ -611,7 +653,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 1
 Min       : 0
 Default   : 0
@@ -625,24 +667,10 @@ Dimensions: one - 1
 Size      : 1
 Type      : long
 Units     : integer
-Width     : 0
+Width     : 10
 Max       : 1
 Min       : 0
 Default   : 1
-
-Name      : chemout_file_unit
-Module    : io
-Descr     : Unit number for file summarizing solute transport
-Help      : Unit number for file summarizing solute transport
-Ndimen    : 1
-Dimensions: one - 1
-Size      : 1
-Type      : long
-Units     : integer
-Width     : 0
-Max       : 99
-Min       : 50
-Default   : 90
 
 Name      : chv
 Module    : routec
@@ -653,7 +681,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : float
 Units     : m/h
-Width     : 0
+Width     : 10
 Max       : 10000.000000
 Min       : 1.000000
 Default   : 100.000000
@@ -667,7 +695,7 @@ Dimensions: nconvert - 3
 Size      : 3
 Type      : double
 Units     : user-defined
-Width     : 0
+Width     : 10
 Max       : 1000000.000000
 Min       : 0.000001
 Default   : 1.000000
@@ -681,7 +709,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 3
 Min       : 0
 Default   : 3
@@ -695,7 +723,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : decimal percent
-Width     : 0
+Width     : 10
 Max       : 1.000000
 Min       : 0.000000
 Default   : 0.500000
@@ -709,7 +737,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : decimal percent
-Width     : 0
+Width     : 10
 Max       : 1.000000
 Min       : 0.000000
 Default   : 0.500000
@@ -723,7 +751,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : float
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 0.700000
 Min       : 0.100000
 Default   : 0.400000
@@ -737,7 +765,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : float
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 0.800000
 Min       : 0.200000
 Default   : 0.610000
@@ -751,7 +779,7 @@ Dimensions: ntopchan - 5, nchan - 11
 Size      : 55
 Type      : float
 Units     : m
-Width     : 0
+Width     : 10
 Max       : 50000.000000
 Min       : 0.000000
 Default   : 500.000000
@@ -765,7 +793,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : vol/vol
-Width     : 0
+Width     : 10
 Max       : 0.700000
 Min       : 0.000000
 Default   : 0.350000
@@ -779,7 +807,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : float
 Units     : hours
-Width     : 0
+Width     : 10
 Max       : 24.000000
 Min       : 0.000000
 Default   : 24.000000
@@ -793,7 +821,7 @@ Dimensions: nmonths - 12
 Size      : 12
 Type      : float
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 3.000000
 Min       : 0.200000
 Default   : 1.000000
@@ -807,7 +835,7 @@ Dimensions: nmru_res - 9, nchem_sets - 10
 Size      : 90
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : -1
 Default   : -1
@@ -821,7 +849,7 @@ Dimensions: nmru_res - 9, nchem_sets - 10
 Size      : 90
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : -1
 Default   : -1
@@ -835,7 +863,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : -log10(cm/s)
-Width     : 0
+Width     : 10
 Max       : 11.000000
 Min       : -1.000000
 Default   : 10.000000
@@ -849,7 +877,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : meters
-Width     : 0
+Width     : 10
 Max       : 1000000.000000
 Min       : 0.000000
 Default   : 0.000000
@@ -863,7 +891,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : meters
-Width     : 0
+Width     : 10
 Max       : 1000000.000000
 Min       : 0.000000
 Default   : 0.000000
@@ -877,8 +905,8 @@ Dimensions: nmonths - 12
 Size      : 12
 Type      : float
 Units     : ????
-Width     : 0
-Max       : 0.008000
+Width     : 10
+Max       : 0.015000
 Min       : 0.004000
 Default   : 0.005500
 
@@ -891,7 +919,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : m
-Width     : 0
+Width     : 10
 Max       : 1.000000
 Min       : 0.000000
 Default   : 0.010000
@@ -905,7 +933,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 1
 Min       : 0
 Default   : 0
@@ -919,7 +947,7 @@ Dimensions: nhydro - 1
 Size      : 1
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 1
 Default   : 1
@@ -933,7 +961,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 1
 Default   : 1
@@ -947,7 +975,7 @@ Dimensions: nhydro - 1
 Size      : 1
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 1
 Default   : 1
@@ -961,7 +989,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 1
 Default   : 1
@@ -975,7 +1003,7 @@ Dimensions: nhydro - 1
 Size      : 1
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 1
 Default   : 1
@@ -989,7 +1017,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 1
 Default   : 1
@@ -1003,7 +1031,7 @@ Dimensions: nhydro - 1
 Size      : 1
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 1
 Default   : 1
@@ -1017,7 +1045,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 1
 Default   : 1
@@ -1031,7 +1059,7 @@ Dimensions: nchem_ext - 2
 Size      : 2
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 1
 Default   : 1
@@ -1045,7 +1073,7 @@ Dimensions: nhydro - 1
 Size      : 1
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 1
 Default   : 1
@@ -1059,7 +1087,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 1
 Default   : 1
@@ -1073,7 +1101,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 1
 Default   : 1
@@ -1087,7 +1115,7 @@ Dimensions: nhydro - 1
 Size      : 1
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 1
 Default   : 1
@@ -1101,7 +1129,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 1
 Default   : 1
@@ -1115,7 +1143,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 2
 Min       : 0
 Default   : 1
@@ -1129,7 +1157,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : inches
-Width     : 0
+Width     : 10
 Max       : 100.000000
 Min       : 0.000000
 Default   : 0.000000
@@ -1143,7 +1171,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : gallons per minute
-Width     : 0
+Width     : 10
 Max       : 1000000.000000
 Min       : 0.000000
 Default   : 100.000000
@@ -1157,7 +1185,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 0
 Default   : 0
@@ -1171,7 +1199,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 0
 Default   : 0
@@ -1185,7 +1213,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 0
 Default   : 0
@@ -1199,7 +1227,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : double
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 1.000000
 Min       : 0.500000
 Default   : 0.500000
@@ -1213,7 +1241,7 @@ Dimensions: nmru_res - 9, nchem_sets - 10
 Size      : 90
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : -1
 Default   : -1
@@ -1227,7 +1255,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 11
 Min       : 0
 Default   : 1
@@ -1242,7 +1270,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : km2
-Width     : 0
+Width     : 10
 Max       : 1000000000.000000
 Min       : 0.010000
 Default   : 1.000000
@@ -1256,7 +1284,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 1.000000
 Min       : 0.000000
 Default   : 1.000000
@@ -1270,7 +1298,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : degrees
-Width     : 0
+Width     : 10
 Max       : 360.000000
 Min       : 0.000000
 Default   : 0.000000
@@ -1284,7 +1312,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : meters
-Width     : 0
+Width     : 10
 Max       : 10000.000000
 Min       : -300.000000
 Default   : 0.000000
@@ -1298,7 +1326,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : degrees
-Width     : 0
+Width     : 10
 Max       : 60.000000
 Min       : 20.000000
 Default   : 40.000000
@@ -1312,7 +1340,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : decimal percent
-Width     : 0
+Width     : 10
 Max       : 1.000000
 Min       : 0.000000
 Default   : 0.000000
@@ -1326,7 +1354,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 1
 Min       : 0
 Default   : 1
@@ -1341,7 +1369,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : decimal percent
-Width     : 0
+Width     : 10
 Max       : 10.000000
 Min       : 0.000000
 Default   : 0.000000
@@ -1355,7 +1383,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 1
 Min       : 0
 Default   : 1
@@ -1370,7 +1398,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 0
 Default   : 1
@@ -1384,21 +1412,21 @@ Dimensions: nchan - 11
 Size      : 11
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 50
 Min       : 0
 Default   : 5
 
 Name      : pmac_sat
 Module    : topc
-Descr     : Fraction of potential infiltration that bypasses the root zone and mixes immediately with the saturated zone
-Help      : Fraction of potential infiltration that bypasses the root zone and mixes immediately with the saturated zone
+Descr     : Fraction of pmacro that mixes immediately with the saturated zone
+Help      : Fraction of pmacro that mixes immediately with the saturated zone
 Ndimen    : 1
 Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : fraction
-Width     : 0
+Width     : 10
 Max       : 1.000000
 Min       : 0.000000
 Default   : 0.000000
@@ -1412,7 +1440,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : fraction
-Width     : 0
+Width     : 10
 Max       : 1.000000
 Min       : 0.000000
 Default   : 0.000000
@@ -1426,7 +1454,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 1
 Min       : 0
 Default   : 0
@@ -1440,7 +1468,7 @@ Dimensions: nmonths - 12
 Size      : 12
 Type      : float
 Units     : inches
-Width     : 0
+Width     : 10
 Max       : 0.500000
 Min       : 0.000000
 Default   : 0.020000
@@ -1454,7 +1482,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 1
 Min       : 0
 Default   : 1
@@ -1468,7 +1496,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 31
 Min       : 0
 Default   : 1
@@ -1482,7 +1510,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 1
 Min       : 0
 Default   : 0
@@ -1496,7 +1524,21 @@ Dimensions: one - 1
 Size      : 1
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
+Max       : 2
+Min       : 0
+Default   : 1
+
+Name      : print_vse
+Module    : sumb
+Descr     : Scope of geochemical output files (vse)
+Help      : Scope of geochemical output files (vse): 0 = none;                  1 = basin and MRUs;                              2 = all reservoirs.                
+Ndimen    : 1
+Dimensions: one - 1
+Size      : 1
+Type      : long
+Units     : none
+Width     : 10
 Max       : 2
 Min       : 0
 Default   : 1
@@ -1510,7 +1552,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : float
 Units     : m^3/sec
-Width     : 0
+Width     : 10
 Max       : 100000.000000
 Min       : 0.000000
 Default   : 1.000000
@@ -1524,7 +1566,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : Proportion
-Width     : 0
+Width     : 10
 Max       : 1.000000
 Min       : 0.000000
 Default   : 0.300000
@@ -1538,7 +1580,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 1
 Min       : 0
 Default   : 1
@@ -1553,7 +1595,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : float
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 1.000000
 Min       : 0.000000
 Default   : 0.440000
@@ -1567,7 +1609,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : float
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 1.000000
 Min       : 0.000000
 Default   : 0.500000
@@ -1581,7 +1623,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : float
 Units     : decimal percent
-Width     : 0
+Width     : 10
 Max       : 1.000000
 Min       : 0.100000
 Default   : 0.800000
@@ -1595,52 +1637,10 @@ Dimensions: nmru - 22, nmonths - 12
 Size      : 264
 Type      : float
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 5.000000
 Min       : 0.200000
 Default   : 1.000000
-
-Name      : resp_coef_min
-Module    : topc
-Descr     : Minimum saturation readjustment coefficient
-Help      : Minimum saturation readjustment coefficient
-Ndimen    : 1
-Dimensions: nmru - 22
-Size      : 22
-Type      : float
-Units     : none
-Width     : 0
-Max       : 1.000000
-Min       : 0.000000
-Default   : 0.010000
-
-Name      : resp_hr_full
-Module    : topc
-Descr     : Time step after which the saturation readjustment coefficient becomes 1
-Help      : Time step after which the saturation radjustment coefficient become 1 (i.e. original TOPMODEL)
-Ndimen    : 1
-Dimensions: nmru - 22
-Size      : 22
-Type      : float
-Units     : hours
-Width     : 0
-Max       : 100.000000
-Min       : 0.000000
-Default   : 6.000000
-
-Name      : resp_hr_min
-Module    : topc
-Descr     : Time step below which the saturation readjustment coefficient is set equal to resp_coef_min
-Help      : Time step below which the saturation readjustment coefficient is set equal to resp_coef_min
-Ndimen    : 1
-Dimensions: nmru - 22
-Size      : 22
-Type      : float
-Units     : hours
-Width     : 0
-Max       : 24.000000
-Min       : 0.000000
-Default   : 0.083000
 
 Name      : riparian_thresh
 Module    : topc
@@ -1651,7 +1651,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : lambda
-Width     : 0
+Width     : 10
 Max       : 40.000000
 Min       : 1.000000
 Default   : 10.000000
@@ -1665,7 +1665,7 @@ Dimensions: nmru_res - 9, nchem_sets - 10
 Size      : 90
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : -1
 Default   : -1
@@ -1679,8 +1679,8 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : m
-Width     : 0
-Max       : 0.050000
+Width     : 10
+Max       : 0.500000
 Min       : 0.000100
 Default   : 0.005000
 
@@ -1693,9 +1693,9 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : cm3/cm3
-Width     : 0
+Width     : 10
 Max       : 0.800000
-Min       : 0.100000
+Min       : 0.001000
 Default   : 0.400000
 
 Name      : s_rock_depth
@@ -1707,8 +1707,8 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : m
-Width     : 0
-Max       : 100.000000
+Width     : 10
+Max       : 300.000000
 Min       : 0.100000
 Default   : 6.000000
 
@@ -1721,8 +1721,8 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : m
-Width     : 0
-Max       : 50.000000
+Width     : 10
+Max       : 100.000000
 Min       : 0.100000
 Default   : 1.800000
 
@@ -1735,7 +1735,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : cm/s
-Width     : 0
+Width     : 10
 Max       : 10.000000
 Min       : 0.000000
 Default   : 0.000100
@@ -1749,7 +1749,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : m
-Width     : 0
+Width     : 10
 Max       : 0.000000
 Min       : -100.000000
 Default   : -5.000000
@@ -1763,24 +1763,10 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : m
-Width     : 0
+Width     : 10
 Max       : 0.000000
 Min       : -100.000000
 Default   : -5.000000
-
-Name      : s_theta_0
-Module    : topc
-Descr     : Initial volumetric soil moisture content in the root zone.
-Help      : Initial volumetric soil moisture content in the root zone.
-Ndimen    : 1
-Dimensions: nmru - 22
-Size      : 22
-Type      : float
-Units     : cm3/cm3
-Width     : 0
-Max       : 0.700000
-Min       : 0.010000
-Default   : 0.230000
 
 Name      : s_theta_fc
 Module    : topc
@@ -1791,9 +1777,9 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : cm3/cm3
-Width     : 0
+Width     : 10
 Max       : 0.700000
-Min       : 0.010000
+Min       : 0.001000
 Default   : 0.230000
 
 Name      : s_theta_wp
@@ -1805,9 +1791,9 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : cm3/cm3
-Width     : 0
+Width     : 10
 Max       : 0.560000
-Min       : 0.010000
+Min       : 0.001000
 Default   : 0.130000
 
 Name      : sbar0
@@ -1819,7 +1805,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : m
-Width     : 0
+Width     : 10
 Max       : 10.000000
 Min       : 0.000000
 Default   : 0.001000
@@ -1833,7 +1819,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 2
 Min       : 0
 Default   : 0
@@ -1848,7 +1834,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 2
 Min       : 0
 Default   : 0
@@ -1863,7 +1849,7 @@ Dimensions: nmru - 22, nmonths - 12
 Size      : 264
 Type      : float
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 5.000000
 Min       : 0.200000
 Default   : 1.000000
@@ -1877,13 +1863,13 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : inches
-Width     : 0
+Width     : 10
 Max       : 5.000000
 Min       : 0.000000
 Default   : 0.100000
 
 Name      : snow_ion_factor
-Module    : topc
+Module    : phreeqmms
 Descr     : Maximum ratio of solute concentrations in melt/pack
 Help      : Maximum ratio of solute concentrations in melt/pack
 Ndimen    : 1
@@ -1891,13 +1877,13 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : ratio melt/pack
-Width     : 0
+Width     : 10
 Max       : 10.000000
 Min       : 1.000000
 Default   : 1.000000
 
 Name      : snowmelt_18O_depl
-Module    : topc
+Module    : phreeqmms
 Descr     : Depletion of 18O in melt versus pack
 Help      : Depletion of 18O in melt versus pack
 Ndimen    : 1
@@ -1905,13 +1891,13 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : permil per meltday
-Width     : 0
+Width     : 10
 Max       : 0.000000
 Min       : -5.000000
 Default   : -1.000000
 
 Name      : snowmelt_D_depl
-Module    : topc
+Module    : phreeqmms
 Descr     : Depletion of deuterium in melt versus pack
 Help      : Depletion of deuterium in melt versus pack
 Ndimen    : 1
@@ -1919,7 +1905,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : permil per meltday
-Width     : 0
+Width     : 10
 Max       : 0.000000
 Min       : -40.000000
 Default   : -8.000000
@@ -1933,7 +1919,7 @@ Dimensions: nmru_res - 9, nchem_sets - 10
 Size      : 90
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : 1
 Default   : 1
@@ -1947,7 +1933,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : inches
-Width     : 0
+Width     : 10
 Max       : 5.000000
 Min       : 0.000000
 Default   : 0.100000
@@ -1961,7 +1947,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 2
 Min       : 0
 Default   : 0
@@ -1976,7 +1962,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 2
 Min       : 0
 Default   : 0
@@ -1991,7 +1977,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 2
 Min       : 0
 Default   : 0
@@ -1999,15 +1985,15 @@ Bounded   : nchem_ext
 
 Name      : st
 Module    : topc
-Descr     : The ln(a/tanB) value.
-Help      : The ln(a/tanB) value.
+Descr     : The value of the transformed wetness index
+Help      : The value of the transformed wetness index; ln, sqrt, or normal depending on T_decay
 Ndimen    : 2
 Dimensions: nac - 5, nmru - 22
 Size      : 110
 Type      : float
 Units     : none
-Width     : 0
-Max       : 25.000000
+Width     : 10
+Max       : 25000.000000
 Min       : 0.000000
 Default   : 5.000000
 
@@ -2020,7 +2006,7 @@ Dimensions: nmru - 22, nmonths - 12
 Size      : 264
 Type      : float
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 5.000000
 Min       : 0.200000
 Default   : 1.000000
@@ -2034,7 +2020,7 @@ Dimensions: nmru_res - 9, nchem_sets - 10
 Size      : 90
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 100
 Min       : -1
 Default   : -1
@@ -2048,24 +2034,10 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : m
-Width     : 0
-Max       : 10.000000
-Min       : 0.000000
+Width     : 10
+Max       : 0.100000
+Min       : 0.010000
 Default   : 0.030000
-
-Name      : t0
-Module    : topc
-Descr     : Mean subcatchment value of ln(T0)
-Help      : Mean subcatchment value of ln(T0) where local transmissivity T=T0*exp(T0-TL)
-Ndimen    : 1
-Dimensions: nmru - 22
-Size      : 22
-Type      : float
-Units     : ln(m^2/h)
-Width     : 0
-Max       : 4.000000
-Min       : -6.000000
-Default   : -2.000000
 
 Name      : td
 Module    : topc
@@ -2076,7 +2048,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     :  h/m
-Width     : 0
+Width     : 10
 Max       : 240.000000
 Min       : 0.000000
 Default   : 60.000000
@@ -2090,10 +2062,24 @@ Dimensions: one - 1
 Size      : 1
 Type      : long
 Units     : none
-Width     : 0
+Width     : 10
 Max       : 1
 Min       : 0
 Default   : 1
+
+Name      : tl
+Module    : topc
+Descr     : Mean ln(TWI), sqrt(TWI), or TWI for MRU
+Help      : Mean ln(TWI), sqrt(TWI), or TWI for MRU
+Ndimen    : 1
+Dimensions: nmru - 22
+Size      : 22
+Type      : float
+Units     : depends on T_Decay. TWI in m2/hr
+Width     : 10
+Max       : 10000000.000000
+Min       : 1.000000
+Default   : 10.000000
 
 Name      : tmax_adj
 Module    : temp
@@ -2104,7 +2090,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : degrees C
-Width     : 0
+Width     : 10
 Max       : 10.000000
 Min       : -10.000000
 Default   : 0.000000
@@ -2118,7 +2104,7 @@ Dimensions: nmonths - 12
 Size      : 12
 Type      : float
 Units     : degrees celsius
-Width     : 0
+Width     : 10
 Max       : 15.000000
 Min       : 0.000000
 Default   : 5.000000
@@ -2132,7 +2118,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : float
 Units     : degrees celsius
-Width     : 0
+Width     : 10
 Max       : 10.000000
 Min       : -10.000000
 Default   : 0.000000
@@ -2146,7 +2132,7 @@ Dimensions: nmonths - 12
 Size      : 12
 Type      : float
 Units     : degrees celsius per kilometer
-Width     : 0
+Width     : 10
 Max       : 15.000000
 Min       : -15.000000
 Default   : 9.800000
@@ -2160,7 +2146,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : degrees C
-Width     : 0
+Width     : 10
 Max       : 10.000000
 Min       : -10.000000
 Default   : 0.000000
@@ -2174,24 +2160,10 @@ Dimensions: nmonths - 12
 Size      : 12
 Type      : float
 Units     : degrees celsius per kilometer
-Width     : 0
+Width     : 10
 Max       : 15.000000
 Min       : -15.000000
 Default   : 9.800000
-
-Name      : topout_file_unit
-Module    : io
-Descr     : Unit number for TOPMODEL output file
-Help      : Unit number for TOPMODEL output file
-Ndimen    : 1
-Dimensions: one - 1
-Size      : 1
-Type      : long
-Units     : integer
-Width     : 0
-Max       : 99
-Min       : 50
-Default   : 80
 
 Name      : transp_beg
 Module    : potet
@@ -2202,7 +2174,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : month
-Width     : 0
+Width     : 10
 Max       : 12
 Min       : 1
 Default   : 4
@@ -2216,7 +2188,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : long
 Units     : month
-Width     : 0
+Width     : 10
 Max       : 12
 Min       : 1
 Default   : 10
@@ -2230,10 +2202,136 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : degrees celsius
-Width     : 0
+Width     : 10
 Max       : 1000.000000
 Min       : 0.000000
 Default   : 500.000000
+
+Name      : trxn_ohoriz_c_adj
+Module    : temp
+Descr     : Temperature adjustment to moving average of tmin, tavg, or tmax for O-horizon
+Help      : Temperature adjustment to moving average of tmin, tavg, or tmax for O-horizon
+Ndimen    : 1
+Dimensions: nmru - 22
+Size      : 22
+Type      : float
+Units     : degrees C
+Width     : 9
+Max       : 5.000000
+Min       : -5.000000
+Default   : 0.000000
+
+Name      : trxn_ohoriz_days
+Module    : temp
+Descr     : Temperature averaging window for O-horizon
+Help      : Temperature averaging window for O-horizon
+Ndimen    : 1
+Dimensions: one - 1
+Size      : 1
+Type      : float
+Units     : days
+Width     : 9
+Max       : 10000.000000
+Min       : 1.000000
+Default   : 7.000000
+
+Name      : trxn_ohoriz_stat
+Module    : temp
+Descr     : Use tmin(1), tavg(2), or tmax(3) for moving average
+Help      : Use tmin(1), tavg(2), or tmax(3) for moving average
+Ndimen    : 1
+Dimensions: nmru - 22
+Size      : 22
+Type      : long
+Units     : none
+Width     : 9
+Max       : 3
+Min       : 1
+Default   : 2
+
+Name      : trxn_sat_c_adj
+Module    : temp
+Descr     : Temperature adjustment to moving average of tmin, tavg, or tmax for saturated zone
+Help      : Temperature adjustment to moving average of tmin, tavg, or tmax for saturated zone
+Ndimen    : 1
+Dimensions: nmru - 22
+Size      : 22
+Type      : float
+Units     : degrees C
+Width     : 9
+Max       : 5.000000
+Min       : -5.000000
+Default   : 0.000000
+
+Name      : trxn_sat_days
+Module    : temp
+Descr     : Temperature averaging window for saturated zone
+Help      : Temperature averaging window for saturated zone
+Ndimen    : 1
+Dimensions: one - 1
+Size      : 1
+Type      : float
+Units     : days
+Width     : 9
+Max       : 10000.000000
+Min       : 1.000000
+Default   : 365.000000
+
+Name      : trxn_sat_stat
+Module    : temp
+Descr     : Use tmin(1), tavg(2), or tmax(3) for moving average
+Help      : Use tmin(1), tavg(2), or tmax(3) for moving average
+Ndimen    : 1
+Dimensions: nmru - 22
+Size      : 22
+Type      : long
+Units     : none
+Width     : 9
+Max       : 3
+Min       : 1
+Default   : 2
+
+Name      : trxn_uz_c_adj
+Module    : temp
+Descr     : Temperature adjustment to moving average of tmin, tavg, or tmax for UZ
+Help      : Temperature adjustment to moving average of tmin, tavg, or tmax for UZ
+Ndimen    : 1
+Dimensions: nmru - 22
+Size      : 22
+Type      : float
+Units     : degrees C
+Width     : 9
+Max       : 5.000000
+Min       : -5.000000
+Default   : 0.000000
+
+Name      : trxn_uz_days
+Module    : temp
+Descr     : Temperature averaging window for UZ
+Help      : Temperature averaging window for UZ
+Ndimen    : 1
+Dimensions: one - 1
+Size      : 1
+Type      : float
+Units     : days
+Width     : 9
+Max       : 10000.000000
+Min       : 1.000000
+Default   : 90.000000
+
+Name      : trxn_uz_stat
+Module    : temp
+Descr     : Use tmin(1), tavg(2), or tmax(3) for moving average
+Help      : Use tmin(1), tavg(2), or tmax(3) for moving average
+Ndimen    : 1
+Dimensions: nmru - 22
+Size      : 22
+Type      : long
+Units     : none
+Width     : 9
+Max       : 3
+Min       : 1
+Default   : 2
 
 Name      : tsta_elev
 Module    : temp
@@ -2244,7 +2342,7 @@ Dimensions: ntemp - 1
 Size      : 1
 Type      : float
 Units     : meters
-Width     : 0
+Width     : 10
 Max       : 10000.000000
 Min       : -300.000000
 Default   : 0.000000
@@ -2258,7 +2356,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : inches
-Width     : 0
+Width     : 10
 Max       : 5.000000
 Min       : 0.000000
 Default   : 0.100000
@@ -2272,7 +2370,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : long
 Units     : integer
-Width     : 0
+Width     : 10
 Max       : 1000000
 Min       : 0
 Default   : 0
@@ -2286,7 +2384,7 @@ Dimensions: one - 1
 Size      : 1
 Type      : long
 Units     : integer
-Width     : 0
+Width     : 10
 Max       : 1000000
 Min       : 0
 Default   : 0
@@ -2300,9 +2398,9 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : m/hr
-Width     : 0
+Width     : 10
 Max       : 5.000000
-Min       : 0.010000
+Min       : 0.001000
 Default   : 0.200000
 
 Name      : xk_cv
@@ -2314,7 +2412,7 @@ Dimensions: nmru - 22
 Size      : 22
 Type      : float
 Units     : unitless(standard deviation/mean)
-Width     : 0
+Width     : 10
 Max       : 100.000000
 Min       : 0.000000
 Default   : 14.130000
