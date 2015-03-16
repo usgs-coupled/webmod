@@ -118,7 +118,7 @@ static void write_dimensions (FILE *param_file) {
 
 static void write_parameters (FILE *param_file, int writeAllParams) {
 	PARAM *param;
-	char *ptr;
+//	char *ptr;
 	long i,j;
 	double	*dvalptr;
 	float	*fvalptr;
@@ -160,15 +160,15 @@ static void write_parameters (FILE *param_file, int writeAllParams) {
 					for (j = 0; j < param->size; j++) {
 						(void)fprintf(param_file, "%.20le\n", *dvalptr);
 						dvalptr++;
-						if (param->value_desc[j]) {
-						  while ((ptr = strchr (param->value_desc[j], '\n'))) {
-							*ptr = '\0';
-							(void)fprintf (param_file, "@%s\n", param->value_desc[j]);
-							param->value_desc[j] = ptr + 1;
-						  }
-						  if (param->value_desc[j] && strlen (param->value_desc[j]))
-							(void)fprintf (param_file, "@%s\n", param->value_desc[j]);
-						}
+						//if (param->value_desc[j]) {
+						 // while ((ptr = strchr (param->value_desc[j], '\n'))) {
+							//*ptr = '\0';
+							//(void)fprintf (param_file, "@%s\n", param->value_desc[j]);
+							//param->value_desc[j] = ptr + 1;
+						 // }
+						 // if (param->value_desc[j] && strlen (param->value_desc[j]))
+							//(void)fprintf (param_file, "@%s\n", param->value_desc[j]);
+						//}
 					}
 					break;
 
@@ -182,15 +182,15 @@ static void write_parameters (FILE *param_file, int writeAllParams) {
 					for (j = 0; j < param->size; j++) {
 						(void)fprintf(param_file, "%.12e\n", *fvalptr);
 						fvalptr++;
-						if (param->value_desc[j]) {
-						  while ((ptr = strchr (param->value_desc[j], '\n'))) {
-							*ptr = '\0';
-							(void)fprintf (param_file, "@%s\n", param->value_desc[j]);
-							param->value_desc[j] = ptr + 1;
-						  }
-						  if (param->value_desc[j] && strlen (param->value_desc[j]))
-							(void)fprintf (param_file, "@%s\n", param->value_desc[j]);
-						}
+						//if (param->value_desc[j]) {
+						//  while ((ptr = strchr (param->value_desc[j], '\n'))) {
+						//	*ptr = '\0';
+						//	(void)fprintf (param_file, "@%s\n", param->value_desc[j]);
+						//	param->value_desc[j] = ptr + 1;
+						//  }
+						//  if (param->value_desc[j] && strlen (param->value_desc[j]))
+						//	(void)fprintf (param_file, "@%s\n", param->value_desc[j]);
+						//}
 					}
 					break;
 
@@ -207,15 +207,15 @@ static void write_parameters (FILE *param_file, int writeAllParams) {
 //						(void)fprintf(param_file, "%ld\n", *lvalptr);
 						(void)fprintf(param_file, "%d\n", *lvalptr);
 						lvalptr++;
-						if (param->value_desc[j]) {
-						  while ((ptr = strchr (param->value_desc[j], '\n'))) {
-							*ptr = '\0';
-							(void)fprintf (param_file, "@%s\n", param->value_desc[j]);
-							param->value_desc[j] = ptr + 1;
-						  }
-						  if (param->value_desc[j] && strlen (param->value_desc[j]))
-							(void)fprintf (param_file, "@%s\n", param->value_desc[j]);
-						}
+						//if (param->value_desc[j]) {
+						//  while ((ptr = strchr (param->value_desc[j], '\n'))) {
+						//	*ptr = '\0';
+						//	(void)fprintf (param_file, "@%s\n", param->value_desc[j]);
+						//	param->value_desc[j] = ptr + 1;
+						//  }
+						//  if (param->value_desc[j] && strlen (param->value_desc[j]))
+						//	(void)fprintf (param_file, "@%s\n", param->value_desc[j]);
+						//}
 					}
 					break;
 			}

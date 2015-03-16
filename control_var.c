@@ -168,3 +168,20 @@ long control_integer_array_ (int *retval, int *index, char *key, ftnlen tlen) {
 	*retval = (int)intVal;
 	return 0;
 }
+
+/*--------------------------------------------------------------------*\
+| FUNCTION     : control_file_name_
+| COMMENT		: called from fortran
+| PARAMETERS   :
+| RETURN VALUE :
+| RESTRICTIONS :
+\*--------------------------------------------------------------------*/
+long control_file_name_(char *retval, ftnlen tlen) {
+	char *foo;
+	foo = (char *)umalloc(tlen + 1);
+	strncpy(foo, MAltContFile, tlen);
+	foo[tlen] = '\0';
+	memset(retval, ' ', tlen);
+	strncpy(retval, foo, tlen);
+	return 0;
+}

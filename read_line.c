@@ -29,6 +29,12 @@
 /**4***************** DECLARATION LOCAL FUNCTIONS *********************/
 static void INSERT_time (char *, DATETIME *);
 
+/**5*********************** LOCAL VARIABLES ***************************/
+/*
+static double   prevjt = -1.0;
+*/
+
+/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : read_line
  | COMMENT      :
@@ -38,10 +44,13 @@ static void INSERT_time (char *, DATETIME *);
 \*--------------------------------------------------------------------*/
 long read_line (void) {
 
+   /*static char err[80];*/
+
    char   *start_point, *end_point;
    float   initial_deltat;
    long   i,j;
    static int   start_of_data;
+   static long	data_eof_flag;
    DATETIME   prevtime;
    FILE_DATA   *cur_fd;
    char   *err_ptr;
@@ -51,10 +60,14 @@ long read_line (void) {
 **   get initial delta-t from control data base
 */
    initial_deltat = *control_fvar("initial_deltat");
+   data_eof_flag = *control_lvar ("ignore_data_file_end");
 
    if (Mnsteps == 0) {
       start_of_data = TRUE;
       Mprevjt = 1.0;
+/*
+      prevjt = -1.0;
+*/
    }
 
    prevtime = *Mnowtime;
@@ -69,12 +82,31 @@ long read_line (void) {
 /*
 **  9999 in the year field is the code for EOF. 
 */
-      if (cur_fd->time.year == 9999)
+      if (cur_fd->time.year == 9999) {
+		  (void)fprintf (stderr,"\nERROR, date of end_time is after the last date in the Data File \n");
+		  (void)fprintf(stderr, "       simulation stopped on: %ld %ld %ld \n", Mnowtime->year, Mnowtime->month, Mnowtime->day);
          return ENDOFFILE;
+	  }
+
+/*
+**   DANGER -- This "if" is a hack to get delta time back after storm mode
+**            This is the situation :
+
+cur_fd->time = {year = 1956, month = 2, day = 19, hour = 0, min = 0, sec = 0, 
+  jd = 2435523, jt = 2435523}
+
+*Mnowtime = {year = 1956, month = 2, day = 18, hour = 24, min = 0, sec = 0, 
+  jd = 2435522, jt = 2435523}
+
+*/
 
       if ((Mprevjt < 0.0) && (cur_fd->time.jt - Mprevjt <= 0.000001)) {
          Mprevjt = (double)(Mnowtime->jd);
       }
+
+/*
+**  End of DANGER
+*/
 
 /*
 **   Copy time from current file into global time structure
@@ -92,7 +124,30 @@ long read_line (void) {
 **   check if data time is within limits
 */
       if (Mnowtime->jt > Mendtime->jt) {
-         *Mnowtime = prevtime;
+		  /*
+		  (void)fprintf (stderr,"\n\n nowtime = %ld\n", Mnowtime->year);
+		 (void)fprintf (stderr,"\n\n endtime = %ld\n", Mendtime->year);
+		 (void)fprintf (stderr,"\n\n nowtime = %ld\n", Mnowtime->month);
+		 (void)fprintf (stderr,"\n\n endtime = %ld\n", Mendtime->month);
+		 (void)fprintf (stderr,"\n\n nowtime = %ld\n", Mnowtime->day);
+		 (void)fprintf (stderr,"\n\n endtime = %ld\n", Mendtime->day);
+		 (void)fprintf (stderr,"\n\n nowtime = %ld\n", Mnowtime->hour);
+		 (void)fprintf (stderr,"\n\n endtime = %ld\n", Mendtime->hour);
+		 (void)fprintf (stderr,"\n\n nowtime = %ld\n", Mnowtime->min);
+		 (void)fprintf (stderr,"\n\n endtime = %ld\n", Mendtime->min);
+		 (void)fprintf (stderr,"\n\n nowtime = %ld\n", Mnowtime->sec);
+		 (void)fprintf (stderr,"\n\n endtime = %ld\n", Mendtime->sec);
+		 (void)fprintf (stderr,"\n\n nowtime = %ld\n", Mnowtime->jd);
+		 (void)fprintf (stderr,"\n\n endtime = %ld\n", Mendtime->jd);
+  		 (void)fprintf (stderr,"\n\n nowtime = %f\n", Mnowtime->jt);
+		 (void)fprintf (stderr,"\n\n endtime = %f\n", Mendtime->jt); 
+		 */
+		  *Mnowtime = prevtime;
+		 //(void)fprintf (stderr,"nowtime=endtime\n");
+		 if (data_eof_flag == 1) {
+			Mendtime = Mnowtime;
+			return (0); }
+		 //(void)fprintf (stderr,"nowtime=endtime 2\n");
          return ENDOFDATA;
       }
 
@@ -104,6 +159,18 @@ long read_line (void) {
 
          (void)strcpy (line, cur_fd->start_of_data);
          Mnsteps++;
+/*
+**  DANGER -- Mprevjt must be hacked if starting from var init file.
+**            It is computed based on current time and Mdeltat (which
+**            is read from var init file.
+*/
+
+/*
+         (void)fprintf (stderr,"\n\n read_line Mprevjt = %f Mnowtime->jt = %f\n", Mprevjt, Mnowtime->jt);
+         (void)fprintf (stderr,"     read_line dt = %f\n", Mnowtime->jt - Mprevjt );
+         (void)fprintf (stderr,"          year, mon, day = %d %d %d %d %d\n", Mnowtime->year, Mnowtime->month, Mnowtime->day, Mnowtime->hour, Mnowtime->min);
+*/
+
 		 if (Mnowtime->jt < Mprevjt) {
 			(void)fprintf (stderr,"\n\n read_line Mprevjt = %f Mnowtime->jt = %f\n", Mprevjt, Mnowtime->jt);
 			(void)fprintf (stderr,"Current time step is before previous time step.\n");
@@ -126,6 +193,13 @@ long read_line (void) {
                Mdeltat = Mnowtime->jt - Mprevjt;
             }
          }
+/*
+         (void)fprintf (stderr,"read_line Mdeltat = %f\n", Mdeltat );
+*/
+
+/*
+**  End DANGER
+*/
 
          Minpptr = end_point = line;
 
@@ -154,7 +228,7 @@ long read_line (void) {
                            strtod (start_point, &end_point);
                         break;
                      }
-
+				  	if (CHECK_data (errno, cur_fd))	 (void)fprintf (stderr,"nowtime=endtime 2\n");
                   if (CHECK_data (errno, cur_fd)) return (ENDOFDATA);
 
                } else {
@@ -280,7 +354,9 @@ char *DATA_read_init (void) {
      */
        (fd[i])->time.year = 0;
       fgets ((fd[i])->line, MAXDATALNLEN, (fd[i])->fp);
-
+/* DANGER
+      if (err_ptr = EXTRACT_time (&(fd[i])))
+*/
       err_ptr = EXTRACT_time (fd[i]);
       if (err_ptr) return (err_ptr);
     
@@ -493,6 +569,7 @@ char * EXTRACT_time (FILE_DATA *data) {
    static char   err_buf[MAXDATALNLEN];
 
    if (data->time.year == 9999) {
+	   (void)fprintf (stderr,"9990\n");
       return (NULL);
    }
 
@@ -576,6 +653,9 @@ char * EXTRACT_time (FILE_DATA *data) {
    start_point = end_point;
    errno = 0;
    data->time.sec = (int)(strtod(start_point, &end_point));
+/*
+   data->time.sec = strtod(start_point, &end_point, 10);
+*/
 
    if (data->time.sec < 0 || data->time.min > 59) {
       (void)sprintf (err_buf, "EXTRACT_time - second %ld out of range.\nline:%s",

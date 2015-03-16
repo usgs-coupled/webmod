@@ -156,6 +156,9 @@ int main (int argc, char *argv[]) {
 	fname =   control_svar ("param_file");
     num_param_files = control_var_size ("param_file");
 
+	/*
+	**  Look for, declare and read in mapping parameters before any of the "module" parameters
+	*/
 	for (i = 0; i < num_param_files; i++) {
 		if (stat (fname[i], &stbuf) != -1) {
 		   if (stbuf.st_size) {
@@ -166,7 +169,27 @@ int main (int argc, char *argv[]) {
 		   }
 		}
 	    
-		err = read_params (fname[i], i);
+		err = read_params (fname[i], i, 1);
+		if (err) {
+			(void)fprintf (stderr,"\nWARNING: %s\n", err);
+		}
+	}
+
+	/*
+	**  Read in the parameters declared by the modules.
+	*/
+
+	for (i = 0; i < num_param_files; i++) {
+		if (stat (fname[i], &stbuf) != -1) {
+		   if (stbuf.st_size) {
+		  } else {
+			  (void)fprintf (stderr,buf, "ERROR: Parameter file: %s is empty.",
+						   fname[i]);
+			  exit (1);
+		   }
+		}
+	    
+		err = read_params (fname[i], i, 0);
 		if (err) {
 			(void)fprintf (stderr,"\nWARNING: %s\n", err);
 		}

@@ -33,6 +33,7 @@
   static int       started;
   static PUBVAR    **ani_out_vars, *var;
   static DIMEN **ani_out_dims, *dim;
+  static DIMEN *nhrudim, *ngwdim, *nssrdim, *foobar;
   static FILE **ani_var_files;
   static int num_ani_dims, found, k;
   static DATETIME start_of_data, end_of_data;
@@ -178,14 +179,26 @@ char *single_run_pre_init () {
 **  List of unique ANIMATION dimensions.
 */
     num_ani_dims = 0;
+    nhrudim = dim_addr("nhru");
+    ngwdim = dim_addr("ngw");
+    nssrdim = dim_addr("nssr");
     for (i = 0; i < naniVars; i++) {
        found = FALSE;
-       for (j = 0; j < num_ani_dims; j++)
-          if (ani_out_vars[i]->dimen[0] == ani_out_dims[j])
+       
+/* Reset ngw and nssr dimensions to nhru for the purposes of the animation file.*/
+       foobar = ani_out_vars[i]->dimen[0];
+       if (foobar == ngwdim || foobar == nssrdim) {
+          foobar = nhrudim;
+       }
+
+       for (j = 0; j < num_ani_dims; j++) {
+          if (foobar == ani_out_dims[j]) {
              found = TRUE;
+          }
+       }
 
        if (!found) {
-          ani_out_dims[j] = ani_out_vars[i]->dimen[0];
+          ani_out_dims[j] = foobar;
           num_ani_dims++;
        }
     }
@@ -203,7 +216,7 @@ char *single_run_pre_init () {
        }
 
        fprintf (ani_out_files[i], "#\n# Begin DBF\n");
-       fprintf (ani_out_files[i], "# timestamp,#FIELD_ISODATETIME,19,0\n");
+       fprintf (ani_out_files[i], "# timestamp,#FIELD_ISODATE,10,0\n");
        fprintf (ani_out_files[i], "# %s,#FIELD_DECIMAL,10,2\n", ani_out_dims[i]->name);
     }
 
@@ -211,8 +224,14 @@ char *single_run_pre_init () {
 **  Map each variable to a file.
 */
     for (i = 0; i < naniVars; i++) {
+/* Reset ngw and nssr dimensions to nhru for the purposes of the animation file.*/
+       foobar = ani_out_vars[i]->dimen[0];
+       if (foobar == ngwdim || foobar == nssrdim) {
+          foobar = nhrudim;
+       }
+
        for (j = 0; j < num_ani_dims; j++) {
-          if (ani_out_vars[i]->dimen[0] == ani_out_dims[j]) {
+          if (foobar == ani_out_dims[j]) {
              ani_var_files[i] = ani_out_files[j];
           }
        }
@@ -246,7 +265,7 @@ char *single_run_pre_init () {
 **  Write variable size line
 */
     for (i = 0; i < num_ani_dims; i++) {
-       fprintf (ani_out_files[i], "19d	10n");
+       fprintf (ani_out_files[i], "10d	10n");
     }
 
     for (i = 0; i < naniVars; i++) {
@@ -336,25 +355,27 @@ char *single_run_post_run () {
 /*
 **  Write the current time stamp to the dimension file.
 */
-            fprintf (ani_out_files[i], "%4ld-%02ld-%02ld:%02ld:%02ld:%02ld\t%10ld",
+            fprintf (ani_out_files[i], "%4ld-%02ld-%02ld %10ld",
                      Mnowtime->year,
-                     Mnowtime->month, Mnowtime->day, Mnowtime->hour,
-                     Mnowtime->min, Mnowtime->sec, j + 1);
+                     Mnowtime->month, Mnowtime->day, j + 1);
 
 /*
 **  Write the variable values to the dimension file.
 */
                for (k = 0; k < naniVars; k++) {
                   var = ani_out_vars[k];
-                  if (var->dimen[0] == dim) {
+/*                  if (var->dimen[0] == dim) {
+*/
                      switch (var->type) {
                         case M_DOUBLE:
-                           fprintf (ani_var_files[k], "\t%10.3e",
+                           fprintf (ani_var_files[k], " %10.3e",
                                     *((double *) var->value + j));
                            break;
 
                         case M_FLOAT:
-                           fprintf (ani_var_files[k], "\t%14.6e",
+/*                           fprintf (ani_var_files[k], "\t%14.6e",
+*/
+                           fprintf (ani_var_files[k], " %10.3e",
                                     *((float *) var->value + j));
                            break;
 
@@ -366,7 +387,9 @@ char *single_run_post_run () {
                                     *((int *) var->value + j));
                            break;
                      }
+/*
                   }
+*/
                }
                fprintf (ani_out_files[i], "\n");
             }
@@ -374,6 +397,27 @@ char *single_run_post_run () {
       }
 
       plotRuntimeGraphValue();
+
+   return (NULL);
+}
+
+/*--------------------------------------------------------------------*\
+ | FUNCTION     : single_run_pre_cleanup
+ | COMMENT		:
+ | PARAMETERS   :
+ | RETURN VALUE : char *
+ | RESTRICTIONS :
+\*--------------------------------------------------------------------*/
+char *single_run_pre_cleanup () {
+
+/*
+  if (GISProcessRunning)
+    GISEndAnimation();
+
+  if (ani_init) {
+    RESET_animation_control ();
+  }
+*/
 
    return (NULL);
 }

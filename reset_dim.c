@@ -236,12 +236,12 @@ static void resize_param (PARAM *param, long dimen_num, long nold, long nnew, lo
 /*
 **	resize the value_desc
 */
-	if (size_new)
-		param->value_desc = (char **) realloc (param->value_desc,
-			size_new * sizeof (char *));
-
-	for (i = param->size; i < size_new; i++)
-		param->value_desc[i] = NULL;
+//	if (size_new)
+//		param->value_desc = (char **) realloc (param->value_desc,
+//			size_new * sizeof (char *));
+//
+//	for (i = param->size; i < size_new; i++)
+//		param->value_desc[i] = NULL;
 
 /*
 * copy the data

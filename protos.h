@@ -599,7 +599,7 @@ EXTERN char *read_control (char *);
 #define EXTERN extern
 #endif
 
-EXTERN char *read_params (char *, int);
+EXTERN char *read_params (char *, int, int);
 EXTERN char *read_dims (char *);
 
 /***  read_vars.c  **************************************************/

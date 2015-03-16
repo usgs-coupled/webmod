@@ -104,125 +104,127 @@ int print_params (void) {
   for (i = 0; i < Mnparams; i++) {
 
     param = Mparambase[i];
+	if (param->max != NULL){
 
-    (void)fprintf(param_file, "\n");
-    (void)fprintf(param_file, "Name      : %s\n", param->name);
-    (void)fprintf(param_file, "Module    : %s\n", param->module);
-    (void)fprintf(param_file, "Descr     : %s\n", param->descr);
-    (void)fprintf(param_file, "Help      : %s\n", param->help);
-    (void)fprintf(param_file, "Ndimen    : %ld\n", param->ndimen);
-    (void)fprintf(param_file, "Dimensions: ");
 
-    for (j = 0; j < param->ndimen; j++) {
-      (void)fprintf(param_file, "%s - %ld",
-	      param->dimen[j]->name, param->dimen[j]->value);
-      if (j < param->ndimen - 1)
-	(void)fprintf(param_file, ", ");
-    } /* j */
+		(void)fprintf(param_file, "\n");
+		(void)fprintf(param_file, "Name      : %s\n", param->name);
+		(void)fprintf(param_file, "Module    : %s\n", param->module);
+		(void)fprintf(param_file, "Descr     : %s\n", param->descr);
+		(void)fprintf(param_file, "Help      : %s\n", param->help);
+		(void)fprintf(param_file, "Ndimen    : %ld\n", param->ndimen);
+		(void)fprintf(param_file, "Dimensions: ");
 
-    (void)fprintf(param_file, "\n");
-    (void)fprintf(param_file, "Size      : %ld\n", param->size);
-    (void)fprintf(param_file, "Type      : %s\n", Mtypes[param->type]);
-    (void)fprintf(param_file, "Units     : %s\n", param->units);
-    if (param->format)
-       (void)fprintf(param_file, "Format    : %s\n", param->format);
-    (void)fprintf(param_file, "Width     : %ld\n", param->column_width);
+		for (j = 0; j < param->ndimen; j++) {
+			(void)fprintf(param_file, "%s - %ld",
+				param->dimen[j]->name, param->dimen[j]->value);
+			if (j < param->ndimen - 1)
+				(void)fprintf(param_file, ", ");
+		} /* j */
 
-    switch(param->type) {
-       case M_LONG:
-		   /* DANGER
-          (void)fprintf (param_file, "Max       : %ld\n", *(long *)(param->max));
-          (void)fprintf (param_file, "Min       : %ld\n", *(long *)(param->min));
-          (void)fprintf (param_file, "Default   : %ld\n", *(long *)(param->def));
-		  */
-		  (void)fprintf (param_file, "Max       : %ld\n", *(int *)(param->max));
-          (void)fprintf (param_file, "Min       : %ld\n", *(int *)(param->min));
-          (void)fprintf (param_file, "Default   : %ld\n", *(int *)(param->def));
-          break;
+		(void)fprintf(param_file, "\n");
+		(void)fprintf(param_file, "Size      : %ld\n", param->size);
+		(void)fprintf(param_file, "Type      : %s\n", Mtypes[param->type]);
+		(void)fprintf(param_file, "Units     : %s\n", param->units);
+		if (param->format)
+			(void)fprintf(param_file, "Format    : %s\n", param->format);
+		(void)fprintf(param_file, "Width     : %ld\n", param->column_width);
 
-       case M_FLOAT:
-          (void)fprintf (param_file, "Max       : %f\n",*(float *)(param->max));
-          (void)fprintf (param_file, "Min       : %f\n",*(float *)(param->min));
-          (void)fprintf (param_file, "Default   : %f\n",*(float *)(param->def));
-          break;
+		switch (param->type) {
+		case M_LONG:
+			/* DANGER
+		   (void)fprintf (param_file, "Max       : %ld\n", *(long *)(param->max));
+		   (void)fprintf (param_file, "Min       : %ld\n", *(long *)(param->min));
+		   (void)fprintf (param_file, "Default   : %ld\n", *(long *)(param->def));
+		   */
+			(void)fprintf(param_file, "Max       : %ld\n", *(int *)(param->max));
+			(void)fprintf(param_file, "Min       : %ld\n", *(int *)(param->min));
+			(void)fprintf(param_file, "Default   : %ld\n", *(int *)(param->def));
+			break;
 
-       case M_DOUBLE:
-          (void)fprintf (param_file, "Max       : %lf\n",*(double *)(param->max));
-          (void)fprintf (param_file, "Min       : %lf\n",*(double *)(param->min));
-          (void)fprintf (param_file, "Default   : %lf\n",*(double *)(param->def));
-          break;
-    }
+		case M_FLOAT:
+			(void)fprintf(param_file, "Max       : %f\n", *(float *)(param->max));
+			(void)fprintf(param_file, "Min       : %f\n", *(float *)(param->min));
+			(void)fprintf(param_file, "Default   : %f\n", *(float *)(param->def));
+			break;
 
-    if (param->bound_status == M_BOUNDED) {
-      (void)fprintf(param_file, "Bounded   : %s\n", (param->bound_dimen)->name);
-    }
+		case M_DOUBLE:
+			(void)fprintf(param_file, "Max       : %lf\n", *(double *)(param->max));
+			(void)fprintf(param_file, "Min       : %lf\n", *(double *)(param->min));
+			(void)fprintf(param_file, "Default   : %lf\n", *(double *)(param->def));
+			break;
+		}
 
-/*  DANGER commented out for data dictionary print out */
-/*
-    (void)fprintf(param_file, "Value(s):\n");
+		if (param->bound_status == M_BOUNDED) {
+			(void)fprintf(param_file, "Bounded   : %s\n", (param->bound_dimen)->name);
+		}
 
-    if (param->ndimen >= 3) {
+		/*  DANGER commented out for data dictionary print out */
+		/*
+			(void)fprintf(param_file, "Value(s):\n");
 
-      for (j = 0; j < param->dimen[2]->value; j++) {
+			if (param->ndimen >= 3) {
 
-	(void)fprintf(param_file, "[%ld]\n", j + 1);
+			for (j = 0; j < param->dimen[2]->value; j++) {
 
-	nk = param->dimen[1]->value;
+			(void)fprintf(param_file, "[%ld]\n", j + 1);
 
-	for (k = 0; k < nk; k++) {
+			nk = param->dimen[1]->value;
 
-	  (void)fprintf(param_file, "%5ld:", k + 1);
+			for (k = 0; k < nk; k++) {
 
-	  nl = param->dimen[0]->value;
+			(void)fprintf(param_file, "%5ld:", k + 1);
 
-	  for (l = 0; l < nl; l++) {
+			nl = param->dimen[0]->value;
 
-	    print_param(param_file, param, l, nl, k, nk, j);
+			for (l = 0; l < nl; l++) {
 
-	  }
+			print_param(param_file, param, l, nl, k, nk, j);
 
-	  (void)fprintf(param_file, "\n");
+			}
 
+			(void)fprintf(param_file, "\n");
+
+			}
+
+			}
+
+			} else if (param->ndimen == 2) {
+
+			nk = param->dimen[1]->value;
+
+			for (k = 0; k < nk; k++) {
+
+			(void)fprintf(param_file, "%5ld:", k + 1);
+
+			nl = param->dimen[0]->value;
+
+			for (l = 0; l < nl; l++) {
+
+			print_param(param_file, param, l, nl, k,0,0);
+
+			}
+
+			(void)fprintf(param_file, "\n");
+
+			}
+
+			} else {
+
+			nl = param->dimen[0]->value;
+
+			for (l = 0; l < nl; l++) {
+
+			print_param(param_file, param, l,0,0,0,0);
+
+			}
+
+			(void)fprintf(param_file, "\n");
+
+			}
+			*/
+		/*  end DANGER */
 	}
-
-      }
-
-    } else if (param->ndimen == 2) {
-
-      nk = param->dimen[1]->value;
-
-      for (k = 0; k < nk; k++) {
-
-	(void)fprintf(param_file, "%5ld:", k + 1);
-
-	nl = param->dimen[0]->value;
-
-	for (l = 0; l < nl; l++) {
-
-	  print_param(param_file, param, l, nl, k,0,0);
-
-	}
-
-	(void)fprintf(param_file, "\n");
-
-      }
-
-    } else {
-
-      nl = param->dimen[0]->value;
-
-      for (l = 0; l < nl; l++) {
-
-	print_param(param_file, param, l,0,0,0,0);
-
-      }
-
-      (void)fprintf(param_file, "\n");
-
-    }
-*/
-/*  end DANGER */
-
   } /* i */
 
   fclose(param_file);

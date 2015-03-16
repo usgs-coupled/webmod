@@ -41,7 +41,7 @@ void alloc_space (void) {
    * default dimension "one"
    */
 
-  decldim ("one", 1, 1, "Default dimension with value 1");
+  decldim ("one", 1, 1, "Dimension of scalar parameters and variables");
 
   /*
    * space for the public variable pointer array

@@ -33,8 +33,11 @@ typedef struct {
   char *module;
   char *name;
   long ndimen;
+  long pf_ndimen;
   struct dimen_t **dimen;
+  char **pf_dimNames;
   long size;
+  long pf_size;
   long type;
   long bound_status;
   struct dimen_t *bound_dimen;
@@ -47,7 +50,7 @@ typedef struct {
   char *units;
   char *format;
   long column_width;
-  char **value_desc;
+  //char **value_desc;
   char *value_string;
   char *min_string;
   char *max_string;

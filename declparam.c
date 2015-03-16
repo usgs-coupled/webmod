@@ -293,6 +293,11 @@ long declparam (char *module, char *name, char *dimen, char *type, char *value,
 /*
 * determine dimensions
 */
+	if (dimen == NULL) { // If dimen is NULL then this is a mapping parameter declared by read_params and not any module.  Most of the information is unknown so return.
+		sort_params();
+		return(0);
+	}
+
 	tmpdimen = strdup (dimen);
 	token = strtok (tmpdimen, ",");
 
@@ -387,9 +392,9 @@ long declparam (char *module, char *name, char *dimen, char *type, char *value,
 /*
 **	Set up the pointers to the description strings.
 */
-	param->value_desc = (char **)umalloc (param->size * sizeof (char *));
-	for (i = 0; i < param->size; i++)
-		param->value_desc[i] = NULL;
+//	param->value_desc = (char **)umalloc (param->size * sizeof (char *));
+//	for (i = 0; i < param->size; i++)
+//		param->value_desc[i] = NULL;
 
 	sort_params();
 	return(0);
