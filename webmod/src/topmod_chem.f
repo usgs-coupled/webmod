@@ -599,12 +599,12 @@ c
 
       ALLOCATE (qdf_local(nac,Nmru))
       if(declvar('topc', 'qdf_local', 'nac,nmru', nac*nmru,
-     $ 'real','shallow preferential flow from the unsaturated '//
+     $ 'real','Local direct flow from the unsaturated '//
      $ 'zone', 'meters', qdf_local).ne.0) return
 
       ALLOCATE (z_wt_local(nac,Nmru))
       if(declvar('topc', 'z_wt_local', 'nac,nmru', nac*nmru,
-     $ 'real','local water table height above land surface for '//
+     $ 'real','Local water table height above land surface for '//
      $ 'each TTI bin',
      + 'meters',
      + z_wt_local).ne.0) return
@@ -923,7 +923,7 @@ c$$$     +  'meters',qpref).ne.0) return
 
       ALLOCATE (QUZ(Nmru))
       if(declvar('topc', 'quz', 'nmru', nmru, 'real', 
-     + 'Predicted flow from unsaturated zone to saturated zone',
+     + 'Recharge from unsaturated zone to saturated zone',
      + 'meters',QUZ).ne.0) return
 
       ALLOCATE (REX(Nmru))
@@ -2016,21 +2016,23 @@ c
       integer function topmrun()
 
       USE WEBMOD_TOPMOD
-      USE WEBMOD_IO, only: topout
-      
+      USE WEBMOD_IO, only: topout, debug
+      USE WEBMOD_OBSHYD, ONLY: datetime 
+      USE WEBMOD_PHREEQ_MMS, ONLY: xdebug_start, xdebug_stop
       implicit none
 
 C***  local variables
 
       real ACF, UZ, EA, OF, DF
       real RINT, EP
+      real qv2suz, p2rz, pr2rz_ex
       real sccumf,schf, scdth, scszm, scxk0, sctp
-      real SUMRZ, SUMUZ, sd_temp
-      integer is, j, ik
+      real SUMRZ, SUMUZ, sd_temp, sd_start_debug
+      integer i, is, j, ik
       integer IA, IB, nstep
       integer scirof
       integer endper
-      logical end_run, end_yr, end_mo, end_dy, end_storm
+      logical end_run, end_yr, end_mo, end_dy, end_storm, testuz
 
       topmrun = 1
 
@@ -2234,8 +2236,8 @@ c Since snow_evap is a parameter, the total ET could exceed PET
 
 
       P= (snowmelt(is) + psoilmru(is)) * .0254
-      infil(is) = p
-      SUMP(is) = SUMP(is) + P      
+      surfdep(is) = p
+      SUMP(is) = SUMP(is) + P
 C
 C  SKIP INFILTRATION EXCESS CALCULATIONS IF INFEX = 0
       IF(INFEX.EQ.1) THEN
@@ -2300,16 +2302,23 @@ c$$$             P= P - REX(is)
             ENDIF
  25      CONTINUE
          P = P-REX(is)
-      ENDIF
+            ENDIF
 C****************************************************************
 C
 C P IS RAINFALL AVAILABLE FOR INFILTRATION AFTER SURFACE CONTROL
 C   CALCULATION
 c
-c   Also remove from P the amount of water that bypasses both the
-c   root zone and the unsaturated zone storage, qvpref - RMTW
+c   Discretize potential recharge into surface deposition, p2rz,
+c   water that bypasses the root zone, qv2suz, and water that
+c   bypasses the entire unsaturated zone storage, qvpref. qvpref
+c   makes it to the saturated zone indpendent of SD for TTI bins- RMTW
 c
 c      qvpref(is) = p * pmac_sat(is)
+c Rain, irrigation, and melt that reached the root zone  
+      p2rz = p * (1-pmacro(is))
+c Infiltration that bypasses the root zone
+      qv2suz = p * (1-pmac_sat(is))*pmacro(is)
+c Infiltration that bypasses both the root zone and the UZ.
       qvpref(is) = p * pmac_sat(is)*pmacro(is)
       p = p - qvpref(is)
 C
@@ -2326,6 +2335,7 @@ c
       UZ=0.
       EX(IA)=0.
       srzwet(ia,is)=0
+      testuz=.false.
       if(acf.ne.0.0) then
          last_z_wt_local(ia,is)=z_wt_local(ia,is)
          last_uz_dep(ia,is) = uz_depth(ia,is)
@@ -2362,6 +2372,14 @@ c$$$     $        (s_root_depth(is)+z_wt_local(ia,is))*s_theta_fc(is)
 c$$$      end if
 c
 c
+      sd_start_debug = SD(IA,is)
+      IF(SUZ(ia,is).GE.SD(ia,is))THEN
+        UZ = SUZ(ia,is)
+        SD(ia,is) = SD(ia,is) - SUZ(ia,is)
+        SUZ(ia,is) = 0.
+        testuz = .true.
+      ENDIF
+      
       IF(SD(IA,is).LT.0.) THEN
         if(abs(sd(ia,is)).ge.srz(ia,is)) then
            srzwet(ia,is) = srz(ia,is)
@@ -2381,17 +2399,19 @@ c         endif
 C
 C  ROOT ZONE CALCULATIONS
 c      SRZ(IA,is) = SRZ(IA,is) - (1.0-pmacro(is))*(P+qvpref(is))
-      SRZ(IA,is) = SRZ(IA,is) - (1.0-pmacro(is))*(P+qvpref(is))
+      SRZ(IA,is) = SRZ(IA,is) - p2rz
       IF(SRZ(IA,is).LT.0.)THEN
+! track water in excess of field capacity in case SUZ is larger than SD
+! after calc of SD above
         SUZ(IA,is) = SUZ(IA,is) - SRZ(IA,is)
         SRZ(IA,is) = 0.
       ENDIF
-c      suz(ia,is) = suz(ia,is)+ (pmacro(is)-pmac_sat(is))*(P+qvpref(is))
-      suz(ia,is) = suz(ia,is)+ (pmacro(is)*(1.0-pmac_sat(is))*
-     +             (P+qvpref(is)))
+c      suz(ia,is) = suz(ia,is)+ (pmacro(is)*(1.0-pmac_sat(is))*
+c     +             (P+qvpref(is))) 
+      suz(ia,is) = suz(ia,is)+ qv2suz  ! add additional bypass
 C
 C  UZ CALCULATIONS
-      IF(SUZ(IA,is).GT.SD(IA,is))THEN
+      IF(SUZ(IA,is).GT.SD(IA,is))THEN ! only on days of rain after first SUZ>SD conditional
          EX(IA) = SUZ(IA,is) - SD(IA,is)
          SUZ(IA,is)=SD(IA,is)
          QOF(is)=QOF(is)+EX(IA)*acf
@@ -2406,13 +2426,21 @@ c
      
 C
 C  CALCULATE DRAINAGE FROM SUZ
-      IF(SD(IA,is).GT.0.)THEN
-         UZ=SUZ(IA,is)*DT/(SD(IA,is)*TD(is))
-         IF(UZ.GT.SUZ(IA,is))UZ=SUZ(IA,is)
+      IF(SUZ(IA,is).GT.0.)THEN
+         IF(SD(IA,is).GT.0.)THEN
+           UZ=SUZ(IA,is)*DT/(SD(IA,is)*TD(is))
+         ELSE
+           UZ = SUZ(IA,is)
+         ENDIF
+         IF(UZ.GE.SUZ(IA,is))UZ=SUZ(IA,is)
          SUZ(IA,is)=SUZ(IA,is)-UZ
          IF(SUZ(IA,is).LT.0.0000001)SUZ(IA,is)=0.
-         qdf(is)=qdf(is)+qdffrac(is)*UZ*ACF
-         QUZ(is)=QUZ(is)+(1-qdffrac(is))*UZ*ACF
+!         qdf(is)=qdf(is)+qdffrac(is)*UZ*ACF
+!         QUZ(is)=QUZ(is)+(1-qdffrac(is))*UZ*ACF
+         if(testuz) then 
+             write(debug%lun,'(A)')'double recharge. STOPPED'
+             stop
+         endif
       ENDIF
 c
 c
@@ -2420,7 +2448,9 @@ c
 c Track local recharge flux and qdf for weights in webmod_res.f
 c
       qdf_local(ia,is) = uz*qdffrac(is)
+      qdf(is)=qdf(is)+qdffrac(is)*UZ*ACF
       quz_local(ia,is) = uz*(1-qdffrac(is))
+      QUZ(is)=QUZ(is)+(1-qdffrac(is))*UZ*ACF
 C
 C***************************************************************
 C  CALCULATE EVAPOTRANSPIRATION FROM ROOT ZONE DEFICIT
@@ -2451,6 +2481,18 @@ c
 
       SRZ(IA,is)=SRZ(IA,is)+EA
       sae_local(ia,is) = EA
+! debug
+      if(nstep.eq.1.and.ia.eq.3) write(debug%lun,'(A)')
+     & 'nstep   yr   mo   dy   ia'//
+     & '     SurfDep           P    last_suz         suz    last_srz'//
+     & '         srz     uzinfil       infil      qv2suz       pr2sz'//
+     & '          ex      qvpref         qof         rex      UZ_out'//
+     & '    SD_Start        Evap'
+      if(nstep.ge.xdebug_start.and.nstep.le.xdebug_stop)
+     $   write(debug%lun,1500)nstep,(datetime(i),i=1,3),ia,surfdep(is),
+     &  p,last_suz(ia,is),suz(ia,is), last_srz(ia,is), srz(ia,is), 
+     &  uz_infil(ia,is),surfdep(is)-qof(is)-qvpref(is),qv2suz,p2rz,
+     &  ex(IA),qvpref(is), qof(is),REX(IS),UZ, sd_start_debug, ea
 
 c$$$      IF(EP.GT.0.)THEN
 c$$$        EA=EP*(1 - SRZ(IA,is)/SRMAX(is))
@@ -2525,15 +2567,22 @@ C  END OF transformed A/TANB LOOP
  30   CONTINUE
 C We have eliminated exfiltration to return to original TOPMODEL with only root zone wetting from Sat zone
 C
+! Debug
+      if(nstep.ge.xdebug_start.and.nstep.le.xdebug_stop)
+     $   write(debug%lun,1500)nstep,(datetime(i),i=1,3),ia,surfdep(is),
+     &  p,last_suz(ia,is),suz_sc(is), last_srz(ia,is), srz_sc(is), 
+     &  uz_infil(ia,is),surfdep(is)-qof(is)-qvpref(is),qv2suz,p2rz,
+     &  ex(IA),qvpref(is), qof(is),REX(IS),QUZ(is)+QDF(is),
+     &  sbar(is), sae(is)
+
 C  ADD INFILTRATION EXCESS
       QOFS(is)=QOF(is)
       QOF(is)=QOF(is)+REX(is)
 c
 c Compute surface deposition and total infiltration for mru and basin variables
 c
-      surfdep(is) = infil(is)
-      infil(is) = infil(is) - qof(is)
-c      qdf(is)=qdffrac(is)*infil(is)
+c      surfdep(is) = infil(is)
+      infil(is) = surfdep(is) - qof(is) - qvpref(is)
 c
 c Variable infilitration excess areas now. Independent variables
 c afx(is) and afxmax(is) will track area of ponded water
@@ -2943,7 +2992,7 @@ c      F2=F2 + ABS(qbasincfs - QOBS(qobsta))
 c      NTSTEP = NTSTEP + 1
 
       topmrun = 0
-
+1500  format(5I5,25e12.4)
       return
       end
 

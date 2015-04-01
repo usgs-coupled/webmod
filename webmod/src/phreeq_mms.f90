@@ -1083,7 +1083,7 @@
 
       allocate(ch_outlet_permil(nsolute))
       if(declvar('phreeqmms', 'ch_outlet_permil', 'nsolute', nsolute,&
-           'double','Concentration of solute discharged at outlet',&
+           'double','Delta of isotope discharged at outlet',&
            'permil', ch_outlet_permil).ne.0) return
 !
 ! These variables track the comnposite storage and fluxes of solutes
@@ -1306,12 +1306,12 @@
 
       allocate(ch_basin_permil_in(nsolute))
       if(declvar('phreeqmms', 'ch_basin_permil_in', 'nsolute', nsolute,&
-           'double','Concentration of solute entering the basin',&
+           'double','Delta of isotope entering the basin',&
            'permil', ch_basin_permil_in).ne.0) return
 
       allocate(ch_basin_permil_out(nsolute))
       if(declvar('phreeqmms', 'ch_basin_permil_out', 'nsolute', nsolute,&
-           'double','Concentration of solute leaving the basin',&
+           'double','Delta of isotope leaving the basin',&
            'permil', ch_basin_permil_out).ne.0) return
 
       allocate(ch_basin_permil_ET(nsolute))
@@ -1321,14 +1321,14 @@
 
       allocate(ch_basin_permil_final(nsolute))
       if(declvar('phreeqmms', 'ch_basin_permil_final', 'nsolute', nsolute,&
-           'double','Concentration of solute in basin at end of day',&
+           'double','Delta of isotope in basin at end of day',&
            'permil', ch_basin_permil_final).ne.0) return
 
       allocate(ch_basin_ElemFrac(nsolute))
       if(declvar('phreeqmms', 'ch_basin_ElemFrac', 'nsolute', nsolute,&
            'double','Fraction of elemental production or consumption'//&
            ' in the basin that is accounted for by the solute of interest',&
-           'decimal', ch_basin_ElemFrac).ne.0) return
+           'fraction', ch_basin_ElemFrac).ne.0) return
 
 ! Composite of all stream reservoirs
 !
@@ -1559,7 +1559,7 @@
       if(declvar('phreeqmms', 'ch_hyd_ElemFrac', 'nsolute', nsolute,&
            'double','Fraction of elemental production or consumption'//&
            ' in the stream that is accounted for by the solute of interest',&
-           'decimal', ch_hyd_ElemFrac).ne.0) return
+           'fraction', ch_hyd_ElemFrac).ne.0) return
 
 !
 ! Composite of MRU basin reservoirs
@@ -1806,7 +1806,7 @@
       if(declvar('phreeqmms', 'ch_mru_ElemFrac', 'nmru,nsolute', nmru*nsolute,&
            'double','Fraction of elemental production or consumption'//&
            ' in the MRU that is accounted for by the solute of interest',&
-           'decimal', ch_mru_ElemFrac).ne.0) return
+           'fraction', ch_mru_ElemFrac).ne.0) return
       
 !!
 ! Composite of all unsaturated zone reservoirs
@@ -2053,7 +2053,7 @@
       if(declvar('phreeqmms', 'ch_uzgen_ElemFrac', 'nmru,nsolute', nmru*nsolute,&
            'double','Fraction of elemental production or consumption in the composite '//&
            'unsaturated zone that is accounted for by the solute of interest',&
-           'decimal', ch_uzgen_ElemFrac).ne.0) return
+           'fraction', ch_uzgen_ElemFrac).ne.0) return
       
 !!
 ! Composite of riparian unsaturated zone reservoirs
@@ -2300,7 +2300,7 @@
       if(declvar('phreeqmms', 'ch_uzrip_ElemFrac', 'nmru,nsolute', nmru*nsolute,&
            'double','Fraction of elemental production or consumption in the composite '//&
            'riparian unsaturated zone that is accounted for by the solute of interest',&
-           'decimal', ch_uzrip_ElemFrac).ne.0) return
+           'fraction', ch_uzrip_ElemFrac).ne.0) return
             
 !!
 ! Composite of upland unsaturated zone reservoirs
@@ -2547,7 +2547,7 @@
       if(declvar('phreeqmms', 'ch_uzup_ElemFrac', 'nmru,nsolute', nmru*nsolute,&
            'double','Fraction of elemental production or consumption in the composite '//&
            'upland unsaturated zone that is accounted for by the solute of interest',&
-           'decimal', ch_uzup_ElemFrac).ne.0) return
+           'fraction', ch_uzup_ElemFrac).ne.0) return
 !
 ! Flag that user has configured incongruous melting of snowpack
 !
@@ -2820,9 +2820,9 @@
       allocate(solnset_table(nmru_res,nchem_sets))
       if(declparam('phreeqmms','solnset_table', 'nmru_res,nchem_sets',&
          'integer', '1', '1', '100',&
-         'Solution sets available for initializing mru reservoir '//&
+         'Sets of solutions available for initializing mru reservoir '//&
          'compositions',&
-         'Solution sets for initializing mru reservoir compositions'//&
+         'Sets of solutions for initializing mru reservoir compositions'//&
          'The solution numbers correspond to those read '//&
          'from the phreeq input file, *.pqi.',&
          'none') .ne.0) return
@@ -3091,10 +3091,8 @@
       allocate(c_stindx(nchemvar))
       if(declparam('phreeqmms','c_stindx', 'nchemvar', 'integer',&
          '1', '0', '99',&
-         'Specific topographic index for ch_var, 0 for average '//&
-         'hillslope or riparian',&
-         'Specific topographic index for ch_var, 0 for average '//&
-         'hillslope or riparian',&
+         'Specific TTI bin when c_res=5',&
+         'Specific TTI bin when c_res=5',&
          'none') .ne.0) return
 
       allocate(c_hyd_indx(nchemvar))

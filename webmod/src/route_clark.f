@@ -270,9 +270,9 @@ c
       ALLOCATE (ach(ntopchan,nchan))
       if(declparam('routec', 'ach', 'ntopchan,nchan', 'real',
      +   '1', '0', '1',
-     +   'Decimal percent of MRU areas draining to channel between '//
+     +   'Fraction of MRU area draining to channel between '//
      +   'distance, d, and subcatchment outlet (0->1).',
-     +   'Decimal percent of MRU areas draining to channel between '//
+     +   'Fraction of MRU area draining to channel between '//
      +   'distance, d, and subcatchment outlet (0->1).',
      +   'none').ne.0) return
      
