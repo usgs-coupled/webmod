@@ -64,7 +64,7 @@ c internal or private variables
 ! sol_name is the name of each of nsolutes. They must match one of those
 ! listed in the phreeq.lut file
 !
-      character*12, save, allocatable :: sol_name(:)
+      character(len=12), save, allocatable :: sol_name(:)
 !
 !  for each of nolutes sol_id describes the row number in phq_lut,
 !  sol_id(i)%phq, the phreeq tally table created for each mix,
@@ -88,7 +88,7 @@ c interface for unit_ID
 c
       INTERFACE 
          integer function unit_id(STRING, unit_lut)
-           CHARACTER*12, INTENT(IN) :: STRING, unit_lut(:)
+           CHARACTER(len=12), INTENT(IN) :: STRING, unit_lut(:)
          END function unit_id
        END INTERFACE
 c
@@ -97,8 +97,8 @@ c
       INTERFACE 
          subroutine parsechemobs(buf,unit_lut, nsolute,
      &                nsolobs, validobs, tph)
-           CHARACTER*1000, INTENT(IN) :: buf
-           CHARACTER*12, INTENT(IN) :: unit_lut(:)
+           CHARACTER(len=1000), INTENT(IN) :: buf
+           CHARACTER(len=12), INTENT(IN) :: unit_lut(:)
            INTEGER, INTENT(IN) :: nsolute
            INTEGER, INTENT(OUT) :: nsolobs
            INTEGER, INTENT(OUT) :: validobs(:)
@@ -173,11 +173,11 @@ c
       integer function obs_chem(arg)
 ! Arguments
       CHARACTER(LEN=*), INTENT(IN) :: Arg
-      CHARACTER*256 SVN_ID
+      CHARACTER(len=256) SVN_ID
 c
 ! Functions
       INTEGER, EXTERNAL :: obsc_decl, obsc_init, obsc_run, obsc_clean
-      character*12, external :: parse
+      character(len=12), external :: parse
 c
       SVN_ID = 
      $     '$Id: obs_chem.f 35 2010-03-30 17:34:40Z rmwebb $ '
@@ -386,13 +386,13 @@ C      intrinsic getenv
       logical filflg,tph
       integer, external :: phreeq_id
 c  internal or private variables
-      character*12 solname
-      character*12, external :: parse
+      character(len=12) solname
+      character(len=12), external :: parse
       integer i, j, ret, io
       integer, external :: length
-      character*80 test
-      character*135 data_path, phreeq_lut_file, ptxt
-      character*1000 buf
+      character(len=80) test
+      character(len=135) data_path, phreeq_lut_file, ptxt
+      character(len=1000) buf
 
       obsc_init = 1
 
@@ -886,11 +886,11 @@ c
 c functions
 c
       integer, external :: length, phreeq_id
-      character*12, external :: parse
+      character(len=12), external :: parse
 c variables
-      character*1000 buf, rembuf
-      character*12 elem(MAXSOLOBS), elem_units(MAXSOLOBS)
-      character*12 unit_lut(:), tempc, ph
+      character(len=1000) buf, rembuf
+      character(len=12) elem(MAXSOLOBS), elem_units(MAXSOLOBS)
+      character(len=12) unit_lut(:), tempc, ph
 !      character*12 solname, sol_name(MAXSOLUTE)
 !      integer obs_sol_lut(:,:)
 !      integer obs_sol_lut(MAXSOLUTE,2), sol_id(MAXSOLUTE)
@@ -992,7 +992,7 @@ c
       integer function phreeq_id(STRING)
       USE WEBMOD_OBSCHEM, ONLY: phq_lut, nphq_lut
       include 'fmodules.inc'
-      CHARACTER*12 STRING 
+      CHARACTER(len=12) STRING 
 !      character*12 sol_lut(MAXSOLUTE,2)
       integer i, len1, len2
       integer, external :: length
@@ -1018,8 +1018,8 @@ c
 c Lookup the unit ID
 c
       integer function unit_id(STRING, unit_lut)
-      CHARACTER*12 STRING 
-      character*12 unit_lut(:)
+      CHARACTER(len=12) STRING 
+      character(len=12) unit_lut(:)
       integer i, len1, len2
       integer, external :: length
       unit_id = 0
@@ -1042,8 +1042,8 @@ c Function to return the length of the string using the standard
 c intrinsic FORTRAN LEN function
 c
       INTEGER FUNCTION LENGTH(STRING)
-      CHARACTER*(*) STRING 
-      character*1 c
+      CHARACTER(len=*) STRING 
+      character(len=1) c
       INTEGER I
       DO 15, I = LEN(STRING), 1, -1
          c=string(i:i)
@@ -1056,9 +1056,9 @@ c
 c
 c Function to parse the first word of a delimited string (before space or paren for elemental root)
 c
-      character*12 FUNCTION PARSE(STRING, DEL)
-      CHARACTER*(*) STRING
-      CHARACTER*(*) DEL
+      character(len=12) FUNCTION PARSE(STRING, DEL)
+      CHARACTER(len=*) STRING
+      CHARACTER(len=*) DEL
       INTEGER I
       DO 15, I = 2, LEN(STRING), 1
          IF(STRING(I:I) .EQ. DEL) GO TO 16 

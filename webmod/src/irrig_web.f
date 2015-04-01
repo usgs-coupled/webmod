@@ -609,8 +609,8 @@ c
       integer function irrig_web(arg)
 
       integer irrdecl, irrinit, irrrun
-      character*(*) arg
-      CHARACTER*256 SVN_ID
+      character(len=*) arg
+      CHARACTER(len=256) SVN_ID
       save SVN_ID
 
       SVN_ID = 

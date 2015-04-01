@@ -313,7 +313,7 @@ c
       include 'fmodules.inc'
 
       character(LEN=*), INTENT(IN) :: arg
-      CHARACTER*256 SVN_ID
+      CHARACTER(LEN=256) SVN_ID
 
 ! Functions
       INTEGER, EXTERNAL :: topmdecl,topminit,topmrun

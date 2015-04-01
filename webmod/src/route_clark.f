@@ -101,8 +101,8 @@ c
 
       integer function route_clark(arg)
 
-      character*(*) arg
-      CHARACTER*256 SVN_ID
+      character(len=*) arg
+      CHARACTER(len=256) SVN_ID
       integer routecdecl,routecinit, routecrun
 
       SVN_ID = 

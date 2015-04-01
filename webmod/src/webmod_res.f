@@ -403,7 +403,7 @@ c
       !TYPE(outfiles),save, allocatable :: vf_imperv(:)
 
 !
-      character*3000, save :: out_dir, hdr, filename, mruid, nacid
+      character(3000), save :: out_dir, hdr, filename, mruid, nacid
       integer :: tmplun, path_len, j
 
       END MODULE WEBMOD_RESMOD
@@ -416,7 +416,7 @@ c
       integer function webmod_res(arg)
 
       CHARACTER(LEN=*), INTENT(IN) :: Arg
-      CHARACTER*256 SVN_ID
+      CHARACTER(LEN=256) SVN_ID
 
       integer, external :: webrdecl,webrinit, webrrun
 
@@ -1266,6 +1266,7 @@ c
       integer is, ia, ih, filelen
       real acf
       logical v_alloc
+      integer i
 
       webrinit = 1
 

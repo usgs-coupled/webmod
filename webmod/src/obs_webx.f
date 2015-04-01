@@ -290,8 +290,8 @@ c
 
       include 'fmodules.inc'
 
-      character*(*) arg
-      CHARACTER*256 SVN_ID
+      character(len=*) arg
+      CHARACTER(len=256) SVN_ID
       integer retval, obsxdecl, obsxinit, obsxrun
       integer route_on, form_data(MAXFORM)
       integer temp_units,ntemp

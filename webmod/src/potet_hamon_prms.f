@@ -45,8 +45,8 @@ c
 
       integer function potet_hamon_prms(arg)
 
-      character*(*) arg
-      CHARACTER*256 SVN_ID
+      character(len=*) arg
+      CHARACTER(len=256) SVN_ID
       integer petdecl, petinit, petrun
  
       save SVN_ID

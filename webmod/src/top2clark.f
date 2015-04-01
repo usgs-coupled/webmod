@@ -271,8 +271,8 @@
 !
       integer function top2clark(arg)
 
-      character*(*) arg
-      CHARACTER*256 SVN_ID
+      character(len=*) arg
+      CHARACTER(len=256) SVN_ID
       integer top2cdecl,top2cinit, top2crun
       save SVN_ID
 

@@ -127,8 +127,8 @@ c
 
       integer function web_sum(arg)
 
-      character*(*) arg
-      CHARACTER*256 SVN_ID
+      character(*) arg
+      CHARACTER(256) SVN_ID
 
       integer sumbdecl, sumbinit, sumbrun
 
@@ -658,12 +658,12 @@ c
 
       integer ret, today(3), now(3)
 
-      character*90 datafile, paramfile
+      character(90) datafile, paramfile
 
-      character*80 buffer
-      character*120 bufferw
-      character*4000 bufferd
-      character*4000 buffer_txt
+      character(80) buffer
+      character(120) bufferw
+      character(4000) bufferd
+      character(4000) buffer_txt
  
       sumbinit = 1
 
@@ -1042,9 +1042,9 @@ c*****local variables
 
       logical end_run, end_yr, end_mo, end_dy, end_storm
 
-      character*80 buffer
-      character*120 bufferw
-      character*560 bufferd
+      character(80) buffer
+      character(120) bufferw
+      character(560) bufferd
       integer nowtime(6),year, mo, day
       integer hr, min, sec
       integer nstep

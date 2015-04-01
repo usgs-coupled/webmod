@@ -41,8 +41,8 @@ c
 
       USE WEBMOD_SOLTAB
       
-      character*(*) arg
-      CHARACTER*256 SVN_ID
+      character(len=*) arg
+      CHARACTER(len=256) SVN_ID
 
       integer stdecl, stinit
       save SVN_ID

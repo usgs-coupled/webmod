@@ -47,8 +47,8 @@ c***********************************************************************
       integer function ccsolrad_web(Arg)
 
 C Arguments
-      character*(*) Arg
-      CHARACTER*256 SVN_ID
+      character(len=*) arg
+      CHARACTER(len=256) SVN_ID
 
 C Functions
       integer csoldecl, csolinit, csolrun

@@ -91,8 +91,8 @@ c
 !     ------------
       integer function nwsmelt_topg(arg)
 
-      character*(*) arg
-      CHARACTER*256 SVN_ID
+      character(len=*) arg
+      CHARACTER(len=256) SVN_ID
 
       integer nwsmdecl, nwsminit, nwsmrun
 

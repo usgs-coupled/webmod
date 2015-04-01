@@ -54,8 +54,8 @@ c
 
       include 'fmodules.inc'
 
-      character*(*) arg
-      CHARACTER*256 SVN_ID
+      character(len=*) arg
+      CHARACTER(len=256) SVN_ID
 
       integer pptdecl, pptinit, pptrun
       save SVN_ID

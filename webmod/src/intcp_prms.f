@@ -46,8 +46,8 @@ c
 
       integer function intcp_prms(arg)
 
-      character*(*) arg
-      CHARACTER*256 SVN_ID
+      character(len=*) arg
+      CHARACTER(len=256) SVN_ID
 
       integer intdecl, intinit, intrun
 

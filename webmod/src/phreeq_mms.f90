@@ -161,15 +161,15 @@
 
 ! strings to construct custom header in pqi file      
       integer, save :: isoh1_len, isoh2_len, isogl_len, isogs_len, sol_h2_len
-      character*60, save :: isogs, isogl
-      character*256 :: aline
+      character(60), save :: isogs, isogl
+      character(256) :: aline
 
-      character*3000, save :: sol_header1, sol_header2, iso_header1,iso_header2
-      character*3000, save :: inp_dir, phreeqmms_pqi
-      character*3000, save :: cheminit_file, readline, phreeq_database
+      character(3000), save :: sol_header1, sol_header2, iso_header1,iso_header2
+      character(3000), save :: inp_dir, phreeqmms_pqi
+      character(3000), save :: cheminit_file, readline, phreeq_database
 
 ! variables, file names, and logical units for detailed geochemistry files
-      character*3000, save :: out_dir
+      character(3000), save :: out_dir
 
       TYPE :: outfiles   ! file names, shortnames, and logical unit numbers for input and output files.
          character(60) :: file   ! Output file
@@ -547,9 +547,9 @@
       double precision, allocatable ::   tally_table(:,:), mult(:)
       integer, save :: ntally_rows, ntally_cols
       integer, save, allocatable ::  n_user(:)
-      character*50, save, allocatable ::  tally_col_label(:), ent_label(:)  ! ent_label concatenates type and name
+      character(50), save, allocatable ::  tally_col_label(:), ent_label(:)  ! ent_label concatenates type and name
       integer, save, allocatable ::  tally_col_type(:)
-      character*12, save, allocatable ::  tally_row_label(:)
+      character(12), save, allocatable ::  tally_row_label(:)
       integer, save :: n_ent(11) ! n_ent is the number of tally cols for each entity: 1, soln; 2, rxn, etc
       DATA n_ent/11*0/
 !  mixing variables
@@ -676,7 +676,7 @@
       character(60) line
       integer  nstep, datetime(6),xdebug_start,xdebug_stop
       integer iphrq_mru
-      character*3000, save :: filename
+      character(3000), save :: filename
     
 
       END MODULE WEBMOD_PHREEQ_MMS
@@ -690,7 +690,7 @@
       implicit none
 ! Arguments
       CHARACTER(LEN=*), INTENT(IN) :: Arg
-      CHARACTER*256 SVN_ID
+      CHARACTER(LEN=256)           :: SVN_ID
 ! Functions
       INTEGER, EXTERNAL :: phreeqmms_decl,phreeqmms_init,&
                            phreeqmms_run, phreeqmms_clean
@@ -3317,7 +3317,7 @@
       IMPLICIT NONE
 !      INCLUDE 'IPhreeqc.f90.inc'      
       integer, external ::  length
-      character*12, external :: parse
+      character(12), external :: parse
 #ifdef IPHREEQC_NO_FORTRAN_MODULE
       interface
         function webmod_callback(x1, x2, str)
@@ -6382,11 +6382,11 @@
             if(nstep.ge.it_oh_days) then
                tempc=trxn_ohoriz_c(is)
                if(tempc.lt.0.) tempc=0.
-               WRITE (line,100),'SOLUTION_MODIFY ', solnnum(0,4,0,is,0,0,0)
+               WRITE (line,100) 'SOLUTION_MODIFY ', solnnum(0,4,0,is,0,0,0)
                iresult = AccumulateLine(id, line)
-               WRITE (line,120),'-temp ', tempc
+               WRITE (line,120) '-temp ', tempc
                iresult = AccumulateLine(id, line)
-               WRITE (line,110),'END'
+               WRITE (line,110) 'END'
                iresult = AccumulateLine(id, line)
                iresult = RunAccumulated(id)
             end if
@@ -6394,37 +6394,37 @@
                tempc=trxn_uz_c(is)
                if(tempc.lt.0.) tempc=0.
                do ij = 1,nacsc(is)
-                   WRITE (line,100),'SOLUTION_MODIFY ', solnnum(0,5,0,is,ij,0,0) ! UZ bins
+                   WRITE (line,100) 'SOLUTION_MODIFY ', solnnum(0,5,0,is,ij,0,0) ! UZ bins
                    iresult = AccumulateLine(id, line)
-                   WRITE (line,120),'-temp ', tempc
+                   WRITE (line,120) '-temp ', tempc
                    iresult = AccumulateLine(id, line)
-                   WRITE (line,110),'END'
+                   WRITE (line,110) 'END'
                    iresult = AccumulateLine(id, line)
                    iresult = RunAccumulated(id)
                end do
-               WRITE (line,100),'SOLUTION_MODIFY ', solnnum(0,7,0,is,0,0,0) ! qdffrac
+               WRITE (line,100) 'SOLUTION_MODIFY ', solnnum(0,7,0,is,0,0,0) ! qdffrac
                iresult = AccumulateLine(id, line)
-               WRITE (line,120),'-temp ', tempc
+               WRITE (line,120) '-temp ', tempc
                iresult = AccumulateLine(id, line)
-               WRITE (line,110),'END'
+               WRITE (line,110) 'END'
                iresult = AccumulateLine(id, line)
                iresult = RunAccumulated(id)
             end if
             if(nstep.ge.it_sat_days) then
                tempc=trxn_sat_c(is)
                if(tempc.lt.0.) tempc=0.
-               WRITE (line,100),'SOLUTION_MODIFY ', solnnum(0,8,0,is,0,0,0) ! Sat
+               WRITE (line,100) 'SOLUTION_MODIFY ', solnnum(0,8,0,is,0,0,0) ! Sat
                iresult = AccumulateLine(id, line)
-               WRITE (line,120),'-temp ', tempc
+               WRITE (line,120) '-temp ', tempc
                iresult = AccumulateLine(id, line)
-               WRITE (line,110),'END'
+               WRITE (line,110) 'END'
                iresult = AccumulateLine(id, line)
                iresult = RunAccumulated(id)
-               WRITE (line,100),'SOLUTION_MODIFY ', solnnum(0,9,0,is,0,0,0) ! Satpref
+               WRITE (line,100) 'SOLUTION_MODIFY ', solnnum(0,9,0,is,0,0,0) ! Satpref
                iresult = AccumulateLine(id, line)
-               WRITE (line,120),'-temp ', tempc
+               WRITE (line,120) '-temp ', tempc
                iresult = AccumulateLine(id, line)
-               WRITE (line,110),'END'
+               WRITE (line,110) 'END'
                iresult = AccumulateLine(id, line)
                iresult = RunAccumulated(id)
             end if
@@ -6649,13 +6649,13 @@
                end if
 ! Assign wet bulb temperature to precip if indicated by temperature = -999 in chemdat file or if constant composition (ppt_chem=0)
                if(c_precipT.eq.-999.or.ppt_chem.eq.0) then
-                   WRITE (line,100),'SOLUTION_MODIFY ', src(1)
+                   WRITE (line,100) 'SOLUTION_MODIFY ', src(1)
                    iresult = AccumulateLine(id, line)
                    tempc=wetbulb(kPa(is),tmax_c(is), relhum(1)*100)
                    if(tempc.lt.0.) tempc=0.
-                   WRITE (line,120),'-temp ', tempc
+                   WRITE (line,120) '-temp ', tempc
                    iresult = AccumulateLine(id, line)
-                   WRITE (line,110),'END'
+                   WRITE (line,110) 'END'
                    iresult = AccumulateLine(id, line)
                    iresult = RunAccumulated(id)
                end if
@@ -11075,7 +11075,7 @@
 ! local variables use resv in argument list to avoid changing totvol in the calling routine
       integer :: ID, iresult
       real :: tempc
-      character*256 :: aline
+      character(256) :: aline
 !
       reset_DI = 1
 !

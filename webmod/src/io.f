@@ -55,7 +55,7 @@ c     Main basin_sum routine c
 
 ! Arguments
       CHARACTER(LEN=*), INTENT(IN) :: Arg
-      CHARACTER*256 SVN_ID
+      CHARACTER(len=256) SVN_ID
       integer, EXTERNAL :: iodecl, ioinit, ioclean, iorun
       save SVN_ID
 

@@ -31,7 +31,7 @@ c
 
 ! Arguments
       CHARACTER(LEN=*), INTENT(IN) :: Arg
-      CHARACTER*256 SVN_ID
+      CHARACTER(len=256) SVN_ID
 ! Functions
       integer, external:: basdecl, basinit
       save SVN_ID

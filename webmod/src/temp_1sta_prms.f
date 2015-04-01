@@ -63,8 +63,8 @@ c
 
       integer function temp_1sta_prms(arg)
 
-      character*(*) arg
-      CHARACTER*256 SVN_ID
+      character(len=*) arg
+      CHARACTER(len=256) SVN_ID
       integer t1decl, t1init, t1run, t1clean
       save SVN_ID
 
