@@ -1374,6 +1374,7 @@ c
       logical acflag
       integer is, j
       real dtinit
+      REAL ACF
 
 C***  local variables
 

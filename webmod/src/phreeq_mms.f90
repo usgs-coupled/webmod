@@ -19,9 +19,10 @@
 ! **********************************************************************
 ! ***************** START MODULE *************
       MODULE WEBMOD_PHREEQ_MMS
+      USE IPhreeqc
       IMPLICIT NONE
       INCLUDE 'fmodules.f90.inc'
-      INCLUDE 'IPhreeqc.f90.inc'
+      !INCLUDE 'IPhreeqc.f90.inc'
       INCLUDE 'mms_phreeqc.f90.inc'
       
 !  Constants
@@ -3317,15 +3318,26 @@
 !      INCLUDE 'IPhreeqc.f90.inc'      
       integer, external ::  length
       character*12, external :: parse
-
+#ifdef IPHREEQC_NO_FORTRAN_MODULE
       interface
         function webmod_callback(x1, x2, str)
+            
             double precision webmod_callback
             double precision, intent (in) :: x1
             double precision, intent (in) :: x2
             character(*), intent (in) :: str
         end function webmod_callback
       end interface
+#else
+      interface
+        REAL(kind=C_DOUBLE) function webmod_callback(x1, x2, str, l) BIND(C, name='webmod_callback')
+            USE ISO_C_BINDING
+            REAL(kind=C_DOUBLE),    INTENT(in)        :: x1, x2
+            CHARACTER(kind=C_CHAR), INTENT(in)        :: str(*)
+            INTEGER(kind=C_INT),    INTENT(in), value :: l
+        end function webmod_callback
+      end interface
+#endif
 
       logical filflg, s_alloc, e_alloc
       real dt
@@ -6049,6 +6061,7 @@
           vmix_hill, vmix_mru, vmix_hillexp, vmix_stream, vmix_diversion, &
           vmix_chan_loss, vmix_basin, uz2sat_vol,basin_qsim_cm, &
           vmin_canopy
+      USE IPhreeqc
 !      double precision vmix_imp(nmru,nresinp), vmix_rz(MAXMNR_3D) ! for later development
       implicit none
 
@@ -10933,7 +10946,7 @@
       USE WEBMOD_RESMOD, ONLY : vmin_canopy
       USE WEBMOD_OBSCHEM, ONLY : phq_lut, n_iso, sol_id, iso_list,&
             nsolute, sol_name
-
+      USE IPhreeqc
       implicit none
       
       integer :: i, k, resindx, solns(1), iresult
@@ -10941,7 +10954,7 @@
       integer, external ::  length
       integer, external ::  phr_mix, fill_ent
 !      integer, external ::  update_chem, accumulateline, run
-      integer, external  ::  accumulateline, runaccumulated
+!      integer, external  ::  accumulateline, runaccumulated
 ! local variables use resv in argument list to avoid changing totvol in the calling routine
       double precision :: evapvol, resvol, resv, evap_frac, rh, tempevap, tot_16O, tot_H
       double precision :: log_a, eps_eq, eps_diff,ison,fracs(1)
@@ -11055,9 +11068,10 @@
       integer function reset_DI(ID,tempc)
 
       USE WEBMOD_PHREEQ_MMS, only: delta_D,delta_18O
+      USE IPhreeqc
 
       implicit none
-      integer, external  ::  accumulateline, runaccumulated
+      !integer, external  ::  accumulateline, runaccumulated
 ! local variables use resv in argument list to avoid changing totvol in the calling routine
       integer :: ID, iresult
       real :: tempc
@@ -11179,7 +11193,7 @@
 !999   stop
 !2000  format(6f12.6)
     end function wetbulb 
-    
+#ifdef IPHREEQC_NO_FORTRAN_MODULE
 double precision function webmod_callback(x1, x2, str)
     use WEBMOD_POTET, ONLY : transp_on
     use WEBMOD_PHREEQ_MMS
@@ -11205,7 +11219,43 @@ double precision function webmod_callback(x1, x2, str)
     endif
     webmod_callback = 0
     return 
-end function webmod_callback
+    end function webmod_callback
+#else
+REAL(kind=C_DOUBLE) function webmod_callback(x1, x2, str, l) BIND(C, name='webmod_callback')
+    USE ISO_C_BINDING
+    use WEBMOD_POTET, ONLY : transp_on
+    use WEBMOD_PHREEQ_MMS
+    USE WEBMOD_RESMOD, ONLY : basin_gw_sto_cm
+    implicit none
+    REAL(kind=C_DOUBLE),    INTENT(in)        :: x1, x2
+    CHARACTER(kind=C_CHAR), INTENT(in)        :: str(*)
+    INTEGER(kind=C_INT),    INTENT(in), value :: l
+    CHARACTER(100)                            :: fstr
+    
+    do i = 1, l
+        fstr(i:i) = str(i)
+    enddo
+    
+    if (fstr(1:l) .eq. "transp_on") then
+        webmod_callback = dble(transp_on(iphrq_mru))
+        return 
+    else if (fstr(1:l) .eq. "gwsto") then
+        webmod_callback = dble(basin_gw_sto_cm)
+        return
+    else if (fstr(1:l) .eq. "year") then
+        webmod_callback = dble(datetime(1))
+        return
+    else if (fstr(1:l) .eq. "month") then
+        webmod_callback = dble(datetime(2))
+        return
+    else if (fstr(1:l) .eq. "day") then
+        webmod_callback = dble(datetime(3))
+        return
+    endif
+    webmod_callback = 0
+    return 
+    end function webmod_callback
+#endif
 
 
 
