@@ -17,7 +17,7 @@
       DO 10 i=1,count
         IF (srcarray(i).GE.0.AND.targetarray(i).GE.0) THEN
 
-          WRITE (line,100),'COPY ', keyword, srcarray(i), targetarray(i)
+          WRITE (line,100) 'COPY ', keyword, srcarray(i), targetarray(i)
           phr_multicopy = AccumulateLine(id, line)
           IF (phr_multicopy.NE.0) THEN
             RETURN

@@ -92,7 +92,6 @@
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>src;IPhreeqc/src;IPhreeqc/src/phreeqcpp;IPhreeqc/src/phreeqcpp/PhreeqcKeywords;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_DEBUG;WIN32;_LIB;SWIG_SHARED_OBJ;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeaderOutputFile>.\Debug/IPhreeqcMMS.pch</PrecompiledHeaderOutputFile>

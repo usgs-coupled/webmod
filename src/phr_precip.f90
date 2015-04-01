@@ -6,7 +6,7 @@
       INTEGER       id
       INTEGER       soln_id
       INTEGER       count
-      CHARACTER*(*) aspecies(*)
+      CHARACTER(*)  aspecies(*)
       DOUBLE PRECISION        aconc(*)
       DOUBLE PRECISION        tempc
       DOUBLE PRECISION        pH
@@ -15,20 +15,20 @@
       INTEGER       i
       INTEGER       phr_precip
 
-      WRITE (line,100),'SOLUTION ', soln_id
+      WRITE (line,100) 'SOLUTION ', soln_id
       iresult = AccumulateLine(id, line)
 
-      WRITE (line,110),'-units  mol/kgw'
+      WRITE (line,110) '-units  mol/kgw'
       iresult = AccumulateLine(id, line)
 
-      WRITE (line,120),'-temp ', tempc
+      WRITE (line,120) '-temp ', tempc
       iresult = AccumulateLine(id, line)
 
-      WRITE (line,120),'-pH ', pH
+      WRITE (line,120) '-pH ', pH
       iresult = AccumulateLine(id, line)
 
       DO 10 i=1,count
-        WRITE (line,120), aspecies(i), aconc(i)
+        WRITE (line,120)  aspecies(i), aconc(i)
         iresult = AccumulateLine(id, line)
 10    CONTINUE
 

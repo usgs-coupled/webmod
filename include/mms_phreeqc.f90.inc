@@ -57,11 +57,11 @@
          INTEGER(KIND=4), intent(IN) ::       id
          INTEGER(KIND=4), intent(IN) ::       soln_id
          INTEGER(KIND=4), intent(IN) ::       count
-         CHARACTER*(*),   intent(IN) ::       aspecies(*)
-         REAL*8,          intent(IN) ::       aconc(*)
-         REAL*8,          intent(IN) ::       tempc
-         REAL*8,          intent(IN) ::       ph
-         INTEGER(KIND=4)             ::     phr_precip
+         CHARACTER(*),    intent(IN) ::       aspecies(*)
+         DOUBLE PRECISION,intent(IN) ::       aconc(*)
+         DOUBLE PRECISION,intent(IN) ::       tempc
+         DOUBLE PRECISION,intent(IN) ::       ph
+         INTEGER(KIND=4)             ::       phr_precip
         END FUNCTION phr_precip
        END INTERFACE
 
