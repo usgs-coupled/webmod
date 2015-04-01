@@ -7,8 +7,9 @@
       USE WEBMOD_IO, ONLY: nowtime
       USE WEBMOD_PHREEQ_MMS, ONLY: xdebug_start, xdebug_stop, nsolute, sel_mix 
       USE WEBMOD_OBSCHEM, ONLY : n_iso
+      USE IPhreeqc
       IMPLICIT NONE
-      INCLUDE       'IPhreeqc.f90.inc'
+      !INCLUDE       'IPhreeqc.f90.inc'
       INTEGER       id              ! 
       INTEGER       count           ! solution count
       INTEGER       solutions(*)    ! solution #'s

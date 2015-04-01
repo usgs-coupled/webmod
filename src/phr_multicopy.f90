@@ -1,7 +1,8 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION phr_multicopy(id, keyword, srcarray, targetarray, count)
+      USE IPhreeqc
       IMPLICIT NONE
-      INCLUDE       '../IPhreeqc/src/IPhreeqc.f90.inc'
+      !INCLUDE       '../IPhreeqc/src/IPhreeqc.f90.inc'
       INTEGER       id
       CHARACTER(*)  keyword
       INTEGER       srcarray(*)

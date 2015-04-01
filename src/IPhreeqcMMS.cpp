@@ -5,7 +5,7 @@
 #include "IPhreeqc.h"
 #include "Solution.h"
 
-void padfstring(char *dest, const char *src, unsigned int len);
+void padfstring(char *dest, const char *src, int *len);
 
 /*
 
@@ -247,7 +247,8 @@ int IPhreeqcMMS::CatchGetTallyColumnHeading(int column, int *type, char *string,
 
 		rvalue = this->PhreeqcPtr->get_tally_table_column_heading(column, type, cstr);
 
-		padfstring(string, cstr, string_length);
+		int strl = (int) string_length;
+		padfstring(string, cstr, &strl);
 		free(cstr);
 	}
 	catch (IPhreeqcStop)
@@ -286,8 +287,9 @@ int IPhreeqcMMS::CatchGetTallyRowHeading(int row, char *string, unsigned int str
 		}
 
 		rvalue = this->PhreeqcPtr->get_tally_table_row_heading(row, cstr);
-
-		padfstring(string, cstr, string_length);
+		
+		int strl = (int) string_length;
+		padfstring(string, cstr, &strl);
 		free(cstr);
 	}
 	catch (IPhreeqcStop)
