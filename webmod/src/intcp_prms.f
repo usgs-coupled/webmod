@@ -45,6 +45,7 @@ c     Main intcp routine
 c
 
       integer function intcp_prms(arg)
+      IMPLICIT NONE
 
       character(len=*) arg
       CHARACTER(len=256) SVN_ID
@@ -78,6 +79,7 @@ c
       integer function intdecl()
 
       USE WEBMOD_INTCP
+      IMPLICIT NONE
 
       intdecl = 1
 
@@ -261,6 +263,7 @@ c
       integer function intinit()
 
       USE WEBMOD_INTCP
+      IMPLICIT NONE
       integer i
 
       intinit = 1
@@ -313,6 +316,7 @@ c
       integer function intrun()
 
       USE WEBMOD_INTCP
+      IMPLICIT NONE
 
       integer i, nstep, mo, nowtime(6)
       real cov, stor, evcan, ta, sw, tc, air, can, bal, xmlt, z, xlos, d

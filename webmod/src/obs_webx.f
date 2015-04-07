@@ -23,9 +23,9 @@ c
      $     tsta_min_f, tsta_max_f, tsta_temp_f,
      $     solrad, swe, pan_evap, route_on, form_data,
      $     rain_day)
-
+      use WEBMOD_IRRIG, only : nform
+      implicit none
       include 'fmodules.inc'
-
       real runoff(MAXOBS)
       real precip(MAXRAIN)
       real irrig_ext(MAXIRRIG)
@@ -156,10 +156,12 @@ c     obsinit - initializes obs module
 c
 
       integer function obsxinit(temp_units, ntemp, rain_code)
+      IMPLICIT NONE
 
       include 'fmodules.inc'
 
-      integer datetime(6), temp_units, ntemp, rain_code(maxmo)
+      !integer datetime(6), temp_units, ntemp, rain_code(maxmo)
+      integer temp_units, ntemp, rain_code(maxmo)
 
       obsxinit = 1
 
@@ -193,11 +195,13 @@ c
       integer function obsxrun(route_on, form_data, tsta_min_c,
      $     tsta_max_c, tsta_temp_c, tsta_min_f, tsta_max_f,
      $     tsta_temp_f, temp_units, ntemp, rain_day, rain_code)
+      IMPLICIT NONE
 
       include 'fmodules.inc'
 
       integer i, rain_code(maxmo), rain_day
-      integer nstep, datetime(6), route_on, temp_units, ntemp
+      !integer nstep, datetime(6), route_on, temp_units, ntemp
+      integer datetime(6), route_on, temp_units, ntemp
 c$$$      integer julcalen, julsolar, julwater
       integer form_data(MAXFORM)
       real tsta_min_c(maxtemp), tsta_max_c(maxtemp)
@@ -287,6 +291,7 @@ c     main obs routine
 c
 
       integer function obs_webx(arg)
+      IMPLICIT NONE
 
       include 'fmodules.inc'
 

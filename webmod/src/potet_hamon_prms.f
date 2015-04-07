@@ -44,6 +44,7 @@ c     Main potet_hamon routine
 c
 
       integer function potet_hamon_prms(arg)
+      IMPLICIT NONE
 
       character(len=*) arg
       CHARACTER(len=256) SVN_ID
@@ -80,6 +81,7 @@ c
 
      
       USE WEBMOD_POTET
+      IMPLICIT NONE
 
       petdecl = 1
 
@@ -192,6 +194,7 @@ c
 
 
       USE WEBMOD_POTET
+      IMPLICIT NONE
 
       integer starttime(6), mo, day, i
 
@@ -263,6 +266,7 @@ c
       integer function petrun()
 
       USE WEBMOD_POTET
+      IMPLICIT NONE
 
       integer nowtime(6), mo, i, jday, day
       real dyl, vpsat, vdsat, factor

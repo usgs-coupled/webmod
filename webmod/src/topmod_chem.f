@@ -342,6 +342,7 @@ c
       integer function topmdecl()
 
       USE WEBMOD_TOPMOD
+      IMPLICIT NONE
 
 
 ! Get dimensions
@@ -1370,6 +1371,7 @@ c
 
       USE WEBMOD_TOPMOD
       USE WEBMOD_IO, ONLY : topout
+      IMPLICIT NONE
       
       logical acflag
       integer is, j
@@ -2023,13 +2025,17 @@ c
 
 C***  local variables
 
-      real ACF, UZ, EA, OF, DF
+      !real ACF, UZ, EA, OF, DF
+      real ACF, UZ, EA, DF
       real RINT, EP
-      real qv2suz, p2rz, pr2rz_ex
+      !real qv2suz, p2rz, pr2rz_ex
+      real qv2suz, p2rz
       real sccumf,schf, scdth, scszm, scxk0, sctp
       real SUMRZ, SUMUZ, sd_temp, sd_start_debug
-      integer i, is, j, ik
-      integer IA, IB, nstep
+      !integer i, is, j, ik
+      integer i, is, ik
+      !integer IA, IB, nstep
+      integer IA, nstep
       integer scirof
       integer endper
       logical end_run, end_yr, end_mo, end_dy, end_storm, testuz
@@ -3094,6 +3100,7 @@ C
      +                  const,tp)
 C
 c      INCLUDE TMCOMMON.FOR
+      IMPLICIT NONE
       DOUBLE PRECISION CONST,SUM,FC,FUNC,CD,SZF,XKF
 
 C*************************************************************

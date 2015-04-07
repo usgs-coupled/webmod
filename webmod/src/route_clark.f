@@ -100,6 +100,7 @@ c     Main route_clark routine
 c
 
       integer function route_clark(arg)
+      IMPLICIT NONE
 
       character(len=*) arg
       CHARACTER(len=256) SVN_ID
@@ -130,6 +131,7 @@ c
 
 
       USE WEBMOD_ROUTE
+      IMPLICIT NONE
 
       Routecdecl = 1
 
@@ -418,6 +420,7 @@ c
 
       USE WEBMOD_ROUTE
       USE WEBMOD_IO, ONLY : topout
+      IMPLICIT NONE
 C***  local variables
       integer is, NCH, i, j, IN, NR, IR, ND, TIME
       integer nrtdelay
@@ -628,14 +631,16 @@ c  Initialise discharge array and store the maximum value of nrtdelay
       ND = ndsc(is)
       NR = nrsc(is)
       DO 29 I=1,ND
-   29 Q(I,is) = Q(I,is) + Q0DT*chan_area_frac(is)
+      Q(I,is) = Q(I,is) + Q0DT*chan_area_frac(is)
+   29 continue
       DO 30 I=1,NR
 c$$$      SUM=SUM+AR(I,is)     ! I think this needs to be below
 c                                the Q() assignment, otherwise the
 c                                farthest segment has no water
       IN = ND + I 
       Q(IN,is)=Q(IN,is)+Q0DT*(chan_area_frac(is)-SUM)
-   30 SUM=SUM+AR(I,is)
+      SUM=SUM+AR(I,is)
+   30 continue
 c$$$   30 Q(IN,is)=Q(IN,is)+Q0DT*(chan_area_frac(is)-SUM)
    32 continue
 c
@@ -735,6 +740,7 @@ c
 
       USE WEBMOD_ROUTE
       USE WEBMOD_IO, ONLY : topout
+      IMPLICIT NONE
 
 C***  local variables
       integer NR, IR, ND, i, is, j, jj, k, nstep

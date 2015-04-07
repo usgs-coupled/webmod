@@ -126,6 +126,7 @@ c     Main basin_sum routine
 c
 
       integer function web_sum(arg)
+      IMPLICIT NONE
 
       character(*) arg
       CHARACTER(256) SVN_ID
@@ -162,6 +163,7 @@ c
       integer function sumbdecl()
 
       USE WEBMOD_SUM
+      IMPLICIT NONE
 
       sumbdecl = 1
 
@@ -649,6 +651,7 @@ c
       USE WEBMOD_RESMOD, ONLY : basin_sto_cm, basin_chan_sto_cm,
      $  basin_intcp_sto_cm,basin_pweqv_cm,basin_sssto_cm,
      $  basin_soil_moist_cm, basin_gw_sto_cm
+      IMPLICIT NONE
 
       integer, external :: length  ! (defined in obs_chem)
      
@@ -1032,6 +1035,7 @@ c     sumbrun - Computes summary values
      + basin_chan_div_cm, basin_chan_loss_cm, basin_qsim_cm, 
      + basin_qsim_m3s, basin_qobs_cm, basin_qobs_m3s, basin_et_cm, 
      + basin_transp_cm
+      IMPLICIT NONE
 
 
 c$$$      integer maketempC     ! Fn to convert Temps if necessary

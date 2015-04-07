@@ -64,6 +64,7 @@ c
       integer function irrdecl()
 
       USE WEBMOD_IRRIG
+      IMPLICIT NONE
 
       irrdecl = 1
 
@@ -234,6 +235,7 @@ c
       integer function irrinit()
 
       USE WEBMOD_IRRIG
+      IMPLICIT NONE
 
       irrinit = 1
 
@@ -283,6 +285,7 @@ c
       integer function irrrun()
 
       USE WEBMOD_IRRIG
+      IMPLICIT NONE
 
       integer i, jday, mo
       integer nowtime(6)
@@ -607,6 +610,7 @@ c
 c     Main irrigation routine
 c
       integer function irrig_web(arg)
+      IMPLICIT NONE
 
       integer irrdecl, irrinit, irrrun
       character(len=*) arg

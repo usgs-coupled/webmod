@@ -44,6 +44,7 @@ c
      +                           mru_rain, mru_snow, pptmix,
      +                           prmx, tmax_rain_sta, tmin_rain_sta,
      +                           is_rain_day,solrad_tmax)
+      IMPLICIT NONE
 
       include 'fmodules.inc'
 
@@ -543,6 +544,7 @@ C23456789112345678921234567893123456789412345678951234567896123456789712
      +                           temp_nuse, rain_nuse, psta_freq_nuse,
      + solrad_elev, basin_centroid_x, basin_centroid_y, adjust_rain,
      + nform)
+      IMPLICIT NONE
 
       include 'fmodules.inc'
 
@@ -886,6 +888,7 @@ C23456789112345678921234567893123456789412345678951234567896123456789712
      +                          is_rain_day, psta_freq_nuse,
      + solrad_elev, basin_centroid_x, basin_centroid_y, solrad_tmax,
      +                          adjust_rain, nform)
+      IMPLICIT NONE
 
       include 'fmodules.inc'
       
@@ -992,6 +995,7 @@ c     Main xyz_dist routine
 c
 
       integer function xyz_dist_web (arg)
+      IMPLICIT NONE
 
       include 'fmodules.inc'
 
@@ -1180,6 +1184,7 @@ C23456789112345678921234567893123456789412345678951234567896123456789712
      +                          nrain, rain_STAx, rain_STAy,
      +                          rain_STAelev,
      + solrad_elev, basin_centroid_x, basin_centroid_y, solrad_tmax)
+      IMPLICIT NONE
 
       include 'fmodules.inc'
       
@@ -1489,6 +1494,7 @@ C23456789112345678921234567893123456789412345678951234567896123456789712
      +                          tmax_rain_sta, tmin_rain_sta,
      +                          is_rain_day, psta_freq_nuse,
      +                          adjust_rain, nform)
+      IMPLICIT NONE
 
       include 'fmodules.inc'
       
@@ -1521,7 +1527,8 @@ C23456789112345678921234567893123456789412345678951234567896123456789712
 
 
 C Local variables
-      integer i, j, iflag, err_chk
+      !integer i, j, iflag, err_chk
+      integer i, j, err_chk
       integer nppt
       integer nsta_used
       integer form_data(MAXFORM)
@@ -1531,13 +1538,13 @@ C Local variables
       real sppt
       real sumppt, xppt
       real yppt, zppt
-      real xsumppt
+      !real xsumppt
       real x_add, x_div, y_add, y_div, z_add, z_div
 
         common /lauren/ x_add, x_div, y_add, y_div, z_add, z_div
 
 C DANGER
-      integer nowtime(6), iy, id
+      !integer nowtime(6), iy, id
 
       xyz_rain_run = 0
 

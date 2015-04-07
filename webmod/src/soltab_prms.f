@@ -40,6 +40,7 @@ c
       integer function soltab_prms(arg)
 
       USE WEBMOD_SOLTAB
+      IMPLICIT NONE
       
       character(len=*) arg
       CHARACTER(len=256) SVN_ID
@@ -73,6 +74,7 @@ c
       integer function stdecl()
 
       USE WEBMOD_SOLTAB
+      IMPLICIT NONE
 
       stdecl = 1
 !
@@ -174,6 +176,7 @@ c
       integer function stinit()
 
       USE WEBMOD_SOLTAB
+      IMPLICIT NONE
 
       integer n, jday(13), jd, is
 

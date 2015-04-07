@@ -135,6 +135,7 @@ c
       integer function basinit()
 
       USE WEBMOD_BASIN
+      implicit none
       integer i
       real totarea, diff
 

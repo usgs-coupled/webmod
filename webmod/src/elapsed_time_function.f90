@@ -1,4 +1,5 @@
 function elapsed_time(t_opt) result(e_time)
+      IMPLICIT NONE
   ! ... Purpose: calculate elapsed execution time, tenths of a second.
   ! ... Assumes that  execution time is no more than one month.
   ! ... First call sets reference time; subsequent calls return elapsed 

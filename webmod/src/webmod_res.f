@@ -414,6 +414,7 @@ c     Main webmod_res routine
 c
 
       integer function webmod_res(arg)
+      IMPLICIT NONE
 
       CHARACTER(LEN=*), INTENT(IN) :: Arg
       CHARACTER(LEN=256) SVN_ID
@@ -447,6 +448,7 @@ c
       integer function webrdecl()
       
       USE WEBMOD_RESMOD
+      IMPLICIT NONE
 
       integer check_uz_dim
 
@@ -1262,6 +1264,7 @@ c
       USE WEBMOD_TOPMOD, ONLY : riparian, s_theta_0, 
      $                          s_rock_depth, s_root_depth
       USE WEBMOD_IO, ONLY : print_vse, nf, vse_lun
+      IMPLICIT NONE
       integer, external :: length      
       integer is, ia, ih, filelen
       real acf
@@ -2006,6 +2009,7 @@ c
       USE WEBMOD_IO, only: phreeqout, print_vse
       USE WEBMOD_TOPMOD, only: z_wt_local, srzwet, riparian,
      $                         s_theta_0, s_root_depth
+      IMPLICIT NONE
 
 c variables and parameters from other modules
       double precision timestep

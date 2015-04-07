@@ -88,6 +88,7 @@ c interface for unit_ID
 c
       INTERFACE 
          integer function unit_id(STRING, unit_lut)
+           IMPLICIT NONE
            CHARACTER(len=12), INTENT(IN) :: STRING, unit_lut(:)
          END function unit_id
        END INTERFACE
@@ -171,6 +172,7 @@ c
 c     main obs_chem routine
 c
       integer function obs_chem(arg)
+      IMPLICIT NONE
 ! Arguments
       CHARACTER(LEN=*), INTENT(IN) :: Arg
       CHARACTER(len=256) SVN_ID
@@ -382,6 +384,7 @@ c$$$#if defined(_WIN32)
 c$$$      USE IFPORT
 c$$$#endif
       USE WEBMOD_OBSCHEM
+      IMPLICIT NONE
 C      intrinsic getenv
       logical filflg,tph
       integer, external :: phreeq_id
@@ -391,7 +394,8 @@ c  internal or private variables
       integer i, j, ret, io
       integer, external :: length
       character(len=80) test
-      character(len=135) data_path, phreeq_lut_file, ptxt
+      !character(len=135) data_path, phreeq_lut_file, ptxt
+      character(len=135) data_path, phreeq_lut_file
       character(len=1000) buf
 
       obsc_init = 1
@@ -526,7 +530,7 @@ C kludge line to use only one chemdat file, comment out for normal run
 c      data_path = './input/loch3.dat.chemdat'
 c end kludge
       inquire(file=data_path,exist=filflg)
-      if (filflg.and.ppt_chem) then
+      if (filflg.and.(ppt_chem.ne.0)) then
          open (15, file=data_path)
  10      read (15,1000,END=500) test
          if (test .ne. 
@@ -657,6 +661,7 @@ c
       integer function obsc_run()
 
       use WEBMOD_OBSCHEM
+      IMPLICIT NONE
 
       logical day1run
       integer datetime(6), obsc_datetime(6)
@@ -833,6 +838,7 @@ c     obs_chemclean - Close the chemout file
 c
 
       integer function obsc_clean()
+      IMPLICIT NONE
 
       include 'fmodules.inc'
 
@@ -880,6 +886,7 @@ c
      $                        nsolobs,validobs,tph)
      
       USE WEBMOD_OBSCHEM, ONLY: phq_lut, sol_id, unit_id, obs_sol_lut
+      IMPLICIT NONE
 
       include 'fmodules.inc'
 c
@@ -991,12 +998,13 @@ c Lookup the PHREEQC internal ID
 c
       integer function phreeq_id(STRING)
       USE WEBMOD_OBSCHEM, ONLY: phq_lut, nphq_lut
+      IMPLICIT NONE
       include 'fmodules.inc'
       CHARACTER(len=12) STRING 
 !      character*12 sol_lut(MAXSOLUTE,2)
       integer i, len1, len2
       integer, external :: length
-      logical test1
+      !logical test1
       phreeq_id = 0
       i = 0
       do while (phreeq_id.eq.0)
@@ -1018,6 +1026,7 @@ c
 c Lookup the unit ID
 c
       integer function unit_id(STRING, unit_lut)
+      IMPLICIT NONE
       CHARACTER(len=12) STRING 
       character(len=12) unit_lut(:)
       integer i, len1, len2
@@ -1042,6 +1051,7 @@ c Function to return the length of the string using the standard
 c intrinsic FORTRAN LEN function
 c
       INTEGER FUNCTION LENGTH(STRING)
+      IMPLICIT NONE
       CHARACTER(len=*) STRING 
       character(len=1) c
       INTEGER I
@@ -1057,6 +1067,7 @@ c
 c Function to parse the first word of a delimited string (before space or paren for elemental root)
 c
       character(len=12) FUNCTION PARSE(STRING, DEL)
+      IMPLICIT NONE
       CHARACTER(len=*) STRING
       CHARACTER(len=*) DEL
       INTEGER I

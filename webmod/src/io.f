@@ -53,6 +53,7 @@ c***********************************************************************
 c     Main basin_sum routine c
 
       integer function io(arg)
+      IMPLICIT NONE
 
 ! Arguments
       CHARACTER(LEN=*), INTENT(IN) :: Arg
@@ -82,6 +83,7 @@ c
       integer function iodecl()
 
       USE WEBMOD_IO
+      IMPLICIT NONE
 
       iodecl = 1
 
@@ -157,6 +159,7 @@ c
 !      USE IFPORT
 !#endif
       USE WEBMOD_IO
+      IMPLICIT NONE
       INTEGER, EXTERNAL ::open_res_files
       integer ret, chem_sim, nmru, nac, nhydro
       logical filflg
@@ -291,6 +294,7 @@ c
       integer function iorun()
 
       USE WEBMOD_IO
+      IMPLICIT NONE
 
       logical end_run, end_yr, end_mo, end_dy, end_storm
       integer iend_run, iend_yr, iend_mo, iend_dy, iend_storm
@@ -389,8 +393,9 @@ c
 c     ioclean
 
       integer function ioclean ()
-
       USE WEBMOD_IO
+      implicit none
+      integer i
 
       ioclean = 1
 
@@ -409,7 +414,7 @@ c     ioclean
       
       close (unit = debug%lun)  ! Debug file
       
-      if(nf) then
+      if(nf.ne.0) then
           do i = 1, nf
             close (unit = vse_lun(i))  ! Close volume, solute, and entity files.
           end do

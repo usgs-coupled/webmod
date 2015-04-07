@@ -41,6 +41,7 @@ c     main obs routine
 c
 
       integer function obs_webmod(arg)
+      IMPLICIT NONE
 
       character(len=*) arg
       CHARACTER(len=256) SVN_ID
@@ -75,6 +76,7 @@ c
       integer function obsdecl()
 
       USE WEBMOD_OBSHYD
+      IMPLICIT NONE
 
       obsdecl = 1
 
@@ -210,6 +212,7 @@ c
       integer function obsinit()
 
       USE WEBMOD_OBSHYD
+      IMPLICIT NONE
 
 c      integer datetime(6)
 
@@ -239,11 +242,12 @@ c
       integer function obsrun()
 
       USE WEBMOD_OBSHYD
+      IMPLICIT NONE
 
       integer i
 c      integer nstep, datetime(6)
-      integer nstep
-      integer julcalen, julsolar, julwater
+      !integer nstep
+      !integer julcalen, julsolar, julwater
       double precision dt
 
       obsrun = 1

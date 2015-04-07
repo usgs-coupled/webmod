@@ -90,11 +90,11 @@ c
 !     Main nwsmelt routine
 !     ------------
       integer function nwsmelt_topg(arg)
-
+      implicit none
       character(len=*) arg
       CHARACTER(len=256) SVN_ID
 
-      integer nwsmdecl, nwsminit, nwsmrun
+      integer nwsmdecl, nwsminit, nwsmrun, nwsmclean
 
       save SVN_ID
 
@@ -121,6 +121,7 @@ c
       integer function nwsmdecl()
 
       USE WEBMOD_SNOW
+      implicit none
 
       nwsmdecl = 1
 
@@ -471,6 +472,7 @@ c
       integer function nwsminit()
 
       USE WEBMOD_SNOW
+      implicit none
 
       integer n, n1, icrve, npts
       real r, fn, ai
@@ -634,8 +636,10 @@ c     &   .ne.0) return
 
       USE WEBMOD_SNOW
       USE WEBMOD_OBSHYD, ONLY : datetime
+      implicit none
 
-      integer I1, I2, I, jday, whichcurve, im
+      !integer I1, I2, I, jday, whichcurve, im
+      integer I1, I2, I, jday, whichcurve
       integer itpx,ndt, nstep
       logical nosnow
 c
@@ -804,7 +808,8 @@ c                                            so no conversion to celsius needed
       AESC   = AESCI(I1)          ! Areal extent of snowcover at the end of the day  ! Added by RMTW
       STORAGE  = STOREI(I1)  *25.4  ! the ROUTED liquid water in storage in pack for mru
       DO 75 I=1,nexlag
-   75 LAGRO(I) = LAGROI(I1,I)*25.4  ! lagged/attenuated water in snowpack for mru
+      LAGRO(I) = LAGROI(I1,I)*25.4  ! lagged/attenuated water in snowpack for mru
+   75 continue
 !                                   ! GENERALLY SET MAXLAG--nexlag =2
 !-----------------------------------------------------------------------------------------
 ! SET the 4 6-hour temperature values, calculate the average, SAVE TODAYS MAX
@@ -825,7 +830,8 @@ c                                            so no conversion to celsius needed
 
       LAGGED = 0
       DO 90 I=1,nexlag
-   90 LAGGED = LAGGED + LAGRO(I)
+      LAGGED = LAGGED + LAGRO(I)
+   90 continue
 
       BEGINPACK = WE + LIQW + LAGGED + STORAGE ! STORE BEGINNING OF DAY TOTAL WATER IN MRU
 !                                                      ----------------------
@@ -1066,7 +1072,8 @@ c      PXI    = PXI * SCFACT              ! Adjust for snowfall catch deficiency
       LAGGED  = 0.0
       DO 350 I=1,nexlag
       LAGGED  = LAGRO(I)    + LAGGED
-  350 LAGRO(I)= 0.0
+      LAGRO(I)= 0.0
+  350 continue
       PACKRO  = GMRO + MELT + LAGGED + STORAGE + RAIN
 
       WE      = 0.0
@@ -1208,7 +1215,8 @@ c$$$      end if
 
 
       DO 1010 I = 1,nmru
- 1010   SUBRATE(I) = SUBRATE(I) / 25.4 ! RESET SUBLIMATION TO INCHES
+      SUBRATE(I) = SUBRATE(I) / 25.4 ! RESET SUBLIMATION TO INCHES
+ 1010 continue
 
       
 !----------------------------------------------------*-*--*-*--*-*--*-*--*-*--*-*--
@@ -1222,6 +1230,7 @@ c$$$      end if
 !     nwsmclean - to comply with MMS module standard
 !     --------
       integer function nwsmclean()
+      implicit none
 
       nwsmclean = 1
 
@@ -1240,6 +1249,7 @@ c$$$      end if
 !                                                       ----------------------
 !                           in MARCH 1998 BY J.J.VACCARO
 !.....................................................................................
+      implicit none
       real    ALAT,  MFMAX, MFMIN, MF, RATIO
       real    DIFF,  DAYN,  XX,    X,  ADJMF
       integer IDN
@@ -1285,6 +1295,7 @@ c$$$      end if
 !                                  MAKES MORE SENSE TO KEEP AS ONE
 !
       USE WEBMOD_SNOW, ONLY : nmru
+      implicit none
 
       integer ISTEP, MRU
       real TAIR,    MBASE, TMX,   TSUR,  EA, TAK, TAK4
@@ -1347,6 +1358,7 @@ c$$$      end if
 !       accounts for changes in other information
 !       changed exlag to dimension=2 as far as can see L2=2, L1=1, for most any cases
 !......................................................................................
+      implicit none
       integer NEXLAG
       real EXLAG(NEXLAG)
       integer IT, N, I, L1, L2
@@ -1423,8 +1435,10 @@ c$$$      end if
       STORGE=0.0
 !
 !--Downshift water in EXLAG().
-  190 DO 195 I=2,NEXLAG
-  195 EXLAG(I-1)   = EXLAG(I)
+  190 continue
+      DO 195 I=2,NEXLAG
+      EXLAG(I-1)   = EXLAG(I)
+  195 continue
       EXLAG(NEXLAG)= 0.0
 !.................................................................................
       RETURN
@@ -1442,6 +1456,7 @@ c$$$      end if
 !.................................................................................
 
       USE WEBMOD_SNOW, ONLY : ndepl
+      implicit none
       integer ICRVE, N
       real    WE, LIQW, ACCMAX,  SIT, SB, SBWS, AESC, SBAESC
       real    TWE, FN,  R,   AI
@@ -1500,6 +1515,7 @@ c$$$      end if
 ! FOR NEGATIVE HEAT (NEGHS), LIQUID WATER (LIQW), WATER-EQUIVALENT (WE) ARE UPDATED
 ! put this as separate subroutine to make more readable (main was way to long)
 !----------------------------------------------------------------------------------
+      implicit none
       real LIQWMX, TINDEX, MELT, WCPLW, RAIN, CNHS, WE
       real EXCESS, CNHSPX, LIQW, WATER, HEAT, NEGHS
 

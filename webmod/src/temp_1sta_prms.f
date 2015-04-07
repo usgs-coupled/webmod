@@ -62,10 +62,12 @@ c     Main temp_1sta routine
 c
 
       integer function temp_1sta_prms(arg)
+      IMPLICIT NONE
 
       character(len=*) arg
       CHARACTER(len=256) SVN_ID
-      integer t1decl, t1init, t1run, t1clean
+      !integer t1decl, t1init, t1run, t1clean
+      integer t1decl, t1init, t1run
       save SVN_ID
 
       SVN_ID = 
@@ -99,6 +101,7 @@ c
 
 
       USE WEBMOD_TEMP1STA
+      IMPLICIT NONE
 
       t1decl = 1
 
@@ -365,6 +368,7 @@ c
       integer function t1init()
 
       USE WEBMOD_TEMP1STA
+      IMPLICIT NONE
       
       integer j, k
 
@@ -456,6 +460,7 @@ c             saturated zone.
       integer function t1run()
  
       USE WEBMOD_TEMP1STA
+      IMPLICIT NONE
       
       integer j,mo,k,yr
       integer nowtime(6), nstep, day

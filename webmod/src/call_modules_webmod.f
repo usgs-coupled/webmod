@@ -42,8 +42,9 @@
       INTEGER, EXTERNAL :: webmod_res
       INTEGER, EXTERNAL :: phreeq_mms
       INTEGER, EXTERNAL :: web_sum
-      DOUBLE PRECISION :: dt
-      INTEGER :: storm, runflg
+      !DOUBLE PRECISION :: dt
+      !INTEGER :: storm, runflg
+      INTEGER :: runflg
 !***********************************************************************
       call_modules = 1
       runflg = 0

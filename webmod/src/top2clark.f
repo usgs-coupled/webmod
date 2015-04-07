@@ -64,6 +64,7 @@
       integer function top2cdecl()
 
       USE WEBMOD_CLARK
+      IMPLICIT NONE
 
       top2cdecl = 1
 
@@ -141,6 +142,7 @@
 
       USE WEBMOD_CLARK
       USE WEBMOD_IO, ONLY : topout
+      IMPLICIT NONE
       
       integer i, j
       real area_chk
@@ -224,6 +226,7 @@
       integer function top2crun()
 
       USE WEBMOD_CLARK
+      IMPLICIT NONE
       
       integer i, j
 
@@ -270,6 +273,7 @@
 !     Main top2clark routine
 !
       integer function top2clark(arg)
+      IMPLICIT NONE
 
       character(len=*) arg
       CHARACTER(len=256) SVN_ID

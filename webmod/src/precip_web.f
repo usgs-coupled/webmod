@@ -51,6 +51,7 @@ c     Main precip routine
 c
 
       integer function precip_web(arg)
+      IMPLICIT NONE
 
       include 'fmodules.inc'
 
@@ -85,6 +86,7 @@ c
       integer function pptdecl()
 
       USE WEBMOD_PRECIP
+      IMPLICIT NONE
 
       pptdecl = 1
 !
@@ -237,6 +239,7 @@ c
       integer function pptinit()
 
       USE WEBMOD_PRECIP
+      IMPLICIT NONE
 
       pptinit = 1
 
@@ -282,6 +285,7 @@ c
       integer function pptrun()
 
       USE WEBMOD_PRECIP
+      IMPLICIT NONE
       
       integer i, ip, jday, mo
       integer nowtime(6)

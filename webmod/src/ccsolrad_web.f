@@ -87,6 +87,7 @@ c***********************************************************************
       integer function csoldecl()
 
       USE WEBMOD_CSOL
+      IMPLICIT NONE
 
 c***********************************************************************
       csoldecl = 1
@@ -257,6 +258,7 @@ c***********************************************************************
 
 
       USE WEBMOD_CSOL
+      IMPLICIT NONE
 
 C Local Variables
       integer i, nstep
@@ -361,6 +363,7 @@ c***********************************************************************
       integer function csolrun()
 
       USE WEBMOD_CSOL
+      IMPLICIT NONE
 
 C Local Variables
       logical ppt

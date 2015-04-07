@@ -69,6 +69,7 @@
 
       INTERFACE
          FUNCTION solnnum(time,res_id,chemdat,mru,nac,hydro,stat)
+           IMPLICIT NONE
            INTEGER :: time, res_id,chemdat,mru,nac,hydro,stat
            INTEGER :: solnnum
          END FUNCTION solnnum
@@ -77,6 +78,7 @@
       INTERFACE
          FUNCTION isoln(soln_num,nchemdat,nmru,nac,nhydro,&
            ires,ichemdat,imru,inac,ihydro)
+           IMPLICIT NONE
            INTEGER :: soln_num, nchemdat, nmru, nac, nhydro
            INTEGER :: ires, ichemdat, imru, inac, ihydro
            INTEGER :: isoln
@@ -86,6 +88,7 @@
       INTERFACE 
          FUNCTION fill_ent(n_user,soln_number,nchemdat,nmru,&
            nac,clark_segs,src_init)
+           IMPLICIT NONE
            INTEGER :: n_user(:),soln_number, nchemdat, nmru
            INTEGER :: nac, clark_segs
            INTEGER, INTENT(IN) :: src_init(:,:)
@@ -95,6 +98,7 @@
 
       INTERFACE 
          FUNCTION wetbulb(pres,ta,rh)
+           IMPLICIT NONE
            REAL, INTENT(IN) :: pres, ta, rh
            REAL :: wetbulb
          END FUNCTION wetbulb
@@ -102,6 +106,7 @@
 
       INTERFACE
          FUNCTION checkfracs(count,solns,fracs,mixture)
+           IMPLICIT NONE
            INTEGER :: count,solns(:),mixture
            DOUBLE PRECISION :: fracs(:)
            INTEGER :: checkfracs
@@ -110,6 +115,7 @@
 
       INTERFACE
         INTEGER FUNCTION chemflag(index,chvar_lut, soln_number,nchemvar)
+          IMPLICIT NONE
           INTEGER :: index, chvar_lut(:,:)
           INTEGER :: soln_number, nchemvar
         END FUNCTION chemflag
@@ -119,6 +125,7 @@
          function update_chem(indx,totvol,imetric,&
               conc,ph,tempc,tally_table,n_ent,indxm,&
               indxb,restype,comp_rxn)
+           IMPLICIT NONE
          
            integer :: indx, imetric,n_ent(:),restype
            logical :: indxm,indxb,comp_rxn
@@ -139,6 +146,7 @@
       DATA not_m,not_b,not_rxn/3*.FALSE./
       INTERFACE
          FUNCTION fractionate(phase,indx,evap,totvol,ison,rh,tempevap)
+           IMPLICIT NONE
            INTEGER :: phase, indx
            DOUBLE PRECISION :: evap,totvol,ison,rh,tempevap
            INTEGER :: fractionate
@@ -147,6 +155,7 @@
 
       INTERFACE
          FUNCTION reset_DI(ID,tempevap)
+           IMPLICIT NONE
            INTEGER :: ID
            REAL :: tempevap
            INTEGER :: reset_DI
@@ -730,6 +739,7 @@
 
       USE WEBMOD_PHREEQ_MMS
       USE WEBMOD_OBSCHEM, ONLY : n_iso
+      IMPLICIT NONE
 
 ! #if defined(_WIN32)
 !       USE IFPORT
@@ -1316,9 +1326,9 @@
            'permil', ch_basin_permil_out).ne.0) return
 
       allocate(ch_basin_permil_ET(nsolute))
-      if(declvar('phreeqmms', 'ch_basin_permil_rxn', 'nsolute', nsolute,&
+      if(declvar('phreeqmms', 'ch_basin_permil_ET', 'nsolute', nsolute,&
            'double','Delta of evapotransiration for basin',&
-           'permil', ch_basin_permil_rxn).ne.0) return
+           'permil', ch_basin_permil_ET).ne.0) return
 
       allocate(ch_basin_permil_final(nsolute))
       if(declvar('phreeqmms', 'ch_basin_permil_final', 'nsolute', nsolute,&
@@ -3308,6 +3318,7 @@
 #ifdef IPHREEQC_NO_FORTRAN_MODULE
       interface
         function webmod_callback(x1, x2, str)
+            IMPLICIT NONE
             
             double precision webmod_callback
             double precision, intent (in) :: x1
@@ -3319,6 +3330,7 @@
       interface
         REAL(kind=C_DOUBLE) function webmod_callback(x1, x2, str, l) BIND(C, name='webmod_callback')
             USE ISO_C_BINDING
+            IMPLICIT NONE
             REAL(kind=C_DOUBLE),    INTENT(in)        :: x1, x2
             CHARACTER(kind=C_CHAR), INTENT(in)        :: str(*)
             INTEGER(kind=C_INT),    INTENT(in), value :: l
@@ -3329,7 +3341,8 @@
       logical filflg, s_alloc, e_alloc
       real dt
 
-      integer k, l, ir, it, path_len, file_len, filelen ! made is, ia, and ih global (in module) for mru, nac, and hyd query in update_chem
+      !integer k, l, ir, it, path_len, file_len, filelen ! made is, ia, and ih global (in module) for mru, nac, and hyd query in update_chem
+      integer k, l, ir, path_len, file_len, filelen
       integer pqdat_len, res_id, ret, io, ivar, iresult
       integer uzwet, uzdry
 !   moved to module
@@ -6049,7 +6062,8 @@
       integer, external ::  length
 
       integer endper
-      logical end_run, end_yr, end_mo, end_dy, end_storm, minvol
+      !logical end_run, end_yr, end_mo, end_dy, end_storm, minvol
+      logical end_run, end_yr, end_mo, end_dy, end_storm
 
       integer input_soln
       integer iresult
@@ -6062,7 +6076,8 @@
       real depvol, irrig_frac
       real dt
       
-      double precision str_vol, vol_in, vol_out, M_Elem_Sum
+      !double precision str_vol, vol_in, vol_out, M_Elem_Sum
+      double precision str_vol, M_Elem_Sum
       double precision chvar_conv_t(nchemvar,nsolute+1)
  
 !      double precision cconc_precipM(nsolute)
@@ -9977,6 +9992,7 @@
 
       USE WEBMOD_PHREEQ_MMS
       USE WEBMOD_IO, only: phreeqout
+      IMPLICIT NONE
 
       phreeqmms_clean = 1
 
@@ -10251,6 +10267,7 @@
 
       INTEGER FUNCTION fill_ent(n_user,soln_number,nchemdat,nmru,&
            nac,clark_segs,src_init)
+      IMPLICIT NONE
 
       integer isoln ! function
       INTEGER src_init(:,:), n_user(:), i, index
@@ -10269,6 +10286,7 @@
       END
 
       INTEGER FUNCTION checkfracs(count,solns,fracs,mixture)
+      IMPLICIT NONE
 
       integer i,count,solns(:),mixture,snowmelt
       double precision fracs(:)
@@ -10306,6 +10324,7 @@
       END
 
       INTEGER FUNCTION chemflag(index,chvar_lut, soln_number,nchemvar)
+      IMPLICIT NONE
 
       INTEGER chvar_lut(:,:), i, index
       integer soln_number, nchemvar
@@ -10426,12 +10445,14 @@
       implicit none
 
 !      integer sol_id(ntally_rows,2)
-      integer i,j,k,ke,n, indx,im,imx,imetric,n_ent(:),nis,restype
+      !integer i,j,k,ke,n, indx,im,imx,imetric,n_ent(:),nis,
+      integer i,j,k,ke,n, indx,im,imetric,n_ent(:),nis,restype
       logical step1,stream,snow, unsat, mru, mrubnd, basbnd, react  ! stream, snow, unsat, and mru indicate what type of reservoir, snow and unsat being special types of mru.
                                                                       ! mrumnd, and basinbnd indicate that an input or output enters or leaves through an mru or a basin boundary
       double precision vol,totvol, conc1(:),pH,tempc,tally_table(:,:)
       double precision vwtempc, vwpH, vwdelta, Moles, M_cons, M_rxn
-      double precision M_diff,M_elem, M_elem_sum, M_diff_e, M_ElemFrac
+      !double precision M_diff,M_elem, M_elem_sum, M_diff_e, M_ElemFrac
+      double precision M_diff,M_elem, M_elem_sum
 
       data step1/.true./
       save step1
@@ -10750,6 +10771,7 @@
       integer function chem2var()
    
       USE WEBMOD_PHREEQ_MMS
+      IMPLICIT NONE
 
       integer ivar, isol, c_unit
       logical been_warned_iso, been_warned_vol, been_warned_area
@@ -11080,7 +11102,14 @@
 !     written by Dave Stannard
  
       real function wetbulb (pres, ta, rh)
-      implicit double precision (a-h,o-z)
+      !implicit double precision (a-h,o-z)
+      implicit none
+      double precision a0, a1, a2, a3, a4, a5, a6
+      double precision b0, b1, b2, b3, b4, b5, b6
+      double precision a0i, a1i, a2i, a3i, a4i, a5i, a6i
+      double precision b0i, b1i, b2i, b3i, b4i, b5i, b6i
+      double precision es, s, emeas, gam, tw, etemp, emod
+      
       real pres, ta, rh
       wetbulb = -999.
 !     site pressure in kilopascals
@@ -11179,6 +11208,7 @@ double precision function webmod_callback(x1, x2, str)
     use WEBMOD_POTET, ONLY : transp_on
     use WEBMOD_PHREEQ_MMS
     USE WEBMOD_RESMOD, ONLY : basin_gw_sto_cm
+    IMPLICIT NONE
 
     double precision x1, x2
     character (*) str
