@@ -327,7 +327,7 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 	{
 		char buffer[80];
 		sprintf(buffer, "Bad fill_factor in phr_mix for box %d %f.\n", pvars->n_user[Solution], pvars->fill_factor);
-		this->PhreeqcPtr->error_msg(buffer, CONTINUE);
+		this->error_msg(buffer, CONTINUE);
 	}
 
 	double pos_mix_h2o = 0.0;
@@ -465,7 +465,7 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 		}
 		else {
 			sprintf(line, "REACTION %d doesn't exist\n", pvars->n_user[Reaction]);
-			this->PhreeqcPtr->warning_msg(line);
+			this->warning_msg(line);
 		}
 	}
 
@@ -484,7 +484,7 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 		}
 		else {
 			sprintf(line, "EXCHANGE %d doesn't exist\n", pvars->n_user[Exchange]);
-			this->PhreeqcPtr->warning_msg(line);
+			this->warning_msg(line);
 		}
 	}
 	/* Surface */
@@ -501,7 +501,7 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 		}
 		else {
 			sprintf(line, "SURFACE %d doesn't exist\n", pvars->n_user[Surface]);
-			this->PhreeqcPtr->warning_msg(line);
+			this->warning_msg(line);
 		}
 	}
 	/* Gas_phase */
@@ -518,7 +518,7 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 		}
 		else {
 			sprintf(line, "GAS_PHASE %d doesn't exist\n", pvars->n_user[Gas_phase]);
-			this->PhreeqcPtr->warning_msg(line);
+			this->warning_msg(line);
 		}
 	}
 	/* Pure_phase */
@@ -535,7 +535,7 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 		}
 		else {
 			sprintf(line, "EQUILIBRIUM_PHASES %d doesn't exist\n", pvars->n_user[Pure_phase]);
-			this->PhreeqcPtr->warning_msg(line);
+			this->warning_msg(line);
 		}
 	}
 	/* Ss_phase */
@@ -552,7 +552,7 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 		}
 		else {
 			sprintf(line, "SOLID_SOLUTION %d doesn't exist\n", pvars->n_user[Ss_phase]);
-			this->PhreeqcPtr->warning_msg(line);
+			this->warning_msg(line);
 		}
 	}
 	/* Kinetics */
@@ -566,7 +566,7 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 		}
 		else {
 			sprintf(line, "KINETICS %d doesn't exist\n", pvars->n_user[Kinetics]);
-			this->PhreeqcPtr->warning_msg(line);
+			this->warning_msg(line);
 		}
 	}
 	/* Temperature */
@@ -580,7 +580,7 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 		}
 		else {
 			sprintf(line, "REACTION_TEMPERATURE %d doesn't exist\n", pvars->n_user[Temperature]);
-			this->PhreeqcPtr->warning_msg(line);
+			this->warning_msg(line);
 		}
 	}
 
