@@ -4,8 +4,8 @@
                      n_user,rxnmols,tempc,ph,ph_final,tsec,array, &
                      arr_rows,arr_cols)
       USE IFPORT   ! to enable 'SYSTEM' calls
-      USE WEBMOD_IO, ONLY: nowtime
-      USE WEBMOD_PHREEQ_MMS, ONLY: xdebug_start, xdebug_stop, nsolute, sel_mix 
+      USE WEBMOD_IO, ONLY: nowtime, xdebug_start, xdebug_stop
+      USE WEBMOD_PHREEQ_MMS, ONLY: nsolute, sel_mix 
       USE WEBMOD_OBSCHEM, ONLY : n_iso
       USE IPhreeqc
       IMPLICIT NONE
@@ -41,7 +41,8 @@
       INTEGER RunMixF
 
 ! Rick's debug/
-      integer          startmix(3), endmix(3), nstep, j, et_hyd, et_mix, iresult
+      !integer          startmix(3), endmix(3), nstep, j, et_hyd, et_mix, iresult
+      integer          startmix(3), endmix(3), nstep, et_hyd, iresult
       integer, external  ::  getstep, elapsed_time
       logical   fil_temp
       integer, save      ::  et_hold

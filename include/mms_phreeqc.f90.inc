@@ -1,5 +1,6 @@
        INTERFACE
         FUNCTION CreateIPhreeqcMMS()
+         IMPLICIT NONE
          INTEGER(KIND=4) :: CreateIPhreeqcMMS
         END FUNCTION CreateIPhreeqcMMS
        END INTERFACE
@@ -7,6 +8,7 @@
 
        INTERFACE
         FUNCTION DestroyIPhreeqcMMS(ID)
+         IMPLICIT NONE
          INTEGER(KIND=4), INTENT(IN) :: ID
          INTEGER(KIND=4)             :: DestroyIPhreeqcMMS
         END FUNCTION DestroyIPhreeqcMMS
@@ -19,6 +21,7 @@
                      fill_factor,index_rxn,conc_conserv,files_on, &
                      n_user,rxnmols,tempc,ph,ph_final,tsec,array, &
                      arr_rows,arr_cols)
+         IMPLICIT NONE
          INTEGER(KIND=4), INTENT(IN)    :: id              ! 
          INTEGER(KIND=4), INTENT(IN)    :: count           ! solution count
          INTEGER(KIND=4), INTENT(IN)    :: solutions(*)    ! solution #'s
@@ -43,6 +46,7 @@
 
        INTERFACE
         FUNCTION phr_multicopy(id, keyword, srcarray, targetarray, count)
+         IMPLICIT NONE
          INTEGER(KIND=4), intent(IN) ::  id
          CHARACTER(*),    intent(IN) ::  keyword
          INTEGER(KIND=4), intent(IN) ::  srcarray(*)
@@ -54,6 +58,7 @@
 
        INTERFACE
         FUNCTION phr_precip(id,soln_id,count,aspecies,aconc,tempc,ph)
+         IMPLICIT NONE
          INTEGER(KIND=4), intent(IN) ::       id
          INTEGER(KIND=4), intent(IN) ::       soln_id
          INTEGER(KIND=4), intent(IN) ::       count
@@ -67,6 +72,7 @@
 
        INTERFACE
         FUNCTION build_tally_table(id)
+         IMPLICIT NONE
          INTEGER(KIND=4), INTENT(IN) :: id
          INTEGER(KIND=4)             :: build_tally_table
         END FUNCTION build_tally_table
@@ -75,6 +81,7 @@
 
        INTERFACE
         FUNCTION get_tally_table_rows_columns(id,rows,columns)
+         IMPLICIT NONE
          INTEGER(KIND=4), INTENT(IN)  :: id
          INTEGER(KIND=4), INTENT(OUT) :: rows
          INTEGER(KIND=4), INTENT(OUT) :: columns
@@ -84,6 +91,7 @@
 
        INTERFACE
         FUNCTION get_tally_table_column_heading(id,column,type,string)
+         IMPLICIT NONE
          INTEGER(KIND=4),  INTENT(IN)  :: id
          INTEGER(KIND=4),  INTENT(IN)  :: column
          INTEGER(KIND=4),  INTENT(OUT) :: type
@@ -95,6 +103,7 @@
 
        INTERFACE
         FUNCTION get_tally_table_row_heading(id,row,string)
+         IMPLICIT NONE
          INTEGER(KIND=4),  INTENT(IN)  :: id
          INTEGER(KIND=4),  INTENT(IN)  :: row
          CHARACTER(LEN=*), INTENT(OUT) :: string

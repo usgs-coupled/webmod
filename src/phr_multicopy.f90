@@ -8,7 +8,7 @@
       INTEGER       srcarray(*)
       INTEGER       targetarray(*)
       INTEGER       count
-      INTEGER       iresult
+      !INTEGER       iresult
       INTEGER       i
       CHARACTER(80) line
       INTEGER       phr_multicopy
