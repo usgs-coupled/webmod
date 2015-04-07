@@ -25,6 +25,7 @@ c***********************************************************************
 !   Dimensions and Local Variables
 !      integer, SAVE:: topout_file_unit, chemout_file_unit, phreeqout ! standard output, in addition to MMS files *.out, *.statvar, etc
       integer, save:: endper, yrdays, modays(12),nowtime(6)
+      integer, save:: xdebug_start, xdebug_stop
       integer, save, allocatable :: vse_lun(:) ! LUNs for volume, solute, and entitity files
       integer, save:: print_vse, nf  ! In addition to the four standard files, additional detailed files
                                       ! may be output: nf files include volume files output in webmod_res and 
@@ -120,6 +121,19 @@ c
      $     'Run(16)+Year(8)+Month(4)+Day(2)+storm(1)',
      +     'none',endper).ne.0) return
 
+      if(declparam('io', 'xdebug_start', 'one', 'integer',
+     +    '0', '0', '1000000',
+     +    'Begin debugging on this step (0 if no debugging)',
+     +    'Begin debugging on this step (0 if no debugging)',
+     +    'integer').ne.0) return
+
+      if(declparam('io', 'xdebug_stop', 'one', 'integer',
+     +    '0', '0', '1000000',
+     +    'End debugging on this step',
+     +    'End debugging on this step',
+     +    'integer').ne.0) return
+
+!
       if(declpri('io_modays', 12, 'integer', modays)
      + .ne. 0) return
 
@@ -169,6 +183,12 @@ c End-period variables
       if(getparam('phreeqmms', 'chem_sim', 1,
      +     'integer',chem_sim) .ne.0) return
      
+      if(getparam('io', 'xdebug_start', 1,
+     +     'integer',xdebug_start) .ne.0) return
+
+      if(getparam('io', 'xdebug_stop', 1,
+     +     'integer',xdebug_stop) .ne.0) return
+
 c
 c Open topmodel output file
 c

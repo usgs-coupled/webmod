@@ -2017,9 +2017,8 @@ c
       integer function topmrun()
 
       USE WEBMOD_TOPMOD
-      USE WEBMOD_IO, only: topout, debug
+      USE WEBMOD_IO, only: topout, debug, xdebug_start, xdebug_stop
       USE WEBMOD_OBSHYD, ONLY: datetime 
-      USE WEBMOD_PHREEQ_MMS, ONLY: xdebug_start, xdebug_stop
       implicit none
 
 C***  local variables

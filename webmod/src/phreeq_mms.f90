@@ -674,7 +674,7 @@
       integer vtype, leng, id_len, ID
       character(15) heading
       character(60) line
-      integer  nstep, datetime(6),xdebug_start,xdebug_stop
+      integer  nstep, datetime(6)
       integer iphrq_mru
       character(3000), save :: filename
     
@@ -2719,19 +2719,6 @@
       !
 !
 ! parameters
-!
-      if(declparam('phreeqmms', 'xdebug_start', 'one', 'integer',&
-         '0', '0', '1000000',&
-         'Begin debugging on this step (0 if no debugging)',&
-         'Begin debugging on this step (0 if no debugging)',&
-         'integer').ne.0) return
-
-      if(declparam('phreeqmms', 'xdebug_stop', 'one', 'integer',&
-         '0', '0', '1000000',&
-         'End debugging on this step',&
-         'End debugging on this step',&
-         'integer').ne.0) return
-
 !      if(decl*param('io', 'chemout_file_unit', 'one', 'integer',
 !     +   '90', '50', '99',
 !     +   'Unit number for file summarizing solute transport',
@@ -3304,7 +3291,7 @@
 ! #endif
       USE WEBMOD_PHREEQ_MMS
       USE WEBMOD_OBSCHEM, ONLY :phq_lut,sol_id,sol_name,n_iso,iso_list
-      USE WEBMOD_IO, only: phreeqout, chemout, print_vse, chemout,nf,vse_lun
+      USE WEBMOD_IO, only: phreeqout, chemout, print_vse, chemout,nf,vse_lun, xdebug_start, xdebug_stop
 
 ! Mixing variables from webmod_res
       USE WEBMOD_RESMOD, ONLY : vmix_can, vmix_snow, vmix_ohoriz, &
@@ -3356,12 +3343,6 @@
 
       if(getparam('phreeqmms', 'chem_sim', 1,&
            'integer',chem_sim) .ne.0) return
-
-      if(getparam('phreeqmms', 'xdebug_start', 1,&
-           'integer',xdebug_start) .ne.0) return
-
-      if(getparam('phreeqmms', 'xdebug_stop', 1,&
-           'integer',xdebug_stop) .ne.0) return
 
 !
 ! Skip initialization (and later run) if no chemical simulations desired
@@ -6041,7 +6022,7 @@
 
       USE WEBMOD_PHREEQ_MMS
 !      USE WEBMOD_INTCP, ONLY : covden_win
-      USE WEBMOD_IO, ONLY : phreeqout, chemout, print_vse, debug
+      USE WEBMOD_IO, ONLY : phreeqout, chemout, print_vse, debug, xdebug_start, xdebug_stop
       USE WEBMOD_OBSHYD, ONLY : relhum
       USE WEBMOD_OBSCHEM, ONLY : phq_lut, sol_id, sol_name,unit_lut,&
           n_iso, iso_list,c_precip_pH,c_precipT,cconc_precipM, &
