@@ -5,7 +5,7 @@
                      arr_rows,arr_cols)
       USE IFPORT   ! to enable 'SYSTEM' calls
       USE WEBMOD_IO, ONLY: nowtime, xdebug_start, xdebug_stop
-      USE WEBMOD_PHREEQ_MMS, ONLY: nsolute, sel_mix 
+      USE WEBMOD_PHREEQ_MMS, ONLY:  nsolute, sel_mix 
       USE WEBMOD_OBSCHEM, ONLY : n_iso
       USE IPhreeqc
       IMPLICIT NONE
