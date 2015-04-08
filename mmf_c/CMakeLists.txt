@@ -38,10 +38,13 @@ setdims_
 call_modules
 )
 
-# set "Character Set" to Unicode
-# this may be unnecessary
-add_definitions(-D_UNICODE)
-add_definitions(-DUNICODE)
+add_definitions(-DCMAKE_FC)
+if (MSVC)
+  # set "Character Set" to Unicode
+  # this may be unnecessary
+  add_definitions(-D_UNICODE)
+  add_definitions(-DUNICODE)
+endif()
 
 # turn off "The POSIX name for this item is deprecated" warning
 add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
