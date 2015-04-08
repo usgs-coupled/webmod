@@ -741,7 +741,7 @@
       USE WEBMOD_OBSCHEM, ONLY : n_iso
       IMPLICIT NONE
 
-! #if defined(_WIN32)
+! #if defined(__INTEL_COMPILER)
 !       USE IFPORT
 ! #endif
 
@@ -3296,7 +3296,7 @@
 !****************************************************************************
 
       integer function phreeqmms_init()
-! #if defined(_WIN32)
+! #if defined(__INTEL_COMPILER)
 !       USE IFPORT
 ! #endif
       USE WEBMOD_PHREEQ_MMS
@@ -3386,7 +3386,7 @@
 !
 ! Open selct_mixes if xdebug_start > 0 and solute files if print_vse= 1 (basin and mru) or 2 (all reservoirs)
 !
-      IF(control_string(out_dir,'output_dir').NE.0) RETURN
+      IF(control_string_(out_dir,'output_dir').NE.0) RETURN
       path_len = index(out_dir,CHAR(0))-1   ! CHAR(0) is end of strings returned from control_string call
       if(xdebug_start.ge.1) then
         sel_mix%file = out_dir(1:path_len)//'select_mixes'
@@ -3618,7 +3618,7 @@
 ! in file, phreeqmms.pqi. This file will be created and used
 ! during each run.
 !
-      IF(control_string(inp_dir,'input_dir').NE.0) RETURN
+      IF(control_string_(inp_dir,'input_dir').NE.0) RETURN
       path_len = index(inp_dir,CHAR(0))-1   ! CHAR(0) is end of strings returned from control_string call
 ! Kludge for multi-CPU
       phreeqmms_pqi= inp_dir(1:path_len)//'phreeqmms.pqi'
@@ -3704,7 +3704,7 @@
 ! Open the geochemical database, phreeqc.dat  The phreeqc.dat file will be 
 ! placed in the data directory for now.
 !
-      IF(control_string(phreeq_database,'phreeq_database').NE.0) then
+      IF(control_string_(phreeq_database,'phreeq_database').NE.0) then
          PRINT *, 'phreeq_database needs to be defined in control file'
          STOP
       END IF
@@ -5329,7 +5329,7 @@
 !
       if(print_vse.ge.1) then
 ! composite basin solutes
-        IF(control_string(out_dir,'output_dir').NE.0) RETURN
+        IF(control_string_(out_dir,'output_dir').NE.0) RETURN
         path_len = index(out_dir,CHAR(0))-1   ! CHAR(0) is end of strings returned from control_string call
         sf_bas%file = out_dir(1:path_len)//'s_basin'
         inquire(file=sf_bas%file,exist=filflg)
@@ -5638,7 +5638,7 @@
 ! 
       if(print_vse.ge.1) then
 !  composite basin entities
-        IF(control_string(out_dir,'output_dir').NE.0) RETURN
+        IF(control_string_(out_dir,'output_dir').NE.0) RETURN
         path_len = index(out_dir,CHAR(0))-1   ! CHAR(0) is end of strings returned from control_string call
         ef_bas%file = out_dir(1:path_len)//'e_basin'
         inquire(file=ef_bas%file,exist=filflg)

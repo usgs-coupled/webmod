@@ -48,7 +48,7 @@ c
       end if
 
 C******Debug level print
-      call dpint4('End of basin, retval = ', basin_topg, 1, 2)
+      call dpint4_('End of basin, retval = ', basin_topg, 1, 2)
 
       return
       end function basin_topg

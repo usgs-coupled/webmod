@@ -87,7 +87,7 @@ c
       end if
 
 C******Debug level print
-      call dpint4('End of temp_1sta, retval = ', temp_1sta_prms, 1, 2)
+      call dpint4_('End of temp_1sta, retval = ', temp_1sta_prms, 1, 2)
 
       end function temp_1sta_prms
 

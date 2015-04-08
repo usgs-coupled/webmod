@@ -47,6 +47,7 @@ add_definitions(-DUNICODE)
 add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
 
 SET(mmf_c_SOURCES
+${PROJECT_BINARY_DIR}/FC.h
 src/alloc_space.c
 src/batch_run.c
 src/batch_run_functions.c
@@ -72,17 +73,20 @@ src/getdim.c
 src/getdimname.c
 src/getparam.c
 src/getvar.c
+src/globals.h
 src/graph_single_run.c
 src/julconvert.c
 src/julday.c
 src/load_param.c
 src/mmf.c
+src/mms.h
 src/oprint.c
 src/param_addr.c
 src/parse_args.c
 src/print_model_info.c
 src/print_params.c
 src/print_vars.c
+src/protos.h
 src/putvar.c
 src/read_control.c
 src/read_datainfo.c
@@ -99,6 +103,7 @@ src/sort_params.c
 src/sort_vars.c
 src/stats.c
 src/str_to_vals.c
+src/structs.h
 src/timing.c
 src/umalloc_etc.c
 src/uprint.c

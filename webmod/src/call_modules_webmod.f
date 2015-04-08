@@ -63,7 +63,7 @@
         call_modules = declmodule(
      +'$Id: call_modules_webmod.f 494 2013-07-15 18:00:00Z rmwebb $')
 
-        IF ( control_string(Model_mode, 'model_mode').NE.0 ) RETURN
+        IF ( control_string_(Model_mode, 'model_mode').NE.0 ) RETURN
 
 !       Model (1=daily; 2=storm; 99=reserved for name files)',
 !       Climate_dist (0=dist2, ide_dist; 1=1sta, laps, 2sta; 2=xyz)
@@ -86,7 +86,7 @@
         ENDIF
 
         Climate_dist = 1
-        IF ( control_string(Precip_module, 'precip_module')
+        IF ( control_string_(Precip_module, 'precip_module')
      +       .NE.0 ) RETURN
         IF ( Precip_module(:10).NE.'precip_web' .AND.
      +       Precip_module(:12).NE.'xyz_dist_web' ) THEN
@@ -279,13 +279,13 @@
 !     declare the dimensions
 !***********************************************************************
 
-      INTEGER FUNCTION setdims()
+      INTEGER FUNCTION setdims_()
       IMPLICIT NONE
       INCLUDE 'fmodules.inc'
 ! Local Variables
       INTEGER :: ncurves
 !***********************************************************************
-      setdims = 1
+      setdims_ = 1
 
       if(declfix('five', 5, 5, 'Dimension of obj_q').ne.0) return
 
@@ -429,5 +429,5 @@ c
      +    .ne.0) return
 
 
-      setdims = 0
-      END FUNCTION setdims
+      setdims_ = 0
+      END FUNCTION setdims_

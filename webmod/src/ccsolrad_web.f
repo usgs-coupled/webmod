@@ -74,7 +74,7 @@ c***********************************************************************
       endif
 
 C******Debug level print
-      call dpint4('End of ccsolrad, retval = ', ccsolrad_web, 1, 2)
+      call dpint4_('End of ccsolrad, retval = ', ccsolrad_web, 1, 2)
 
       return
       end

@@ -321,7 +321,7 @@ c
       basin_dep = 0.
       basin_ppt = 0.
 
-      call dpreal('precip - precip', precip, 1, 2)
+      call dpreal_('precip - precip', precip, 1, 2)
 c
 c Initialize precip
 

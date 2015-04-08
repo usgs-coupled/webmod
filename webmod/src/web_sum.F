@@ -646,7 +646,9 @@ c
 
       integer function sumbinit()
 
+#if defined(__INTEL_COMPILER)
       USE IFPORT
+#endif
       USE WEBMOD_SUM
       USE WEBMOD_RESMOD, ONLY : basin_sto_cm, basin_chan_sto_cm,
      $  basin_intcp_sto_cm,basin_pweqv_cm,basin_sssto_cm,
@@ -795,7 +797,7 @@ c Get the date/time and names of the data file and the parameter file
         return
       end if
       lengdat = index(datafile,achar(0))-1
-      IF (control_string(paramfile, 'param_file')
+      IF (control_string_(paramfile, 'param_file')
      &       .NE.0 ) then
         print*,'Problems retrieving parameter file name',
      $           ' Run has been stopped.'

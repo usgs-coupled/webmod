@@ -155,7 +155,7 @@ c
 
       integer function ioinit()
 
-!#if defined(_WIN32)
+!#if defined(__INTEL_COMPILER)
 !      USE IFPORT
 !#endif
       USE WEBMOD_IO
@@ -424,7 +424,7 @@ c     ioclean
       end
 
 c$$$      integer function WhatTime(IsIt)  ! used for debugging
-c$$$!#if defined(_WIN32)
+c$$$!#if defined(__INTEL_COMPILER)
 c$$$!        USE IFPORT
 c$$$!#endif
 c$$$      integer, intent(OUT) :: IsIt(3)

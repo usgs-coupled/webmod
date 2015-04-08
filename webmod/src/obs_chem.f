@@ -159,8 +159,9 @@ c 8) permil
 c
 c unit_lut describes the eight acceptable units described below
       character(LEN=12), parameter :: unit_lut(8) = 
-     $   (/'mg/L','meq/L','uconc1','uconc2','uconc3', 
-     $    'mmol/L','mol/L','permil'/)
+     $   (/'mg/L        ', 'meq/L       ', 'uconc1      ', 
+     $     'uconc2      ', 'uconc3      ', 'mmol/L      ',
+     $     'mol/L       ', 'permil      '/)
 c
 c M2mM is equal to 1000 to convert moles to millimoles.
       double precision, parameter:: M2mM = 1000.0
@@ -380,7 +381,7 @@ c
 
       integer function obsc_init()
 
-c$$$#if defined(_WIN32)
+c$$$#if defined(__INTEL_COMPILER)
 c$$$      USE IFPORT
 c$$$#endif
       USE WEBMOD_OBSCHEM
@@ -465,7 +466,7 @@ c
 !      call getenv('mms_data_dir',phreeq_lut_file)
 !      phreeq_lut_file= phreeq_lut_file(1:length(phreeq_lut_file))//
 !     $     '/phreeq_lut'
-      IF ( control_string(phreeq_lut_file, 'input_dir').NE.0 ) RETURN
+      IF ( control_string_(phreeq_lut_file, 'input_dir').NE.0 ) RETURN
       i = index(phreeq_lut_file,CHAR(0))   ! CHAR(0) is end of strings returned from control_string call
       phreeq_lut_file= phreeq_lut_file(1:i-1)//'phreeq_lut'
       inquire(file=phreeq_lut_file,exist=filflg)

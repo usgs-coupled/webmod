@@ -1646,7 +1646,7 @@ c
       if(print_vse.ge.1) then
 !        nf=0
 c composite basin volumes
-        IF(control_string(out_dir,'output_dir').NE.0) RETURN
+        IF(control_string_(out_dir,'output_dir').NE.0) RETURN
         path_len = index(out_dir,CHAR(0))-1   ! CHAR(0) is end of strings returned from control_string call
         vf_bas%file = out_dir(1:path_len)//'v_basin'
         inquire(file=vf_bas%file,exist=filflg)

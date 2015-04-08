@@ -8,7 +8,7 @@
       INTEGER, EXTERNAL :: getvar, readvar, putvar, declparam_u
       INTEGER, EXTERNAL :: julian, isleap
       INTEGER, EXTERNAL :: getdataname, getoutname, getoutdirfile
-      INTEGER, EXTERNAL :: declmodule, control_string, control_integer
+      INTEGER, EXTERNAL :: declmodule, control_string_, control_integer
 
 !      EXTERNAL dattim, opstr, dpint4, dpstr, dpdble, dpreal
       EXTERNAL decl_control

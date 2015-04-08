@@ -62,7 +62,7 @@ c
       end if
 
 C******Debug level print
-      call dpint4('End of soltab, retval = ', soltab_prms, 1, 2)
+      call dpint4_('End of soltab, retval = ', soltab_prms, 1, 2)
       return
       end
 
