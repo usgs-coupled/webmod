@@ -82,7 +82,7 @@
 		<File RelativePath="src\obs_chem.f"/>
 		<File RelativePath="src\obs_webmod.f"/>
 		<File RelativePath=".\src\obs_webx.f"/>
-		<File RelativePath="..\IPhreeqcMMS\src\phr_mix.f90"/>
+		<File RelativePath="..\IPhreeqcMMS\src\phr_mix.F90"/>
 		<File RelativePath="..\IPhreeqcMMS\src\phr_multicopy.f90"/>
 		<File RelativePath="..\IPhreeqcMMS\src\phr_precip.f90"/>
 		<File RelativePath=".\src\phreeq_mms.f90"/>
