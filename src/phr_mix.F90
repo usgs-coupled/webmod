@@ -3,7 +3,9 @@
                      fill_factor,index_rxn,conc_conserv,files_on, &
                      n_user,rxnmols,tempc,ph,ph_final,tsec,array, &
                      arr_rows,arr_cols)
+#if defined(__INTEL_COMPILER)
       USE IFPORT   ! to enable 'SYSTEM' calls
+#endif
       USE WEBMOD_IO, ONLY: nowtime, xdebug_start, xdebug_stop
       USE WEBMOD_PHREEQ_MMS, ONLY:  nsolute, sel_mix 
       USE WEBMOD_OBSCHEM, ONLY : n_iso
