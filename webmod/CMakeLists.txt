@@ -37,6 +37,9 @@ src/webmod_res.f
 src/xyz_dist_web.f
 )
 
+# place [*.F[90]] files into "Source Files"
+source_group("Source Files" FILES "../IPhreeqcMMS/IPhreeqc/src/IPhreeqc_interface.F90")
+source_group("Source Files" FILES "src/web_sum.F")
 
 # setup include directories
 ##include_directories("${PROJECT_SOURCE_DIR}")

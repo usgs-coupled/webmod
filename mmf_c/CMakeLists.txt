@@ -4,7 +4,39 @@ project(mmf_c C)
 
 # fortran name mangling
 include(FortranCInterface)
-FortranCInterface_HEADER(FC.h MACRO_NAMESPACE "FC_")
+FortranCInterface_HEADER(FC.h MACRO_NAMESPACE "FC_" SYMBOLS
+control_string_
+dattim
+decldim
+declfix
+declmodule
+declparam
+declpri
+declvar
+decl_control
+deltim
+djulian
+dpdble
+dpint4_
+dpreal_
+dpstr
+getdataname
+getdim
+getdimname
+getoutname
+getparam
+getstep
+getvar
+isleap
+julian
+opstr
+putvar
+readvar
+setdims_
+##setdims
+##call_modules_
+call_modules
+)
 
 # set "Character Set" to Unicode
 # this may be unnecessary
