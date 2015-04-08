@@ -9,7 +9,7 @@ project(webmod_f Fortran)
 SET(webmod_f_SOURCES
 ../IPhreeqcMMS/include/mms_phreeqc.f90.inc
 ../IPhreeqcMMS/IPhreeqc/src/IPhreeqc_interface.F90
-../IPhreeqcMMS/src/phr_mix.f90
+../IPhreeqcMMS/src/phr_mix.F90
 ../IPhreeqcMMS/src/phr_multicopy.f90
 ../IPhreeqcMMS/src/phr_precip.f90
 src/basin_topg.f
