@@ -24,7 +24,7 @@ src/nwsmelt_topg.f
 src/obs_chem.f
 src/obs_webmod.f
 src/obs_webx.f
-src/phreeq_mms.f90
+src/phreeq_mms.F90
 src/potet_hamon_prms.f
 src/precip_web.f
 src/route_clark.f
