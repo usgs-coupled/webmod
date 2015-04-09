@@ -8,6 +8,7 @@ c
 c***********************************************************************
 c 
       MODULE WEBMOD_INTCP
+      USE mmf, only : declparam
       IMPLICIT NONE
       include 'fmodules.inc'
 

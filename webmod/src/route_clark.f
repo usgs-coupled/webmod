@@ -131,6 +131,7 @@ c
 
 
       USE WEBMOD_ROUTE
+      USE mmf, only : declparam
       IMPLICIT NONE
 
       Routecdecl = 1

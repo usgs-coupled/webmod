@@ -121,6 +121,7 @@ c
       integer function nwsmdecl()
 
       USE WEBMOD_SNOW
+      USE mmf, only : declparam
       implicit none
 
       nwsmdecl = 1

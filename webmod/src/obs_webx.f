@@ -24,6 +24,7 @@ c
      $     solrad, swe, pan_evap, route_on, form_data,
      $     rain_day)
       use WEBMOD_IRRIG, only : nform
+      USE mmf, only : declparam
       implicit none
       include 'fmodules.inc'
       real runoff(MAXOBS)

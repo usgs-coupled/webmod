@@ -2,7 +2,9 @@
 ! $Id: fmodules.inc 491 2008-10-24 23:13:50Z rsregan $
 ! system include file for all fortran modules
 ! **********************************************************************
-      INTEGER, EXTERNAL :: decldim, declfix, declparam, declvar, declpri
+!!      INTEGER, EXTERNAL :: decldim, declfix, declparam, declvar, declpri
+!!      INTEGER, EXTERNAL :: declfix, declparam, declvar, declpri
+      INTEGER, EXTERNAL :: declvar, declpri
       DOUBLE PRECISION, EXTERNAL :: deltim, delnex, djulian
       INTEGER, EXTERNAL :: getdim, getparam, getstep
       INTEGER, EXTERNAL :: getvar, readvar, putvar, declparam_u

@@ -20,6 +20,7 @@
 ! ***************** START MODULE *************
       MODULE WEBMOD_PHREEQ_MMS
       USE IPhreeqc
+      USE mmf, only : declparam
       IMPLICIT NONE
       INCLUDE 'fmodules.f90.inc'
       !INCLUDE 'IPhreeqc.f90.inc'

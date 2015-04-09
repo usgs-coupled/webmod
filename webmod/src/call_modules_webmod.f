@@ -17,6 +17,7 @@
 !***********************************************************************
       INTEGER FUNCTION call_modules(Arg)
       USE WEB_MODULE
+      USE mmf, only : decldim, declfix
       IMPLICIT NONE
       INCLUDE 'fmodules.inc'
 ! Arguments
@@ -280,6 +281,7 @@
 !***********************************************************************
 
       INTEGER FUNCTION setdims_()
+      USE mmf, only : decldim, declfix
       IMPLICIT NONE
       INCLUDE 'fmodules.inc'
 ! Local Variables

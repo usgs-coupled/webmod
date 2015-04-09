@@ -76,6 +76,7 @@ c
       integer function obsdecl()
 
       USE WEBMOD_OBSHYD
+      USE mmf, only : declparam
       IMPLICIT NONE
 
       obsdecl = 1

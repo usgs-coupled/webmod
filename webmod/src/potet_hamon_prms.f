@@ -81,6 +81,7 @@ c
 
      
       USE WEBMOD_POTET
+      USE mmf, only : declparam
       IMPLICIT NONE
 
       petdecl = 1
