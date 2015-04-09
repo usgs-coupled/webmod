@@ -7423,7 +7423,8 @@
                  if(n_iso.ne.0) then   ! assign the proper delta to the DI, delta values for the pack 
                                        ! were stored in the fractionate subroutine above
                    ! int ipack, int imelt, double eps, double ipf, double fmelt, double rstd    
-                   CALL meltpack(id,solns(1),mixture, dble(snowmelt_18O_depl(is)), dble(ion_factor), dble(percent_melt),phq_lut(sol_id(iso_list(1))%phq)%isoratio )
+                   CALL meltpack(id,solns(1),mixture, dble(snowmelt_18O_depl(is)), dble(ion_factor), dble(percent_melt),&
+                        phq_lut(sol_id(iso_list(1))%phq)%isoratio )
                    iresult = accumulateline(ID, "SELECTED_OUTPUT")
                    iresult = accumulateline(ID, "-reset false")
                    iresult = accumulateline(ID, "-pH")

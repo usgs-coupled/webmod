@@ -3,63 +3,64 @@ IMPLICIT NONE
 SAVE
 CONTAINS
     
-    ! long decldim_ (char *dname, ftnint *dval, ftnint *dmax, char *ddescr, ftnlen namelen, ftnlen descrlen)    
-    INTEGER(C_LONG) FUNCTION decldim(dname, dval, dmax, ddescr)
+    ! long decldim (char *name, long value, long max, char *descr)
+    INTEGER FUNCTION decldim(name, val, max, descr)
         USE ISO_C_BINDING
         IMPLICIT NONE
         INTERFACE
-            INTEGER (C_LONG) FUNCTION decldimC                    &
-                !(dname, dval, dmax, ddescr, namelen, descrlen)    &
-                (dname, dval, dmax, ddescr)    &
+            INTEGER (C_LONG) FUNCTION decldimC  &
+                (name, val, max, descr)         &
                 BIND(C, NAME='decldim')
                 USE ISO_C_BINDING
                 IMPLICIT NONE
-                CHARACTER(KIND=C_CHAR), INTENT(IN)        :: dname(*)
-                !INTEGER(KIND=C_INT),    INTENT(IN)        :: dval
-                !INTEGER(KIND=C_INT),    INTENT(IN)        :: dmax
-                INTEGER(KIND=C_LONG),    INTENT(IN)        :: dval
-                INTEGER(KIND=C_LONG),    INTENT(IN)        :: dmax
-                CHARACTER(KIND=C_CHAR), INTENT(IN)        :: ddescr(*)
-                !INTEGER(KIND=C_INT),    INTENT(IN), VALUE :: namelen
-                !INTEGER(KIND=C_INT),    INTENT(IN), VALUE :: descrlen
+                CHARACTER(KIND=C_CHAR),  INTENT(IN)        :: name(*)
+                INTEGER(KIND=C_LONG),    INTENT(IN)        :: val
+                INTEGER(KIND=C_LONG),    INTENT(IN)        :: max
+                CHARACTER(KIND=C_CHAR),  INTENT(IN)        :: descr(*)
             END FUNCTION decldimC
         END INTERFACE
-        CHARACTER(*),        INTENT(IN) :: dname        
-        INTEGER, INTENT(IN) :: dval
-        INTEGER, INTENT(IN) :: dmax
-        CHARACTER(*),        INTENT(IN) :: ddescr        
-        !decldim = decldim_(trim(dname)//C_NULL_CHAR,              &
-        !                   dval, dmax, trim(ddescr)//C_NULL_CHAR, &
-        !                   len(dname), len(ddescr))
-        decldim = decldimC(trim(dname)//C_NULL_CHAR,              &
-                           dval, dmax, trim(ddescr)//C_NULL_CHAR)
+        CHARACTER(*),        INTENT(IN) :: name
+        INTEGER,             INTENT(IN) :: val
+        INTEGER,             INTENT(IN) :: max
+        CHARACTER(*),        INTENT(IN) :: descr
+        INTEGER(KIND=C_LONG)            :: tval
+        INTEGER(KIND=C_LONG)            :: tmax
+        INTEGER(KIND=C_LONG)            :: creturn
+        tval = val
+        tmax = max
+        creturn = decldimC(trim(name)//C_NULL_CHAR,                &
+                           tval, tmax, trim(descr)//C_NULL_CHAR)
+        decldim = creturn
     END FUNCTION decldim
 
-    ! long declfix_ (char *dname, ftnint *dval, ftnint *dmax, char *ddescr, ftnlen namelen, ftnlen descrlen)
-    INTEGER(C_LONG) FUNCTION declfix(dname, dval, dmax, ddescr)
+    ! long declfix (char *name, long value, long max, char *descr)
+    INTEGER FUNCTION declfix(name, val, max, descr)
         USE ISO_C_BINDING
         IMPLICIT NONE
         INTERFACE
-            INTEGER (C_LONG) FUNCTION declfix_                    &
-                (dname, dval, dmax, ddescr, namelen, descrlen)    &
-                BIND(C, NAME='declfix_')
+            INTEGER (C_LONG) FUNCTION declfixC  &
+                (name, val, max, descr)         &
+                BIND(C, NAME='declfix')
                 USE ISO_C_BINDING
                 IMPLICIT NONE
-                CHARACTER(KIND=C_CHAR), INTENT(IN)        :: dname(*)
-                INTEGER(KIND=C_INT),    INTENT(IN)        :: dval
-                INTEGER(KIND=C_INT),    INTENT(IN)        :: dmax
-                CHARACTER(KIND=C_CHAR), INTENT(IN)        :: ddescr(*)
-                INTEGER(KIND=C_INT),    INTENT(IN), VALUE :: namelen
-                INTEGER(KIND=C_INT),    INTENT(IN), VALUE :: descrlen
-            END FUNCTION declfix_
+                CHARACTER(KIND=C_CHAR),  INTENT(IN)        :: name(*)
+                INTEGER(KIND=C_LONG),    INTENT(IN)        :: val
+                INTEGER(KIND=C_LONG),    INTENT(IN)        :: max
+                CHARACTER(KIND=C_CHAR),  INTENT(IN)        :: descr(*)
+            END FUNCTION declfixC
         END INTERFACE
-        CHARACTER(*),        INTENT(IN) :: dname        
-        INTEGER(KIND=C_INT), INTENT(IN) :: dval
-        INTEGER(KIND=C_INT), INTENT(IN) :: dmax
-        CHARACTER(*),        INTENT(IN) :: ddescr        
-        declfix = declfix_(trim(dname)//C_NULL_CHAR,              &
-                           dval, dmax, trim(ddescr)//C_NULL_CHAR, &
-                           len(dname), len(ddescr))
+        CHARACTER(*),        INTENT(IN) :: name
+        INTEGER,             INTENT(IN) :: val
+        INTEGER,             INTENT(IN) :: max
+        CHARACTER(*),        INTENT(IN) :: descr
+        INTEGER(KIND=C_LONG)            :: tval
+        INTEGER(KIND=C_LONG)            :: tmax
+        INTEGER(KIND=C_LONG)            :: creturn
+        tval = val
+        tmax = max
+        creturn = declfixC(trim(name)//C_NULL_CHAR,                &
+                           tval, tmax, trim(descr)//C_NULL_CHAR)
+        declfix = creturn
     END FUNCTION declfix
     
     ! long declparam_ (char *mname, char *pname, char *pdimen, char *ptype,

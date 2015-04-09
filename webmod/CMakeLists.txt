@@ -20,6 +20,7 @@ src/fmodules.f90.inc
 src/intcp_prms.f
 src/io.f
 src/irrig_web.f
+src/mmf.f90
 src/nwsmelt_topg.f
 src/obs_chem.f
 src/obs_webmod.f
