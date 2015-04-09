@@ -8,26 +8,31 @@ CONTAINS
         USE ISO_C_BINDING
         IMPLICIT NONE
         INTERFACE
-            INTEGER (C_LONG) FUNCTION decldim_                    &
-                (dname, dval, dmax, ddescr, namelen, descrlen)    &
-                BIND(C, NAME='decldim_')
+            INTEGER (C_LONG) FUNCTION decldimC                    &
+                !(dname, dval, dmax, ddescr, namelen, descrlen)    &
+                (dname, dval, dmax, ddescr)    &
+                BIND(C, NAME='decldim')
                 USE ISO_C_BINDING
                 IMPLICIT NONE
                 CHARACTER(KIND=C_CHAR), INTENT(IN)        :: dname(*)
-                INTEGER(KIND=C_INT),    INTENT(IN)        :: dval
-                INTEGER(KIND=C_INT),    INTENT(IN)        :: dmax
+                !INTEGER(KIND=C_INT),    INTENT(IN)        :: dval
+                !INTEGER(KIND=C_INT),    INTENT(IN)        :: dmax
+                INTEGER(KIND=C_LONG),    INTENT(IN)        :: dval
+                INTEGER(KIND=C_LONG),    INTENT(IN)        :: dmax
                 CHARACTER(KIND=C_CHAR), INTENT(IN)        :: ddescr(*)
-                INTEGER(KIND=C_INT),    INTENT(IN), VALUE :: namelen
-                INTEGER(KIND=C_INT),    INTENT(IN), VALUE :: descrlen
-            END FUNCTION decldim_
+                !INTEGER(KIND=C_INT),    INTENT(IN), VALUE :: namelen
+                !INTEGER(KIND=C_INT),    INTENT(IN), VALUE :: descrlen
+            END FUNCTION decldimC
         END INTERFACE
         CHARACTER(*),        INTENT(IN) :: dname        
-        INTEGER(KIND=C_INT), INTENT(IN) :: dval
-        INTEGER(KIND=C_INT), INTENT(IN) :: dmax
+        INTEGER, INTENT(IN) :: dval
+        INTEGER, INTENT(IN) :: dmax
         CHARACTER(*),        INTENT(IN) :: ddescr        
-        decldim = decldim_(trim(dname)//C_NULL_CHAR,              &
-                           dval, dmax, trim(ddescr)//C_NULL_CHAR, &
-                           len(dname), len(ddescr))
+        !decldim = decldim_(trim(dname)//C_NULL_CHAR,              &
+        !                   dval, dmax, trim(ddescr)//C_NULL_CHAR, &
+        !                   len(dname), len(ddescr))
+        decldim = decldimC(trim(dname)//C_NULL_CHAR,              &
+                           dval, dmax, trim(ddescr)//C_NULL_CHAR)
     END FUNCTION decldim
 
     ! long declfix_ (char *dname, ftnint *dval, ftnint *dmax, char *ddescr, ftnlen namelen, ftnlen descrlen)
