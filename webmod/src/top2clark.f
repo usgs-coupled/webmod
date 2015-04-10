@@ -64,7 +64,7 @@
       integer function top2cdecl()
 
       USE WEBMOD_CLARK
-      USE mmf, only : declparam
+      USE mmf, only : declparam, declvar
       IMPLICIT NONE
 
       top2cdecl = 1

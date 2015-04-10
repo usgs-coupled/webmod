@@ -448,7 +448,7 @@ c
       integer function webrdecl()
       
       USE WEBMOD_RESMOD
-      USE mmf, only : declparam
+      USE mmf, only : declparam, declvar
       IMPLICIT NONE
 
       integer check_uz_dim

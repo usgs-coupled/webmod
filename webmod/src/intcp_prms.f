@@ -80,6 +80,8 @@ c
       integer function intdecl()
 
       USE WEBMOD_INTCP
+      USE ISO_C_BINDING
+      USE mmf, only : declvar
       IMPLICIT NONE
 
       intdecl = 1

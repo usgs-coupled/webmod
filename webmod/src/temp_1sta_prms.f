@@ -101,7 +101,7 @@ c
 
 
       USE WEBMOD_TEMP1STA
-      USE mmf, only : declparam
+      USE mmf, only : declparam, declvar
       IMPLICIT NONE
 
       t1decl = 1

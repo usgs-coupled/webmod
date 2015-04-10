@@ -86,7 +86,7 @@ c
       integer function pptdecl()
 
       USE WEBMOD_PRECIP
-      USE mmf, only : declparam
+      USE mmf, only : declparam, declvar, declpri
       IMPLICIT NONE
 
       pptdecl = 1

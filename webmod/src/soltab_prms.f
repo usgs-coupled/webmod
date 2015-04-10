@@ -74,7 +74,7 @@ c
       integer function stdecl()
 
       USE WEBMOD_SOLTAB
-      USE mmf, only : declparam
+      USE mmf, only : declparam, declvar
       IMPLICIT NONE
 
       stdecl = 1

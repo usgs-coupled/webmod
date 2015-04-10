@@ -740,6 +740,7 @@
 
       USE WEBMOD_PHREEQ_MMS
       USE WEBMOD_OBSCHEM, ONLY : n_iso
+      USE mmf, ONLY : declvar
       IMPLICIT NONE
 
 ! #if defined(__INTEL_COMPILER)

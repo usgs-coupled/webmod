@@ -44,7 +44,7 @@ c
      +                           mru_rain, mru_snow, pptmix,
      +                           prmx, tmax_rain_sta, tmin_rain_sta,
      +                           is_rain_day,solrad_tmax)
-      USE mmf, only : declparam
+      USE mmf, only : declparam, declvar
       IMPLICIT NONE
 
       include 'fmodules.inc'

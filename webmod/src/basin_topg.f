@@ -60,7 +60,7 @@ c
 
       integer function basdecl()
       USE WEBMOD_BASIN
-      USE mmf, only : declparam
+      USE mmf, only : declparam, declvar
       implicit none
 
       basdecl = 1
