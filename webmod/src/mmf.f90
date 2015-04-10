@@ -46,7 +46,7 @@ IMPLICIT NONE
         tmax = max
         creturn = decldimC(trim(name)//C_NULL_CHAR,                &
                            tval, tmax, trim(descr)//C_NULL_CHAR)
-        decldim = creturn
+        decldim = int(creturn)
     END FUNCTION decldim
 
     ! long declfix (char *name, long value, long max, char *descr)
@@ -76,7 +76,7 @@ IMPLICIT NONE
         tmax = max
         creturn = declfixC(trim(name)//C_NULL_CHAR,                &
                            tval, tmax, trim(descr)//C_NULL_CHAR)
-        declfix = creturn
+        declfix = int(creturn)
     END FUNCTION declfix
     
     ! long declparam (char *module, char *name, char *dimen, char *type, char *value,
@@ -115,8 +115,6 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
         INTEGER(KIND=C_LONG)            :: creturn
-        
-        
         creturn = declparamC(trim(mname)   // C_NULL_CHAR,  &
                              trim(name)    // C_NULL_CHAR,  &
                              trim(dimen)   // C_NULL_CHAR,  &
@@ -128,7 +126,7 @@ IMPLICIT NONE
                              trim(help)    // C_NULL_CHAR,  &
                              trim(units)   // C_NULL_CHAR   &
                              )
-        declparam = creturn
+        declparam = int(creturn)
     END FUNCTION declparam
 
 
@@ -174,7 +172,7 @@ IMPLICIT NONE
                            trim(units)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
-        declvar_real = creturn
+        declvar_real = int(creturn)
     END FUNCTION declvar_real
 
     ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
@@ -218,7 +216,7 @@ IMPLICIT NONE
                            trim(units)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
-        declvar_realvec = creturn
+        declvar_realvec = int(creturn)
     END FUNCTION declvar_realvec
                              
 
@@ -263,7 +261,7 @@ IMPLICIT NONE
                            trim(units)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
-        declvar_realmat = creturn
+        declvar_realmat = int(creturn)
     END FUNCTION declvar_realmat
                                      
     ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
@@ -307,7 +305,7 @@ IMPLICIT NONE
                            trim(units)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
-        declvar_int = creturn
+        declvar_int = int(creturn)
     END FUNCTION declvar_int
 
     ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
@@ -351,7 +349,7 @@ IMPLICIT NONE
                            trim(units)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
-        declvar_intvec = creturn
+        declvar_intvec = int(creturn)
     END FUNCTION declvar_intvec
                                      
     ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
@@ -395,7 +393,7 @@ IMPLICIT NONE
                            trim(units)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
-        declvar_dp = creturn
+        declvar_dp = int(creturn)
     END FUNCTION declvar_dp
                                    
                                    
@@ -440,7 +438,7 @@ IMPLICIT NONE
                            trim(units)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
-        declvar_dpvec = creturn
+        declvar_dpvec = int(creturn)
     END FUNCTION declvar_dpvec
 
     
@@ -485,7 +483,7 @@ IMPLICIT NONE
                            trim(units)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
-        declvar_dpmat = creturn
+        declvar_dpmat = int(creturn)
     END FUNCTION declvar_dpmat
 
     
@@ -530,7 +528,7 @@ IMPLICIT NONE
                            trim(units)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
-        declvar_dp3d = creturn
+        declvar_dp3d = int(creturn)
     END FUNCTION declvar_dp3d
 
     ! long declpri (char *name, long size, char *type, char *value)
@@ -559,7 +557,7 @@ IMPLICIT NONE
                            trim(ptype)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
-        declpri_real = creturn
+        declpri_real = int(creturn)
     END FUNCTION declpri_real
     
     
@@ -590,7 +588,7 @@ IMPLICIT NONE
                            trim(ptype)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
-        declpri_realvec = creturn
+        declpri_realvec = int(creturn)
     END FUNCTION declpri_realvec
     
     
@@ -621,7 +619,7 @@ IMPLICIT NONE
                            trim(ptype)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
-        declpri_realmat = creturn
+        declpri_realmat = int(creturn)
     END FUNCTION declpri_realmat
     
     
@@ -651,7 +649,7 @@ IMPLICIT NONE
                            trim(ptype)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
-        declpri_int = creturn
+        declpri_int = int(creturn)
     END FUNCTION declpri_int
     
 
@@ -681,7 +679,7 @@ IMPLICIT NONE
                            trim(ptype)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
-        declpri_intvec = creturn
+        declpri_intvec = int(creturn)
     END FUNCTION declpri_intvec
     
 
@@ -711,7 +709,7 @@ IMPLICIT NONE
                            trim(ptype)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
-        declpri_intmat = creturn
+        declpri_intmat = int(creturn)
     END FUNCTION declpri_intmat
     
     ! long declpri (char *name, long size, char *type, char *value)
@@ -740,7 +738,7 @@ IMPLICIT NONE
                            trim(ptype)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
-        declpri_dp = creturn
+        declpri_dp = int(creturn)
     END FUNCTION declpri_dp
     
     
@@ -770,7 +768,7 @@ IMPLICIT NONE
                            trim(ptype)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
-        declpri_dpmat = creturn
+        declpri_dpmat = int(creturn)
     END FUNCTION declpri_dpmat
     
 END MODULE mmf
