@@ -2,7 +2,7 @@ MODULE mmf
 IMPLICIT NONE
 
     ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
-	!               char *help, char *units, char *value)
+    !               char *help, char *units, char *value)
     INTERFACE declvar
         MODULE PROCEDURE declvar_real, declvar_realvec, declvar_realmat,   &
                          declvar_int,  declvar_intvec,                     &
@@ -80,7 +80,7 @@ IMPLICIT NONE
     END FUNCTION declfix
     
     ! long declparam (char *module, char *name, char *dimen, char *type, char *value,
-	!     char *minimum, char *maximum, char *descr, char *help, char *units)     
+    !     char *minimum, char *maximum, char *descr, char *help, char *units)     
     INTEGER FUNCTION declparam(mname, name, dimen, ptype, value, &
                                minimum, maximum, descr, help, units)
         USE ISO_C_BINDING
@@ -132,7 +132,7 @@ IMPLICIT NONE
 
 
     ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
-	!               char *help, char *units, char *value)
+    !               char *help, char *units, char *value)
     INTEGER FUNCTION declvar_real(mname, name, dimen, maxsize, ptype, &
                                   help, units, value)
         USE ISO_C_BINDING
@@ -147,7 +147,7 @@ IMPLICIT NONE
                 CHARACTER(KIND=C_CHAR), INTENT(IN)        :: mname(*)
                 CHARACTER(KIND=C_CHAR), INTENT(IN)        :: name(*)
                 CHARACTER(KIND=C_CHAR), INTENT(IN)        :: dimen(*)
-                INTEGER(KIND=C_LONG),   INTENT(IN)        :: maxsize
+                INTEGER  (KIND=C_LONG), INTENT(IN)        :: maxsize
                 CHARACTER(KIND=C_CHAR), INTENT(IN)        :: ptype(*)
                 CHARACTER(KIND=C_CHAR), INTENT(IN)        :: help(*)
                 CHARACTER(KIND=C_CHAR), INTENT(IN)        :: units(*)
@@ -161,7 +161,7 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: ptype
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
-        REAL,         INTENT(IN)        :: value
+        REAL,         INTENT(IN), TARGET:: value
         INTEGER(KIND=C_LONG)            :: creturn
         creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
                            trim(name)   // C_NULL_CHAR,  &
@@ -176,7 +176,7 @@ IMPLICIT NONE
     END FUNCTION declvar_real
 
     ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
-	!               char *help, char *units, char *value)
+    !               char *help, char *units, char *value)
     INTEGER FUNCTION declvar_realvec(mname, name, dimen, maxsize, ptype, &
                                      help, units, value)
         USE ISO_C_BINDING
@@ -205,7 +205,7 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: ptype
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
-        REAL,         INTENT(IN)        :: value(:)
+        REAL,         INTENT(IN), TARGET:: value(:)
         INTEGER(KIND=C_LONG)            :: creturn
         creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
                            trim(name)   // C_NULL_CHAR,  &
@@ -221,7 +221,7 @@ IMPLICIT NONE
                              
 
     ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
-	!               char *help, char *units, char *value)
+    !               char *help, char *units, char *value)
     INTEGER FUNCTION declvar_realmat(mname, name, dimen, maxsize, ptype, &
                                         help, units, value)
         USE ISO_C_BINDING
@@ -250,7 +250,7 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: ptype
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
-        REAL,         INTENT(IN)        :: value(:,:)
+        REAL,         INTENT(IN), TARGET:: value(:,:)
         INTEGER(KIND=C_LONG)            :: creturn
         creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
                            trim(name)   // C_NULL_CHAR,  &
@@ -265,7 +265,7 @@ IMPLICIT NONE
     END FUNCTION declvar_realmat
                                      
     ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
-	!               char *help, char *units, char *value)
+    !               char *help, char *units, char *value)
     INTEGER FUNCTION declvar_int(mname, name, dimen, maxsize, ptype, &
                                  help, units, value)
         USE ISO_C_BINDING
@@ -294,7 +294,7 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: ptype
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
-        INTEGER,      INTENT(IN)        :: value
+        INTEGER,      INTENT(IN), TARGET:: value
         INTEGER(KIND=C_LONG)            :: creturn
         creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
                            trim(name)   // C_NULL_CHAR,  &
@@ -309,7 +309,7 @@ IMPLICIT NONE
     END FUNCTION declvar_int
 
     ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
-	!               char *help, char *units, char *value)
+    !               char *help, char *units, char *value)
     INTEGER FUNCTION declvar_intvec(mname, name, dimen, maxsize, ptype, &
                                      help, units, value)
         USE ISO_C_BINDING
@@ -338,7 +338,7 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: ptype
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
-        INTEGER,      INTENT(IN)        :: value(:)
+        INTEGER,      INTENT(IN), TARGET:: value(:)
         INTEGER(KIND=C_LONG)            :: creturn
         creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
                            trim(name)   // C_NULL_CHAR,  &
@@ -353,7 +353,7 @@ IMPLICIT NONE
     END FUNCTION declvar_intvec
                                      
     ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
-	!               char *help, char *units, char *value)
+    !               char *help, char *units, char *value)
     INTEGER FUNCTION declvar_dp(mname, name, dimen, maxsize, ptype, &
                                 help, units, value)
         USE ISO_C_BINDING
@@ -382,7 +382,7 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: ptype
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
-        DOUBLE PRECISION, INTENT(IN)    :: value
+        DOUBLE PRECISION, INTENT(IN), TARGET :: value
         INTEGER(KIND=C_LONG)            :: creturn
         creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
                            trim(name)   // C_NULL_CHAR,  &
@@ -398,7 +398,7 @@ IMPLICIT NONE
                                    
                                    
     ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
-	!               char *help, char *units, char *value)
+    !               char *help, char *units, char *value)
     INTEGER FUNCTION declvar_dpvec(mname, name, dimen, maxsize, ptype, &
                                    help, units, value)
         USE ISO_C_BINDING
@@ -427,7 +427,7 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: ptype
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
-        DOUBLE PRECISION, INTENT(IN)    :: value(:)
+        DOUBLE PRECISION, INTENT(IN), TARGET:: value(:)
         INTEGER(KIND=C_LONG)            :: creturn
         creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
                            trim(name)   // C_NULL_CHAR,  &
@@ -443,7 +443,7 @@ IMPLICIT NONE
 
     
     ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
-	!               char *help, char *units, char *value)
+    !               char *help, char *units, char *value)
     INTEGER FUNCTION declvar_dpmat(mname, name, dimen, maxsize, ptype, &
                                    help, units, value)
         USE ISO_C_BINDING
@@ -472,7 +472,7 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: ptype
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
-        DOUBLE PRECISION, INTENT(IN)    :: value(:,:)
+        DOUBLE PRECISION, INTENT(IN), TARGET:: value(:,:)
         INTEGER(KIND=C_LONG)            :: creturn
         creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
                            trim(name)   // C_NULL_CHAR,  &
@@ -488,7 +488,7 @@ IMPLICIT NONE
 
     
     ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
-	!               char *help, char *units, char *value)
+    !               char *help, char *units, char *value)
     INTEGER FUNCTION declvar_dp3d(mname, name, dimen, maxsize, ptype, &
                                    help, units, value)
         USE ISO_C_BINDING
@@ -517,7 +517,7 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: ptype
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
-        DOUBLE PRECISION, INTENT(IN)    :: value(:,:,:)
+        DOUBLE PRECISION, INTENT(IN), TARGET:: value(:,:,:)
         INTEGER(KIND=C_LONG)            :: creturn
         creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
                            trim(name)   // C_NULL_CHAR,  &
@@ -550,7 +550,7 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: name
         INTEGER,      INTENT(IN)        :: size
         CHARACTER(*), INTENT(IN)        :: ptype
-        REAL,         INTENT(IN)        :: value
+        REAL,         INTENT(IN), TARGET:: value
         INTEGER(KIND=C_LONG)            :: creturn
         creturn = declpriC(trim(name)   // C_NULL_CHAR,  &
                            size,                         &
@@ -581,7 +581,7 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: name
         INTEGER,      INTENT(IN)        :: size
         CHARACTER(*), INTENT(IN)        :: ptype
-        REAL,         INTENT(IN)        :: value(:)
+        REAL,         INTENT(IN), TARGET:: value(:)
         INTEGER(KIND=C_LONG)            :: creturn
         creturn = declpriC(trim(name)   // C_NULL_CHAR,  &
                            size,                         &
@@ -612,7 +612,7 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: name
         INTEGER,      INTENT(IN)        :: size
         CHARACTER(*), INTENT(IN)        :: ptype
-        REAL,         INTENT(IN)        :: value(:,:)
+        REAL,         INTENT(IN), TARGET:: value(:,:)
         INTEGER(KIND=C_LONG)            :: creturn
         creturn = declpriC(trim(name)   // C_NULL_CHAR,  &
                            size,                         &
@@ -642,7 +642,7 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: name
         INTEGER,      INTENT(IN)        :: size
         CHARACTER(*), INTENT(IN)        :: ptype
-        INTEGER,      INTENT(IN)        :: value
+        INTEGER,      INTENT(IN), TARGET:: value
         INTEGER(KIND=C_LONG)            :: creturn
         creturn = declpriC(trim(name)   // C_NULL_CHAR,  &
                            size,                         &
@@ -672,7 +672,7 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: name
         INTEGER,      INTENT(IN)        :: size
         CHARACTER(*), INTENT(IN)        :: ptype
-        INTEGER,      INTENT(IN)        :: value(:)
+        INTEGER,      INTENT(IN), TARGET:: value(:)
         INTEGER(KIND=C_LONG)            :: creturn
         creturn = declpriC(trim(name)   // C_NULL_CHAR,  &
                            size,                         &
@@ -702,7 +702,7 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: name
         INTEGER,      INTENT(IN)        :: size
         CHARACTER(*), INTENT(IN)        :: ptype
-        INTEGER,      INTENT(IN)        :: value(:,:)
+        INTEGER,      INTENT(IN), TARGET:: value(:,:)
         INTEGER(KIND=C_LONG)            :: creturn
         creturn = declpriC(trim(name)   // C_NULL_CHAR,  &
                            size,                         &
@@ -731,7 +731,7 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: name
         INTEGER,      INTENT(IN)        :: size
         CHARACTER(*), INTENT(IN)        :: ptype
-        DOUBLE PRECISION, INTENT(IN)    :: value
+        DOUBLE PRECISION, INTENT(IN), TARGET:: value
         INTEGER(KIND=C_LONG)            :: creturn
         creturn = declpriC(trim(name)   // C_NULL_CHAR,  &
                            size,                         &
@@ -752,17 +752,17 @@ IMPLICIT NONE
                 BIND(C, NAME='declpri')
                 USE ISO_C_BINDING
                 IMPLICIT NONE
-                CHARACTER(KIND=C_CHAR), INTENT(IN)        :: name(*)
-                INTEGER(KIND=C_LONG),   INTENT(IN)        :: size
-                CHARACTER(KIND=C_CHAR), INTENT(IN)        :: ptype(*)
-                TYPE(C_PTR), VALUE                        :: value
+                CHARACTER(KIND=C_CHAR), INTENT(IN) :: name(*)
+                INTEGER  (KIND=C_LONG), INTENT(IN) :: size
+                CHARACTER(KIND=C_CHAR), INTENT(IN) :: ptype(*)
+                TYPE(C_PTR), VALUE                 :: value
             END FUNCTION declpriC
         END INTERFACE
-        CHARACTER(*), INTENT(IN)        :: name
-        INTEGER,      INTENT(IN)        :: size
-        CHARACTER(*), INTENT(IN)        :: ptype
-        DOUBLE PRECISION, INTENT(IN)    :: value(:,:)
-        INTEGER(KIND=C_LONG)            :: creturn
+        CHARACTER(*),     INTENT(IN)         :: name
+        INTEGER,          INTENT(IN)         :: size
+        CHARACTER(*),     INTENT(IN)         :: ptype
+        DOUBLE PRECISION, INTENT(IN), TARGET :: value(:,:)
+        INTEGER(KIND=C_LONG)                 :: creturn
         creturn = declpriC(trim(name)   // C_NULL_CHAR,  &
                            size,                         &
                            trim(ptype)  // C_NULL_CHAR,  &
