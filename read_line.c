@@ -83,9 +83,9 @@ long read_line (void) {
 **  9999 in the year field is the code for EOF. 
 */
       if (cur_fd->time.year == 9999) {
-		  (void)fprintf (stderr,"\nERROR, date of end_time is after the last date in the Data File \n");
-		  (void)fprintf(stderr, "       simulation stopped on: %ld %ld %ld \n", Mnowtime->year, Mnowtime->month, Mnowtime->day);
-         return ENDOFFILE;
+		  (void)fprintf (stderr,"\nWARNING, date of end_time reached the last date in the Data File \n");
+		  (void)fprintf(stderr, "         simulation stopped on: %ld %ld %ld \n", Mnowtime->year, Mnowtime->month, Mnowtime->day);
+	      return ENDOFFILE;
 	  }
 
 /*
