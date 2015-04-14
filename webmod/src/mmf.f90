@@ -162,11 +162,13 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
         REAL,         INTENT(IN), TARGET:: value
+        INTEGER(KIND=C_LONG)            :: tmaxsize
         INTEGER(KIND=C_LONG)            :: creturn
+        tmaxsize = maxsize
         creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
                            trim(name)   // C_NULL_CHAR,  &
                            trim(dimen)  // C_NULL_CHAR,  &
-                           maxsize,                      &
+                           tmaxsize,                     &
                            trim(ptype)  // C_NULL_CHAR,  &
                            trim(help)   // C_NULL_CHAR,  &
                            trim(units)  // C_NULL_CHAR,  &
@@ -205,12 +207,19 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: ptype
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
-        REAL,         INTENT(IN), TARGET:: value(:)
+        !!REAL,         INTENT(IN), ALLOCATABLE, TARGET :: value(:)   !! WORKS
+        !!REAL,         INTENT(IN), ALLOCATABLE, TARGET :: value(:,:)   !! WORKS
+        !REAL,         INTENT(IN), TARGET :: value(*)                !! WORKS
+        REAL,DIMENSION(:), INTENT(IN), ALLOCATABLE, TARGET :: value               
+        !REAL,         INTENT(IN), ALLOCATABLE :: value(:)
+        !REAL,         INTENT(IN), TARGET :: value(:)
+        INTEGER(KIND=C_LONG)            :: tmaxsize
         INTEGER(KIND=C_LONG)            :: creturn
+        tmaxsize = maxsize
         creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
                            trim(name)   // C_NULL_CHAR,  &
                            trim(dimen)  // C_NULL_CHAR,  &
-                           maxsize,                      &
+                           tmaxsize,                     &
                            trim(ptype)  // C_NULL_CHAR,  &
                            trim(help)   // C_NULL_CHAR,  &
                            trim(units)  // C_NULL_CHAR,  &
@@ -250,12 +259,14 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: ptype
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
-        REAL,         INTENT(IN), TARGET:: value(:,:)
+        REAL,         INTENT(IN), ALLOCATABLE, TARGET:: value(:,:)
         INTEGER(KIND=C_LONG)            :: creturn
+        INTEGER(KIND=C_LONG)            :: tmaxsize
+        tmaxsize = maxsize
         creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
                            trim(name)   // C_NULL_CHAR,  &
                            trim(dimen)  // C_NULL_CHAR,  &
-                           maxsize,                      &
+                           tmaxsize,                     &
                            trim(ptype)  // C_NULL_CHAR,  &
                            trim(help)   // C_NULL_CHAR,  &
                            trim(units)  // C_NULL_CHAR,  &
@@ -295,11 +306,13 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
         INTEGER,      INTENT(IN), TARGET:: value
+        INTEGER(KIND=C_LONG)            :: tmaxsize
         INTEGER(KIND=C_LONG)            :: creturn
+        tmaxsize = maxsize
         creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
                            trim(name)   // C_NULL_CHAR,  &
                            trim(dimen)  // C_NULL_CHAR,  &
-                           maxsize,                      &
+                           tmaxsize,                     &
                            trim(ptype)  // C_NULL_CHAR,  &
                            trim(help)   // C_NULL_CHAR,  &
                            trim(units)  // C_NULL_CHAR,  &
@@ -338,12 +351,14 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: ptype
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
-        INTEGER,      INTENT(IN), TARGET:: value(:)
+        INTEGER,      INTENT(IN), ALLOCATABLE, TARGET:: value(:)
+        INTEGER(KIND=C_LONG)            :: tmaxsize
         INTEGER(KIND=C_LONG)            :: creturn
+        tmaxsize = maxsize
         creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
                            trim(name)   // C_NULL_CHAR,  &
                            trim(dimen)  // C_NULL_CHAR,  &
-                           maxsize,                      &
+                           tmaxsize,                     &
                            trim(ptype)  // C_NULL_CHAR,  &
                            trim(help)   // C_NULL_CHAR,  &
                            trim(units)  // C_NULL_CHAR,  &
@@ -383,11 +398,13 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
         DOUBLE PRECISION, INTENT(IN), TARGET :: value
+        INTEGER(KIND=C_LONG)            :: tmaxsize
         INTEGER(KIND=C_LONG)            :: creturn
+        tmaxsize = maxsize
         creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
                            trim(name)   // C_NULL_CHAR,  &
                            trim(dimen)  // C_NULL_CHAR,  &
-                           maxsize,                      &
+                           tmaxsize,                     &
                            trim(ptype)  // C_NULL_CHAR,  &
                            trim(help)   // C_NULL_CHAR,  &
                            trim(units)  // C_NULL_CHAR,  &
@@ -427,12 +444,14 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: ptype
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
-        DOUBLE PRECISION, INTENT(IN), TARGET:: value(:)
+        DOUBLE PRECISION, INTENT(IN), ALLOCATABLE, TARGET:: value(:)
+        INTEGER(KIND=C_LONG)            :: tmaxsize
         INTEGER(KIND=C_LONG)            :: creturn
+        tmaxsize = maxsize
         creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
                            trim(name)   // C_NULL_CHAR,  &
                            trim(dimen)  // C_NULL_CHAR,  &
-                           maxsize,                      &
+                           tmaxsize,                     &
                            trim(ptype)  // C_NULL_CHAR,  &
                            trim(help)   // C_NULL_CHAR,  &
                            trim(units)  // C_NULL_CHAR,  &
@@ -472,12 +491,14 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: ptype
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
-        DOUBLE PRECISION, INTENT(IN), TARGET:: value(:,:)
+        DOUBLE PRECISION, INTENT(IN), ALLOCATABLE, TARGET:: value(:,:)
+        INTEGER(KIND=C_LONG)            :: tmaxsize
         INTEGER(KIND=C_LONG)            :: creturn
+        tmaxsize = maxsize
         creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
                            trim(name)   // C_NULL_CHAR,  &
                            trim(dimen)  // C_NULL_CHAR,  &
-                           maxsize,                      &
+                           tmaxsize,                     &
                            trim(ptype)  // C_NULL_CHAR,  &
                            trim(help)   // C_NULL_CHAR,  &
                            trim(units)  // C_NULL_CHAR,  &
@@ -517,12 +538,14 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: ptype
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
-        DOUBLE PRECISION, INTENT(IN), TARGET:: value(:,:,:)
+        DOUBLE PRECISION, INTENT(IN), ALLOCATABLE, TARGET:: value(:,:,:)
+        INTEGER(KIND=C_LONG)            :: tmaxsize
         INTEGER(KIND=C_LONG)            :: creturn
+        tmaxsize = maxsize
         creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
                            trim(name)   // C_NULL_CHAR,  &
                            trim(dimen)  // C_NULL_CHAR,  &
-                           maxsize,                      &
+                           tmaxsize,                     &
                            trim(ptype)  // C_NULL_CHAR,  &
                            trim(help)   // C_NULL_CHAR,  &
                            trim(units)  // C_NULL_CHAR,  &
@@ -551,9 +574,11 @@ IMPLICIT NONE
         INTEGER,      INTENT(IN)        :: size
         CHARACTER(*), INTENT(IN)        :: ptype
         REAL,         INTENT(IN), TARGET:: value
+        INTEGER(KIND=C_LONG)            :: tsize
         INTEGER(KIND=C_LONG)            :: creturn
+        tsize = size
         creturn = declpriC(trim(name)   // C_NULL_CHAR,  &
-                           size,                         &
+                           tsize,                        &
                            trim(ptype)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
@@ -581,10 +606,12 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: name
         INTEGER,      INTENT(IN)        :: size
         CHARACTER(*), INTENT(IN)        :: ptype
-        REAL,         INTENT(IN), TARGET:: value(:)
+        REAL,         INTENT(IN), ALLOCATABLE, TARGET:: value(:)
+        INTEGER(KIND=C_LONG)            :: tsize
         INTEGER(KIND=C_LONG)            :: creturn
+        tsize = size
         creturn = declpriC(trim(name)   // C_NULL_CHAR,  &
-                           size,                         &
+                           tsize,                        &
                            trim(ptype)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
@@ -612,10 +639,12 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: name
         INTEGER,      INTENT(IN)        :: size
         CHARACTER(*), INTENT(IN)        :: ptype
-        REAL,         INTENT(IN), TARGET:: value(:,:)
+        REAL,         INTENT(IN), ALLOCATABLE, TARGET:: value(:,:)
+        INTEGER(KIND=C_LONG)            :: tsize
         INTEGER(KIND=C_LONG)            :: creturn
+        tsize = size
         creturn = declpriC(trim(name)   // C_NULL_CHAR,  &
-                           size,                         &
+                           tsize,                        &
                            trim(ptype)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
@@ -644,8 +673,10 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: ptype
         INTEGER,      INTENT(IN), TARGET:: value
         INTEGER(KIND=C_LONG)            :: creturn
+        INTEGER(KIND=C_LONG)            :: tsize
+        tsize = size
         creturn = declpriC(trim(name)   // C_NULL_CHAR,  &
-                           size,                         &
+                           tsize,                        &
                            trim(ptype)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
@@ -672,10 +703,12 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: name
         INTEGER,      INTENT(IN)        :: size
         CHARACTER(*), INTENT(IN)        :: ptype
-        INTEGER,      INTENT(IN), TARGET:: value(:)
+        INTEGER,      INTENT(IN), ALLOCATABLE, TARGET:: value(:)
+        INTEGER(KIND=C_LONG)            :: tsize
         INTEGER(KIND=C_LONG)            :: creturn
+        tsize = size
         creturn = declpriC(trim(name)   // C_NULL_CHAR,  &
-                           size,                         &
+                           tsize,                        &
                            trim(ptype)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
@@ -702,10 +735,12 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: name
         INTEGER,      INTENT(IN)        :: size
         CHARACTER(*), INTENT(IN)        :: ptype
-        INTEGER,      INTENT(IN), TARGET:: value(:,:)
+        INTEGER,      INTENT(IN), ALLOCATABLE, TARGET:: value(:,:)
+        INTEGER(KIND=C_LONG)            :: tsize
         INTEGER(KIND=C_LONG)            :: creturn
+        tsize = size
         creturn = declpriC(trim(name)   // C_NULL_CHAR,  &
-                           size,                         &
+                           tsize,                        &
                            trim(ptype)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
@@ -732,9 +767,11 @@ IMPLICIT NONE
         INTEGER,      INTENT(IN)        :: size
         CHARACTER(*), INTENT(IN)        :: ptype
         DOUBLE PRECISION, INTENT(IN), TARGET:: value
+        INTEGER(KIND=C_LONG)            :: tsize
         INTEGER(KIND=C_LONG)            :: creturn
+        tsize = size
         creturn = declpriC(trim(name)   // C_NULL_CHAR,  &
-                           size,                         &
+                           tsize,                        &
                            trim(ptype)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
@@ -761,10 +798,12 @@ IMPLICIT NONE
         CHARACTER(*),     INTENT(IN)         :: name
         INTEGER,          INTENT(IN)         :: size
         CHARACTER(*),     INTENT(IN)         :: ptype
-        DOUBLE PRECISION, INTENT(IN), TARGET :: value(:,:)
+        DOUBLE PRECISION, INTENT(IN), ALLOCATABLE, TARGET :: value(:,:)
+        INTEGER(KIND=C_LONG)                 :: tsize
         INTEGER(KIND=C_LONG)                 :: creturn
+        tsize = size
         creturn = declpriC(trim(name)   // C_NULL_CHAR,  &
-                           size,                         &
+                           tsize,                        &
                            trim(ptype)  // C_NULL_CHAR,  &
                            C_LOC(value)                  &
                            )
