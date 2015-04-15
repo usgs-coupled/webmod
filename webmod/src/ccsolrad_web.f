@@ -87,7 +87,7 @@ c***********************************************************************
       integer function csoldecl()
 
       USE WEBMOD_CSOL
-      USE mmf, only : declparam, declvar, declpri
+      USE mmf, only : declparam, declvar !, declpri
       IMPLICIT NONE
 
 c***********************************************************************

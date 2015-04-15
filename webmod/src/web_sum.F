@@ -163,7 +163,7 @@ c
       integer function sumbdecl()
 
       USE WEBMOD_SUM
-      USE mmf, only : declparam, declvar, declpri
+      USE mmf, only : declparam, declvar !, declpri
       IMPLICIT NONE
 
       sumbdecl = 1

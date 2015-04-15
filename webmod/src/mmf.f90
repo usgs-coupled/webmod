@@ -4,17 +4,26 @@ IMPLICIT NONE
     ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
     !               char *help, char *units, char *value)
     INTERFACE declvar
-        MODULE PROCEDURE declvar_real, declvar_realvec, declvar_realmat,   &
-                         declvar_int,  declvar_intvec,                     &
-                         declvar_dp,   declvar_dpvec,   declvar_dpmat,    declvar_dp3d
+        MODULE PROCEDURE       &
+            declvar_real,      &
+            !declvar_realavec,  &
+            declvar_realvec,   &
+            declvar_realmat,   &
+            declvar_int,       &
+            !declvar_intavec,   &
+            declvar_intvec,    &
+            declvar_dp,        &
+            declvar_dpvec,     &
+            declvar_dpmat,     &
+            declvar_dp3d
     END INTERFACE declvar
 
-    ! long declpri (char *name, long size, char *type, char *value)
-    INTERFACE declpri
-        MODULE PROCEDURE declpri_real, declpri_realvec, declpri_realmat,   &
-                         declpri_int,  declpri_intvec,  declpri_intmat,    &
-                         declpri_dp,   declpri_dpmat
-    END INTERFACE declpri
+    !! long declpri (char *name, long size, char *type, char *value)
+    !INTERFACE declpri
+    !    MODULE PROCEDURE declpri_real, declpri_realvec, declpri_realmat,   &
+    !                     declpri_int,  declpri_intvec,  declpri_intmat,    &
+    !                     declpri_dp,   declpri_dpmat
+    !END INTERFACE declpri
 
     SAVE
     CONTAINS
@@ -176,6 +185,64 @@ IMPLICIT NONE
                            )
         declvar_real = int(creturn)
     END FUNCTION declvar_real
+                             
+
+    ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
+    !               char *help, char *units, char *value)
+    INTEGER FUNCTION declvar_realavec(mname, name, dimen, maxsize, ptype, &
+                                     help, units, value)
+        USE ISO_C_BINDING
+        IMPLICIT NONE
+        INTERFACE
+            INTEGER(C_LONG) FUNCTION declvarC          &
+                (mname, name, dimen, maxsize, ptype,   &
+                 help, units, value)                   & 
+                BIND(C, NAME='declvar')
+                USE ISO_C_BINDING
+                IMPLICIT NONE
+                CHARACTER(KIND=C_CHAR), INTENT(IN)        :: mname(*)
+                CHARACTER(KIND=C_CHAR), INTENT(IN)        :: name(*)
+                CHARACTER(KIND=C_CHAR), INTENT(IN)        :: dimen(*)
+                INTEGER(KIND=C_LONG),   INTENT(IN)        :: maxsize
+                CHARACTER(KIND=C_CHAR), INTENT(IN)        :: ptype(*)
+                CHARACTER(KIND=C_CHAR), INTENT(IN)        :: help(*)
+                CHARACTER(KIND=C_CHAR), INTENT(IN)        :: units(*)
+                TYPE(C_PTR), VALUE                        :: value
+            END FUNCTION declvarC
+        END INTERFACE
+        CHARACTER(*), INTENT(IN)        :: mname
+        CHARACTER(*), INTENT(IN)        :: name
+        CHARACTER(*), INTENT(IN)        :: dimen
+        INTEGER,      INTENT(IN)        :: maxsize
+        CHARACTER(*), INTENT(IN)        :: ptype
+        CHARACTER(*), INTENT(IN)        :: help
+        CHARACTER(*), INTENT(IN)        :: units
+        !!REAL, INTENT(IN), TARGET :: value(*)
+        !!REAL, INTENT(IN), ALLOCATABLE, TARGET :: value(:)
+        !!REAL, INTENT(IN), ALLOCATABLE, TARGET :: value(:,:)
+!{{linux
+        !!REAL,         INTENT(IN), ALLOCATABLE, TARGET :: value(:)   !! WORKS
+        !!REAL,         INTENT(IN), ALLOCATABLE, TARGET :: value(:,:)   !! WORKS
+        !REAL,         INTENT(IN), TARGET :: value(*)                !! WORKS
+        !!REAL,DIMENSION(:), INTENT(IN), ALLOCATABLE, TARGET :: value               
+        REAL, INTENT(IN), ALLOCATABLE, TARGET :: value(:)
+        !REAL,         INTENT(IN), ALLOCATABLE :: value(:)
+        !REAL,         INTENT(IN), TARGET :: value(:)
+        INTEGER(KIND=C_LONG)            :: tmaxsize
+!}}linux
+        INTEGER(KIND=C_LONG)            :: creturn
+        tmaxsize = maxsize
+        creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
+                           trim(name)   // C_NULL_CHAR,  &
+                           trim(dimen)  // C_NULL_CHAR,  &
+                           tmaxsize,                     &
+                           trim(ptype)  // C_NULL_CHAR,  &
+                           trim(help)   // C_NULL_CHAR,  &
+                           trim(units)  // C_NULL_CHAR,  &
+                           C_LOC(value)                  &
+                           )
+        declvar_realavec = int(creturn)
+    END FUNCTION declvar_realavec
 
     ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
     !               char *help, char *units, char *value)
@@ -207,12 +274,8 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: ptype
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
-        !!REAL,         INTENT(IN), ALLOCATABLE, TARGET :: value(:)   !! WORKS
-        !!REAL,         INTENT(IN), ALLOCATABLE, TARGET :: value(:,:)   !! WORKS
-        !REAL,         INTENT(IN), TARGET :: value(*)                !! WORKS
-        REAL,DIMENSION(:), INTENT(IN), ALLOCATABLE, TARGET :: value               
-        !REAL,         INTENT(IN), ALLOCATABLE :: value(:)
-        !REAL,         INTENT(IN), TARGET :: value(:)
+        !REAL, INTENT(IN), TARGET :: value(*)
+        REAL, DIMENSION(:), INTENT(IN), TARGET :: value
         INTEGER(KIND=C_LONG)            :: tmaxsize
         INTEGER(KIND=C_LONG)            :: creturn
         tmaxsize = maxsize
@@ -227,8 +290,8 @@ IMPLICIT NONE
                            )
         declvar_realvec = int(creturn)
     END FUNCTION declvar_realvec
-                             
-
+                                     
+                                     
     ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
     !               char *help, char *units, char *value)
     INTEGER FUNCTION declvar_realmat(mname, name, dimen, maxsize, ptype, &
@@ -259,7 +322,8 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: ptype
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
-        REAL,         INTENT(IN), ALLOCATABLE, TARGET:: value(:,:)
+        !REAL,         INTENT(IN), ALLOCATABLE, TARGET:: value(:,:)
+        REAL, DIMENSION(:,:), INTENT(IN), TARGET:: value
         INTEGER(KIND=C_LONG)            :: creturn
         INTEGER(KIND=C_LONG)            :: tmaxsize
         tmaxsize = maxsize
@@ -323,7 +387,7 @@ IMPLICIT NONE
 
     ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
     !               char *help, char *units, char *value)
-    INTEGER FUNCTION declvar_intvec(mname, name, dimen, maxsize, ptype, &
+    INTEGER FUNCTION declvar_intavec(mname, name, dimen, maxsize, ptype, &
                                      help, units, value)
         USE ISO_C_BINDING
         IMPLICIT NONE
@@ -352,6 +416,53 @@ IMPLICIT NONE
         CHARACTER(*), INTENT(IN)        :: help
         CHARACTER(*), INTENT(IN)        :: units
         INTEGER,      INTENT(IN), ALLOCATABLE, TARGET:: value(:)
+        INTEGER(KIND=C_LONG)            :: tmaxsize
+        INTEGER(KIND=C_LONG)            :: creturn
+        tmaxsize = maxsize
+        creturn = declvarC(trim(mname)  // C_NULL_CHAR,  &
+                           trim(name)   // C_NULL_CHAR,  &
+                           trim(dimen)  // C_NULL_CHAR,  &
+                           tmaxsize,                     &
+                           trim(ptype)  // C_NULL_CHAR,  &
+                           trim(help)   // C_NULL_CHAR,  &
+                           trim(units)  // C_NULL_CHAR,  &
+                           C_LOC(value)                  &
+                           )
+        declvar_intavec = int(creturn)
+    END FUNCTION declvar_intavec
+                                     
+
+    ! long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
+    !               char *help, char *units, char *value)
+    INTEGER FUNCTION declvar_intvec(mname, name, dimen, maxsize, ptype, &
+                                     help, units, value)
+        USE ISO_C_BINDING
+        IMPLICIT NONE
+        INTERFACE
+            INTEGER(C_LONG) FUNCTION declvarC          &
+                (mname, name, dimen, maxsize, ptype,   &
+                 help, units, value)                   & 
+                BIND(C, NAME='declvar')
+                USE ISO_C_BINDING
+                IMPLICIT NONE
+                CHARACTER(KIND=C_CHAR), INTENT(IN)        :: mname(*)
+                CHARACTER(KIND=C_CHAR), INTENT(IN)        :: name(*)
+                CHARACTER(KIND=C_CHAR), INTENT(IN)        :: dimen(*)
+                INTEGER(KIND=C_LONG),   INTENT(IN)        :: maxsize
+                CHARACTER(KIND=C_CHAR), INTENT(IN)        :: ptype(*)
+                CHARACTER(KIND=C_CHAR), INTENT(IN)        :: help(*)
+                CHARACTER(KIND=C_CHAR), INTENT(IN)        :: units(*)
+                TYPE(C_PTR), VALUE                        :: value
+            END FUNCTION declvarC
+        END INTERFACE
+        CHARACTER(*), INTENT(IN)        :: mname
+        CHARACTER(*), INTENT(IN)        :: name
+        CHARACTER(*), INTENT(IN)        :: dimen
+        INTEGER,      INTENT(IN)        :: maxsize
+        CHARACTER(*), INTENT(IN)        :: ptype
+        CHARACTER(*), INTENT(IN)        :: help
+        CHARACTER(*), INTENT(IN)        :: units
+        INTEGER,      INTENT(IN), TARGET:: value(*)
         INTEGER(KIND=C_LONG)            :: tmaxsize
         INTEGER(KIND=C_LONG)            :: creturn
         tmaxsize = maxsize

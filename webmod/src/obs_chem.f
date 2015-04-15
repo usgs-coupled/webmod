@@ -210,7 +210,7 @@ c
       integer function obsc_decl()
 
       USE WEBMOD_OBSCHEM
-      USE mmf, only : declparam, declvar, declpri
+      USE mmf, only : declparam, declvar !, declpri
       implicit none
       obsc_decl = 1
 !

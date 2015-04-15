@@ -83,7 +83,7 @@ c
       integer function iodecl()
 
       USE WEBMOD_IO
-      USE mmf, only : declparam, declvar, declpri
+      USE mmf, only : declparam, declvar !, declpri
       IMPLICIT NONE
 
       iodecl = 1

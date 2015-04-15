@@ -64,7 +64,7 @@ c
       integer function irrdecl()
 
       USE WEBMOD_IRRIG
-      USE mmf, only : declparam, declvar, declpri
+      USE mmf, only : declparam, declvar !, declpri
       IMPLICIT NONE
 
       irrdecl = 1

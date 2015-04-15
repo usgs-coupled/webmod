@@ -5,7 +5,7 @@
 !!!      INTEGER, EXTERNAL :: decldim, declfix, declparam, declvar, declpri
 !!!      INTEGER, EXTERNAL :: declfix, declparam, declvar, declpri
 !!!      INTEGER, EXTERNAL :: declparam, declvar, declpri
-!!!      INTEGER, EXTERNAL :: declpri
+      INTEGER, EXTERNAL :: declpri
       DOUBLE PRECISION, EXTERNAL :: deltim, delnex, djulian
       INTEGER, EXTERNAL :: getdim, getparam, getstep
 !!      INTEGER, EXTERNAL :: getvar, readvar, putvar, declparam_u
