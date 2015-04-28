@@ -1,3 +1,4 @@
+#include "defines.h"
 c***********************************************************************
 c     potet_hamon.f:  Determine whether transpiration is occurring and
 c                     compute the potential evapotranspiration for each
@@ -82,6 +83,7 @@ c
      
       USE WEBMOD_POTET
       IMPLICIT NONE
+      INTEGER, EXTERNAL :: declpri
 
       petdecl = 1
 
@@ -267,6 +269,7 @@ c
 
       USE WEBMOD_POTET
       IMPLICIT NONE
+      INTEGER, EXTERNAL :: julian
 
       integer nowtime(6), mo, i, jday, day
       real dyl, vpsat, vdsat, factor

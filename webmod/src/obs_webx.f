@@ -1,3 +1,4 @@
+#include "defines.h"
 c***********************************************************************
 c     obs_webx.f: modified from obs_prms -> obs_webmod to
 c                 include XYZ data input. -RMTW

@@ -1,3 +1,4 @@
+#include "defines.h"
 c***********************************************************************
 c     Open and close the file for the objective functions.
 c     Modified for xtopprms by rmwebb from obj_func_xml.f
@@ -84,6 +85,7 @@ c
 
       USE WEBMOD_IO
       IMPLICIT NONE
+      INTEGER, EXTERNAL :: declpri
 
       iodecl = 1
 
@@ -160,6 +162,7 @@ c
 !#endif
       USE WEBMOD_IO
       IMPLICIT NONE
+      INTEGER, EXTERNAL :: getoutname
       INTEGER, EXTERNAL ::open_res_files
       integer ret, chem_sim, nmru, nac, nhydro
       logical filflg
@@ -295,6 +298,7 @@ c
 
       USE WEBMOD_IO
       IMPLICIT NONE
+      INTEGER, EXTERNAL :: julian
 
       logical end_run, end_yr, end_mo, end_dy, end_storm
       integer iend_run, iend_yr, iend_mo, iend_dy, iend_storm

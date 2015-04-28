@@ -1,3 +1,4 @@
+#include "defines.h"
 c***********************************************************************
 c     obs_webmod.f: modified from obs_prms. -RMTW
 c         4 Mar 05 - changed tmin to tsta_min_c and _f.

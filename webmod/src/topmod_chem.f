@@ -1,3 +1,4 @@
+#include "defines.h"
 ***********************************************************************
 c   topmod_chem.f
 c
@@ -343,6 +344,7 @@ c
 
       USE WEBMOD_TOPMOD
       IMPLICIT NONE
+      INTEGER, EXTERNAL :: declpri
 
 
 ! Get dimensions

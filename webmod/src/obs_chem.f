@@ -1,3 +1,4 @@
+#include "defines.h"
 c **********************************************************************
 c     obs_chem.f: read concentrations for atmospheric deposition,
 c                 external chemical sources, and observed chemistry.
@@ -159,8 +160,9 @@ c 8) permil
 c
 c unit_lut describes the eight acceptable units described below
       character(LEN=12), parameter :: unit_lut(8) = 
-     $   (/'mg/L','meq/L','uconc1','uconc2','uconc3', 
-     $    'mmol/L','mol/L','permil'/)
+     $   (/'mg/L        ','meq/L       ','uconc1      ',
+     $     'uconc2      ','uconc3      ','mmol/L      ',
+     $     'mol/L       ','permil      '/)
 c
 c M2mM is equal to 1000 to convert moles to millimoles.
       double precision, parameter:: M2mM = 1000.0
@@ -210,6 +212,7 @@ c
 
       USE WEBMOD_OBSCHEM
       implicit none
+      INTEGER, EXTERNAL :: declpri
       obsc_decl = 1
 !
 ! Get dimensions

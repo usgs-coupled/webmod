@@ -1,3 +1,4 @@
+#include "defines.h"
 c***********************************************************************
 c     intcp.f:  Computes amount of intercepted rain and snow, and
 c               determines evaporation from interception 

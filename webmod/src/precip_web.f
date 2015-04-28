@@ -1,3 +1,4 @@
+#include "defines.h"
 c***********************************************************************
 c   precip_web.f: Determine form (rain, snow, mix) of precipitation 
 c                 and distribute to mru's.
@@ -87,6 +88,7 @@ c
 
       USE WEBMOD_PRECIP
       IMPLICIT NONE
+      INTEGER, EXTERNAL :: declpri
 
       pptdecl = 1
 !
@@ -248,14 +250,14 @@ c
       if(getparam('precip', 'tmax_allrain_c', nmonths, 'real', 
      +   tmax_allrain_c).ne.0) return
 
-      if(getparam('precip', 'tmax_allsnow_c', 1, 'real', tmax_allsnow_c)
-     +   .ne.0) return
+      if(getparam('precip', 'tmax_allsnow_c', 1, 'real',
+     +   tmax_allsnow_c).ne.0) return
 
       if(getparam('precip', 'mru_psta', nmru, 'integer', mru_psta)
      +   .ne.0) return
 
-      if(getparam('precip', 'adjmix_rain', nmonths, 'real', adjmix_rain)
-     +   .ne.0) return
+      if(getparam('precip', 'adjmix_rain', nmonths, 'real',
+     +   adjmix_rain).ne.0) return
 
       if(getparam('precip', 'rain_adj', nmru*nmonths, 'real', rain_adj)
      +   .ne.0) return
@@ -286,6 +288,7 @@ c
 
       USE WEBMOD_PRECIP
       IMPLICIT NONE
+      INTEGER, EXTERNAL :: julian
       
       integer i, ip, jday, mo
       integer nowtime(6)

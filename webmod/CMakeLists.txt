@@ -2,20 +2,18 @@ cmake_minimum_required (VERSION 2.8)
 
 project(webmod_f Fortran)
 
-##include(FortranCInterface)
-##FortranCInterface_HEADER(FC.h MACRO_NAMESPACE "FC_")
-##FortranCInterface_VERIFY(CXX QUIET)
-
 SET(webmod_f_SOURCES
 ../IPhreeqcMMS/include/mms_phreeqc.f90.inc
 ../IPhreeqcMMS/IPhreeqc/src/IPhreeqc_interface.F90
-../IPhreeqcMMS/src/phr_mix.f90
+../IPhreeqcMMS/src/phr_mix.F90
 ../IPhreeqcMMS/src/phr_multicopy.f90
 ../IPhreeqcMMS/src/phr_precip.f90
 src/basin_topg.f
 src/call_modules_webmod.f
 src/ccsolrad_web.f
+src/defines.h
 src/elapsed_time_function.f90
+src/fmodules.inc
 src/fmodules.f90.inc
 src/intcp_prms.f
 src/io.f
@@ -37,16 +35,22 @@ src/webmod_res.f
 src/xyz_dist_web.f
 )
 
+# define CMAKE_FC
+add_definitions(-DCMAKE_FC)
+
 # place [*.F[90]] files into "Source Files"
 source_group("Source Files" FILES "../IPhreeqcMMS/IPhreeqc/src/IPhreeqc_interface.F90")
 source_group("Source Files" FILES "src/web_sum.F")
 
 # setup include directories
-##include_directories("${PROJECT_SOURCE_DIR}")
+include_directories("${PROJECT_SOURCE_DIR}/src")
 include_directories("${PROJECT_SOURCE_DIR}/../IPhreeqcMMS/include")
 include_directories("${PROJECT_SOURCE_DIR}/../IPhreeqcMMS/IPhreeqc/src")
 
 # executable
+if(WIN32 AND ${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
+  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} /MP")
+endif()
 add_executable(webmod_f ${webmod_f_SOURCES})
 set_target_properties(webmod_f PROPERTIES DEBUG_POSTFIX "d")
 

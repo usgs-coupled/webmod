@@ -1,3 +1,4 @@
+#include "defines.h"
 c*********************************************************************
 c     temp_1sta.f: Distribute temperatures to MRU's using 1 station
 c                  and monthly lapse rate parameters

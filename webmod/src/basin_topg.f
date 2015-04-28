@@ -1,3 +1,4 @@
+#include "defines.h"
 c***********************************************************************
 c     basin_topg.f: Declares basin and HRU physical parameters and 
 c              reservoirs 

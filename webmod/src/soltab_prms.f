@@ -1,3 +1,4 @@
+#include "defines.h"
 c***********************************************************************
 c     soltab_prms.f: compute potential solar radiation for timesteps
 c               from 15 minutes to 1 day for each model response unit.

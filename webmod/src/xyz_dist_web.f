@@ -1,3 +1,4 @@
+#include "defines.h"
 ***********************************************************************
 c     xyz_dist_web.f: Distribute temperatures and precip to MRUs using
 c                      Lauren Hay's XYZ methodology.

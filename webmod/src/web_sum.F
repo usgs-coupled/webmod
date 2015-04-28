@@ -1,3 +1,4 @@
+#include "defines.h"
 **********************************************************************
 * Modified from PRMS version by Rick Webb
 *
@@ -164,7 +165,7 @@ c
 
       USE WEBMOD_SUM
       IMPLICIT NONE
-
+      INTEGER, EXTERNAL :: declpri
       sumbdecl = 1
 
       if(declparam('sumb', 'print_explanation', 'one', 'integer', 
@@ -646,12 +647,15 @@ c
 
       integer function sumbinit()
 
+#if defined(__INTEL_COMPILER)
       USE IFPORT
+#endif
       USE WEBMOD_SUM
       USE WEBMOD_RESMOD, ONLY : basin_sto_cm, basin_chan_sto_cm,
      $  basin_intcp_sto_cm,basin_pweqv_cm,basin_sssto_cm,
      $  basin_soil_moist_cm, basin_gw_sto_cm
       IMPLICIT NONE
+      !integer, external :: getdataname  ! (defined in obs_chem)
 
       integer, external :: length  ! (defined in obs_chem)
      
