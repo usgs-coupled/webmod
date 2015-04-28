@@ -6,47 +6,49 @@ project(mmf_c C)
 include(FortranCInterface)
 FortranCInterface_HEADER(FC.h MACRO_NAMESPACE "FC_" SYMBOLS
 control_string_
-dattim
-decldim
-declfix
-declmodule
-declparam
-declpri
-declvar
-decl_control
-deltim
-djulian
-dpdble
+dattim_
+decldim_
+declfix_
+declmodule_
+declparam_
+declpri_
+declvar_
+decl_control_
+deltim_
+djulian_
+dpdble_
 dpint4_
 dpreal_
-dpstr
-getdataname
-getdim
-getdimname
-getoutname
-getparam
-getstep
-getvar
-isleap
-julian
-opstr
-putvar
-readvar
-setdims_
-##setdims
-##call_modules_
-call_modules
+dpstr_
+getdataname_
+getdim_
+getdimname_
+getoutname_
+getparam_
+getstep_
+getvar_
+isleap_
+julian_
+opstr_
+putvar_
+readvar_
+setdims
+call_modules_
 )
 
-# set "Character Set" to Unicode
-# this may be unnecessary
-add_definitions(-D_UNICODE)
-add_definitions(-DUNICODE)
+add_definitions(-DCMAKE_FC)
+if (MSVC)
+  # set "Character Set" to Unicode
+  # this may be unnecessary
+  add_definitions(-D_UNICODE)
+  add_definitions(-DUNICODE)
+endif()
 
 # turn off "The POSIX name for this item is deprecated" warning
 add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
 
 SET(mmf_c_SOURCES
+${PROJECT_BINARY_DIR}/FC.h
 src/alloc_space.c
 src/batch_run.c
 src/batch_run_functions.c
@@ -72,17 +74,20 @@ src/getdim.c
 src/getdimname.c
 src/getparam.c
 src/getvar.c
+src/globals.h
 src/graph_single_run.c
 src/julconvert.c
 src/julday.c
 src/load_param.c
 src/mmf.c
+src/mms.h
 src/oprint.c
 src/param_addr.c
 src/parse_args.c
 src/print_model_info.c
 src/print_params.c
 src/print_vars.c
+src/protos.h
 src/putvar.c
 src/read_control.c
 src/read_datainfo.c
@@ -99,6 +104,7 @@ src/sort_params.c
 src/sort_vars.c
 src/stats.c
 src/str_to_vals.c
+src/structs.h
 src/timing.c
 src/umalloc_etc.c
 src/uprint.c
