@@ -391,20 +391,20 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 			factor = 1.0;
 		}
 		sprintf(line, "\t%d %g", pvars->solutions[i], pvars->fracs[i]*factor);
-		if (::AccumulateLine(pvars->id, line) != VR_OK) {
+		if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 			return ERROR;
 		}
 	}
 
 	/* SAVE solution n_user[Solution] */
 	sprintf(line, "SAVE solution %d", pvars->n_user[Solution]);
-	if (::AccumulateLine(pvars->id, line) != VR_OK) {
+	if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 		return ERROR;
 	}
 
 	/* COPY SOLUTION n_user[Solution] index_conserv */
 	sprintf(line, "COPY SOLUTION %d %d", pvars->n_user[Solution], pvars->index_conserv);
-	if (::AccumulateLine(pvars->id, line) != VR_OK) {
+	if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 		return ERROR;
 	}
 
@@ -444,13 +444,13 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 		return ERROR;
 	}
 	sprintf(line, "\t%d %g", pvars->n_user[Solution], pvars->fill_factor);
-	if (::AccumulateLine(pvars->id, line) != VR_OK) {
+	if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 		return ERROR;
 	}
 
 	/* SAVE solution n_user[Solution] */
 	sprintf(line, "SAVE solution %d", pvars->n_user[Solution]);
-	if (::AccumulateLine(pvars->id, line) != VR_OK) {
+	if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 		return ERROR;
 	}
 
@@ -459,7 +459,7 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 		if (this->PhreeqcPtr->entity_exists("reaction", pvars->n_user[Reaction])) {
 			this->PhreeqcPtr->set_reaction_moles(pvars->n_user[Reaction], pvars->rxnmols * pvars->fill_factor);
 			sprintf(line, "USE reaction %d", pvars->n_user[Reaction]);
-			if (::AccumulateLine(pvars->id, line) != VR_OK) {
+			if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 				return ERROR;
 			}
 		}
@@ -474,11 +474,11 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 	if (pvars->n_user[Exchange] >= 0) {
 		if (this->PhreeqcPtr->entity_exists("exchange", pvars->n_user[Exchange])) {
 			sprintf(line, "USE exchange %d", pvars->n_user[Exchange]);
-			if (::AccumulateLine(pvars->id, line) != VR_OK) {
+			if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 				return ERROR;
 			}
 			sprintf(line, "SAVE exchange %d", pvars->n_user[Exchange]);
-			if (::AccumulateLine(pvars->id, line) != VR_OK) {
+			if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 				return ERROR;
 			}
 		}
@@ -491,11 +491,11 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 	if (pvars->n_user[Surface] >= 0) {
 		if (this->PhreeqcPtr->entity_exists("surface", pvars->n_user[Surface])) {
 			sprintf(line, "USE surface %d", pvars->n_user[Surface]);
-			if (::AccumulateLine(pvars->id, line) != VR_OK) {
+			if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 				return ERROR;
 			}
 			sprintf(line, "SAVE surface %d", pvars->n_user[Surface]);
-			if (::AccumulateLine(pvars->id, line) != VR_OK) {
+			if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 				return ERROR;
 			}
 		}
@@ -508,11 +508,11 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 	if (pvars->n_user[Gas_phase] >= 0) {
 		if (this->PhreeqcPtr->entity_exists("gas_phase", pvars->n_user[Gas_phase])) {
 			sprintf(line, "USE gas_phase %d", pvars->n_user[Gas_phase]);
-			if (::AccumulateLine(pvars->id, line) != VR_OK) {
+			if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 				return ERROR;
 			}
 			sprintf(line, "SAVE gas_phase %d", pvars->n_user[Gas_phase]);
-			if (::AccumulateLine(pvars->id, line) != VR_OK) {
+			if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 				return ERROR;
 			}
 		}
@@ -525,11 +525,11 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 	if (pvars->n_user[Pure_phase] >= 0) {
 		if (this->PhreeqcPtr->entity_exists("equilibrium_phases", pvars->n_user[Pure_phase])) {
 			sprintf(line, "USE equilibrium_phases %d", pvars->n_user[Pure_phase]);
-			if (::AccumulateLine(pvars->id, line) != VR_OK) {
+			if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 				return ERROR;
 			}
 			sprintf(line, "SAVE equilibrium_phases %d", pvars->n_user[Pure_phase]);
-			if (::AccumulateLine(pvars->id, line) != VR_OK) {
+			if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 				return ERROR;
 			}
 		}
@@ -542,11 +542,11 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 	if (pvars->n_user[Ss_phase] >= 0) {
 		if (this->PhreeqcPtr->entity_exists("solid_solution", pvars->n_user[Ss_phase])) {
 			sprintf(line, "USE solid_solution %d", pvars->n_user[Ss_phase]);
-			if (::AccumulateLine(pvars->id, line) != VR_OK) {
+			if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 				return ERROR;
 			}
 			sprintf(line, "SAVE solid_solution %d", pvars->n_user[Ss_phase]);
-			if (::AccumulateLine(pvars->id, line) != VR_OK) {
+			if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 				return ERROR;
 			}
 		}
@@ -560,7 +560,7 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 		if (this->PhreeqcPtr->entity_exists("kinetics", pvars->n_user[Kinetics])) {
 			sprintf(line, "USE kinetics %d", pvars->n_user[Kinetics]);
 			this->PhreeqcPtr->set_kinetics_time(pvars->n_user[Kinetics], pvars->tsec);
-			if (::AccumulateLine(pvars->id, line) != VR_OK) {
+			if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 				return ERROR;
 			}
 		}
@@ -574,7 +574,7 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 		if (this->PhreeqcPtr->entity_exists("reaction_temperature", pvars->n_user[Temperature])) {
 			sprintf(line, "USE reaction_temperature %d", pvars->n_user[Temperature]);
 			this->PhreeqcPtr->set_reaction_temperature(pvars->n_user[Temperature], pvars->tempc);
-			if (::AccumulateLine(pvars->id, line) != VR_OK) {
+			if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 				return ERROR;
 			}
 		}
@@ -594,13 +594,13 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 		return ERROR;
 	}
 	sprintf(line, "\t%d %g", pvars->n_user[Solution], 1.0 / pvars->fill_factor);
-	if (::AccumulateLine(pvars->id, line) != VR_OK) {
+	if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 		return ERROR;
 	}
 
 	/* SAVE solution n_user[Solution] */
 	sprintf(line, "SAVE solution %d", pvars->n_user[Solution]);
-	if (::AccumulateLine(pvars->id, line) != VR_OK) {
+	if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 		return ERROR;
 	}
 
@@ -608,11 +608,11 @@ int IPhreeqcMMS::PreMixCallback(struct MixVars* pvars)
 	/* MIX */
 	
 	sprintf(line, "SOLUTION_MIX %d", pvars->n_user[Solution]);
-	if (::AccumulateLine(pvars->id, line) != VR_OK) {
+	if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 		return ERROR;
 	}
 	sprintf(line, "\t%d %g", pvars->n_user[Solution], 1.0 / pvars->fill_factor);
-	if (::AccumulateLine(pvars->id, line) != VR_OK) {
+	if (::AccumulateLine(pvars->id, line) != IPQ_OK) {
 		return ERROR;
 	}
 #endif
