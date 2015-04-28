@@ -1,3 +1,6 @@
+#if defined(CMAKE_FC)
+#include "defines.h"
+#endif
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       FUNCTION phr_mix(id,count,solutions,fracs,index_conserv, &
                      fill_factor,index_rxn,conc_conserv,files_on, &
