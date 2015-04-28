@@ -1,4 +1,5 @@
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 2.8.11)
+
 project(web_win C CXX Fortran)
 
 # Disable shared libraries on windows
