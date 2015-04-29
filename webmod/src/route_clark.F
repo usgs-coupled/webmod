@@ -133,7 +133,6 @@ c
 
       USE WEBMOD_ROUTE
       IMPLICIT NONE
-      INTEGER, EXTERNAL :: declpri
 
       Routecdecl = 1
 

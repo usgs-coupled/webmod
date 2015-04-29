@@ -85,7 +85,6 @@ c
 
       USE WEBMOD_IO
       IMPLICIT NONE
-      INTEGER, EXTERNAL :: declpri
 
       iodecl = 1
 
@@ -298,7 +297,6 @@ c
 
       USE WEBMOD_IO
       IMPLICIT NONE
-      INTEGER, EXTERNAL :: julian
 
       logical end_run, end_yr, end_mo, end_dy, end_storm
       integer iend_run, iend_yr, iend_mo, iend_dy, iend_storm

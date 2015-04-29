@@ -88,7 +88,6 @@ c
 
       USE WEBMOD_PRECIP
       IMPLICIT NONE
-      INTEGER, EXTERNAL :: declpri
 
       pptdecl = 1
 !
@@ -288,7 +287,6 @@ c
 
       USE WEBMOD_PRECIP
       IMPLICIT NONE
-      INTEGER, EXTERNAL :: julian
       
       integer i, ip, jday, mo
       integer nowtime(6)

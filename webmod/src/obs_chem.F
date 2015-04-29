@@ -212,7 +212,6 @@ c
 
       USE WEBMOD_OBSCHEM
       implicit none
-      INTEGER, EXTERNAL :: declpri
       obsc_decl = 1
 !
 ! Get dimensions

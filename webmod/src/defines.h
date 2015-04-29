@@ -1,13 +1,14 @@
 #if defined(CMAKE_FC)
+#define call_modules        call_modules_
 #define control_string      control_string_
 #define dattim              dattim_
+#define decl_control        decl_control_
 #define decldim             decldim_
 #define declfix             declfix_
 #define declmodule          declmodule_
 #define declparam           declparam_
 #define declpri             declpri_
 #define declvar             declvar_
-#define decl_control        decl_control_
 #define deltim              deltim_
 #define djulian             djulian_
 #define dpdble              dpdble_
@@ -26,5 +27,4 @@
 #define opstr               opstr_
 #define putvar              putvar_
 #define readvar             readvar_
-#define call_modules        call_modules_
 #endif

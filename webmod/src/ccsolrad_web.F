@@ -89,7 +89,6 @@ c***********************************************************************
 
       USE WEBMOD_CSOL
       IMPLICIT NONE
-      INTEGER, EXTERNAL :: declpri
 
 c***********************************************************************
       csoldecl = 1
@@ -366,7 +365,6 @@ c***********************************************************************
 
       USE WEBMOD_CSOL
       IMPLICIT NONE
-      INTEGER, EXTERNAL :: julian
 
 C Local Variables
       logical ppt

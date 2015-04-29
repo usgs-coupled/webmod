@@ -638,8 +638,6 @@ c     &   .ne.0) return
       USE WEBMOD_SNOW
       USE WEBMOD_OBSHYD, ONLY : datetime
       implicit none
-      INTEGER, EXTERNAL :: julian
-      INTEGER, EXTERNAL :: putvar
 
       !integer I1, I2, I, jday, whichcurve, im
       integer I1, I2, I, jday, whichcurve

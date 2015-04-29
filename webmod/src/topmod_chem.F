@@ -344,7 +344,6 @@ c
 
       USE WEBMOD_TOPMOD
       IMPLICIT NONE
-      INTEGER, EXTERNAL :: declpri
 
 
 ! Get dimensions

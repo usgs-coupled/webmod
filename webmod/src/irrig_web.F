@@ -66,7 +66,6 @@ c
 
       USE WEBMOD_IRRIG
       IMPLICIT NONE
-      INTEGER, EXTERNAL :: declpri
 
       irrdecl = 1
 
@@ -288,8 +287,6 @@ c
 
       USE WEBMOD_IRRIG
       IMPLICIT NONE
-      INTEGER, EXTERNAL :: julian
-      INTEGER, EXTERNAL :: putvar
 
       integer i, jday, mo
       integer nowtime(6)

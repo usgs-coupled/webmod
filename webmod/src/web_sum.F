@@ -165,7 +165,6 @@ c
 
       USE WEBMOD_SUM
       IMPLICIT NONE
-      INTEGER, EXTERNAL :: declpri
       sumbdecl = 1
 
       if(declparam('sumb', 'print_explanation', 'one', 'integer', 
