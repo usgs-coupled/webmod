@@ -1,7 +1,7 @@
 if (WIN32)
-  set(INPUT_ANDCRK_PARAMS ".\\input\\andcrk.params")
+  set(WEBMOD_INPUT_ANDCRK_PARAMS ".\\input\\andcrk.params")
 else()
-  set(INPUT_ANDCRK_PARAMS "./input/andcrk.params")
+  set(WEBMOD_INPUT_ANDCRK_PARAMS "./input/andcrk.params")
 endif()
 
 # create output directory

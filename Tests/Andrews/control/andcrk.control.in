@@ -132,7 +132,7 @@ nstatVars
 param_file
 1
 4
-.\input\andcrk.params
+@WEBMOD_INPUT_ANDCRK_PARAMS@
 ####
 precip_module
 1
