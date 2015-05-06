@@ -97,12 +97,12 @@ initial_deltat
 input_dir
 1
 4
-.\input\
+@WEBMOD_INPUT_DIR@
 ####
 output_dir
 1
 4
-.\output\
+@WEBMOD_OUTPUT_DIR@
 ####
 model_mode
 1
