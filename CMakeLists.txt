@@ -26,9 +26,10 @@ if(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400)
 endif(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400) 
 
 # tests
-# enable_testing()
+enable_testing()
 
 # subdirs
 add_subdirectory(IPhreeqcMMS)
 add_subdirectory(mmf_c)
 add_subdirectory(webmod)
+add_subdirectory(Tests)

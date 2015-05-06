@@ -1881,6 +1881,8 @@ C New formats for unit value runs - RW
  2028 format(' Total for Run ',5x,3(i4.3,1x),2f7.2,49(1x,f9.2))
 
       sumbrun = 0
+      if(end_run) print*, "Finished"
+      
 
       return
       end
