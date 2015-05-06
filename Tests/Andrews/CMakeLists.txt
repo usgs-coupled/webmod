@@ -1,9 +1,15 @@
+if (WIN32)
+  set(INPUT_ANDCRK_PARAMS ".\\input\\andcrk.params")
+else()
+  set(INPUT_ANDCRK_PARAMS "./input/andcrk.params")
+endif()
+
 # create output directory
 file(MAKE_DIRECTORY "${PROJECT_BINARY_DIR}/Tests/Andrews/output")
 
 # control/andcrk.control
 configure_file(
-  "control/andcrk.control"
+  "control/andcrk.control.in"
   "control/andcrk.control"
   )
 
