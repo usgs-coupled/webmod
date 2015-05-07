@@ -66,34 +66,34 @@
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration></Configurations>
 	<Files>
 		<Filter Name="Header Files" Filter="fi;fd">
-		<File RelativePath=".\src\fmodules.f90.inc"/>
+		<File RelativePath="src\fmodules.f90.inc"/>
 		<File RelativePath="..\IPhreeqcMMS\include\mms_phreeqc.f90.inc"/></Filter>
 		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
-		<File RelativePath="src\basin_topg.f"/>
-		<File RelativePath="src\call_modules_webmod.f"/>
-		<File RelativePath="src\ccsolrad_web.f"/>
-		<File RelativePath=".\src\elapsed_time_function.f90"/>
-		<File RelativePath="src\intcp_prms.f"/>
-		<File RelativePath="src\io.f"/>
 		<File RelativePath="..\IPhreeqcMMS\IPhreeqc\src\IPhreeqc_interface.F90"/>
-		<File RelativePath="src\irrig_web.f"/>
-		<File RelativePath="src\nwsmelt_topg.f"/>
-		<File RelativePath="src\obs_chem.f"/>
-		<File RelativePath="src\obs_webmod.f"/>
-		<File RelativePath=".\src\obs_webx.f"/>
 		<File RelativePath="..\IPhreeqcMMS\src\phr_mix.F90"/>
 		<File RelativePath="..\IPhreeqcMMS\src\phr_multicopy.f90"/>
 		<File RelativePath="..\IPhreeqcMMS\src\phr_precip.f90"/>
-		<File RelativePath=".\src\phreeq_mms.f90"/>
-		<File RelativePath="src\potet_hamon_prms.f"/>
-		<File RelativePath="src\precip_web.f"/>
-		<File RelativePath="src\route_clark.f"/>
-		<File RelativePath="src\soltab_prms.f"/>
-		<File RelativePath="src\temp_1sta_prms.f"/>
-		<File RelativePath="src\top2clark.f"/>
-		<File RelativePath="src\topmod_chem.f"/>
-		<File RelativePath=".\src\web_sum.F"/>
-		<File RelativePath="src\webmod_res.f"/>
-		<File RelativePath=".\src\xyz_dist_web.f"/></Filter></Files>
+		<File RelativePath="src\basin_topg.F"/>
+		<File RelativePath="src\call_modules_webmod.F"/>
+		<File RelativePath="src\ccsolrad_web.F"/>
+		<File RelativePath="src\elapsed_time_function.F90"/>
+		<File RelativePath="src\intcp_prms.F"/>
+		<File RelativePath="src\io.F"/>
+		<File RelativePath="src\irrig_web.F"/>
+		<File RelativePath="src\nwsmelt_topg.F"/>
+		<File RelativePath="src\obs_chem.F"/>
+		<File RelativePath="src\obs_webmod.F"/>
+		<File RelativePath="src\obs_webx.F"/>
+		<File RelativePath="src\phreeq_mms.F90"/>
+		<File RelativePath="src\potet_hamon_prms.F"/>
+		<File RelativePath="src\precip_web.F"/>
+		<File RelativePath="src\route_clark.F"/>
+		<File RelativePath="src\soltab_prms.F"/>
+		<File RelativePath="src\temp_1sta_prms.F"/>
+		<File RelativePath="src\top2clark.F"/>
+		<File RelativePath="src\topmod_chem.F"/>
+		<File RelativePath="src\web_sum.F"/>
+		<File RelativePath="src\webmod_res.F"/>
+		<File RelativePath="src\xyz_dist_web.F"/></Filter></Files>
 	<Globals/></VisualStudioProject>
