@@ -12,7 +12,7 @@ c***********************************************************************
 
       MODULE WEBMOD_BASIN
       IMPLICIT NONE
-#include 'fmodules.inc'
+#include "fmodules.inc"
 !   Dimensions and Local Variables
       INTEGER, SAVE :: Nmru
 !   Declared Variables

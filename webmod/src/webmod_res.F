@@ -266,7 +266,7 @@ c***********************************************************************
 
       IMPLICIT NONE
 
-#include 'fmodules.inc'
+#include "fmodules.inc"
 
       real a_million, inch2m
       DATA a_million / 1e6 /

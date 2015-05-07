@@ -6,7 +6,7 @@ c    27 apr  2010 - Port to Fortran 90 with module and dynamic memory
 c **********************************************************************
       MODULE WEBMOD_OBSCHEM
       IMPLICIT NONE
-#include 'fmodules.inc'
+#include "fmodules.inc"
 c   Dimensions and Local Variables
 c nsolobs is the number of sites or irrigation sources with defined solute
 c concentrations returned from parsechemobs that reads the content of the chemdat file.
@@ -842,7 +842,7 @@ c
       integer function obsc_clean()
       IMPLICIT NONE
 
-#include 'fmodules.inc'
+#include "fmodules.inc"
 
 
       obsc_clean = 1
@@ -890,7 +890,7 @@ c
       USE WEBMOD_OBSCHEM, ONLY: phq_lut, sol_id, unit_id, obs_sol_lut
       IMPLICIT NONE
 
-#include 'fmodules.inc'
+#include "fmodules.inc"
 c
 c functions
 c
@@ -1001,7 +1001,7 @@ c
       integer function phreeq_id(STRING)
       USE WEBMOD_OBSCHEM, ONLY: phq_lut, nphq_lut
       IMPLICIT NONE
-#include 'fmodules.inc'
+#include "fmodules.inc"
       CHARACTER(len=12) STRING 
 !      character*12 sol_lut(MAXSOLUTE,2)
       integer i, len1, len2

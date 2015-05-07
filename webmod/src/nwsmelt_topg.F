@@ -39,7 +39,7 @@ c***********************************************************************
 c 
       MODULE WEBMOD_SNOW
       IMPLICIT NONE
-#include 'fmodules.inc'
+#include "fmodules.inc"
 
 C   Dimensions
       integer, save :: nmru, nexlag, ndepl, ndeplval

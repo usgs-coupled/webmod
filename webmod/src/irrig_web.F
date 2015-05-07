@@ -17,7 +17,7 @@ c***********************************************************************
 c 
       MODULE WEBMOD_IRRIG
       IMPLICIT NONE
-#include 'fmodules.inc'
+#include "fmodules.inc"
 
 C   Dimensions
       integer, save :: nmru, nirrig_ext, nirrig_int

@@ -19,7 +19,7 @@ c***********************************************************************
 c 
       MODULE WEBMOD_PRECIP
       IMPLICIT NONE
-#include 'fmodules.inc'
+#include "fmodules.inc"
 
 C   Dimensions
       integer, save :: nmru, nmonths, nrain, nform
@@ -54,7 +54,7 @@ c
       integer function precip_web(arg)
       IMPLICIT NONE
 
-#include 'fmodules.inc'
+#include "fmodules.inc"
 
       character(len=*) arg
       CHARACTER(len=256) SVN_ID

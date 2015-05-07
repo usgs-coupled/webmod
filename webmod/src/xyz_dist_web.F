@@ -47,7 +47,7 @@ c
      +                           is_rain_day,solrad_tmax)
       IMPLICIT NONE
 
-#include 'fmodules.inc'
+#include "fmodules.inc"
 
       integer newsnow(MAXMRU), pptmix(MAXMRU)
       integer is_rain_day
@@ -547,7 +547,7 @@ C23456789112345678921234567893123456789412345678951234567896123456789712
      + nform)
       IMPLICIT NONE
 
-#include 'fmodules.inc'
+#include "fmodules.inc"
 
       integer nMRU, temp_nsta, rain_nsta
       integer ntemp, nrain, nform
@@ -891,7 +891,7 @@ C23456789112345678921234567893123456789412345678951234567896123456789712
      +                          adjust_rain, nform)
       IMPLICIT NONE
 
-#include 'fmodules.inc'
+#include "fmodules.inc"
       
       integer nMRU, temp_nsta, rain_nsta, nform
       integer temp_nuse(MAXTEMP), rain_nuse(MAXRAIN)
@@ -998,7 +998,7 @@ c
       integer function xyz_dist_web (arg)
       IMPLICIT NONE
 
-#include 'fmodules.inc'
+#include "fmodules.inc"
 
       character(len=*) arg
       CHARACTER(len=256) SVN_ID
@@ -1187,7 +1187,7 @@ C23456789112345678921234567893123456789412345678951234567896123456789712
      + solrad_elev, basin_centroid_x, basin_centroid_y, solrad_tmax)
       IMPLICIT NONE
 
-#include 'fmodules.inc'
+#include "fmodules.inc"
       
       integer nMRU, temp_nsta
       integer temp_nuse(MAXTEMP), im
@@ -1497,7 +1497,7 @@ C23456789112345678921234567893123456789412345678951234567896123456789712
      +                          adjust_rain, nform)
       IMPLICIT NONE
 
-#include 'fmodules.inc'
+#include "fmodules.inc"
       
       integer nMRU, rain_nsta, nform
 

@@ -15,7 +15,7 @@ c                   Port to Fortran 90 with module and dynamic memory
 c **********************************************************************
       MODULE WEBMOD_CSOL
       IMPLICIT NONE
-#include 'fmodules.inc'
+#include "fmodules.inc"
 
 C   Dimensions
       integer, save :: nmru, ndays, nmonths, nsol, nrain
