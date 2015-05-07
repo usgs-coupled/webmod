@@ -13,7 +13,7 @@ c***********************************************************************
 c 
       MODULE WEBMOD_POTET
       IMPLICIT NONE
-      include 'fmodules.inc'
+#include 'fmodules.inc'
 
 C   Dimensions
       integer, save :: nmru, nmonths

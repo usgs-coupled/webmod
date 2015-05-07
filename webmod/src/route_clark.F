@@ -43,7 +43,7 @@ c***********************************************************************
 c! ***************** START MODULE *************
       MODULE WEBMOD_ROUTE
       IMPLICIT NONE
-      INCLUDE 'fmodules.inc'
+#include 'fmodules.inc'
 
 C   Parameters and initial flags
       real inch2m,gpm2m3ph,a_million, qlin2dep

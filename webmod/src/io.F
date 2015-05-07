@@ -22,7 +22,7 @@ c
 c***********************************************************************
       MODULE WEBMOD_IO
       IMPLICIT NONE
-      include 'fmodules.inc'
+#include 'fmodules.inc'
 !   Dimensions and Local Variables
 !      integer, SAVE:: topout_file_unit, chemout_file_unit, phreeqout ! standard output, in addition to MMS files *.out, *.statvar, etc
       integer, save:: endper, yrdays, modays(12),nowtime(6)
@@ -161,7 +161,7 @@ c
 !#endif
       USE WEBMOD_IO
       IMPLICIT NONE
-      INTEGER, EXTERNAL :: getoutname
+!!      INTEGER, EXTERNAL :: getoutname
       INTEGER, EXTERNAL ::open_res_files
       integer ret, chem_sim, nmru, nac, nhydro
       logical filflg

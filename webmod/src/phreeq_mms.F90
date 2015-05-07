@@ -22,7 +22,7 @@
       MODULE WEBMOD_PHREEQ_MMS
       USE IPhreeqc
       IMPLICIT NONE
-      INCLUDE 'fmodules.f90.inc'
+#include 'fmodules.f90.inc'
       !INCLUDE 'IPhreeqc.f90.inc'
       INCLUDE 'mms_phreeqc.f90.inc'
       

@@ -49,7 +49,7 @@ c***********************************************************************
 c! ***************** START MODULE *************
       MODULE WEBMOD_SUM
       IMPLICIT NONE
-      INCLUDE 'fmodules.inc'
+#include 'fmodules.inc'
       
 C   Parameters and initial flags
 c Conversion factors

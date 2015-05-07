@@ -31,7 +31,7 @@
 ! ***************** START MODULE *************
       MODULE WEBMOD_CLARK
       IMPLICIT NONE
-      INCLUDE 'fmodules.inc'
+#include 'fmodules.inc'
       
 
       

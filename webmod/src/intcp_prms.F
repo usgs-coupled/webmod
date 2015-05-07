@@ -10,7 +10,7 @@ c***********************************************************************
 c 
       MODULE WEBMOD_INTCP
       IMPLICIT NONE
-      include 'fmodules.inc'
+#include 'fmodules.inc'
 
 C   Dimensions
       integer, save :: nmru, nevap, nmonths
