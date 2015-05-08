@@ -3393,11 +3393,13 @@
         sel_mix%file = out_dir(1:path_len)//'select_mixes'
         inquire(file=sel_mix%file,exist=filflg)
         if (filflg) then
-          open(newunit=tmplun,file=sel_mix%file,status='old')
+          tmplun = my_newunit()
+          open(unit=tmplun,file=sel_mix%file,status='old')
           close(unit=tmplun,status='delete')
         endif
 !----open the file and close it so the the system copy can write to it.
-        open (newunit=sel_mix%lun,file=sel_mix%file,access='sequential',&
+        sel_mix%lun = my_newunit()
+        open (unit=sel_mix%lun,file=sel_mix%file,access='sequential',&
           form='formatted', status='new')
         write(sf_bas%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
         close (unit = sel_mix%lun)
@@ -5335,11 +5337,13 @@
         sf_bas%file = out_dir(1:path_len)//'s_basin'
         inquire(file=sf_bas%file,exist=filflg)
         if (filflg) then
-          open(newunit=tmplun,file=sf_bas%file,status='old')
+          tmplun = my_newunit()
+          open(unit=tmplun,file=sf_bas%file,status='old')
           close(unit=tmplun,status='delete')
         endif
 !----open the file.
-        open (newunit=sf_bas%lun,file=sf_bas%file,access='sequential',&
+        sf_bas%lun = my_newunit()
+        open (unit=sf_bas%lun,file=sf_bas%file,access='sequential',&
           form='formatted', status='new')
         nf=nf+1
         vse_lun(nf)=sf_bas%lun
@@ -5355,11 +5359,13 @@
           sf_mru(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=sf_mru(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=sf_mru(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=sf_mru(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=sf_mru(i)%lun,file=sf_mru(i)%file,&
+          sf_mru(i)%lun = my_newunit()
+          open (unit=sf_mru(i)%lun,file=sf_mru(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=sf_mru(i)%lun
@@ -5389,11 +5395,13 @@
           sf_uzgen(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=sf_uzgen(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=sf_uzgen(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=sf_uzgen(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=sf_uzgen(i)%lun,file=sf_uzgen(i)%file,&
+          sf_uzgen(i)%lun = my_newunit()
+          open (unit=sf_uzgen(i)%lun,file=sf_uzgen(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=sf_uzgen(i)%lun
@@ -5404,11 +5412,13 @@
           sf_uzrip(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=sf_uzrip(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=sf_uzrip(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=sf_uzrip(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=sf_uzrip(i)%lun,file=sf_uzrip(i)%file,&
+          sf_uzrip(i)%lun = my_newunit()
+          open (unit=sf_uzrip(i)%lun,file=sf_uzrip(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=sf_uzrip(i)%lun
@@ -5419,11 +5429,13 @@
           sf_uzup(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=sf_uzup(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=sf_uzup(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=sf_uzup(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=sf_uzup(i)%lun,file=sf_uzup(i)%file,&
+          sf_uzup(i)%lun = my_newunit()
+          open (unit=sf_uzup(i)%lun,file=sf_uzup(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=sf_uzup(i)%lun
@@ -5434,11 +5446,13 @@
           sf_can(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=sf_can(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=sf_can(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=sf_can(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=sf_can(i)%lun,file=sf_can(i)%file,&
+          sf_can(i)%lun = my_newunit()
+          open (unit=sf_can(i)%lun,file=sf_can(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=sf_can(i)%lun
@@ -5449,11 +5463,13 @@
           sf_snow(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=sf_snow(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=sf_snow(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=sf_snow(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=sf_snow(i)%lun,file=sf_snow(i)%file,&
+          sf_snow(i)%lun = my_newunit()
+          open (unit=sf_snow(i)%lun,file=sf_snow(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=sf_snow(i)%lun
@@ -5464,11 +5480,13 @@
     !      sf_imperv(i)%file = out_dir(1:path_len)//filename(1:filelen)
     !        inquire(file=sf_imperv(i)%file,exist=filflg)
     !      if (filflg) then
-    !        open(newunit=tmplun,file=sf_imperv(i)%file,status='old')
+    !        tmplun = my_newunit()
+    !        open(unit=tmplun,file=sf_imperv(i)%file,status='old')
     !        close(unit=tmplun,status='delete')
     !      endif
     !!----open the file.
-    !      open (newunit=sf_imperv(i)%lun,file=sf_imperv(i)%file,
+    !      sf_imperv(i)%lun = my_newunit()
+    !      open (unit=sf_imperv(i)%lun,file=sf_imperv(i)%file,
     ! $      access='sequential',form='formatted', status='new')
     !      nf=nf+1
     !      vse_lun(nf)=sf_imperv(i)%lun
@@ -5479,11 +5497,13 @@
           sf_transp(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=sf_transp(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=sf_transp(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=sf_transp(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=sf_transp(i)%lun,file=sf_transp(i)%file,&
+          sf_transp(i)%lun = my_newunit()
+          open (unit=sf_transp(i)%lun,file=sf_transp(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=sf_transp(i)%lun
@@ -5494,11 +5514,13 @@
           sf_ohoriz(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=sf_ohoriz(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=sf_ohoriz(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=sf_ohoriz(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=sf_ohoriz(i)%lun,file=sf_ohoriz(i)%file,&
+          sf_ohoriz(i)%lun = my_newunit()
+          open (unit=sf_ohoriz(i)%lun,file=sf_ohoriz(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=sf_ohoriz(i)%lun
@@ -5510,11 +5532,13 @@
            sf_uz(i,k)%file = out_dir(1:path_len)//filename(1:filelen)
              inquire(file=sf_uz(i,k)%file,exist=filflg)
            if (filflg) then
-             open(newunit=tmplun,file=sf_uz(i,k)%file,status='old')
+             tmplun = my_newunit()
+             open(unit=tmplun,file=sf_uz(i,k)%file,status='old')
              close(unit=tmplun,status='delete')
            endif
     !----open the file.
-           open (newunit=sf_uz(i,k)%lun,file=sf_uz(i,k)%file,&
+           sf_uz(i,k)%lun = my_newunit()
+           open (unit=sf_uz(i,k)%lun,file=sf_uz(i,k)%file,&
             access='sequential',form='formatted', status='new')
            nf=nf+1
            vse_lun(nf)=sf_uz(i,k)%lun
@@ -5526,11 +5550,13 @@
           sf_qdf(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=sf_qdf(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=sf_qdf(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=sf_qdf(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=sf_qdf(i)%lun,file=sf_qdf(i)%file,&
+          sf_qdf(i)%lun = my_newunit()
+          open (unit=sf_qdf(i)%lun,file=sf_qdf(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=sf_qdf(i)%lun
@@ -5541,11 +5567,13 @@
           sf_sat(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=sf_sat(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=sf_sat(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=sf_sat(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=sf_sat(i)%lun,file=sf_sat(i)%file,&
+          sf_sat(i)%lun = my_newunit()
+          open (unit=sf_sat(i)%lun,file=sf_sat(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=sf_sat(i)%lun
@@ -5556,11 +5584,13 @@
           sf_satpref(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=sf_satpref(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=sf_satpref(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=sf_satpref(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=sf_satpref(i)%lun,file=sf_satpref(i)%file,&
+          sf_satpref(i)%lun = my_newunit()
+          open (unit=sf_satpref(i)%lun,file=sf_satpref(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=sf_satpref(i)%lun
@@ -5571,11 +5601,13 @@
           sf_hill(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=sf_hill(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=sf_hill(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=sf_hill(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=sf_hill(i)%lun,file=sf_hill(i)%file,&
+          sf_hill(i)%lun = my_newunit()
+          open (unit=sf_hill(i)%lun,file=sf_hill(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=sf_hill(i)%lun
@@ -5587,11 +5619,13 @@
           sf_uz2sat(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=sf_uz2sat(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=sf_uz2sat(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=sf_uz2sat(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=sf_uz2sat(i)%lun,file=sf_uz2sat(i)%file,&
+          sf_uz2sat(i)%lun = my_newunit()
+          open (unit=sf_uz2sat(i)%lun,file=sf_uz2sat(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=sf_uz2sat(i)%lun
@@ -5607,11 +5641,13 @@
           sf_hydseg(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=sf_hydseg(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=sf_hydseg(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=sf_hydseg(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=sf_hydseg(i)%lun,file=sf_hydseg(i)%file,&
+          sf_hydseg(i)%lun = my_newunit()
+          open (unit=sf_hydseg(i)%lun,file=sf_hydseg(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=sf_hydseg(i)%lun
@@ -5623,11 +5659,13 @@
         sf_hyd%file = out_dir(1:path_len)//filename(1:filelen)
           inquire(file=sf_hyd%file,exist=filflg)
         if (filflg) then
-          open(newunit=tmplun,file=sf_hyd%file,status='old')
+          tmplun = my_newunit()
+          open(unit=tmplun,file=sf_hyd%file,status='old')
           close(unit=tmplun,status='delete')
         endif
     !----open the file.
-        open (newunit=sf_hyd%lun,file=sf_hyd%file,&
+        sf_hyd%lun = my_newunit()
+        open (unit=sf_hyd%lun,file=sf_hyd%file,&
             access='sequential',form='formatted', status='new')
         nf=nf+1
         vse_lun(nf)=sf_hyd%lun
@@ -5644,11 +5682,13 @@
         ef_bas%file = out_dir(1:path_len)//'e_basin'
         inquire(file=ef_bas%file,exist=filflg)
         if (filflg) then
-          open(newunit=tmplun,file=ef_bas%file,status='old')
+          tmplun = my_newunit()
+          open(unit=tmplun,file=ef_bas%file,status='old')
           close(unit=tmplun,status='delete')
         endif
 !----open the file.
-        open (newunit=ef_bas%lun,file=ef_bas%file,access='sequential',&
+        ef_bas%lun = my_newunit()
+        open (unit=ef_bas%lun,file=ef_bas%file,access='sequential',&
           form='formatted', status='new')
         nf=nf+1
         vse_lun(nf)=ef_bas%lun
@@ -5664,11 +5704,13 @@
           ef_mru(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=ef_mru(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=ef_mru(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=ef_mru(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=ef_mru(i)%lun,file=ef_mru(i)%file,&
+          ef_mru(i)%lun = my_newunit()
+          open (unit=ef_mru(i)%lun,file=ef_mru(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_mru(i)%lun
@@ -5698,11 +5740,13 @@
           ef_uzgen(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=ef_uzgen(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=ef_uzgen(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=ef_uzgen(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=ef_uzgen(i)%lun,file=ef_uzgen(i)%file,&
+          ef_uzgen(i)%lun = my_newunit()
+          open (unit=ef_uzgen(i)%lun,file=ef_uzgen(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_uzgen(i)%lun
@@ -5713,11 +5757,13 @@
           ef_uzrip(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=ef_uzrip(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=ef_uzrip(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=ef_uzrip(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=ef_uzrip(i)%lun,file=ef_uzrip(i)%file,&
+          ef_uzrip(i)%lun = my_newunit()
+          open (unit=ef_uzrip(i)%lun,file=ef_uzrip(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_uzrip(i)%lun
@@ -5728,11 +5774,13 @@
           ef_uzup(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=ef_uzup(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=ef_uzup(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=ef_uzup(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=ef_uzup(i)%lun,file=ef_uzup(i)%file,&
+          ef_uzup(i)%lun = my_newunit()
+          open (unit=ef_uzup(i)%lun,file=ef_uzup(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_uzup(i)%lun
@@ -5743,11 +5791,13 @@
           ef_can(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=ef_can(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=ef_can(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=ef_can(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=ef_can(i)%lun,file=ef_can(i)%file,&
+          ef_can(i)%lun = my_newunit()
+          open (unit=ef_can(i)%lun,file=ef_can(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_can(i)%lun
@@ -5758,11 +5808,13 @@
           ef_snow(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=ef_snow(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=ef_snow(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=ef_snow(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=ef_snow(i)%lun,file=ef_snow(i)%file,&
+          ef_snow(i)%lun = my_newunit()
+          open (unit=ef_snow(i)%lun,file=ef_snow(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_snow(i)%lun
@@ -5773,11 +5825,13 @@
     !      ef_imperv(i)%file = out_dir(1:path_len)//filename(1:filelen)
     !        inquire(file=ef_imperv(i)%file,exist=filflg)
     !      if (filflg) then
-    !        open(newunit=tmplun,file=ef_imperv(i)%file,status='old')
+    !        tmplun = my_newunit()
+    !        open(unit=tmplun,file=ef_imperv(i)%file,status='old')
     !        close(unit=tmplun,status='delete')
     !      endif
     !!----open the file.
-    !      open (newunit=ef_imperv(i)%lun,file=ef_imperv(i)%file,
+    !      ef_imperv(i)%lun = my_newunit()
+    !      open (unit=ef_imperv(i)%lun,file=ef_imperv(i)%file,
     ! $      access='sequential',form='formatted', status='new')
     !      nf=nf+1
     !      vse_lun(nf)=ef_imperv(i)%lun
@@ -5788,11 +5842,13 @@
           ef_transp(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=ef_transp(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=ef_transp(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=ef_transp(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=ef_transp(i)%lun,file=ef_transp(i)%file,&
+          ef_transp(i)%lun = my_newunit()
+          open (unit=ef_transp(i)%lun,file=ef_transp(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_transp(i)%lun
@@ -5803,11 +5859,13 @@
           ef_ohoriz(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=ef_ohoriz(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=ef_ohoriz(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=ef_ohoriz(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=ef_ohoriz(i)%lun,file=ef_ohoriz(i)%file,&
+          ef_ohoriz(i)%lun = my_newunit()
+          open (unit=ef_ohoriz(i)%lun,file=ef_ohoriz(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_ohoriz(i)%lun
@@ -5819,11 +5877,13 @@
            ef_uz(i,k)%file = out_dir(1:path_len)//filename(1:filelen)
              inquire(file=ef_uz(i,k)%file,exist=filflg)
            if (filflg) then
-             open(newunit=tmplun,file=ef_uz(i,k)%file,status='old')
+             tmplun = my_newunit()
+             open(unit=tmplun,file=ef_uz(i,k)%file,status='old')
              close(unit=tmplun,status='delete')
            endif
     !----open the file.
-           open (newunit=ef_uz(i,k)%lun,file=ef_uz(i,k)%file,&
+           ef_uz(i,k)%lun = my_newunit()
+           open (unit=ef_uz(i,k)%lun,file=ef_uz(i,k)%file,&
             access='sequential',form='formatted', status='new')
            nf=nf+1
            vse_lun(nf)=ef_uz(i,k)%lun
@@ -5835,11 +5895,13 @@
           ef_qdf(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=ef_qdf(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=ef_qdf(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=ef_qdf(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=ef_qdf(i)%lun,file=ef_qdf(i)%file,&
+          ef_qdf(i)%lun = my_newunit()
+          open (unit=ef_qdf(i)%lun,file=ef_qdf(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_qdf(i)%lun
@@ -5850,11 +5912,13 @@
           ef_sat(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=ef_sat(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=ef_sat(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=ef_sat(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=ef_sat(i)%lun,file=ef_sat(i)%file,&
+          ef_sat(i)%lun = my_newunit()
+          open (unit=ef_sat(i)%lun,file=ef_sat(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_sat(i)%lun
@@ -5865,11 +5929,13 @@
           ef_satpref(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=ef_satpref(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=ef_satpref(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=ef_satpref(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=ef_satpref(i)%lun,file=ef_satpref(i)%file,&
+          ef_satpref(i)%lun = my_newunit()
+          open (unit=ef_satpref(i)%lun,file=ef_satpref(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_satpref(i)%lun
@@ -5880,11 +5946,13 @@
           ef_hill(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=ef_hill(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=ef_hill(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=ef_hill(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=ef_hill(i)%lun,file=ef_hill(i)%file,&
+          ef_hill(i)%lun = my_newunit()
+          open (unit=ef_hill(i)%lun,file=ef_hill(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_hill(i)%lun
@@ -5896,11 +5964,13 @@
           ef_uz2sat(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=ef_uz2sat(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=ef_uz2sat(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=ef_uz2sat(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=ef_uz2sat(i)%lun,file=ef_uz2sat(i)%file,&
+          ef_uz2sat(i)%lun = my_newunit()
+          open (unit=ef_uz2sat(i)%lun,file=ef_uz2sat(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_uz2sat(i)%lun
@@ -5916,11 +5986,13 @@
           ef_hydseg(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=ef_hydseg(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=ef_hydseg(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=ef_hydseg(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=ef_hydseg(i)%lun,file=ef_hydseg(i)%file,&
+          ef_hydseg(i)%lun = my_newunit()
+          open (unit=ef_hydseg(i)%lun,file=ef_hydseg(i)%file,&
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_hydseg(i)%lun
@@ -5932,11 +6004,13 @@
         ef_hyd%file = out_dir(1:path_len)//filename(1:filelen)
           inquire(file=ef_hyd%file,exist=filflg)
         if (filflg) then
-          open(newunit=tmplun,file=ef_hyd%file,status='old')
+          tmplun = my_newunit()
+          open(unit=tmplun,file=ef_hyd%file,status='old')
           close(unit=tmplun,status='delete')
         endif
     !----open the file.
-        open (newunit=ef_hyd%lun,file=ef_hyd%file,&
+        ef_hyd%lun = my_newunit()
+        open (unit=ef_hyd%lun,file=ef_hyd%file,&
             access='sequential',form='formatted', status='new')
         nf=nf+1
         vse_lun(nf)=ef_hyd%lun
