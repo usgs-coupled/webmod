@@ -18,6 +18,7 @@ src/fmodules.f90.inc
 src/intcp_prms.F
 src/io.F
 src/irrig_web.F
+src/my_newunit.F
 src/nwsmelt_topg.F
 src/obs_chem.F
 src/obs_webmod.F
