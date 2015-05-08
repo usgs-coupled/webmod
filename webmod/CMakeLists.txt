@@ -89,3 +89,7 @@ set(EXTRA_LIBS ${EXTRA_LIBS} mmf_c)
 
 # link 
 target_link_libraries(webmod_f ${EXTRA_LIBS})
+
+# install
+install(TARGETS webmod_f DESTINATION ${CMAKE_INSTALL_BINDIR})
+

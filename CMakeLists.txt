@@ -2,6 +2,15 @@ cmake_minimum_required (VERSION 2.8.11)
 
 project(web_win C CXX Fortran)
 
+# overide docdir on windows
+if(WIN32 AND NOT CMAKE_INSTALL_DOCDIR)
+  set(CMAKE_INSTALL_DOCDIR "" CACHE PATH "documentation root (doc)")
+  set(CMAKE_INSTALL_DOCDIR "doc")
+endif()
+
+# retrieve default install locations
+include(GNUInstallDirs)
+
 # Disable shared libraries on windows
 # see https://support2.microsoft.com/default.aspx?scid=KB;EN-US;168958
 # and https://msdn.microsoft.com/query/dev11.query?appId=Dev11IDEF1&l=EN-US&k=k(C4251);&rd=true
