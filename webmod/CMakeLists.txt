@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 2.8.11)
 
-project(webmod_f Fortran)
+project(webmod_f Fortran C CXX)
 
 SET(webmod_f_SOURCES
 ../IPhreeqcMMS/include/mms_phreeqc.f90.inc
@@ -80,6 +80,7 @@ if(WIN32 AND ${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
 endif()
 add_executable(webmod_f ${webmod_f_SOURCES})
 set_target_properties(webmod_f PROPERTIES DEBUG_POSTFIX "d")
+set_target_properties(webmod_f PROPERTIES LINKER_LANGUAGE "CXX")
 
 # library dependencies
 set(EXTRA_LIBS ${EXTRA_LIBS} IPhreeqcMMS)
