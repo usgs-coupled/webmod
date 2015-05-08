@@ -28,6 +28,7 @@
       EXTERNAL dattim, opstr, dpint4, dpstr, dpdble, dpreal
       EXTERNAL decl_control
 #endif
+      INTEGER, EXTERNAL :: my_newunit
 ! fmodules.inc
 !      MODULE WEBMOD_MAX
 ! Dimensions

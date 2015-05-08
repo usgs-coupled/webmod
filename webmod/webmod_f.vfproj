@@ -70,21 +70,22 @@
 		<File RelativePath="..\IPhreeqcMMS\include\mms_phreeqc.f90.inc"/></Filter>
 		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
-		<File RelativePath="..\IPhreeqcMMS\IPhreeqc\src\IPhreeqc_interface.F90"/>
-		<File RelativePath="..\IPhreeqcMMS\src\phr_mix.F90"/>
-		<File RelativePath="..\IPhreeqcMMS\src\phr_multicopy.f90"/>
-		<File RelativePath="..\IPhreeqcMMS\src\phr_precip.f90"/>
 		<File RelativePath="src\basin_topg.F"/>
 		<File RelativePath="src\call_modules_webmod.F"/>
 		<File RelativePath="src\ccsolrad_web.F"/>
 		<File RelativePath="src\elapsed_time_function.F90"/>
 		<File RelativePath="src\intcp_prms.F"/>
 		<File RelativePath="src\io.F"/>
+		<File RelativePath="..\IPhreeqcMMS\IPhreeqc\src\IPhreeqc_interface.F90"/>
 		<File RelativePath="src\irrig_web.F"/>
+		<File RelativePath=".\src\my_newunit.F"/>
 		<File RelativePath="src\nwsmelt_topg.F"/>
 		<File RelativePath="src\obs_chem.F"/>
 		<File RelativePath="src\obs_webmod.F"/>
 		<File RelativePath="src\obs_webx.F"/>
+		<File RelativePath="..\IPhreeqcMMS\src\phr_mix.F90"/>
+		<File RelativePath="..\IPhreeqcMMS\src\phr_multicopy.f90"/>
+		<File RelativePath="..\IPhreeqcMMS\src\phr_precip.f90"/>
 		<File RelativePath="src\phreeq_mms.F90"/>
 		<File RelativePath="src\potet_hamon_prms.F"/>
 		<File RelativePath="src\precip_web.F"/>
