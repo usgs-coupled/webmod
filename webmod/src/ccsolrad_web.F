@@ -1,3 +1,4 @@
+#include "defines.h"
 c***********************************************************************
 c    ccsolrad_web.f: Subroutine to calculate daily solar radiation from
 c                max-min temperature-cloud cover relationship
@@ -14,7 +15,7 @@ c                   Port to Fortran 90 with module and dynamic memory
 c **********************************************************************
       MODULE WEBMOD_CSOL
       IMPLICIT NONE
-      include 'fmodules.inc'
+#include "fmodules.inc"
 
 C   Dimensions
       integer, save :: nmru, ndays, nmonths, nsol, nrain
@@ -282,11 +283,11 @@ c$$$      if ( Nradpl.eq.-1 ) return
       Nsol = getdim('nsol')
       if ( Nsol.eq.-1 ) return
 
-      if ( getparam('solrad', 'ccov_slope', nmonths, 'real', ccov_slope)
-     +     .ne.0 ) return
+      if ( getparam('solrad', 'ccov_slope', nmonths, 'real',
+     +     ccov_slope).ne.0 ) return
 
-      if ( getparam('solrad', 'ccov_intcp', nmonths, 'real', ccov_intcp)
-     +     .ne.0 ) return
+      if ( getparam('solrad', 'ccov_intcp', nmonths, 'real',
+     +     ccov_intcp).ne.0 ) return
 
       if ( getparam('solrad', 'radj_sppt', 1, 'real', radj_sppt)
      +     .ne.0 ) return

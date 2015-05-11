@@ -1,3 +1,4 @@
+#include "defines.h"
 c*********************************************************************
 c     temp_1sta.f: Distribute temperatures to MRU's using 1 station
 c                  and monthly lapse rate parameters
@@ -10,7 +11,7 @@ c     06may10 - Port to Fortran 90 with module and dynamic memory
 c ********************************************************************
       MODULE WEBMOD_TEMP1STA
       IMPLICIT NONE
-      include 'fmodules.inc'
+#include "fmodules.inc"
 
 C Constant
       real, PARAMETER :: nearzero = 1.E-10 ! Trap when trxn_**_days is actually equal to an integer

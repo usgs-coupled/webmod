@@ -1,3 +1,4 @@
+#include "defines.h"
 c***********************************************************************
 c     obs_webx.f: modified from obs_prms -> obs_webmod to
 c                 include XYZ data input. -RMTW
@@ -25,7 +26,7 @@ c
      $     rain_day)
       use WEBMOD_IRRIG, only : nform
       implicit none
-      include 'fmodules.inc'
+#include "fmodules.inc"
       real runoff(MAXOBS)
       real precip(MAXRAIN)
       real irrig_ext(MAXIRRIG)
@@ -158,7 +159,7 @@ c
       integer function obsxinit(temp_units, ntemp, rain_code)
       IMPLICIT NONE
 
-      include 'fmodules.inc'
+#include "fmodules.inc"
 
       !integer datetime(6), temp_units, ntemp, rain_code(maxmo)
       integer temp_units, ntemp, rain_code(maxmo)
@@ -197,7 +198,7 @@ c
      $     tsta_temp_f, temp_units, ntemp, rain_day, rain_code)
       IMPLICIT NONE
 
-      include 'fmodules.inc'
+#include "fmodules.inc"
 
       integer i, rain_code(maxmo), rain_day
       !integer nstep, datetime(6), route_on, temp_units, ntemp
@@ -293,7 +294,7 @@ c
       integer function obs_webx(arg)
       IMPLICIT NONE
 
-      include 'fmodules.inc'
+#include "fmodules.inc"
 
       character(len=*) arg
       CHARACTER(len=256) SVN_ID

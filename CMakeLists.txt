@@ -1,5 +1,15 @@
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 2.8.11)
+
 project(web_win C CXX Fortran)
+
+# overide docdir on windows
+if(WIN32 AND NOT CMAKE_INSTALL_DOCDIR)
+  set(CMAKE_INSTALL_DOCDIR "" CACHE PATH "documentation root (doc)")
+  set(CMAKE_INSTALL_DOCDIR "doc")
+endif()
+
+# retrieve default install locations
+include(GNUInstallDirs)
 
 # Disable shared libraries on windows
 # see https://support2.microsoft.com/default.aspx?scid=KB;EN-US;168958
@@ -25,9 +35,10 @@ if(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400)
 endif(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400) 
 
 # tests
-# enable_testing()
+enable_testing()
 
 # subdirs
 add_subdirectory(IPhreeqcMMS)
 add_subdirectory(mmf_c)
 add_subdirectory(webmod)
+add_subdirectory(Tests)

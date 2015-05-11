@@ -1,3 +1,4 @@
+#include "defines.h"
 ***********************************************************************
 c   webmod_res.f
 c
@@ -265,7 +266,7 @@ c***********************************************************************
 
       IMPLICIT NONE
 
-      INCLUDE 'fmodules.inc'
+#include "fmodules.inc"
 
       real a_million, inch2m
       DATA a_million / 1e6 /
@@ -1651,11 +1652,13 @@ c composite basin volumes
         vf_bas%file = out_dir(1:path_len)//'v_basin'
         inquire(file=vf_bas%file,exist=filflg)
         if (filflg) then
-          open(newunit=tmplun,file=vf_bas%file,status='old')
+          tmplun = my_newunit()
+          open(unit=tmplun,file=vf_bas%file,status='old')
           close(unit=tmplun,status='delete')
         endif
 !----open the file.
-        open (newunit=vf_bas%lun,file=vf_bas%file,access='sequential',
+        vf_bas%lun = my_newunit()
+        open (unit=vf_bas%lun,file=vf_bas%file,access='sequential',
      $    form='formatted', status='new')
         nf=nf+1
         vse_lun(nf)=vf_bas%lun
@@ -1671,11 +1674,13 @@ c composite basin volumes
           vf_mru(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=vf_mru(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=vf_mru(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=vf_mru(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=vf_mru(i)%lun,file=vf_mru(i)%file,
+          vf_mru(i)%lun = my_newunit()
+          open (unit=vf_mru(i)%lun,file=vf_mru(i)%file,
      $      access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=vf_mru(i)%lun
@@ -1705,11 +1710,13 @@ c composite basin volumes
           vf_uzgen(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=vf_uzgen(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=vf_uzgen(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=vf_uzgen(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=vf_uzgen(i)%lun,file=vf_uzgen(i)%file,
+          vf_uzgen(i)%lun = my_newunit()
+          open (unit=vf_uzgen(i)%lun,file=vf_uzgen(i)%file,
      $      access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=vf_uzgen(i)%lun
@@ -1720,11 +1727,13 @@ c composite basin volumes
           vf_uzrip(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=vf_uzrip(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=vf_uzrip(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=vf_uzrip(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=vf_uzrip(i)%lun,file=vf_uzrip(i)%file,
+          vf_uzrip(i)%lun = my_newunit()
+          open (unit=vf_uzrip(i)%lun,file=vf_uzrip(i)%file,
      $      access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=vf_uzrip(i)%lun
@@ -1735,11 +1744,13 @@ c composite basin volumes
           vf_uzup(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=vf_uzup(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=vf_uzup(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=vf_uzup(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=vf_uzup(i)%lun,file=vf_uzup(i)%file,
+          vf_uzup(i)%lun = my_newunit()
+          open (unit=vf_uzup(i)%lun,file=vf_uzup(i)%file,
      $      access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=vf_uzup(i)%lun
@@ -1750,11 +1761,13 @@ c composite basin volumes
           vf_can(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=vf_can(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=vf_can(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=vf_can(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=vf_can(i)%lun,file=vf_can(i)%file,
+          vf_can(i)%lun = my_newunit()
+          open (unit=vf_can(i)%lun,file=vf_can(i)%file,
      $      access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=vf_can(i)%lun
@@ -1765,11 +1778,13 @@ c composite basin volumes
           vf_snow(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=vf_snow(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=vf_snow(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=vf_snow(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=vf_snow(i)%lun,file=vf_snow(i)%file,
+          vf_snow(i)%lun = my_newunit()
+          open (unit=vf_snow(i)%lun,file=vf_snow(i)%file,
      $      access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=vf_snow(i)%lun
@@ -1780,11 +1795,13 @@ c composite basin volumes
     !      vf_imperv(i)%file = out_dir(1:path_len)//filename(1:filelen)
     !        inquire(file=vf_imperv(i)%file,exist=filflg)
     !      if (filflg) then
-    !        open(newunit=tmplun,file=vf_imperv(i)%file,status='old')
+    !        tmplun = my_newunit()
+    !        open(unit=tmplun,file=vf_imperv(i)%file,status='old')
     !        close(unit=tmplun,status='delete')
     !      endif
     !!----open the file.
-    !      open (newunit=vf_imperv(i)%lun,file=vf_imperv(i)%file,
+    !      vf_imperv(i)%lun = my_newunit()
+    !      open (unit=vf_imperv(i)%lun,file=vf_imperv(i)%file,
     ! $      access='sequential',form='formatted', status='new')
     !      nf=nf+1
     !      vse_lun(nf)=vf_imperv(i)%lun
@@ -1795,11 +1812,13 @@ c composite basin volumes
           vf_transp(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=vf_transp(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=vf_transp(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=vf_transp(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=vf_transp(i)%lun,file=vf_transp(i)%file,
+          vf_transp(i)%lun = my_newunit()
+          open (unit=vf_transp(i)%lun,file=vf_transp(i)%file,
      $      access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=vf_transp(i)%lun
@@ -1810,11 +1829,13 @@ c composite basin volumes
           vf_ohoriz(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=vf_ohoriz(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=vf_ohoriz(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=vf_ohoriz(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=vf_ohoriz(i)%lun,file=vf_ohoriz(i)%file,
+          vf_ohoriz(i)%lun = my_newunit()
+          open (unit=vf_ohoriz(i)%lun,file=vf_ohoriz(i)%file,
      $      access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=vf_ohoriz(i)%lun
@@ -1826,11 +1847,13 @@ c composite basin volumes
            vf_uz(i,j)%file = out_dir(1:path_len)//filename(1:filelen)
              inquire(file=vf_uz(i,j)%file,exist=filflg)
            if (filflg) then
-             open(newunit=tmplun,file=vf_uz(i,j)%file,status='old')
+             tmplun = my_newunit()
+             open(unit=tmplun,file=vf_uz(i,j)%file,status='old')
              close(unit=tmplun,status='delete')
            endif
     !----open the file.
-           open (newunit=vf_uz(i,j)%lun,file=vf_uz(i,j)%file,
+           vf_uz(i,j)%lun = my_newunit()
+           open (unit=vf_uz(i,j)%lun,file=vf_uz(i,j)%file,
      $      access='sequential',form='formatted', status='new')
            nf=nf+1
            vse_lun(nf)=vf_uz(i,j)%lun
@@ -1842,11 +1865,13 @@ c composite basin volumes
           vf_qdf(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=vf_qdf(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=vf_qdf(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=vf_qdf(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=vf_qdf(i)%lun,file=vf_qdf(i)%file,
+          vf_qdf(i)%lun = my_newunit()
+          open (unit=vf_qdf(i)%lun,file=vf_qdf(i)%file,
      $      access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=vf_qdf(i)%lun
@@ -1857,11 +1882,13 @@ c composite basin volumes
           vf_sat(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=vf_sat(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=vf_sat(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=vf_sat(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=vf_sat(i)%lun,file=vf_sat(i)%file,
+          vf_sat(i)%lun = my_newunit()
+          open (unit=vf_sat(i)%lun,file=vf_sat(i)%file,
      $      access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=vf_sat(i)%lun
@@ -1872,11 +1899,13 @@ c composite basin volumes
           vf_satpref(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=vf_satpref(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=vf_satpref(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=vf_satpref(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=vf_satpref(i)%lun,file=vf_satpref(i)%file,
+          vf_satpref(i)%lun = my_newunit()
+          open (unit=vf_satpref(i)%lun,file=vf_satpref(i)%file,
      $      access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=vf_satpref(i)%lun
@@ -1887,11 +1916,13 @@ c composite basin volumes
           vf_hill(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=vf_hill(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=vf_hill(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=vf_hill(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=vf_hill(i)%lun,file=vf_hill(i)%file,
+          vf_hill(i)%lun = my_newunit()
+          open (unit=vf_hill(i)%lun,file=vf_hill(i)%file,
      $      access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=vf_hill(i)%lun
@@ -1903,11 +1934,13 @@ c composite basin volumes
           vf_uz2sat(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=vf_uz2sat(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=vf_uz2sat(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=vf_uz2sat(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=vf_uz2sat(i)%lun,file=vf_uz2sat(i)%file,
+          vf_uz2sat(i)%lun = my_newunit()
+          open (unit=vf_uz2sat(i)%lun,file=vf_uz2sat(i)%file,
      $      access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=vf_uz2sat(i)%lun
@@ -1923,11 +1956,13 @@ c composite basin volumes
           vf_hillexp(i)%file = out_dir(1:path_len)//filename(1:filelen)
             inquire(file=vf_hillexp(i)%file,exist=filflg)
           if (filflg) then
-            open(newunit=tmplun,file=vf_hillexp(i)%file,status='old')
+            tmplun = my_newunit()
+            open(unit=tmplun,file=vf_hillexp(i)%file,status='old')
             close(unit=tmplun,status='delete')
           endif
     !----open the file.
-          open (newunit=vf_hillexp(i)%lun,file=vf_hillexp(i)%file,
+          vf_hillexp(i)%lun = my_newunit()
+          open (unit=vf_hillexp(i)%lun,file=vf_hillexp(i)%file,
      $      access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=vf_hillexp(i)%lun
@@ -1939,11 +1974,13 @@ c composite basin volumes
         vf_hyd%file = out_dir(1:path_len)//filename(1:filelen)
           inquire(file=vf_hyd%file,exist=filflg)
         if (filflg) then
-          open(newunit=tmplun,file=vf_hyd%file,status='old')
+          tmplun = my_newunit()
+          open(unit=tmplun,file=vf_hyd%file,status='old')
           close(unit=tmplun,status='delete')
         endif
     !----open the file.
-        open (newunit=vf_hyd%lun,file=vf_hyd%file,
+        vf_hyd%lun = my_newunit()
+        open (unit=vf_hyd%lun,file=vf_hyd%file,
      $      access='sequential',form='formatted', status='new')
         nf=nf+1
         vse_lun(nf)=vf_hyd%lun

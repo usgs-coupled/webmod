@@ -1,3 +1,4 @@
+#include "defines.h"
 c***********************************************************************
 c   precip_web.f: Determine form (rain, snow, mix) of precipitation 
 c                 and distribute to mru's.
@@ -18,7 +19,7 @@ c***********************************************************************
 c 
       MODULE WEBMOD_PRECIP
       IMPLICIT NONE
-      include 'fmodules.inc'
+#include "fmodules.inc"
 
 C   Dimensions
       integer, save :: nmru, nmonths, nrain, nform
@@ -53,7 +54,7 @@ c
       integer function precip_web(arg)
       IMPLICIT NONE
 
-      include 'fmodules.inc'
+#include "fmodules.inc"
 
       character(len=*) arg
       CHARACTER(len=256) SVN_ID
@@ -248,14 +249,14 @@ c
       if(getparam('precip', 'tmax_allrain_c', nmonths, 'real', 
      +   tmax_allrain_c).ne.0) return
 
-      if(getparam('precip', 'tmax_allsnow_c', 1, 'real', tmax_allsnow_c)
-     +   .ne.0) return
+      if(getparam('precip', 'tmax_allsnow_c', 1, 'real',
+     +   tmax_allsnow_c).ne.0) return
 
       if(getparam('precip', 'mru_psta', nmru, 'integer', mru_psta)
      +   .ne.0) return
 
-      if(getparam('precip', 'adjmix_rain', nmonths, 'real', adjmix_rain)
-     +   .ne.0) return
+      if(getparam('precip', 'adjmix_rain', nmonths, 'real',
+     +   adjmix_rain).ne.0) return
 
       if(getparam('precip', 'rain_adj', nmru*nmonths, 'real', rain_adj)
      +   .ne.0) return

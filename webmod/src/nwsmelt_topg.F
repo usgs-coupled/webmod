@@ -1,3 +1,4 @@
+#include "defines.h"
 !***********************************************************************
 !     nwsmelt.f:   snowmelt routine according to the National Weather
 !                  Service River Forecast System - Snow Accumulation
@@ -38,7 +39,7 @@ c***********************************************************************
 c 
       MODULE WEBMOD_SNOW
       IMPLICIT NONE
-      include 'fmodules.inc'
+#include "fmodules.inc"
 
 C   Dimensions
       integer, save :: nmru, nexlag, ndepl, ndeplval

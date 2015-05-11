@@ -1,3 +1,4 @@
+#include "defines.h"
 c***********************************************************************
 c     basin_topg.f: Declares basin and HRU physical parameters and 
 c              reservoirs 
@@ -11,7 +12,7 @@ c***********************************************************************
 
       MODULE WEBMOD_BASIN
       IMPLICIT NONE
-      include 'fmodules.inc'
+#include "fmodules.inc"
 !   Dimensions and Local Variables
       INTEGER, SAVE :: Nmru
 !   Declared Variables

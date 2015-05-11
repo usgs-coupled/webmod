@@ -1,3 +1,4 @@
+#include "defines.h"
 c***********************************************************************
 c     soltab_prms.f: compute potential solar radiation for timesteps
 c               from 15 minutes to 1 day for each model response unit.
@@ -13,7 +14,7 @@ c    27 apr  2010 - Port to Fortran 90 with module and dynamic memory
 c **********************************************************************
       MODULE WEBMOD_SOLTAB
       IMPLICIT NONE
-      include 'fmodules.inc'
+#include "fmodules.inc"
 
       integer, save :: nmru, ndays
 

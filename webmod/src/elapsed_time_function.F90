@@ -1,3 +1,4 @@
+#include "defines.h"
 function elapsed_time(t_opt) result(e_time)
       IMPLICIT NONE
   ! ... Purpose: calculate elapsed execution time, tenths of a second.
