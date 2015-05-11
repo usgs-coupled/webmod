@@ -1,3 +1,4 @@
+#include "defines.h"
 c***********************************************************************
 c     Open and close the file for the objective functions.
 c     Modified for xtopprms by rmwebb from obj_func_xml.f
@@ -21,7 +22,7 @@ c
 c***********************************************************************
       MODULE WEBMOD_IO
       IMPLICIT NONE
-      include 'fmodules.inc'
+#include "fmodules.inc"
 !   Dimensions and Local Variables
 !      integer, SAVE:: topout_file_unit, chemout_file_unit, phreeqout ! standard output, in addition to MMS files *.out, *.statvar, etc
       integer, save:: endper, yrdays, modays(12),nowtime(6)
@@ -160,6 +161,7 @@ c
 !#endif
       USE WEBMOD_IO
       IMPLICIT NONE
+!!      INTEGER, EXTERNAL :: getoutname
       INTEGER, EXTERNAL ::open_res_files
       integer ret, chem_sim, nmru, nac, nhydro
       logical filflg
@@ -202,12 +204,14 @@ c
 c      output_path='.\output\loch3.topout'
       inquire(file=topout%file,exist=filflg)
       if (filflg) then
-        open(newunit=topout%lun,file=topout%file,status='old')
+        topout%lun = my_newunit()
+        open(unit=topout%lun,file=topout%file,status='old')
         close(topout%lun,status='delete')
       endif
 
 c-----open the file.
-      open (newunit=topout%lun,file=topout%file,
+      topout%lun = my_newunit()
+      open (unit=topout%lun,file=topout%file,
      +    access='sequential', form='formatted', status='new')
 
 c
@@ -219,12 +223,14 @@ c      output_path='.\output\loch3.chemout'
 c End Kludge
       inquire(file=chemout%file,exist=filflg)
       if (filflg) then
-        open(newunit=chemout%lun,file=chemout%file,status='old')
+        chemout%lun = my_newunit()
+        open(unit=chemout%lun,file=chemout%file,status='old')
         close(unit=chemout%lun,status='delete')
       endif
 
 c-----open the file.
-      open (newunit=chemout%lun,file=chemout%file,
+      chemout%lun = my_newunit()
+      open (unit=chemout%lun,file=chemout%file,
      +    access='sequential', form='formatted', status='new')
 c
 c Convert the end of run time to an absolute julian date
@@ -236,11 +242,13 @@ c
 !      phreeqout%file='./output/select_mixes'
 !      inquire(file=phreeqout%file,exist=filflg)
 !      if (filflg) then
-!        open(newunit=phreeqout%lun,file=phreeqout%file,status='old')
+!        phreeqout%lun = my_newunit()
+!        open(unit=phreeqout%lun,file=phreeqout%file,status='old')
 !        close(unit=phreeqout%lun,status='delete')
 !      endif
 !!!----open the file.
-!      open (newunit=phreeqout%lun,file=phreeqout%file,access=
+!      phreeqout%lun = my_newunit()
+!      open (unit=phreeqout%lun,file=phreeqout%file,access=
 !     * 'sequential',form='formatted', status='new')
 !      close (unit = phreeqout%lun)  ! Output for selected mixes. Empty at first then appended with each mix while debug is on
 !
@@ -250,11 +258,13 @@ c
       Debug%file='./Debug'
       inquire(file=Debug%file,exist=filflg)
       if (filflg) then
-        open(newunit=debug%lun,file=debug%file,status='old')
+        debug%lun = my_newunit()
+        open(unit=debug%lun,file=debug%file,status='old')
         close(unit=debug%lun,status='delete')
       endif
 !----open the file.
-      open (newunit=debug%lun,file=debug%file,access='sequential',
+      debug%lun = my_newunit()
+      open (unit=debug%lun,file=debug%file,access='sequential',
      * form='formatted', status='new')
 !
 ! Detailed output in addition to the four above.

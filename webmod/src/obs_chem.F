@@ -1,3 +1,4 @@
+#include "defines.h"
 c **********************************************************************
 c     obs_chem.f: read concentrations for atmospheric deposition,
 c                 external chemical sources, and observed chemistry.
@@ -5,7 +6,7 @@ c    27 apr  2010 - Port to Fortran 90 with module and dynamic memory
 c **********************************************************************
       MODULE WEBMOD_OBSCHEM
       IMPLICIT NONE
-      include 'fmodules.inc'
+#include "fmodules.inc"
 c   Dimensions and Local Variables
 c nsolobs is the number of sites or irrigation sources with defined solute
 c concentrations returned from parsechemobs that reads the content of the chemdat file.
@@ -159,8 +160,9 @@ c 8) permil
 c
 c unit_lut describes the eight acceptable units described below
       character(LEN=12), parameter :: unit_lut(8) = 
-     $   (/'mg/L','meq/L','uconc1','uconc2','uconc3', 
-     $    'mmol/L','mol/L','permil'/)
+     $   (/'mg/L        ','meq/L       ','uconc1      ',
+     $     'uconc2      ','uconc3      ','mmol/L      ',
+     $     'mol/L       ','permil      '/)
 c
 c M2mM is equal to 1000 to convert moles to millimoles.
       double precision, parameter:: M2mM = 1000.0
@@ -840,7 +842,7 @@ c
       integer function obsc_clean()
       IMPLICIT NONE
 
-      include 'fmodules.inc'
+#include "fmodules.inc"
 
 
       obsc_clean = 1
@@ -888,7 +890,7 @@ c
       USE WEBMOD_OBSCHEM, ONLY: phq_lut, sol_id, unit_id, obs_sol_lut
       IMPLICIT NONE
 
-      include 'fmodules.inc'
+#include "fmodules.inc"
 c
 c functions
 c
@@ -999,7 +1001,7 @@ c
       integer function phreeq_id(STRING)
       USE WEBMOD_OBSCHEM, ONLY: phq_lut, nphq_lut
       IMPLICIT NONE
-      include 'fmodules.inc'
+#include "fmodules.inc"
       CHARACTER(len=12) STRING 
 !      character*12 sol_lut(MAXSOLUTE,2)
       integer i, len1, len2

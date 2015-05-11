@@ -1,3 +1,4 @@
+#include "defines.h"
 ***********************************************************************
 c   topmod_chem.f
 c
@@ -195,7 +196,7 @@ c***********************************************************************
 c! ***************** START MODULE *************
       MODULE WEBMOD_TOPMOD
       IMPLICIT NONE
-      INCLUDE 'fmodules.inc'
+#include "fmodules.inc"
 
 C   Parameters, constants, and initial flags
 c     Normalized areas for nine bins representing the lognormal
@@ -310,7 +311,7 @@ c
 
       integer function topmod_chem(arg)
       implicit none
-      include 'fmodules.inc'
+#include "fmodules.inc"
 
       character(LEN=*), INTENT(IN) :: arg
       CHARACTER(LEN=256) SVN_ID

@@ -1,3 +1,4 @@
+#include "defines.h"
 **********************************************************************
 * Modified from PRMS version by Rick Webb
 *
@@ -48,7 +49,7 @@ c***********************************************************************
 c! ***************** START MODULE *************
       MODULE WEBMOD_SUM
       IMPLICIT NONE
-      INCLUDE 'fmodules.inc'
+#include "fmodules.inc"
       
 C   Parameters and initial flags
 c Conversion factors
@@ -164,7 +165,6 @@ c
 
       USE WEBMOD_SUM
       IMPLICIT NONE
-
       sumbdecl = 1
 
       if(declparam('sumb', 'print_explanation', 'one', 'integer', 
@@ -646,12 +646,15 @@ c
 
       integer function sumbinit()
 
+#if defined(__INTEL_COMPILER)
       USE IFPORT
+#endif
       USE WEBMOD_SUM
       USE WEBMOD_RESMOD, ONLY : basin_sto_cm, basin_chan_sto_cm,
      $  basin_intcp_sto_cm,basin_pweqv_cm,basin_sssto_cm,
      $  basin_soil_moist_cm, basin_gw_sto_cm
       IMPLICIT NONE
+      !integer, external :: getdataname  ! (defined in obs_chem)
 
       integer, external :: length  ! (defined in obs_chem)
      
@@ -1878,6 +1881,8 @@ C New formats for unit value runs - RW
  2028 format(' Total for Run ',5x,3(i4.3,1x),2f7.2,49(1x,f9.2))
 
       sumbrun = 0
+      if(end_run) print*, "Finished"
+      
 
       return
       end

@@ -2,6 +2,19 @@
 ! $Id: fmodules.inc 491 2008-10-24 23:13:50Z rsregan $
 ! system include file for all fortran modules
 ! **********************************************************************
+#if defined(CMAKE_FC)
+      INTEGER, EXTERNAL :: decldim_, declfix_, declparam_, declvar_, declpri_
+      DOUBLE PRECISION, EXTERNAL :: deltim_, delnex, djulian_
+      INTEGER, EXTERNAL :: getdim_, getparam_, getstep_
+      INTEGER, EXTERNAL :: getvar_, readvar_, putvar, declparam_u
+      INTEGER, EXTERNAL :: julian, isleap_
+      INTEGER, EXTERNAL :: getdataname_, getoutname_, getoutdirfile
+      INTEGER, EXTERNAL :: declmodule_, control_string_, control_integer
+
+!      EXTERNAL dattim, opstr, dpint4, dpstr, dpdble, dpreal
+      EXTERNAL opstr_, dpint4_, dpstr_, dpdble_, dpreal_
+      EXTERNAL decl_control_
+#else
       INTEGER, EXTERNAL :: decldim, declfix, declparam, declvar, declpri
       DOUBLE PRECISION, EXTERNAL :: deltim, delnex, djulian
       INTEGER, EXTERNAL :: getdim, getparam, getstep
@@ -12,6 +25,8 @@
 
 !      EXTERNAL dattim, opstr, dpint4, dpstr, dpdble, dpreal
       EXTERNAL decl_control
+#endif
+      INTEGER, EXTERNAL :: my_newunit
 ! fmodules.inc
 !      MODULE WEBMOD_MAX
 ! Dimensions

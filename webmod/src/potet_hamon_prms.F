@@ -1,3 +1,4 @@
+#include "defines.h"
 c***********************************************************************
 c     potet_hamon.f:  Determine whether transpiration is occurring and
 c                     compute the potential evapotranspiration for each
@@ -12,7 +13,7 @@ c***********************************************************************
 c 
       MODULE WEBMOD_POTET
       IMPLICIT NONE
-      include 'fmodules.inc'
+#include "fmodules.inc"
 
 C   Dimensions
       integer, save :: nmru, nmonths

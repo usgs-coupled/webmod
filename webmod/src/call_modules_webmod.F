@@ -1,3 +1,4 @@
+#include "defines.h"
 !***********************a************************************************
 !     MMS module that replaces call_modules.c and setdims.f
 !***********************************************************************
@@ -18,7 +19,7 @@
       INTEGER FUNCTION call_modules(Arg)
       USE WEB_MODULE
       IMPLICIT NONE
-      INCLUDE 'fmodules.inc'
+#include "fmodules.inc"
 ! Arguments
       CHARACTER(LEN=*), INTENT(IN) :: Arg
 ! Functions (define in calling order)
@@ -281,7 +282,7 @@
 
       INTEGER FUNCTION setdims()
       IMPLICIT NONE
-      INCLUDE 'fmodules.inc'
+#include "fmodules.inc"
 ! Local Variables
       INTEGER :: ncurves
 !***********************************************************************

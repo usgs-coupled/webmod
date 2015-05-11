@@ -1,3 +1,4 @@
+#include "defines.h"
 c***********************************************************************
 c     intcp.f:  Computes amount of intercepted rain and snow, and
 c               determines evaporation from interception 
@@ -9,7 +10,7 @@ c***********************************************************************
 c 
       MODULE WEBMOD_INTCP
       IMPLICIT NONE
-      include 'fmodules.inc'
+#include "fmodules.inc"
 
 C   Dimensions
       integer, save :: nmru, nevap, nmonths
