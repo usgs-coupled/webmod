@@ -1,9 +1,6 @@
 ptf %
 # Par2par file for PRMS parameter estimation
 * parameter data
-k_decr = %    k_decr    %
-k_decr_pyr = %  k_decr_pyr  %
-k_decr_nit = %  k_decr_nit  %
 CO2uz =  %    CO2uz     %
 CO2str = %    CO2str    %
 O2uz =   %    O2uz      %
@@ -14,12 +11,24 @@ kchlru = %    kchlru    %
 kcalcu = %    kcalcu    %
 kpyr_u = %    kpyr_u    %
 knitru = %    knitru    %
+koligs = %    koligs    %
+kbiots = %    kbiots    %
+kchlrs = %    kchlrs    %
+kcalcs = %    kcalcs    %
+kpyr_s = %    kpyr_s    %
+knitrs = %    knitrs    %
 kK_sum = %    kK_sum    %
 kK_win = %    kK_win    %
 kpyrxt = %    kpyrxt    %
 tpyrxt = %    tpyrxt    %
+todays = %    todays    %
+tudays = %    tudays    %
+tsdays = %    tsdays    %
+tocadj = %    tocadj    %
+tucadj = %    tucadj    %
+tscadj = %    tscadj    %
 qdffrac = %    qdffrac   %
-td =      %    td        %
+td     = %    td        %
 adjmix = %    adjmix    %
 candep = %    candep    %
 ccvint = %    ccvint    %
@@ -36,7 +45,7 @@ gwloss = %    gwloss    %
 hamcof = %    hamcof    %
 meltba = %    meltba    %
 meltmx = %    meltmx    %
-meltmn = %    meltmn    %
+meltra = %    meltra    %
 nmeltf = %    nmeltf    %
 pklwhc = %    pklwhc    %
 pmacst = %    pmacst    %
@@ -49,13 +58,13 @@ rainad = %    rainad    %
 ripthr = %    ripthr    %
 s_ohor = %    s_ohor    %
 s_thpo = %    s_thpo    %
+s_thfc = %    s_thfc    %
+awc    = %    awc       %
 s_rock = %    s_rock    %
 s_root = %    s_root    %
 s_satk = %    s_satk    %
 s_zmax = %    s_zmax    %
 s_zmin = %    s_zmin    %
-s_thfc = %    s_thfc    %
-s_thwp = %    s_thwp    %
 sn_thr = %    sn_thr    %
 sn_adj = %    sn_adj    %
 sn_int = %    sn_int    %
@@ -65,7 +74,6 @@ sD_dpl = %    sD_dpl    %
 sraini = %    sraini    %
 wraini = %    wraini    %
 recess = %    recess    %
-transm = %    transm    %
 sn_flx = %    sn_flx    %
 tmxadj = %    tmxadj    %
 tmxalr = %    tmxalr    %
@@ -76,13 +84,15 @@ windad = %    windad    %
 xkcvar = %    xkcvar    %
 xkvert = %    xkvert    %
 
-koligs = ( koligu + k_decr )
-kbiots = ( kbiotu + k_decr )
-kchlrs = ( kchlru + k_decr )
-kcalcs = ( kcalcu + k_decr )
-kpyr_s = ( kpyr_u + k_decr_pyr )
-knitrs = ( knitru + k_decr_nit)
+# T_decay = 0, original exponential decay, T0 (transm) not constrained by szm (shape factor)
+#transm  =  recess
+# T_decay = 1, parabolic decay
+transm  =  (recess*8.12775)**2
+# T_decay = 2, linear decay
+#transm  =  recess*92.72550721
 
+meltmn = meltmx * meltra
+s_thwp = s_thfc-awc
 
 * template files
 @PROJECT_DIR@params_andcrk.tpl andcrk.params

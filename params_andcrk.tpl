@@ -100,7 +100,7 @@ Alkalinity
 @ Alkalinity
 Cl
 @Chloride
-S(6)
+S
 @Sulfate
 N(5)
 @Nitrate
@@ -139,6 +139,69 @@ nevap
 nchem_ext
 1
 ** Parameters **
+####
+trxn_ohoriz_stat 9
+1
+nmru
+1
+1
+1
+####
+trxn_uz_stat 9
+1
+nmru
+1
+1
+1
+####
+trxn_sat_stat 9
+1
+nmru
+1
+1
+1
+####
+trxn_ohoriz_days 9
+1
+one
+1
+2
+% todays       %
+####
+trxn_uz_days 9
+1
+one
+1
+2
+% tudays       %
+####
+trxn_sat_days 9
+1
+one
+1
+2
+% tsdays       %
+####
+trxn_ohoriz_c_adj 9
+1
+nmru
+1
+2
+% tocadj       %
+####
+trxn_uz_c_adj 9
+1
+nmru
+1
+2
+% tucadj       %
+####
+trxn_sat_c_adj 9
+1
+nmru
+1
+2
+% tscadj       %
 ####
 radj_wppt 14
 1
@@ -340,6 +403,13 @@ one
 1
 0
 ####
+atmos_eq_ph 14
+1
+one
+1
+1
+0
+####
 s_porosity 11
 1
 nmru
@@ -464,8 +534,8 @@ nchem_sets
 3
 3
 3
-3
-3
+4
+4
 1
 1
 1
@@ -762,7 +832,7 @@ WEI 8
 nmru
 1
 2
-20.0
+15.0
 ####
 irrig_int_init 15
 1
@@ -925,13 +995,6 @@ nchemvar
 7
 7
 7
-####
-chemout_file_unit 18
-1
-one
-1
-1
-90
 ####
 src_ext_irrig 14
 1
@@ -1454,24 +1517,24 @@ nac
 nmru
 11
 2
-64817760.00
-9673.68
-3126.91
-1714.98
-1025.37
-628.45
-392.01
-227.28
-109.62
-19.91
-2.14
+8050.947754
+98.354874
+55.918774
+41.412315
+32.021423
+25.06893
+19.79916
+15.07565
+10.469971
+4.462064
+1.463311
 ####
 T_decay
 1
 nmru
 1
 1
-2
+1
 ####
 infex 8
 1
@@ -1607,13 +1670,6 @@ nmru
 1
 2
 0.0
-####
-s_theta_0 10
-1
-nmru
-1
-2
-0.0039
 ####
 iso_n 8
 1
@@ -1751,7 +1807,7 @@ tl 8
 nmru
 1
 2
-110615.4
+71.5705387
 ####
 c_stindx 9
 1
@@ -1855,14 +1911,14 @@ one
 2
 % radjsp       %
 ####
-topout_file_unit 17
+print_type 11
 1
 one
 1
 1
-80
+2
 ####
-print_type 11
+print_vse 11
 1
 one
 1
