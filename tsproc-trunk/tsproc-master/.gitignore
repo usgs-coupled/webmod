@@ -1,0 +1,7 @@
+/build
+*.mod
+*.o
+*.zpi
+*.zwi
+*.ini
+*.rec
