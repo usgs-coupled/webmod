@@ -1,5 +1,3 @@
-
-echo ============================================================================================
 REM @echo off
 REM Sychronize latest WEBMOD executable, create the tsproc and PEST command files, and start beopest as master
 REM Help printed if command entered with no arguments
@@ -39,9 +37,9 @@ rename %WEB_SRC%\andcrk.statvar.full andcrk.statvar
 if exist %PROJECT_DIR_PATH% rmdir /s/q %PROJECT_DIR_PATH%
 copy %PEST_BIN_DIR_PATH%\webmod_1.0.exe %WEB_SRC%
 XCOPY /I %WEB_SRC% %PROJECT_DIR_PATH%
-REM copy %PROJECT_DIR_PATH%\andcrk.statvar .\
+copy %PROJECT_DIR_PATH%\andcrk.statvar .\
 %PEST_BIN_DIR_PATH%\tsproc.exe < %PROJECT_DIR_PATH%\tsproc.in
-REM copy andcrk.ins %PROJECT_DIR_PATH%
+copy andcrk.ins %PROJECT_DIR_PATH%
 
 sed -i "2s/CONTEXT pest_prep/CONTEXT model_run/" %PROJECT_DIR_PATH%\andcrk_tsproc.dat
 sed -i "1s/.*/andcrk_tsproc.dat/" %PROJECT_DIR_PATH%\tsproc.in

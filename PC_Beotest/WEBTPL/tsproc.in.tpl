@@ -1,4 +1,4 @@
 @PROJECT_DIR@andcrk_tsproc.dat
-@PROJECT_DIR@tsproc.log
+tsproc.log
 y
 y
