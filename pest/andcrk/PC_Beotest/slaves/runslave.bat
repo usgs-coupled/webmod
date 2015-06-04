@@ -7,8 +7,8 @@ REM set WEBDIR=\\igskahhwuwhopkn\pest\webmod\
 REM set PESTBINDIR=\\igskahhwuwhopkn\pest\bin\
 REM set MASTER=igskahhwwsnixe
 
-set WEBDIR=C:\beopest_workspace\Beotest\webmod\
-set PESTBINDIR=C:\beopest_workspace\bin\
+set WEBDIR=C:\Programs\webmod-trunk\pest\andcrk\PC_Beotest\webmod\
+set PESTBINDIR=C:\Programs\webmod-trunk\pest\PC_bin\
 set MASTER=igskahhwwsdpark
 
 set PORT=4004

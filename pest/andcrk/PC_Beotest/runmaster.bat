@@ -1,3 +1,5 @@
+
+echo ============================================================================================
 REM @echo off
 REM Sychronize latest WEBMOD executable, create the tsproc and PEST command files, and start beopest as master
 REM Help printed if command entered with no arguments
@@ -12,10 +14,10 @@ REM set "PROJECT_DIR=\\\\igskahhwuwhopkn\\\pest\\\webmod"
 REM set "PEST_BIN_DIR_PATH=\\igskahhwuwhopkn\pest\bin"
 REM set "PEST_BIN_DIR=\\\\igskahhwuwhopkn\\\pest\\\bin"
 
-set "PROJECT_DIR_PATH=C:\beopest_workspace\Beotest\webmod"
-set "PROJECT_DIR=c:\\\beopest_workspace\\\Beotest\\\webmod"
-set "PEST_BIN_DIR_PATH=C:\beopest_workspace\bin"
-set "PEST_BIN_DIR=c:\\\beopest_workspace\\\bin"
+set "PROJECT_DIR_PATH=C:\Programs\webmod-trunk\pest\andcrk\PC_Beotest\webmod"
+set "PROJECT_DIR=C:\\Programs\\webmod-trunk\\pest\\andcrk\\PC_Beotest\\webmod"
+set "PEST_BIN_DIR_PATH=C:\Programs\webmod-trunk\pest\PC_bin"
+set "PEST_BIN_DIR=C:\\Programs\\webmod-trunk\\pest\\PC_bin"
 dir
 set PORT=4004 
 set pst=%1
@@ -28,7 +30,7 @@ sed "s#@PROJECT_DIR@#%PROJECT_DIR%\\#" %WEB_TPL%\andcrk_tsproc.tpl > %WEB_SRC%\a
 sed "s#@PROJECT_DIR@#%PROJECT_DIR%\\#g" %WEB_TPL%\pest_webmod.bat.tpl > %WEB_SRC%\pest_webmod.bata
 sed "s#@PEST_BIN_DIR@#%PEST_BIN_DIR%\\#" %WEB_SRC%\pest_webmod.bata > %WEB_SRC%\pest_webmod.bat
 del %WEB_SRC%\pest_webmod.bata
-pause
+
 sed "s#@PROJECT_DIR@#%PROJECT_DIR%\\#g" %WEB_TPL%\tsproc.in.tpl > %WEB_SRC%\tsproc.in
 sed "s#@PROJECT_DIR@#%PROJECT_DIR%\\#g" %WEB_TPL%\par2par_andcrk.tpl.tpl > %WEB_SRC%\par2par_andcrk.tpl
 
