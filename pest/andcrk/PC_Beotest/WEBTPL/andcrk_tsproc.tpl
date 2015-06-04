@@ -10,7 +10,7 @@ END SETTINGS
 ##########################################
 START GET_MUL_SERIES_STATVAR
 CONTEXT all
-FILE @PROJECT_DIR@andcrk.statvar
+FILE andcrk.statvar
 DATE_1 10/01/2003
 TIME_1 00:00:00
 DATE_2 09/30/2004  
@@ -803,7 +803,7 @@ END ERASE_ENTITY
 #######################################
 START LIST_OUTPUT
 CONTEXT all
-FILE @PROJECT_DIR@andcrk_sim.out
+FILE andcrk_sim.out
 SERIES_FORMAT long
 SERIES_NAME ph_s
 SERIES_NAME tempc_s
@@ -846,7 +846,7 @@ MODEL_INPUT_FILE  par2par_andcrk.dat
 #MODEL_INPUT_FILE  andcrk.params
 #TEMPLATE_FILE pqi_andcrk.tpl
 #MODEL_INPUT_FILE  andcrk.dat.pqi
-NEW_INSTRUCTION_FILE @PROJECT_DIR@andcrk.ins
+NEW_INSTRUCTION_FILE andcrk.ins
 #
 OBSERVATION_SERIES_NAME ph_o
 MODEL_SERIES_NAME ph_s
