@@ -17,7 +17,7 @@ animation.out
 data_file
 1
 4
-.\andcrk.dat
+./andcrk.dat
 ####
 phreeq_database
 1
