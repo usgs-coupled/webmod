@@ -3,20 +3,15 @@ REM Sychronize latest WEBMOD executable, create the tsproc and PEST command file
 REM Help printed if command entered with no arguments
 IF %1.==. GOTO usage
 REM 
-set "WEB_DAT=.\WEBDATA"
-set "WEB_TPL=.\WEBTPL"
-set "WEB_SRC=.\WEBFILES"
-
-REM set "PROJECT_DIR_PATH=\\igskahhwuwhopkn\pest\webmod"
-REM set "PROJECT_DIR=\\\\igskahhwuwhopkn\\\pest\\\webmod"
-REM set "PEST_BIN_DIR_PATH=\\igskahhwuwhopkn\pest\bin"
-REM set "PEST_BIN_DIR=\\\\igskahhwuwhopkn\\\pest\\\bin"
+set "WEB_DAT=..\WEBDATA"
+set "WEB_TPL=..\WEBTPL"
+set "WEB_SRC=.\webfiles"
 
 set "PROJECT_DIR_PATH=C:\Programs\webmod-trunk\pest\andcrk\PC_Beotest\webmod"
 set "PROJECT_DIR=C:\\Programs\\webmod-trunk\\pest\\andcrk\\PC_Beotest\\webmod"
 set "PEST_BIN_DIR_PATH=C:\Programs\webmod-trunk\pest\PC_bin"
 set "PEST_BIN_DIR=C:\\Programs\\webmod-trunk\\pest\\PC_bin"
-dir
+REM dir
 set PORT=4004 
 set pst=%1
 if exist %WEB_SRC% rmdir /s/q %WEB_SRC%
