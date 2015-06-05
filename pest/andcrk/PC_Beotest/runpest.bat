@@ -31,7 +31,8 @@ sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#g" %WEB_TPL%\pest_webmod.bat.tpl > %WEB_SRC%
 sed "s#@PEST_BIN_DIR@#%PEST_BIN_DIR%/#" %WEB_SRC%\pest_webmod.bata > %WEB_SRC%\pest_webmod.bat
 del %WEB_SRC%\pest_webmod.bata
 REM sed "s#@PROJECT_DIR@##g" %WEB_TPL%\tsproc.in.tpl > %WEB_SRC%\tsproc.in
-sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#g" %WEB_TPL%\par2par_andcrk.tpl.tpl > %WEB_SRC%\par2par_andcrk.tpl
+rem sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#g" %WEB_TPL%\par2par_andcrk.tpl.tpl > %WEB_SRC%\par2par_andcrk.tpl
+rem sed "s#xxxxx#xxxxx/#g" %WEB_TPL%\par2par_andcrk.tpl.tpl > %WEB_SRC%\par2par_andcrk.tpl
 copy %WEB_DAT%\* %WEB_SRC%
 copy %PEST_BIN_DIR_PATH%\webmod_1.0.exe %WEB_SRC%
 
