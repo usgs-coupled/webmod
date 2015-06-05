@@ -4,10 +4,12 @@ REM Help printed if command entered with no arguments
 IF %1.==. GOTO usage
 IF %2.==. GOTO NoCase
 
+set HOME_BATCH="%cd%"
+
 REM Set variables
 set nodes=%1
 set pst=%2
-set "WEB_DAT=..\WEBDATA"
+set "WEB_DAT=%HOME%..\WEBDATA"
 set "WEB_TPL=..\WEBTPL"
 set "WEB_SRC=.\webfiles"
 
@@ -28,7 +30,7 @@ sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#" %WEB_TPL%\andcrk_tsproc.tpl > %WEB_SRC%\an
 sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#g" %WEB_TPL%\pest_webmod.bat.tpl > %WEB_SRC%\pest_webmod.bata
 sed "s#@PEST_BIN_DIR@#%PEST_BIN_DIR%/#" %WEB_SRC%\pest_webmod.bata > %WEB_SRC%\pest_webmod.bat
 del %WEB_SRC%\pest_webmod.bata
-sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#g" %WEB_TPL%\tsproc.in.tpl > %WEB_SRC%\tsproc.in
+REM sed "s#@PROJECT_DIR@##g" %WEB_TPL%\tsproc.in.tpl > %WEB_SRC%\tsproc.in
 sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#g" %WEB_TPL%\par2par_andcrk.tpl.tpl > %WEB_SRC%\par2par_andcrk.tpl
 copy %WEB_DAT%\* %WEB_SRC%
 copy %PEST_BIN_DIR_PATH%\webmod_1.0.exe %WEB_SRC%
@@ -44,9 +46,7 @@ cd %PROJECT_DIR_PATH%
 %PEST_BIN_DIR_PATH%\tsproc.exe < %PROJECT_DIR_PATH%\tsproc.in
 cd ..
 
-
 sed -i "2s/CONTEXT pest_prep/CONTEXT model_run/" %PROJECT_DIR_PATH%\andcrk_tsproc.dat
-sed -i "1s/.*/andcrk_tsproc.dat/" %PROJECT_DIR_PATH%\tsproc.in
 
 REM Line 6 of the pst file RLAMBDA1 .....	
 sed -i "6s/.*/10.0  -3.0    0.3    0.03     -10  999  LAMFORGIVE/" %PROJECT_DIR_PATH%\andcrk.pst
