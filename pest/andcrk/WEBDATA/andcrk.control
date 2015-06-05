@@ -22,7 +22,7 @@ data_file
 phreeq_database
 1
 4
-@PROJECT_DIR@phreeqc_web_lite.dat
+phreeqc_web_lite.dat
 ####
 dispGraphsBuffSize
 1
@@ -74,7 +74,7 @@ WEBMOD version 1.0
 executable_model
 1
 4
-@PROJECT_DIR@webmod_1.0
+../webmod_1.0
 ####
 gisOutON_OFF
 1
