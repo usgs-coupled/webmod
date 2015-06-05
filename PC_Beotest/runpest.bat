@@ -18,29 +18,32 @@ set "PEST_BIN_DIR=C:\\Programs\\webmod-trunk\\pest\\PC_bin"
 
 REM dir
 set PORT=4004 
+
+REM setup WEB_SRC
 if exist %WEB_SRC% rmdir /s/q %WEB_SRC%
 mkdir %WEB_SRC%
 REM sed is on NIXE so use it here. VB scripts are an alternative
 sed "s#@PROJECT_DIR@#%PROJECT_DIR%\\#" %WEB_TPL%\andcrk.control.tpl > %WEB_SRC%\andcrk.control
 sed "s#@PROJECT_DIR@#%PROJECT_DIR%\\#" %WEB_TPL%\andcrk_tsproc.tpl > %WEB_SRC%\andcrk_tsproc.dat
-
 sed "s#@PROJECT_DIR@#%PROJECT_DIR%\\#g" %WEB_TPL%\pest_webmod.bat.tpl > %WEB_SRC%\pest_webmod.bata
 sed "s#@PEST_BIN_DIR@#%PEST_BIN_DIR%\\#" %WEB_SRC%\pest_webmod.bata > %WEB_SRC%\pest_webmod.bat
 del %WEB_SRC%\pest_webmod.bata
-
 sed "s#@PROJECT_DIR@#%PROJECT_DIR%\\#g" %WEB_TPL%\tsproc.in.tpl > %WEB_SRC%\tsproc.in
 sed "s#@PROJECT_DIR@#%PROJECT_DIR%\\#g" %WEB_TPL%\par2par_andcrk.tpl.tpl > %WEB_SRC%\par2par_andcrk.tpl
-
 copy %WEB_DAT%\* %WEB_SRC%
-rename %WEB_SRC%\andcrk.statvar.full andcrk.statvar
-if exist %PROJECT_DIR_PATH% rmdir /s/q %PROJECT_DIR_PATH%
 copy %PEST_BIN_DIR_PATH%\webmod_1.0.exe %WEB_SRC%
+
+REM setup working directory PROJECT_DIR_PATH
+if exist %PROJECT_DIR_PATH% rmdir /s/q %PROJECT_DIR_PATH%
+mkdir %PROJECT_DIR_PATH%
+copy %WEB_SRC%\andcrk.statvar.full %PROJECT_DIR_PATH%\andcrk.statvar
 XCOPY /I %WEB_SRC% %PROJECT_DIR_PATH%
-copy %PROJECT_DIR_PATH%\andcrk.statvar .\
 
 REM run tsproc
+cd %PROJECT_DIR_PATH%
 %PEST_BIN_DIR_PATH%\tsproc.exe < %PROJECT_DIR_PATH%\tsproc.in
-copy andcrk.ins %PROJECT_DIR_PATH%
+cd ..
+
 
 sed -i "2s/CONTEXT pest_prep/CONTEXT model_run/" %PROJECT_DIR_PATH%\andcrk_tsproc.dat
 sed -i "1s/.*/andcrk_tsproc.dat/" %PROJECT_DIR_PATH%\tsproc.in
@@ -60,7 +63,10 @@ REM remove sed files
 rm sed*
 
 REM Run parallel pest Master
+cd %PROJECT_DIR_PATH%
 start "Master" cmd /k call %PEST_BIN_DIR_PATH%\beopest64 %PROJECT_DIR_PATH%\%pst% /H :%PORT%
+cd ..
+
 sleep 5
 
 REM start "Workers" cmd /k call .\slaves\runslave.bat %nodes% %pst%
