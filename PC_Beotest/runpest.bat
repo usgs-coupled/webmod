@@ -25,14 +25,11 @@ REM setup WEB_SRC
 if exist %WEB_SRC% rmdir /s/q %WEB_SRC%
 mkdir %WEB_SRC%
 REM sed is on NIXE so use it here. VB scripts are an alternative
-sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#" %WEB_TPL%\andcrk.control.tpl > %WEB_SRC%\andcrk.control
 sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#" %WEB_TPL%\andcrk_tsproc.tpl > %WEB_SRC%\andcrk_tsproc.dat
 sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#g" %WEB_TPL%\pest_webmod.bat.tpl > %WEB_SRC%\pest_webmod.bata
 sed "s#@PEST_BIN_DIR@#%PEST_BIN_DIR%/#" %WEB_SRC%\pest_webmod.bata > %WEB_SRC%\pest_webmod.bat
 del %WEB_SRC%\pest_webmod.bata
-REM sed "s#@PROJECT_DIR@##g" %WEB_TPL%\tsproc.in.tpl > %WEB_SRC%\tsproc.in
-rem sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#g" %WEB_TPL%\par2par_andcrk.tpl.tpl > %WEB_SRC%\par2par_andcrk.tpl
-rem sed "s#xxxxx#xxxxx/#g" %WEB_TPL%\par2par_andcrk.tpl.tpl > %WEB_SRC%\par2par_andcrk.tpl
+
 copy %WEB_DAT%\* %WEB_SRC%
 copy %PEST_BIN_DIR_PATH%\webmod_1.0.exe %WEB_SRC%
 
@@ -82,12 +79,8 @@ REM make tmp dirs where slaves will be activated.
 for /l %%X in (1, 1, %nodes%) do (
 if exist %WORKER_DIR%\tmpest%%X rmdir /s/q %WORKER_DIR%\tmpest%%X 
 mkdir %WORKER_DIR%\tmpest%%X
-REM XCOPY /I %WEBDIR% %PROJECT_DIR_PATH%\tmpest%%X
 cd %WORKER_DIR%\tmpest%%X
 copy %WEBDIR%andcrk.pst .\
-REM copy %WEBDIR%andcrk_tsproc.dat .\
-REM copy %WEBDIR%andcrk.par2par.tpl .\
-REM copy %WEBDIR%andcrk.statvar .\
 copy %WEBDIR%params_andcrk.tpl .\
 copy %WEBDIR%pqi_andcrk.tpl .\
 copy %WEBDIR%pest_webmod.bat .\
