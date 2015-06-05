@@ -12,9 +12,9 @@ set "WEB_TPL=..\WEBTPL"
 set "WEB_SRC=.\webfiles"
 
 set "PROJECT_DIR_PATH=C:\Programs\webmod-trunk\pest\andcrk\PC_Beotest\webmod"
-set "PROJECT_DIR=C:\\Programs\\webmod-trunk\\pest\\andcrk\\PC_Beotest\\webmod"
+set "PROJECT_DIR=C:/Programs/webmod-trunk/pest/andcrk/PC_Beotest/webmod"
 set "PEST_BIN_DIR_PATH=C:\Programs\webmod-trunk\pest\PC_bin"
-set "PEST_BIN_DIR=C:\\Programs\\webmod-trunk\\pest\\PC_bin"
+set "PEST_BIN_DIR=C:/Programs/webmod-trunk/pest/PC_bin"
 
 REM dir
 set PORT=4004 
@@ -23,13 +23,13 @@ REM setup WEB_SRC
 if exist %WEB_SRC% rmdir /s/q %WEB_SRC%
 mkdir %WEB_SRC%
 REM sed is on NIXE so use it here. VB scripts are an alternative
-sed "s#@PROJECT_DIR@#%PROJECT_DIR%\\#" %WEB_TPL%\andcrk.control.tpl > %WEB_SRC%\andcrk.control
-sed "s#@PROJECT_DIR@#%PROJECT_DIR%\\#" %WEB_TPL%\andcrk_tsproc.tpl > %WEB_SRC%\andcrk_tsproc.dat
-sed "s#@PROJECT_DIR@#%PROJECT_DIR%\\#g" %WEB_TPL%\pest_webmod.bat.tpl > %WEB_SRC%\pest_webmod.bata
-sed "s#@PEST_BIN_DIR@#%PEST_BIN_DIR%\\#" %WEB_SRC%\pest_webmod.bata > %WEB_SRC%\pest_webmod.bat
+sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#" %WEB_TPL%\andcrk.control.tpl > %WEB_SRC%\andcrk.control
+sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#" %WEB_TPL%\andcrk_tsproc.tpl > %WEB_SRC%\andcrk_tsproc.dat
+sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#g" %WEB_TPL%\pest_webmod.bat.tpl > %WEB_SRC%\pest_webmod.bata
+sed "s#@PEST_BIN_DIR@#%PEST_BIN_DIR%/#" %WEB_SRC%\pest_webmod.bata > %WEB_SRC%\pest_webmod.bat
 del %WEB_SRC%\pest_webmod.bata
-sed "s#@PROJECT_DIR@#%PROJECT_DIR%\\#g" %WEB_TPL%\tsproc.in.tpl > %WEB_SRC%\tsproc.in
-sed "s#@PROJECT_DIR@#%PROJECT_DIR%\\#g" %WEB_TPL%\par2par_andcrk.tpl.tpl > %WEB_SRC%\par2par_andcrk.tpl
+sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#g" %WEB_TPL%\tsproc.in.tpl > %WEB_SRC%\tsproc.in
+sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#g" %WEB_TPL%\par2par_andcrk.tpl.tpl > %WEB_SRC%\par2par_andcrk.tpl
 copy %WEB_DAT%\* %WEB_SRC%
 copy %PEST_BIN_DIR_PATH%\webmod_1.0.exe %WEB_SRC%
 
