@@ -64,8 +64,7 @@ rm sed*
 
 REM Run parallel pest Master
 cd %PROJECT_DIR_PATH%
-rem start "Master" cmd /k call %PEST_BIN_DIR_PATH%\beopest64 %PROJECT_DIR_PATH%\%pst% /H :%PORT%
-start "Master" cmd call %PEST_BIN_DIR_PATH%\beopest64 %PROJECT_DIR_PATH%\%pst% /H :%PORT%
+start "Master" cmd /k call %PEST_BIN_DIR_PATH%\beopest64 %PROJECT_DIR_PATH%\%pst% /H :%PORT%
 cd ..
 
 sleep 5
