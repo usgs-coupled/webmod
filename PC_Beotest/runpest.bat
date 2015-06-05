@@ -4,19 +4,19 @@ REM Help printed if command entered with no arguments
 IF %1.==. GOTO usage
 IF %2.==. GOTO NoCase
 
-set HOME_BATCH="%cd%"
+set HOME_BATCH=%cd%
+set HOME=%HOME_BATCH:\=/%
 
 REM Set variables
 set nodes=%1
 set pst=%2
-set "WEB_DAT=%HOME%..\WEBDATA"
+set "WEB_DAT=%HOME_BATCH%\..\WEBDATA"
 set "WEB_TPL=..\WEBTPL"
 set "WEB_SRC=.\webfiles"
-
-set "PROJECT_DIR_PATH=C:\Programs\webmod-trunk\pest\andcrk\PC_Beotest\webmod"
-set "PROJECT_DIR=C:/Programs/webmod-trunk/pest/andcrk/PC_Beotest/webmod"
-set "PEST_BIN_DIR_PATH=C:\Programs\webmod-trunk\pest\PC_bin"
-set "PEST_BIN_DIR=C:/Programs/webmod-trunk/pest/PC_bin"
+set "PROJECT_DIR_PATH=%HOME_BATCH%\webmod"
+set "PROJECT_DIR=%HOME%/webmod"
+set "PEST_BIN_DIR_PATH=%HOME_BATCH%\..\..\PC_bin"
+set "PEST_BIN_DIR=%HOME%/../../PC_bin"
 
 REM dir
 set PORT=4004 
@@ -29,7 +29,6 @@ sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#" %WEB_TPL%\andcrk_tsproc.tpl > %WEB_SRC%\an
 sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#g" %WEB_TPL%\pest_webmod.bat.tpl > %WEB_SRC%\pest_webmod.bata
 sed "s#@PEST_BIN_DIR@#%PEST_BIN_DIR%/#" %WEB_SRC%\pest_webmod.bata > %WEB_SRC%\pest_webmod.bat
 del %WEB_SRC%\pest_webmod.bata
-
 copy %WEB_DAT%\* %WEB_SRC%
 copy %PEST_BIN_DIR_PATH%\webmod_1.0.exe %WEB_SRC%
 
@@ -62,8 +61,7 @@ rm sed*
 
 REM Run parallel pest Master
 cd %PROJECT_DIR_PATH%
-start "Master" cmd /k call %PEST_BIN_DIR_PATH%\beopest64 %PROJECT_DIR_PATH%\%pst% /H :%PORT%
-cd ..
+start "Master" cmd /k "call %PEST_BIN_DIR_PATH%\beopest64 %PROJECT_DIR_PATH%\%pst% /H :%PORT% & cd .."
 
 sleep 5
 
