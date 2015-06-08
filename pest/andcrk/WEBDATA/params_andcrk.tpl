@@ -1888,7 +1888,7 @@ chem_sim 9
 one
 1
 1
-1
+0
 ####
 tmin_adj 9
 1
