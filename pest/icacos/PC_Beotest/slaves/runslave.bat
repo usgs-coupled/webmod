@@ -7,7 +7,7 @@ REM set WEBDIR=\\igskahhwuwhopkn\pest\webmod\
 REM set PESTBINDIR=\\igskahhwuwhopkn\pest\bin\
 REM set MASTER=igskahhwwsnixe
 
-set WEBDIR=C:\Programs\webmod-trunk\pest\andcrk\PC_Beotest\webmod\
+set WEBDIR=C:\Programs\webmod-trunk\pest\ica\PC_Beotest\webmod\
 set PESTBINDIR=C:\Programs\webmod-trunk\pest\PC_bin\
 set MASTER=igskahhwwsdpark
 
@@ -20,19 +20,19 @@ if exist tmpest%%X rmdir /s/q tmpest%%X
 mkdir tmpest%%X
 REM XCOPY /I %WEBDIR% tmpest%%X
 cd tmpest%%X
-copy %WEBDIR%andcrk.pst .\
-REM copy %WEBDIR%andcrk_tsproc.dat .\
-REM copy %WEBDIR%andcrk.par2par.tpl .\
-REM copy %WEBDIR%andcrk.statvar .\
-copy %WEBDIR%params_andcrk.tpl .\
-copy %WEBDIR%pqi_andcrk.tpl .\
+copy %WEBDIR%ica.pst .\
+REM copy %WEBDIR%ica_tsproc.dat .\
+REM copy %WEBDIR%ica.par2par.tpl .\
+REM copy %WEBDIR%ica.statvar .\
+copy %WEBDIR%params_ica.tpl .\
+copy %WEBDIR%pqi_ica.tpl .\
 copy %WEBDIR%pest_webmod.bat .\
-copy %WEBDIR%andcrk.dat .\
-copy %WEBDIR%andcrk.dat.chemdat .\
+copy %WEBDIR%ica.dat .\
+copy %WEBDIR%ica.dat.chemdat .\
 copy %WEBDIR%phreeq_lut .\
 copy %WEBDIR%phreeqc_web_lite.dat .\
-copy %WEBDIR%andcrk.ins .\
-copy %WEBDIR%andcrk_tsproc.dat .\
+copy %WEBDIR%ica.ins .\
+copy %WEBDIR%ica_tsproc.dat .\
 START /B %PESTBINDIR%beopest64 %WEBDIR%%pst% /H %MASTER%:%PORT%
 cd ..
 )
