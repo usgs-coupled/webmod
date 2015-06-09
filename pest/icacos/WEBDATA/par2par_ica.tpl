@@ -85,9 +85,9 @@ xkcvar = %    xkcvar    %
 xkvert = %    xkvert    %
 
 # T_decay = 0, original exponential decay, T0 (transm) not constrained by szm (shape factor)
-#transm  =  recess
+transm  =  %    transm    %
 # T_decay = 1, parabolic decay
-transm  =  (recess*8.12775)**2
+# transm  =  (recess*8.12775)**2
 # T_decay = 2, linear decay
 #transm  =  recess*92.72550721
 
@@ -95,5 +95,5 @@ meltmn = meltmx * meltra
 s_thwp = s_thfc-awc
 
 * template files
-params_andcrk.tpl andcrk.params
-pqi_andcrk.tpl andcrk.dat.pqi
+params_ica.tpl ica.params
+pqi_ica.tpl ica.dat.pqi
