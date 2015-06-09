@@ -32,6 +32,8 @@ sed "s#@PROJECT_DIR@#${PROJECT_DIR}/#g" ${WEB_TPL}/pest_webmod.bat.tpl > ${WEB_S
 sed "s#@PEST_BIN_DIR@#${PEST_BIN_DIR}#" ${WEB_SRC}/pest_webmod.bata > ${WEB_SRC}/pest_webmod.batb
 sed "s#@TSPROC_BIN_DIR@#${TSPROC_BIN_DIR}/#" ${WEB_SRC}/pest_webmod.batb > ${WEB_SRC}/pest_webmod.bat
 rm ${WEB_SRC}/pest_webmod.bata ${WEB_SRC}/pest_webmod.batb
+sed -i "s#@DEL@#rm -f#" ${WEB_SRC}/pest_webmod.bat
+
 chmod 755 ${WEB_SRC}/pest_webmod.bat
 cp ${WEB_DAT}/* ${WEB_SRC}
 cp ${TSPROC_BIN_DIR}/webmod_1.0.exe ${WEB_SRC}
@@ -67,15 +69,14 @@ do
     rm -rf andcrk$i
     mkdir andcrk$i
     cp \
-	andcrk.pst \
-	params_andcrk.tpl \
 	pqi_andcrk.tpl \
-	pest_webmod.bat \
+	params_andcrk.tpl \
+	andcrk_tsproc.dat \
+	andcrk.ins \
 	andcrk.dat \
 	andcrk.dat.chemdat \
-	phreeq_lut \
-	phreeqc_web_lite.dat \
-	andcrk_tsproc.dat \
+	andcrk.statvar \
+        phreeq_lut \
 	andcrk$i
 done
 
