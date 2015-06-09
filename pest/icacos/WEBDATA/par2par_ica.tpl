@@ -74,6 +74,7 @@ sD_dpl = %    sD_dpl    %
 sraini = %    sraini    %
 wraini = %    wraini    %
 recess = %    recess    %
+transm = %    transm    %
 sn_flx = %    sn_flx    %
 tmxadj = %    tmxadj    %
 tmxalr = %    tmxalr    %
@@ -85,7 +86,7 @@ xkcvar = %    xkcvar    %
 xkvert = %    xkvert    %
 
 # T_decay = 0, original exponential decay, T0 (transm) not constrained by szm (shape factor)
-transm  =  %    transm    %
+# transm  =  %    transm    %
 # T_decay = 1, parabolic decay
 # transm  =  (recess*8.12775)**2
 # T_decay = 2, linear decay

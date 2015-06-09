@@ -31,7 +31,7 @@ candep	fixed	factor	10	1	10	hyd_evap	1.110E-03	-1.100E-03	1
 ccvint	fixed	factor	4.294	1	10	hyd_evap	5.556E-01	-5.556E-01	1
 ccvslp	fixed	factor	7.7959	1	10	hyd_evap	5.444E-02	-5.544E-01	1
 chloss	fixed	factor	1	1	10	hyd_runoff	1.111E+01	-1.111E+01	1
-chvelo	fixed	factor	1.0441	1	10	hyd_runoff	1.111E+03	-1.110E+03	1
+chvelo	fixed	factor	1.449144914	1	10	hyd_runoff	1.111E+03	-1.110E+03	1
 cdensm	fixed	factor	9.905263158	1	10	hyd_evap	1.056E-01	-5.556E-02	1
 cdenwn	fixed	factor	10	1	10	hyd_evap	1.089E-01	-9.889E-02	1
 crdcof	fixed	factor	5.5	1	10	hyd_evap	6.667E-02	3.333E-02	1
@@ -51,7 +51,7 @@ pptrad	fixed	factor	1.36	1	10	hyd_evap	5.556E-02	-5.556E-02	1
 radjsp	fixed	factor	6.4	1	10	hyd_evap	1.111E-01	-1.111E-01	1
 radjwp	fixed	factor	5.5	1	10	hyd_evap	1.111E-01	-1.111E-01	1
 radmax	fixed	factor	8	1	10	hyd_evap	1.000E-01	0.000E+00	1
-rainad	log	factor	2.8	1	10	hyd_ppt	5.556E-02	9.444E-01	1
+rainad	log	factor	1	1	10	hyd_ppt	5.556E-02	9.444E-01	1
 ripthr	fixed	factor	1.067567568	1	10	phq_hyd	1.110E+02	-1.100E+02	1
 s_ohor	fixed	factor	1.2331	1	10	phq_hyd	5.554E-02	-5.544E-02	1
 s_thpo	fixed	factor	3.25	1	10	hyd_soil	4.444E-02	3.556E-01	1
