@@ -72,7 +72,7 @@ REM start "Workers" cmd /k call .\slaves\runslave.bat %nodes% %pst%
 REM goto :EOF
 
 REM Run parallel pest workers
-set MASTER=igskahhwwsdpark
+set MASTER=%COMPUTERNAME%
 set WEBDIR=%PROJECT_DIR_PATH%\
 set WORKER_DIR=%PROJECT_DIR_PATH%\
 
