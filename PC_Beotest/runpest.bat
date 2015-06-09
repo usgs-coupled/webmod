@@ -17,6 +17,7 @@ set "PROJECT_DIR_PATH=%HOME_BATCH%\webmod"
 set "PROJECT_DIR=%HOME%/webmod"
 set "PEST_BIN_DIR_PATH=%HOME_BATCH%\..\..\PC_bin"
 set "PEST_BIN_DIR=%HOME%/../../PC_bin"
+set "TSPROC_BIN_DIR=%HOME%/../../PC_bin"
 
 REM dir
 set PORT=4004 
@@ -27,8 +28,10 @@ mkdir %WEB_SRC%
 REM sed is on NIXE so use it here. VB scripts are an alternative
 sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#" %WEB_TPL%\andcrk_tsproc.tpl > %WEB_SRC%\andcrk_tsproc.dat
 sed "s#@PROJECT_DIR@#%PROJECT_DIR%/#g" %WEB_TPL%\pest_webmod.bat.tpl > %WEB_SRC%\pest_webmod.bata
-sed "s#@PEST_BIN_DIR@#%PEST_BIN_DIR%/#" %WEB_SRC%\pest_webmod.bata > %WEB_SRC%\pest_webmod.bat
-del %WEB_SRC%\pest_webmod.bata
+sed "s#@PEST_BIN_DIR@#%PEST_BIN_DIR%/#g" %WEB_SRC%\pest_webmod.bata > %WEB_SRC%\pest_webmod.batb
+sed "s#@TSPROC_BIN_DIR@#%TSPROC_BIN_DIR%/#" %WEB_SRC%\pest_webmod.batb > %WEB_SRC%\pest_webmod.bat
+sed -i "s#@DEL@#DEL#" %WEB_SRC%\pest_webmod.bat
+del %WEB_SRC%\pest_webmod.bata %WEB_SRC%\pest_webmod.batb
 copy %WEB_DAT%\* %WEB_SRC%
 copy %PEST_BIN_DIR_PATH%\webmod_1.0.exe %WEB_SRC%
 
