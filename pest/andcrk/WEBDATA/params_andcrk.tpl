@@ -1692,6 +1692,13 @@ nmru
 2
 % s_thfc       %
 ####
+s_theta_0 11
+1
+nmru
+1
+2
+% s_thfc       %
+####
 init_soln_hydro 16
 1
 nhydro
