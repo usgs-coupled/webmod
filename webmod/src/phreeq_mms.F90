@@ -6597,9 +6597,12 @@
 ! defined in the init section throughout the model run.
 !
 ! If a chemdat file exists, create the solutions indicated
-! by cconc_precipM(nsolute), cconc_extM(nchem_ext,nsolute),
-! and cconc_obsM(nchemobs,nsolute) if ppt_chem=1, chem_ext=1,
-! or nobs_chem>0, respectively.
+! by cconc_precipM(nsolute) and cconc_extM(nchem_ext,nsolute)
+! if ppt_chem=1 or chem_ext=1 respectively.
+!
+! cconc_obsM(nchemobs,nsolute) is be manually populated
+! when nobs_chem>0 without acutually creating a PHREEQC solution
+! as only a subset of major ions may be included in a given sample.
 !
 ! Also allow for varying chemical concentrations of irrigation and/or
 ! QW samples even if precip chemistry is to remain constant (ppt_chem=0).
@@ -6645,17 +6648,18 @@
             else
                conc(j) = cconc_obsM(ibindx-nchemdep,j)
             end if
- 5       continue
-! Create solution 
-         iresult = phr_precip(ID,input_soln, nsolute, sol_name, conc, tempc, ph)
-         IF (iresult.NE.0) THEN
-            PRINT *, 'Errors during phr_precip:'
-            CALL OutputErrorString(id)
-            STOP
-         ENDIF
-         if(ib.gt.nchemdep) then
-! if there are observations (point samples) create a one liter solution with
-! the same mass in inputs and outputs. precip and irrigation solutions
+5        continue
+! Create solution if precip or external source
+         if(ib.le.nchemdep) then
+            iresult = phr_precip(ID,input_soln, nsolute, sol_name, conc, tempc, ph)
+            IF (iresult.NE.0) THEN
+               PRINT *, 'Errors during phr_precip:'
+               CALL OutputErrorString(id)
+               STOP
+            ENDIF
+         else
+! else record observed concentrations (point samples) as a one liter solution with
+! the same mass in inputs and outputs. Precip and irrigation solutions
 ! will be created in the mru loop
             totvol=1e-3  ! one liter
             indx = isoln(input_soln,nchemdat,nmru,nac,clark_segs,&
@@ -9036,9 +9040,11 @@
            solns(2) = solnnum(0,99,0,0,0,ih,0) ! orig chem in upstream section
            fracs(2) = totvol/str_vol
            if(fracs(2).lt.0)then
-              print*,'negative fraction for stream seg ',&
-                   ih,' set to zero. It was equal to ',fracs(2)
               fracs(2)=0.0
+              if(fracs(2).lt.-1.0e-6) then
+                print*,'negative fraction for stream seg ',&
+                     ih,' set to zero. It was equal to ',fracs(2)
+              end if
            end if
 !
 ! fill entities with those of the upstream hydro segment (solns(2))
