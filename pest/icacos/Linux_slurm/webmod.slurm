@@ -77,6 +77,7 @@ do
 	ica.dat.chemdat \
 	ica.statvar \
         phreeq_lut \
+        phreeqc_web_lite.dat \
 	ica$i
 done
 
