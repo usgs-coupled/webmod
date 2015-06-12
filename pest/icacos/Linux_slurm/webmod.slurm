@@ -2,10 +2,10 @@
 
 #SBATCH -p prod
 #SBATCH -A nrp
-##SBATCH -N 5
+#SBATCH -n 12
 #SBATCH --output=ica.pest.out
-#SBATCH --mem-per-cpu=1000M
-#SBATCH -t00:10:00
+#SBATCH --mem-per-cpu=2000M
+#SBATCH -t24:00:00
 #SBATCH --exclusive
 
 module load tools/beopest-12.2-gnu
@@ -59,12 +59,12 @@ sed -i "7s/.*/0.2   2.0   1.0e-3/" ${PROJECT_DIR}/ica.pst
 # Line 9 of the pst file. NOPTMAX Max # of optimizations. Default is 30, set to 0 for single run with phi contributions, 1 for sensitivities, or a small number to test PEST loops.
 sed -i "9s/.*/30   .005  4   4  .005   4/" ${PROJECT_DIR}/ica.pst
 # Line 13. SVD block MAXSING EIGTHRESH. Replace MAXSING the maximum number of adjustable variables (number of singlular valuess at which truncation occurs)
-sed -i "13s/.*/19 5e-7/" ${PROJECT_DIR}/ica.pst
+sed -i "13s/.*/11 5e-7/" ${PROJECT_DIR}/ica.pst
 # Line 14 EIGWRITE. 0 if not using SVD output file
 sed -i "14s/.*/1/" ${PROJECT_DIR}/ica.pst
 
 # Make temp directories
-for i in {1..4}
+for i in {1..12}
 do
     rm -rf ica$i
     mkdir ica$i
@@ -80,4 +80,4 @@ do
 	ica$i
 done
 
-time mpirun -np 5 ppest ${PROJECT_DIR}/ica /M ${TEMP_DIRS}/ica
+time mpirun -np 12 ppest ${PROJECT_DIR}/ica /M ${TEMP_DIRS}/ica
