@@ -6,3 +6,4 @@ hyd_soil	relative	0.01	0	always_2	2	parabolic
 phq_hyd	relative	0.01	0	always_2	2	parabolic
 phq_k	relative	0.01	0	always_2	2	parabolic
 phq_eq	relative	0.01	0	always_2	2	parabolic
+phq_t	relative	0.01	0	always_2	2	parabolic

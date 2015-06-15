@@ -1,11 +1,11 @@
 #!/bin/sh
 
-#SBATCH -p prod
+#SBATCH -p UV
 #SBATCH -A nrp
 #SBATCH -n 12
 #SBATCH --output=ica.pest.out
 #SBATCH --mem-per-cpu=2000M
-#SBATCH -t24:00:00
+#SBATCH -t72:00:00
 #SBATCH --exclusive
 
 module load tools/beopest-12.2-gnu
