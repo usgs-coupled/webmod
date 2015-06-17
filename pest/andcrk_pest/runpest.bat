@@ -20,9 +20,9 @@ set "CONTROL_DIR=%HOME%\control"
 set CONTROL_DIR_SED=%CONTROL:\=/%
 set "PROJECT_DIR=%HOME%\pest_run_dir"
 set PROJECT_DIR_SED=%PROJECT_DIR:\=/%
-set "PEST_BIN_DIR=%HOME%\..\PC_bin"
+set "PEST_BIN_DIR=%HOME%\..\..\bin"
 set PEST_BIN_DIR_SED=%PEST_BIN_DIR:\=/%
-set "TSPROC_BIN_DIR=%HOME%\..\PC_bin"
+set "TSPROC_BIN_DIR=%HOME%\..\..\bin"
 set TSPROC_BIN_DIR_SED=%TSPROC_BIN_DIR:\=/%
 
 REM set port number
@@ -55,7 +55,7 @@ cd %PROJECT_DIR%
 %PEST_BIN_DIR%\tsproc.exe < .\tsproc.in
 
 REM move output from tsproc to working directory
-cp %TSPROC_BIN_DIR%\webmod_1.0.exe  %PROJECT_DIR%
+COPY %TSPROC_BIN_DIR%\webmod_1.0.exe  %PROJECT_DIR%
 
 REM edit the control file
 call %HOME%\sed.bat ./input . %CONTROL_DIR%\%BASIN%.control >    %PROJECT_DIR%\%BASIN%.control1
@@ -111,7 +111,7 @@ MOVE %tmppest% %pstfile%
 
 REM Run parallel pest Master
 cd %PROJECT_DIR%
-start "Master" cmd /k "call %PEST_BIN_DIR%\beopest64 %PROJECT_DIR%\%pst% /H :%PORT% & cd .."
+start "Master" cmd /k "call %PEST_BIN_DIR%\beopest64.exe %PROJECT_DIR%\%pst% /H :%PORT% & cd .."
 
 REM wait 2 seconds for master to come up before starting workers
 sleep 2
@@ -131,7 +131,7 @@ for /l %%X in (1, 1, %nodes%) do (
 	copy %PROJECT_DIR%\pest_webmod.bat .\
 	copy %PROJECT_DIR%\%BASIN%.ins .\
 	copy %PROJECT_DIR%\%BASIN%_tsproc.dat .\
-	START /B %PEST_BIN_DIR%\beopest64 %PROJECT_DIR%\%pst% /H %MASTER%:%PORT%
+	START /B %PEST_BIN_DIR%\beopest64.exe %PROJECT_DIR%\%pst% /H %MASTER%:%PORT%
 	cd %PROJECT_DIR%
 )
 cd %PROJECT_DIR_PATH%\..
