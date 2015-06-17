@@ -36,10 +36,10 @@ REM Sed to make basin_tsproc.dat
 call %HOME%\sed.bat @PROJECT_DIR@ %PROJECT_DIR_SED%/ %PEST_FILES_DIR%\%BASIN%_tsproc.tpl > %PROJECT_DIR%\%BASIN%_tsproc.dat
 
 REM Sed to make pest_webmod.bat in PROJECT_DIR
-call %HOME%\sed.bat @PROJECT_DIR@ %PROJECT_DIR_SED%/   %PEST_FILES_DIR%\pest_webmod.bat.tpl > %PROJECT_DIR%\pest_webmod.bat1
-call %HOME%\sed.bat @PEST_BIN_DIR@ %PEST_BIN_DIR_SED%/ %PROJECT_DIR%\pest_webmod.bat1 >       %PROJECT_DIR%\pest_webmod.bat2
-call %HOME%\sed.bat @TSPROC_BIN_DIR@ %TSPROC_BIN_DIR%/ %PROJECT_DIR%\pest_webmod.bat2 >       %PROJECT_DIR%\pest_webmod.bat3
-call %HOME%\sed.bat @DEL@ DEL                          %PROJECT_DIR%\pest_webmod.bat3 >       %PROJECT_DIR%\pest_webmod.bat
+call %HOME%\sed.bat @PROJECT_DIR@ %PROJECT_DIR_SED%/       %PEST_FILES_DIR%\pest_webmod.bat.tpl > %PROJECT_DIR%\pest_webmod.bat1
+call %HOME%\sed.bat @PEST_BIN_DIR@ %PEST_BIN_DIR_SED%/     %PROJECT_DIR%\pest_webmod.bat1 >       %PROJECT_DIR%\pest_webmod.bat2
+call %HOME%\sed.bat @TSPROC_BIN_DIR@ %TSPROC_BIN_DIR_SED%/ %PROJECT_DIR%\pest_webmod.bat2 >       %PROJECT_DIR%\pest_webmod.bat3
+call %HOME%\sed.bat @DEL@ DEL                              %PROJECT_DIR%\pest_webmod.bat3 >       %PROJECT_DIR%\pest_webmod.bat
 DEL %PROJECT_DIR%\pest_webmod.bat1 %PROJECT_DIR%\pest_webmod.bat2 %PROJECT_DIR%\pest_webmod.bat3
 
 REM Copy files to tsproc directory
@@ -111,7 +111,7 @@ MOVE %tmppest% %pstfile%
 
 REM Run parallel pest Master
 cd %PROJECT_DIR%
-start "Master" cmd /k "call %PEST_BIN_DIR%\beopest64.exe %PROJECT_DIR%\%pst% /H :%PORT% & cd .."
+start "Master" cmd /k "call %PEST_BIN_DIR%\beopest64.exe %PROJECT_DIR%\%pst% /H /L :%PORT% & cd .. & echo Here I am."
 
 REM wait 2 seconds for master to come up before starting workers
 sleep 2
@@ -131,12 +131,21 @@ for /l %%X in (1, 1, %nodes%) do (
 	copy %PROJECT_DIR%\pest_webmod.bat .\
 	copy %PROJECT_DIR%\%BASIN%.ins .\
 	copy %PROJECT_DIR%\%BASIN%_tsproc.dat .\
-	START /B %PEST_BIN_DIR%\beopest64.exe %PROJECT_DIR%\%pst% /H %MASTER%:%PORT%
-	cd %PROJECT_DIR%
+	START /B %PEST_BIN_DIR%\beopest64.exe %PROJECT_DIR%\%pst% /H %MASTER%:%PORT% & cd %PROJECT_DIR%\..
+	cd %PROJECT_DIR%\..
 )
-cd %PROJECT_DIR_PATH%\..
 
-REM Workers have been started.
+REM /L requires to be able to run in PROJECT_DIR_PATH 
+cd %PROJECT_DIR%
+copy %PEST_FILES_DIR%\params_%BASIN%.tpl .\
+copy %PEST_FILES_DIR%\pqi_%BASIN%.tpl .\
+copy %INPUT_DIR%\%BASIN%.dat .\
+copy %INPUT_DIR%\%BASIN%.dat.chemdat .\
+copy %INPUT_DIR%\phreeq_lut .\
+copy %INPUT_DIR%\phreeqc_web_lite.dat .\
+cd %PROJECT_DIR%\..
+echo ===================================================================================
+REM Done.
 GOTO :EOF
 
 :usage
@@ -154,6 +163,8 @@ echo usage: runslave n case.pst
 echo where  n is number of slaves to start, and
 echo        case.pst is the name of the PEST control file.
 :EOF
+
+echo DOES THIS EVER GET CALLED???????????????????????????????????????????????????????????????
 cd %PROJECT_DIR_PATH%\..
 
 
