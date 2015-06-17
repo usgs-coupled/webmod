@@ -197,7 +197,9 @@ c End-period variables
 c
 c Open topmodel output file
 c
-      ret = getoutname (topout%file, '.topout')
+      IF(control_string(topout%file,'model_topout_file').NE.0) RETURN
+      topout%file = topout%file(:index(topout%file,CHAR(0))-1)   ! CHAR(0) is end of strings returned from control_string call
+c      ret = getoutname (topout%file, '.topout')
 c
 c Kludge to allow running on 2nd CPU
 c
@@ -217,7 +219,10 @@ c-----open the file.
 c
 c Open solute model output file
 c
-      ret = getoutname (chemout%file, '.chemout')
+      IF(control_string(chemout%file,'model_chemout_file').NE.0)RETURN
+      chemout%file = chemout%file(:index(chemout%file,CHAR(0))-1)   ! CHAR(0) is end of strings returned from control_string call
+
+c      ret = getoutname (chemout%file, '.chemout')
 c Kludge for running on 2nd CPU
 c      output_path='.\output\loch3.chemout'
 c End Kludge
@@ -255,6 +260,7 @@ c
 ! Debug file
 !
       !Debug%file='./output/Debug'
+C        if(xdebug_start.gt.0) then
       Debug%file='./Debug'
       inquire(file=Debug%file,exist=filflg)
       if (filflg) then
@@ -265,8 +271,9 @@ c
 !----open the file.
       debug%lun = my_newunit()
       open (unit=debug%lun,file=debug%file,access='sequential',
-     * form='formatted', status='new')
-!
+     *  form='formatted', status='new')
+
+C     end if
 ! Detailed output in addition to the four above.
 ! When print_vse equals 1 or 2, calculate the number of volume files written in webmod_res and
 ! the number of solute and entity files written in phr3eeq_mms. 'nf' is the the total number of

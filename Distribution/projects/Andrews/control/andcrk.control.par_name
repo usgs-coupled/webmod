@@ -464,8 +464,8 @@ Default   : 1.000000
 
 Name      : ach
 Module    : routec
-Descr     : Decimal percent of MRU areas draining to channel between distance, d, and subcatchment outlet (0->1).
-Help      : Decimal percent of MRU areas draining to channel between distance, d, and subcatchment outlet (0->1).
+Descr     : Fraction of MRU area draining to channel between distance, d, and subcatchment outlet (0->1).
+Help      : Fraction of MRU area draining to channel between distance, d, and subcatchment outlet (0->1).
 Ndimen    : 2
 Dimensions: ntopchan - 5, nchan - 1
 Size      : 5
@@ -590,8 +590,8 @@ Default   : 0
 
 Name      : c_stindx
 Module    : phreeqmms
-Descr     : Specific topographic index for ch_var, 0 for average hillslope or riparian
-Help      : Specific topographic index for ch_var, 0 for average hillslope or riparian
+Descr     : Specific TTI bin when c_res=5
+Help      : Specific TTI bin when c_res=5
 Ndimen    : 1
 Dimensions: nchemvar - 10
 Size      : 10
@@ -1926,8 +1926,8 @@ Default   : -8.000000
 
 Name      : solnset_table
 Module    : phreeqmms
-Descr     : Solution sets available for initializing mru reservoir compositions
-Help      : Solution sets for initializing mru reservoir compositionsThe solution numbers correspond to those read from the phreeq input file, *.pqi.
+Descr     : Sets of solutions available for initializing mru reservoir compositions
+Help      : Sets of solutions for initializing mru reservoir compositionsThe solution numbers correspond to those read from the phreeq input file, *.pqi.
 Ndimen    : 2
 Dimensions: nmru_res - 9, nchem_sets - 10
 Size      : 90
@@ -2376,7 +2376,7 @@ Min       : 0.000000
 Default   : 0.100000
 
 Name      : xdebug_start
-Module    : phreeqmms
+Module    : io
 Descr     : Begin debugging on this step (0 if no debugging)
 Help      : Begin debugging on this step (0 if no debugging)
 Ndimen    : 1
@@ -2390,7 +2390,7 @@ Min       : 0
 Default   : 0
 
 Name      : xdebug_stop
-Module    : phreeqmms
+Module    : io
 Descr     : End debugging on this step
 Help      : End debugging on this step
 Ndimen    : 1

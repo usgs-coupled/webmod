@@ -397,7 +397,8 @@ c  internal or private variables
       integer, external :: length
       character(len=80) test
       !character(len=135) data_path, phreeq_lut_file, ptxt
-      character(len=135) data_path, phreeq_lut_file
+!      character(len=135) data_path, phreeq_lut_file
+      character(len=135) pqi_file, phreeq_lut_file
       character(len=1000) buf
 
       obsc_init = 1
@@ -526,14 +527,15 @@ c
 c Read the chemical deposition file through to the line that describes
 c the species and units in the deposition file
 c
-c
-      ret = getdataname (data_path, '.chemdat')
 C kludge line to use only one chemdat file, comment out for normal run
 c      data_path = './input/loch3.dat.chemdat'
 c end kludge
-      inquire(file=data_path,exist=filflg)
+      IF (control_string(pqi_file, 'phreeq_file').NE.0 ) RETURN
+      i = index(pqi_file,CHAR(0))   ! CHAR(0) is end of strings returned from control_string call
+      pqi_file= pqi_file(1:i-1)
+      inquire(file=pqi_file,exist=filflg)
       if (filflg.and.(ppt_chem.ne.0)) then
-         open (15, file=data_path)
+         open (15, file=pqi_file)
  10      read (15,1000,END=500) test
          if (test .ne. 
      $        '** Species and Units **') goto 10
@@ -602,7 +604,7 @@ c
 c     
       else
 
-         print*,'The file ',data_path,' describing time series of '//
+         print*,'The file ',pqi_file,' describing time series of '//
      $      'input and/or observed concentrations could not be '//
      $      'found or inputs of constant input concentrations have ' //
      $      'been selected from the pqi file.'

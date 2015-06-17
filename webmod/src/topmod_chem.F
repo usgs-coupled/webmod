@@ -2489,17 +2489,17 @@ c
       SRZ(IA,is)=SRZ(IA,is)+EA
       sae_local(ia,is) = EA
 ! debug
-      if(nstep.eq.1.and.ia.eq.3) write(debug%lun,'(A)')
-     & 'nstep   yr   mo   dy   ia'//
-     & '     SurfDep           P    last_suz         suz    last_srz'//
-     & '         srz     uzinfil       infil      qv2suz       pr2sz'//
-     & '          ex      qvpref         qof         rex      UZ_out'//
-     & '    SD_Start        Evap'
-      if(nstep.ge.xdebug_start.and.nstep.le.xdebug_stop)
-     $   write(debug%lun,1500)nstep,(datetime(i),i=1,3),ia,surfdep(is),
-     &  p,last_suz(ia,is),suz(ia,is), last_srz(ia,is), srz(ia,is), 
-     &  uz_infil(ia,is),surfdep(is)-qof(is)-qvpref(is),qv2suz,p2rz,
-     &  ex(IA),qvpref(is), qof(is),REX(IS),UZ, sd_start_debug, ea
+! if(nstep.eq.1.and.ia.eq.3) write(debug%lun,'(A)')
+!& 'nstep   yr   mo   dy   ia'//
+!& '     SurfDep           P    last_suz         suz    last_srz'//
+!& '         srz     uzinfil       infil      qv2suz       pr2sz'//
+!& '          ex      qvpref         qof         rex      UZ_out'//
+!& '    SD_Start        Evap'
+! if(nstep.ge.xdebug_start.and.nstep.le.xdebug_stop)
+!$   write(debug%lun,1500)nstep,(datetime(i),i=1,3),ia,surfdep(is),
+!&  p,last_suz(ia,is),suz(ia,is), last_srz(ia,is), srz(ia,is), 
+!&  uz_infil(ia,is),surfdep(is)-qof(is)-qvpref(is),qv2suz,p2rz,
+!&  ex(IA),qvpref(is), qof(is),REX(IS),UZ, sd_start_debug, ea
 
 c$$$      IF(EP.GT.0.)THEN
 c$$$        EA=EP*(1 - SRZ(IA,is)/SRMAX(is))
