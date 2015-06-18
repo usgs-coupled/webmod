@@ -7,10 +7,10 @@ set "WEB_DAT=..\WEBDATA"
 set "WEB_TPL=..\WEBTPL"
 set "WEB_SRC=.\webfiles"
 
-set "PROJECT_DIR_PATH=C:\Programs\webmod-trunk\pest\andcrk\PC_Beotest\webmod"
-set "PROJECT_DIR=C:\\Programs\\webmod-trunk\\pest\\andcrk\\PC_Beotest\\webmod"
-set "PEST_BIN_DIR_PATH=C:\Programs\webmod-trunk\pest\PC_bin"
-set "PEST_BIN_DIR=C:\\Programs\\webmod-trunk\\pest\\PC_bin"
+set "PROJECT_DIR_PATH=D:\System\Users\rmwebb\Desktop\webmod\pest\andcrk\PC_Beotest\webmod"
+set "PROJECT_DIR=D:\\System\\Users\\rmwebb\\Desktop\\webmod\\pest\\andcrk\\PC_Beotest\\webmod"
+set "PEST_BIN_DIR_PATH=D:\System\Users\rmwebb\Desktop\webmod\pest\PC_bin"
+set "PEST_BIN_DIR=D:\\System\\Users\\rmwebb\\Desktop\\webmod\\pest\\PC_bin"
 REM dir
 set PORT=4004 
 set pst=%1
