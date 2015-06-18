@@ -49,27 +49,26 @@ cd ${PROJECT_DIR}
 ${BIN_DIR}/tsproc < ${PROJECT_DIR}/tsproc.in
 
 # edit the control file
-sed "s#\./input#\.#"      ${CONTROL_DIR}/webmod.control  >  ${PROJECT_DIR}/webmod.control
+sed "s#\./input#\.#"      ${CONTROL_DIR}/webmod.control  >         ${PROJECT_DIR}/webmod.control
 sed -i "s#\./output#\.#"  ${PROJECT_DIR}/webmod.control 
-sed -i "s#\.\./\.\./bin#${BIN_DIR}#"  ${PROJECT_DIR}/webmod.control 
 
 # copy executable
 cp ${BIN_DIR}/webmod ${PROJECT_DIR}/webmod
 
 # Sed CONTEXT tsproc.dat
-sed -i "2s/CONTEXT pest_prep/CONTEXT model_run/" ${PROJECT_DIR}/tsproc.dat
+sed -i "2s/CONTEXT pest_prep/CONTEXT model_run/"                   ${PROJECT_DIR}/tsproc.dat
 
 # Sed andcrk.pst
 # Line 6 of the pst file RLAMBDA1 .....	
 sed -i "6s/.*/10.0  -3.0    0.3    0.03     -10  999  LAMFORGIVE/" ${PROJECT_DIR}/webmod.pst
 # Line 7 of the pst file RELPARMAX FACPARMAX FACORIG.....	
-sed -i "7s/.*/0.2   2.0   1.0e-3/" ${PROJECT_DIR}/webmod.pst
+sed -i "7s/.*/0.2   2.0   1.0e-3/"                                 ${PROJECT_DIR}/webmod.pst
 # Line 9 of the pst file. NOPTMAX Max # of optimizations. Default is 30, set to 0 for single run with phi contributions, 1 for sensitivities, or a small number to test PEST loops.
-sed -i "9s/.*/30   .005  4   4  .005   4/" ${PROJECT_DIR}/webmod.pst
+sed -i "9s/.*/30   .005  4   4  .005   4/"                         ${PROJECT_DIR}/webmod.pst
 # Line 13. SVD block MAXSING EIGTHRESH. Replace MAXSING the maximum number of adjustable variables (number of singlular valuess at which truncation occurs)
-sed -i "13s/.*/19 5e-7/" ${PROJECT_DIR}/webmod.pst
+sed -i "13s/.*/19 5e-7/"                                           ${PROJECT_DIR}/webmod.pst
 # Line 14 EIGWRITE. 0 if not using SVD output file
-sed -i "14s/.*/1/" ${PROJECT_DIR}/webmod.pst
+sed -i "14s/.*/1/"                                                 ${PROJECT_DIR}/webmod.pst
 
 # Make temp directories
 i=1
@@ -102,5 +101,32 @@ cp ${INPUT_DIR}/phreeq_lut             .
 cp ${INPUT_DIR}/phreeqc_web_lite.dat   .
 
 mpirun -np ${PROCESSES} ppest ${PROJECT_DIR}/webmod.pst /M /L ${PROJECT_DIR}/psttemp
-#mpirun -np 5 ppest ${PROJECT_DIR}/webmod.pst /M 
+
+# Tidy up
+rm -rf ${PROJECT_DIR}/../pest_results
+mkdir ${PROJECT_DIR}/../pest_results
+cp tsproc.sim.out.ins ../pest_results
+cp webmod.jac         ../pest_results
+cp webmod.jco         ../pest_results
+cp webmod.jst         ../pest_results
+cp webmod.mtt         ../pest_results
+cp webmod.par         ../pest_results
+cp webmod.prf         ../pest_results
+cp webmod.pst         ../pest_results
+cp webmod.rec         ../pest_results
+cp webmod.rei         ../pest_results
+cp webmod.res         ../pest_results
+cp webmod.rmr         ../pest_results
+cp webmod.rsd         ../pest_results
+cp webmod.rst         ../pest_results
+cp webmod.sen         ../pest_results
+cp webmod.seo         ../pest_results
+cp webmod.svd         ../pest_results
+cp webmod.pqi         ../pest_results
+cp webmod.params      ../pest_results
+cp webmod.pqi         ../input/webmod.pqi.pest
+cp webmod.params      ../input/webmod.params.pest
+cp tsproc.dat         ../pest_results
+
+cd ${PROJECT_DIR}/..
 
