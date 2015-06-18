@@ -95,5 +95,5 @@ meltmn = meltmx * meltra
 s_thwp = s_thfc-awc
 
 * template files
-params_andcrk.tpl andcrk.params
-pqi_andcrk.tpl andcrk.dat.pqi
+webmod.params.tpl webmod.params
+webmod.pqi.tpl webmod.pqi
