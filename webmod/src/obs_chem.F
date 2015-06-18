@@ -530,7 +530,7 @@ c
 C kludge line to use only one chemdat file, comment out for normal run
 c      data_path = './input/loch3.dat.chemdat'
 c end kludge
-      IF (control_string(chemdat_file, 'chem_file').NE.0 ) RETURN
+      IF (control_string(chemdat_file, 'chemdat_file').NE.0 ) RETURN
       i = index(chemdat_file,CHAR(0))   ! CHAR(0) is end of strings returned from control_string call
       chemdat_file= chemdat_file(1:i-1)
       inquire(file=chemdat_file,exist=filflg)
