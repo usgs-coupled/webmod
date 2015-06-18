@@ -3601,11 +3601,16 @@
 ! phq_lut of type lut
 !
 ! Open the initial solution file
-      ret = getdataname (cheminit_file, '.pqi')
+      !ret = getdataname (cheminit_file, '.pqi')
 !
 !  Kludge to run selected runs for GSA talk
 !
 !      cheminit_file='.\input\loch3.dat.pqi'
+
+      IF (control_string(cheminit_file, 'phreeq_file').NE.0 ) RETURN
+      i = index(cheminit_file,CHAR(0))   ! CHAR(0) is end of strings returned from control_string call
+      cheminit_file= cheminit_file(1:i-1)
+
       open(unit=16, file=cheminit_file ,access='sequential',&
        form='formatted', status='old', iostat=io)
       file_len=index(cheminit_file,char(0))-1

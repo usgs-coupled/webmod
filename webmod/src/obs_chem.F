@@ -398,7 +398,7 @@ c  internal or private variables
       character(len=80) test
       !character(len=135) data_path, phreeq_lut_file, ptxt
 !      character(len=135) data_path, phreeq_lut_file
-      character(len=135) pqi_file, phreeq_lut_file
+      character(len=135) chemdat_file, phreeq_lut_file
       character(len=1000) buf
 
       obsc_init = 1
@@ -530,12 +530,12 @@ c
 C kludge line to use only one chemdat file, comment out for normal run
 c      data_path = './input/loch3.dat.chemdat'
 c end kludge
-      IF (control_string(pqi_file, 'phreeq_file').NE.0 ) RETURN
-      i = index(pqi_file,CHAR(0))   ! CHAR(0) is end of strings returned from control_string call
-      pqi_file= pqi_file(1:i-1)
-      inquire(file=pqi_file,exist=filflg)
+      IF (control_string(chemdat_file, 'chem_file').NE.0 ) RETURN
+      i = index(chemdat_file,CHAR(0))   ! CHAR(0) is end of strings returned from control_string call
+      chemdat_file= chemdat_file(1:i-1)
+      inquire(file=chemdat_file,exist=filflg)
       if (filflg.and.(ppt_chem.ne.0)) then
-         open (15, file=pqi_file)
+         open (15, file=chemdat_file)
  10      read (15,1000,END=500) test
          if (test .ne. 
      $        '** Species and Units **') goto 10
@@ -604,7 +604,7 @@ c
 c     
       else
 
-         print*,'The file ',pqi_file,' describing time series of '//
+         print*,'The file ',chemdat_file,' describing time series of '//
      $      'input and/or observed concentrations could not be '//
      $      'found or inputs of constant input concentrations have ' //
      $      'been selected from the pqi file.'
