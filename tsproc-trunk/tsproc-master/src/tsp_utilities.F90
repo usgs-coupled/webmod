@@ -2083,9 +2083,12 @@ function num_days_in_month(iMonth, iYear)  result(iNumDaysInMonth)
   integer (kind=T_INT), intent(in) :: iMonth
   integer (kind=T_INT), intent(in) :: iYear
   integer (kind=T_INT) :: iNumDaysInMonth
+  character*256 :: file
 
-  call assert(iMonth <= ubound(MONTH,1), "Illegal month number supplied" &
-    //trim(asChar(iMonth)),trim(__FILE__), __LINE__)
+!  call assert(iMonth <= ubound(MONTH,1), "Illegal month number supplied" &
+!    //trim(asChar(iMonth)),trim(__FILE__), __LINE__)
+  file = " file "
+  call assert(iMonth <= ubound(MONTH,1), "Illegal month number supplied", file, __LINE__)
 
   if (iMonth /= 2) then
     iNumDaysInMonth = MONTH(iMonth)%iNumDays

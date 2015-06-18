@@ -59,7 +59,7 @@ program tsp_main
    write(unit=LU_STD_OUT, fmt="(/,a)") "Compiled on: "  // &
       TRIM(__DATE__) //" "// TRIM(__TIME__)
 
-#ifdef __GFORTRAN__
+#ifdef __GFORTRANXXX__
     sCompilerFlags = COMPILER_OPTIONS()
     sCompilerVersion = COMPILER_VERSION()
     write(UNIT=*,FMT="(a,/)") "Compiled with: gfortran ("//TRIM(sCompilerVersion)//")"

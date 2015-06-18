@@ -2473,7 +2473,8 @@ subroutine pest_files(ifail,lastblock)
          write(itempunit,'(a)') '1'
          write(itempunit,'(a)') trim(sString_g)
          close(unit=itempunit)
-         call execute_command_line (trim(pest2micacom)//' < t###.### > nul')
+         !call execute_command_line (trim(pest2micacom)//' < t###.### > nul')
+	 call system (trim(pest2micacom)//' < t###.### > nul')
          inquire(file=micactlfile,exist=lexist)
          if(.not.lexist)then
            write(amessage,2480)
