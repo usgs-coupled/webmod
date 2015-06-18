@@ -10,7 +10,7 @@ END SETTINGS
 ##########################################
 START GET_MUL_SERIES_STATVAR
 CONTEXT all
-FILE andcrk.statvar
+FILE webmod.statvar
 DATE_1 10/01/2003
 TIME_1 00:00:00
 DATE_2 09/30/2004  
@@ -94,7 +94,7 @@ END GET_MUL_SERIES_STATVAR
 #####################################
 START GET_SERIES_SSF
 CONTEXT all
-FILE @PROJECT_DIR@AndHydObs.ssf
+FILE @PROJECT_DIR@webmod.hydro.obs.ssf
 SITE q_cfs
 NEW_SERIES_NAME q_cfs_o
 DATE_1 10/01/2003
@@ -104,11 +104,12 @@ TIME_2 00:00:00
 END GET_SERIES_SSF
 #
 #################################################
-# Read observed concentrations from an ssf file #
+# Read observed temp, pH, concentrations and    #
+# loads from an ssf file                        #
 #################################################
 START GET_MUL_SERIES_SSF
 CONTEXT all
-FILE @PROJECT_DIR@AndChemObs.ssf
+FILE @PROJECT_DIR@webmod.chem.obs.ssf
 DATE_1 10/01/2003
 TIME_1 00:00:00
 DATE_2 09/30/2004  
@@ -139,19 +140,6 @@ SITE Si_mgL
 NEW_SERIES_NAME Si_o
 SITE [180]_obs
 NEW_SERIES_NAME 18O_o
-END GET_MUL_SERIES_SSF
-#
-##############################################
-# Read observed loads computed for each      #
-# sample date from an ssf file               #
-##############################################
-START GET_MUL_SERIES_SSF
-CONTEXT all
-FILE @PROJECT_DIR@AndChemLoads.ssf
-DATE_1 10/01/2003
-TIME_1 00:00:00
-DATE_2 09/30/2004  
-TIME_2 00:00:00
 SITE Ca_mgm2
 NEW_SERIES_NAME Ca_ol
 SITE Mg_mgm2
@@ -803,7 +791,7 @@ END ERASE_ENTITY
 #######################################
 START LIST_OUTPUT
 CONTEXT all
-FILE andcrk_sim.out
+FILE tsproc.sim.out
 SERIES_FORMAT long
 SERIES_NAME ph_s
 SERIES_NAME tempc_s
@@ -836,17 +824,11 @@ END LIST_OUTPUT_BLOCK
 ####################
 START WRITE_PEST_FILES
 CONTEXT pest_prep
-NEW_PEST_CONTROL_FILE @PROJECT_DIR@andcrk.pst
+NEW_PEST_CONTROL_FILE @PROJECT_DIR@webmod.pst
 TRUNCATED_SVD 5e-7
-TEMPLATE_FILE @PROJECT_DIR@par2par_andcrk.tpl
-MODEL_INPUT_FILE  par2par_andcrk.dat
-#TEMPLATE_FILE params_andcrk.tpl
-#MODEL_INPUT_FILE  andcrk.params
-#TEMPLATE_FILE params_andcrk.tpl
-#MODEL_INPUT_FILE  andcrk.params
-#TEMPLATE_FILE pqi_andcrk.tpl
-#MODEL_INPUT_FILE  andcrk.dat.pqi
-NEW_INSTRUCTION_FILE andcrk.ins
+TEMPLATE_FILE @PROJECT_DIR@par2par.dat.tpl
+MODEL_INPUT_FILE  par2par.dat
+NEW_INSTRUCTION_FILE tsproc.sim.out.ins
 #
 OBSERVATION_SERIES_NAME ph_o
 MODEL_SERIES_NAME ph_s
@@ -979,7 +961,7 @@ MODEL_SERIES_NAME Si_sl
 #SERIES_WEIGHTS_EQUATION 2.95E-02
 SERIES_WEIGHTS_EQUATION 0.0
 #
-PARAMETER_DATA_FILE @PROJECT_DIR@pest_params_andcrk.txt
-PARAMETER_GROUP_FILE @PROJECT_DIR@pest_groups_andcrk.txt
+PARAMETER_DATA_FILE @PROJECT_DIR@pest_params.txt
+PARAMETER_GROUP_FILE @PROJECT_DIR@pest_groups.txt
 MODEL_COMMAND_LINE @PROJECT_DIR@pest_webmod.bat
 END WRITE_PEST_FILES

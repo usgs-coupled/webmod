@@ -7,9 +7,9 @@ REM set WEBDIR=\\igskahhwuwhopkn\pest\webmod\
 REM set PESTBINDIR=\\igskahhwuwhopkn\pest\bin\
 REM set MASTER=igskahhwwsnixe
 
-set WEBDIR=C:\Programs\webmod-trunk\pest\andcrk\PC_Beotest\webmod\
-set PESTBINDIR=C:\Programs\webmod-trunk\pest\PC_bin\
-set MASTER=igskahhwwsdpark
+set WEBDIR=D:\System\Users\rmwebb\Desktop\webmod\pest\andcrk\PC_Beotest\webmod\
+set PESTBINDIR=D:\System\Users\rmwebb\Desktop\webmod\pest\PC_bin\
+set MASTER=igskahhwwsnixe
 
 set PORT=4004
 set nodes=%1
