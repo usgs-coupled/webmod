@@ -19,7 +19,7 @@ data_file
 4
 ./input/webmod.hydro.dat
 ####
-chem_file
+chemdat_file
 1
 4
 ./input/webmod.chem.dat
@@ -64,7 +64,7 @@ dispVar_plot
 end_time
 6
 1
-1985
+2014
 12
 31
 0
