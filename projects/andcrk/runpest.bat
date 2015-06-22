@@ -1,4 +1,6 @@
 @echo off
+SETLOCAL
+
 REM Sychronize latest WEBMOD executable, create the tsproc and PEST command files, and start beopest as master
 REM Help printed if command entered with no arguments
 IF %1.==. GOTO :USAGE
@@ -21,6 +23,46 @@ set PEST_BIN_DIR_SED=%PEST_BIN_DIR:\=/%
 set "TSPROC_BIN_DIR=%HOME%\..\..\bin"
 set TSPROC_BIN_DIR_SED=%TSPROC_BIN_DIR:\=/%
 
+REM check hydro files
+set errors=0
+for %%i in ( 
+    %INPUT_DIR%\webmod.hydro.dat
+    %INPUT_DIR%\webmod.params
+    %CONTROL_DIR%\webmod.control
+    %PEST_FILES_DIR%\par2par.dat.tpl
+    %PEST_FILES_DIR%\pest_groups.txt
+    %PEST_FILES_DIR%\pest_params.txt
+    %PEST_FILES_DIR%\pest_webmod.bat.tpl
+    %PEST_FILES_DIR%\tsproc.dat.tpl
+    %PEST_FILES_DIR%\tsproc.in
+    %PEST_FILES_DIR%\webmod.hydro.obs.ssf
+    %PEST_FILES_DIR%\webmod.params.tpl
+    %PEST_FILES_DIR%\webmod.statvar
+    ) do (
+    if NOT exist %%i (
+        echo Did not find file %%i
+        set errors=2
+    )
+)
+
+REM check chemistry files
+for %%i in ( %INPUT_DIR%\phreeq_lut 
+    %INPUT_DIR%\phreeqc_web_lite.dat
+    %INPUT_DIR%\webmod.chem.dat
+    %INPUT_DIR%\webmod.pqi
+    %PEST_FILES_DIR%\webmod.chem.obs.ssf
+    ) do (
+    if NOT exist %%i (
+        echo Did not find chemistry file %%i
+    )
+)
+
+REM quit if errors in hydro files
+if %errors% == 2 (
+    echo Stopping.
+    goto :FINISH_UP
+)
+    
 REM set port number
 set PORT=4004 
 
