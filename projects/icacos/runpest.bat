@@ -71,13 +71,13 @@ if exist %PROJECT_DIR% rmdir /s/q %PROJECT_DIR%
 mkdir %PROJECT_DIR%
 
 REM Sed to make tsproc.dat 
-call %HOME%\sed.bat @PROJECT_DIR@ %PROJECT_DIR_SED%/ %PEST_FILES_DIR%\tsproc.dat.tpl > %PROJECT_DIR%\tsproc.dat
+call :SED @PROJECT_DIR@ %PROJECT_DIR_SED%/ %PEST_FILES_DIR%\tsproc.dat.tpl > %PROJECT_DIR%\tsproc.dat
 
 REM Sed to make pest_webmod.bat in PROJECT_DIR
-call %HOME%\sed.bat @PROJECT_DIR@ %PROJECT_DIR_SED%/       %PEST_FILES_DIR%\pest_webmod.bat.tpl > %PROJECT_DIR%\pest_webmod.bat1
-call %HOME%\sed.bat @PEST_BIN_DIR@ %PEST_BIN_DIR_SED%/     %PROJECT_DIR%\pest_webmod.bat1 >       %PROJECT_DIR%\pest_webmod.bat2
-call %HOME%\sed.bat @TSPROC_BIN_DIR@ %TSPROC_BIN_DIR_SED%/ %PROJECT_DIR%\pest_webmod.bat2 >       %PROJECT_DIR%\pest_webmod.bat3
-call %HOME%\sed.bat @DEL@ DEL                              %PROJECT_DIR%\pest_webmod.bat3 >       %PROJECT_DIR%\pest_webmod.bat
+call :SED @PROJECT_DIR@ %PROJECT_DIR_SED%/       %PEST_FILES_DIR%\pest_webmod.bat.tpl > %PROJECT_DIR%\pest_webmod.bat1
+call :SED @PEST_BIN_DIR@ %PEST_BIN_DIR_SED%/     %PROJECT_DIR%\pest_webmod.bat1 >       %PROJECT_DIR%\pest_webmod.bat2
+call :SED @TSPROC_BIN_DIR@ %TSPROC_BIN_DIR_SED%/ %PROJECT_DIR%\pest_webmod.bat2 >       %PROJECT_DIR%\pest_webmod.bat3
+call :SED @DEL@ DEL                              %PROJECT_DIR%\pest_webmod.bat3 >       %PROJECT_DIR%\pest_webmod.bat
 DEL %PROJECT_DIR%\pest_webmod.bat1 
 DEL %PROJECT_DIR%\pest_webmod.bat2 
 DEL %PROJECT_DIR%\pest_webmod.bat3
@@ -98,14 +98,14 @@ REM move output from tsproc to working directory
 COPY %TSPROC_BIN_DIR%\webmod.exe  %PROJECT_DIR%
 
 REM edit the control file
-call %HOME%\sed.bat   ./input  .  %CONTROL_DIR%\webmod.control  >  %PROJECT_DIR%\webmod.control1
-call %HOME%\sed.bat  ./output  .  %PROJECT_DIR%\webmod.control1 >  %PROJECT_DIR%\webmod.control2
-call %HOME%\sed.bat ../../bin  .  %PROJECT_DIR%\webmod.control2 >  %PROJECT_DIR%\webmod.control
+call :SED   ./input  .  %CONTROL_DIR%\webmod.control  >  %PROJECT_DIR%\webmod.control1
+call :SED  ./output  .  %PROJECT_DIR%\webmod.control1 >  %PROJECT_DIR%\webmod.control2
+call :SED ../../bin  .  %PROJECT_DIR%\webmod.control2 >  %PROJECT_DIR%\webmod.control
 DEL %PROJECT_DIR%\webmod.control1  
 DEL %PROJECT_DIR%\webmod.control2
 
 REM change tsproc mode from "pest_prep" to "model_run"
-call %HOME%\sed.bat "CONTEXT pest_prep" "CONTEXT model_run" %PROJECT_DIR%\tsproc.dat > %PROJECT_DIR%\xxx
+call :SED  "CONTEXT pest_prep" "CONTEXT model_run" %PROJECT_DIR%\tsproc.dat > %PROJECT_DIR%\xxx
 MOVE  %PROJECT_DIR%\xxx %PROJECT_DIR%\tsproc.dat
 
 REM Edit .pst file for parameter estimation
@@ -211,8 +211,29 @@ echo usage: runpest n
 echo where  n is number of workers to start
 GOTO :EOF
 
-:FINISH_UP
+:SED
+REM -- Prepare the Command Processor --
+SETLOCAL ENABLEEXTENSIONS
+SETLOCAL DISABLEDELAYEDEXPANSION
 
+::BatchSubstitude - parses a File line by line and replaces a substring"
+::syntax: BatchSubstitude.bat OldStr NewStr File
+::          OldStr [in] - string to be replaced
+::          NewStr [in] - string to replace with
+::          File   [in] - file to be parsed
+:$changed 20100115
+:$source http://www.dostips.com
+if "%~1"=="" findstr "^::" "%~f0"&GOTO:EOF
+for /f "tokens=1,* delims=]" %%A in ('"type %3|find /n /v """') do (
+    set "line=%%B"
+    if defined line (
+        call set "line=echo.%%line:%~1=%~2%%"
+        for /f "delims=" %%X in ('"echo."%%line%%""') do %%~X
+    ) ELSE echo.
+)
+EXIT /b
+
+:FINISH_UP
 cd %PROJECT_DIR%\..
 
 
