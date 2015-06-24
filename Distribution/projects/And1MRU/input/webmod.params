@@ -246,13 +246,6 @@ nmru
 2
 0.0
 ####
-resp_coef_min 14
-1
-nmru
-1
-2
-0.01
-####
 init_eq_ph_mru 15
 1
 nmru
@@ -925,13 +918,6 @@ nchemvar
 7
 7
 ####
-chemout_file_unit 18
-1
-one
-1
-1
-90
-####
 src_ext_irrig 14
 1
 nmru
@@ -1135,6 +1121,13 @@ nmru
 1
 2
 -1.0
+####
+print_vse 11
+1
+one
+1
+1
+0
 ####
 covden_sum 11
 1
@@ -1731,7 +1724,7 @@ nchemvar
 0
 0
 ####
-t0 8
+To 8
 1
 nmru
 1
@@ -1777,13 +1770,6 @@ nchemvar
 0
 0
 ####
-resp_hr_min 12
-1
-nmru
-1
-2
-0.083
-####
 init_rxn_mru 13
 1
 nmru
@@ -1826,13 +1812,6 @@ nmru
 2
 -0.3
 ####
-topout_file_unit 17
-1
-one
-1
-1
-80
-####
 radj_sppt 14
 1
 one
@@ -1860,13 +1839,6 @@ nmru
 1
 1
 0
-####
-resp_hr_full 13
-1
-nmru
-1
-2
-36.0
 ####
 PLWHC 8
 1
@@ -2036,3 +2008,87 @@ nmru
 1
 2
 0.0
+####
+trxn_ohoriz_stat 9
+1
+nmru
+1
+1
+1
+####
+trxn_ohoriz_days 9
+1
+one
+1
+2
+18.567808
+####
+trxn_ohoriz_c_adj 9
+1
+nmru
+1
+2
+-2.5094156
+####
+trxn_uz_stat 9
+1
+nmru
+1
+1
+1
+####
+trxn_uz_days 9
+1
+one
+1
+2
+45.92487
+####
+trxn_uz_c_adj 9
+1
+nmru
+1
+2
+0.9057984
+####
+trxn_sat_stat 9
+1
+nmru
+1
+1
+1
+####
+trxn_sat_days 9
+1
+one
+1
+2
+395.76012
+####
+trxn_sat_c_adj 9
+1
+nmru
+1
+2
+5.2780278
+####
+T_decay 10
+1
+nmru
+1
+1
+1
+####
+tl 8
+1
+nmru
+1
+2
+71.0
+####
+atmos_eq_ph 14
+1
+one
+1
+1
+0

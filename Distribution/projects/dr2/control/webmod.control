@@ -3,7 +3,7 @@ DR2 Drain
 aniOutON_OFF
 1
 1
-1
+0
 ####
 aniOutVar_names
 1
@@ -100,7 +100,7 @@ executable_model
 gisOutON_OFF
 1
 1
-1
+0
 ####
 init_vars_from_file
 1
