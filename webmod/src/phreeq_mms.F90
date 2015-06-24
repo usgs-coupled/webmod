@@ -8962,7 +8962,25 @@
 ! of the outlet (ih=1) are exported from the basin on this time step in webmod_res.
 ! The exported volume is the simulated export vmix_basin(3) minus the stream and gw loss.
 ! This equals basin_qsim_cm
-
+      ch_outlet_m3 = 0D0
+      ch_outlet_tempC = 0D0
+      ch_outlet_pH = 0D0
+      nis=0
+      do n = 1, nsolute
+          ch_outlet_M(n) = 0D0
+          ch_outlet_g(n) = 0D0
+          ch_outlet_eq(n) = 0D0
+          ch_outlet_mML(n) = 0D0
+          ch_outlet_mgL(n) = 0D0
+          ch_outlet_meqL(n) = 0D0
+          ch_outlet_mMm2(n) = 0D0
+          ch_outlet_mgm2(n) = 0D0
+          ch_outlet_meqm2(n) = 0D0
+          if(sol_id(n)%iso) then ! Record delta of isotope, in permil
+              nis=nis+1
+              ch_outlet_permil(n)= 0D0
+          end if
+      end do
       do 20 ih = clark_segs,1,-1
 
          if(ih.gt.1) then
@@ -9159,27 +9177,6 @@
             !        c_chem_basin%delta(k,out)*str_vol
             !end do
            end if
-         else if(ih.eq.1) then ! basin export equal to zero.
-            ch_outlet_m3 = 0D0
-            ch_outlet_tempC = 0D0
-            ch_outlet_pH = 0D0
-            nis=0
-            do n = 1, nsolute
-                ch_outlet_M(n) = 0D0
-                ch_outlet_g(n) = 0D0
-                ch_outlet_eq(n) = 0D0
-                ch_outlet_mML(n) = 0D0
-                ch_outlet_mgL(n) = 0D0
-                ch_outlet_meqL(n) = 0D0
-                ch_outlet_mMm2(n) = 0D0
-                ch_outlet_mgm2(n) = 0D0
-                ch_outlet_meqm2(n) = 0D0
-                if(sol_id(n)%iso) then ! Record delta of isotope, in permil
-                  nis=nis+1
-                  ch_outlet_permil(n)= 0D0
-                end if
-            end do
-         else ! Do nothing for dry segments upstream of outlet.
          end if    
 
  20   continue                  ! end clark_segs loop
