@@ -6247,85 +6247,11 @@
 !         end if
 !      end if
 
-
       if(getvar('io', 'endper', 1, 'integer', endper)&
-         .ne.0) return
-
-      if(getvar('potet', 'transp_on', nmru, 'integer', transp_on)&
          .ne.0) return
 
       if(getvar('snow', 'snowcov_area', nmru, 'real', snowcov_area)&
          .ne.0) return
-
-      if(getvar('webr', 'vmix_can', nmru*nresinp, 'double', &
-           vmix_can) .ne.0) return
-
-      if(getvar('webr', 'vmix_snow', nmru*nresinp, 'double', &
-           vmix_snow) .ne.0) return
-
-      if(getvar('webr', 'vmix_ohoriz', nmru*nresinp, 'double',&
-           vmix_ohoriz) .ne.0) return
-
-      if(getvar('webr', 'vmix_uz', nac_nmru_nresinp, 'double', &
-           vmix_uz) .ne.0) return
-
-      if(getvar('webr', 'vmix_uz2can', nac*nmru, 'double', &
-           vmix_uz2can) .ne.0) return
-
-      if(getvar('webr', 'vmix_uz2qdf', nac*nmru, 'double', &
-           vmix_uz2qdf) .ne.0) return
-
-      if(getvar('webr', 'vmix_uz2sat', nac*nmru, 'double', &
-           vmix_uz2sat) .ne.0) return
-
-      if(getvar('webr', 'vmix_sat2uz', nac*nmru, 'double', &
-           vmix_sat2uz) .ne.0) return
-
-      if(getvar('webr', 'uz2sat_vol', nac*nmru, 'double', &
-           uz2sat_vol) .ne.0) return
-
-      if(getvar('webr', 'vmix_uzgen', nmru*nresinp, 'double', &
-           vmix_uzgen) .ne.0) return
-
-      if(getvar('webr', 'vmix_uzrip', nmru*nresinp, 'double', &
-           vmix_uzrip) .ne.0) return
-
-      if(getvar('webr', 'vmix_uzup', nmru*nresinp, 'double', &
-           vmix_uzup) .ne.0) return
-
-      if(getvar('webr', 'vmix_qdf', nmru*nresinp, 'double', &
-           vmix_qdf) .ne.0) return
-
-      if(getvar('webr', 'vmix_sat', nmru*nresinp, 'double', &
-           vmix_sat) .ne.0) return
-
-      if(getvar('webr', 'vmix_well', nmru, 'double', &
-           vmix_well) .ne.0) return
-
-      if(getvar('webr', 'vmix_satpref', nmru*nresinp, 'double', &
-           vmix_satpref) .ne.0) return
-
-      if(getvar('webr', 'vmix_hill', nmru*nresinp, 'double', &
-           vmix_hill) .ne.0) return
-
-      if(getvar('webr', 'vmix_mru', nmru*nresinp, 'double', &
-           vmix_mru) .ne.0) return
-
-      if(getvar('webr', 'vmix_hillexp', nhydro*nmru, 'double', &
-           vmix_hillexp) .ne.0) return
-
-      if(getvar('webr', 'vmix_stream', nhydro, 'double', &
-           vmix_stream) .ne.0) return
-
-      if(getvar('webr', 'vmix_diversion', nhydro, 'double', &
-           vmix_diversion) .ne.0) return
-
-      if(getvar('webr', 'vmix_chan_loss', nhydro, 'double', &
-           vmix_chan_loss) .ne.0) return
-
-      if(getvar('webr', 'vmix_basin', nresinp, 'double', &
-           vmix_basin) .ne.0) return
-
 
       dt = deltim()
 
