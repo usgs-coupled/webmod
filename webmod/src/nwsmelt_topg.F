@@ -108,8 +108,11 @@ c
         nwsmelt_topg = nwsminit()
       else if(arg.eq.'run') then
         nwsmelt_topg = nwsmrun()
-      else if(arg.eq.'clean') then
+      else if(arg.eq.'cleanup') then
         nwsmelt_topg = nwsmclean()
+      else
+        write(*,*) "Unhandled case in nwsmelt_topg", arg
+        stop 
       end if
 
       return

@@ -716,8 +716,11 @@
         phreeq_mms = phreeqmms_decl()
       ELSEIF ( Arg.EQ.'initialize' ) THEN
         phreeq_mms = phreeqmms_init()
-      ELSEIF ( Arg.EQ.'clean' ) THEN
+      ELSEIF ( Arg.EQ.'cleanup' ) THEN
         phreeq_mms = phreeqmms_clean()
+      ELSE 
+        write(*,*) "Unhandled argument in phreeq_mms ", arg
+        stop
       ENDIF
 
       if(phreeq_mms.eq.1) then
@@ -1039,64 +1042,77 @@
       if(declvar('phreeqmms', 'ch_outlet_m3', 'one', 1,&
            'double','Total volume of water discharged at outlet',&
            'm3', ch_outlet_m3).ne.0) return
+      ch_outlet_m3 = 0.0d0
 
       if(declvar('phreeqmms', 'ch_outlet_tempC', 'one', 1,&
            'double','Temperature of water discharged at outlet',&
            'deg C', ch_outlet_tempC).ne.0) return
+      ch_outlet_tempC = 0.0d0
 
       if(declvar('phreeqmms', 'ch_outlet_pH', 'one', 1,&
            'double','pH of water discharged at outlet',&
            'pH units', ch_outlet_pH).ne.0) return
+      ch_outlet_pH = 0.0d0
 
       allocate(ch_outlet_M(nsolute))
       if(declvar('phreeqmms', 'ch_outlet_M', 'nsolute', nsolute,&
            'double','Moles of solute discharged at outlet',&
            'Moles', ch_outlet_M).ne.0) return
+      ch_outlet_M = 0.0d0
 
       allocate(ch_outlet_g(nsolute))
       if(declvar('phreeqmms', 'ch_outlet_g', 'nsolute', nsolute,&
            'double','Grams of solute discharged at outlet',&
            'grams', ch_outlet_g).ne.0) return
+      ch_outlet_g = 0.0d0
 
       allocate(ch_outlet_eq(nsolute))
       if(declvar('phreeqmms', 'ch_outlet_eq', 'nsolute', nsolute,&
            'double','Equivalents of solute discharged at outlet',&
            'eq', ch_outlet_eq).ne.0) return
+      ch_outlet_eq = 0.0d0
 
       allocate(ch_outlet_mMm2(nsolute))
       if(declvar('phreeqmms', 'ch_outlet_mMm2', 'nsolute', nsolute,&
            'double','Load of solute at outlet',&
            'mMol/sq meter', ch_outlet_mMm2).ne.0) return
+      ch_outlet_mMm2 = 0.0d0
 
       allocate(ch_outlet_mgm2(nsolute))
       if(declvar('phreeqmms', 'ch_outlet_mgm2', 'nsolute', nsolute,&
            'double','Load of solute at outlet',&
            'mg/sq meter', ch_outlet_mgm2).ne.0) return
+      ch_outlet_mgm2 = 0.0d0
 
       allocate(ch_outlet_meqm2(nsolute))
       if(declvar('phreeqmms', 'ch_outlet_meqm2', 'nsolute', nsolute,&
            'double','Load of solute at outlet',&
            'meq/sq meter', ch_outlet_meqm2).ne.0) return
+      ch_outlet_meqm2 = 0.0d0
 
       allocate(ch_outlet_mML(nsolute))
       if(declvar('phreeqmms', 'ch_outlet_mML', 'nsolute', nsolute,&
            'double','Concentration of solute discharged at outlet',&
            'mMol/L', ch_outlet_mML).ne.0) return
+      ch_outlet_mML = 0.0d0
 
       allocate(ch_outlet_mgL(nsolute))
       if(declvar('phreeqmms', 'ch_outlet_mgL', 'nsolute', nsolute,&
            'double','Concentration of solute discharged at outlet',&
            'mg/L', ch_outlet_mgL).ne.0) return
+      ch_outlet_mgL = 0.0d0
 
       allocate(ch_outlet_meqL(nsolute))
       if(declvar('phreeqmms', 'ch_outlet_meqL', 'nsolute', nsolute,&
            'double','Concentration of solute discharged at outlet',&
            'meq/L', ch_outlet_meqL).ne.0) return
+      ch_outlet_meqL = 0.0d0
 
       allocate(ch_outlet_permil(nsolute))
       if(declvar('phreeqmms', 'ch_outlet_permil', 'nsolute', nsolute,&
            'double','Delta of isotope discharged at outlet',&
            'permil', ch_outlet_permil).ne.0) return
+      ch_outlet_permil = 0.0d0
 !
 ! These variables track the comnposite storage and fluxes of solutes
 ! into and out of the basins, mrus, UZ, and streams. To track fluxes in specific 
