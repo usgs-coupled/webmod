@@ -1,30 +1,39 @@
 ptf %
+TITLE Reactions for Icacos
 PHASES
-Oligoclase
-Ca0.27Na0.73Al1.27Si2.73O8 + 8H2O = 0.27Ca+2 + 0.73Na+ + 1.27Al(OH)4- + 2.73H4SiO4
+Andesine   # Kinetics
+Ca0.40Na0.60Al1.4Si2.6O8 + 8H2O = 0.4Ca+2 + 0.6Na+ + 1.4Al(OH)4- + 2.6H4SiO4
 	log_k          -19.0  # Ab -18; An -19.714
 
-Biotite
-	#KMg3AlSi3O10(OH)2 + 6H3O+ + 4H2O = K+ + 3Mg+2 + Al(OH)4- + 3H4SiO4 
-     	K0.98Mg1.0Fe1.33Si0.18Al0.33Al1.35Si2.65O10(OH)2 + 10.68H3O+ = 0.98K+ + Mg+2 + 1.33Fe+2 + 1.68Al+3 + 2.83H4SiO4 + 0.68H2O +10.68 H2O
-	#K0.98Mg1.0Fe1.33Al0.33Al1.35Si2.83O10(OH)2 + 3.96H3O+ + 6.04H2O = 0.98K+ + Mg+2 + 1.33Fe+2 + 1.68Al(OH)4- + 2.83H4SiO4 
-	#log_k 12.7 # Kmica phreeqc.dat
-        log_k 20.0 # Kmica phreeqc.dat
-Chlorite
-	#Mg5Al2Si3O10(OH)8 + 16H3O+ = 5Mg+2 + 2Al+3 + 3H4SiO4 + 6H2O 
-	Mg1.81Fe2.72Al1.39Al1.23Si2.77O10(OH)8 + 16.92H3O+ = 1.81Mg+2 + 2.72Fe+2+ 1.39Al+3 + 1.23Al+3 + 2.77H4SiO4 + 6.92H2O + 16.92 H2O
-        log_k           68.38 # phreeqc.dat Chlorite14A
-        delta_h -151.494 kcal
+K-spar     # Kinetics
+Na0.09K0.91AlSi3O8 + 8H2O = 0.09Na+ + 0.91K+ + Al(OH)4- + 3H4SiO4
+        log_k           -20.573
+        delta_h 30.820  kcal
 
-Smectite-Illite              45
-	#K0.6Mg0.25Al2.3Si3.5O10(OH)2 + 11.2H2O = 0.6K+ +0.25Mg+2 + 2.3Al(OH)4- + 3.5H4SiO4 + 1.2H3O+
-	#K0.32Ca0.1Fe0.25Mg0.39Al1.47Al0.46Si3.54O10(OH)2 + 11.2H2O = 0.32K+ +0.1Ca+2 + 0.25Fe+2 + 0.39Mg+2 + 1.47Al(OH)4- \
-	#		+ 0.46Al(OH)4- + 3.54H4SiO4 + 1.2H3O+
-	# adjusted Ca to balance O10(OH)2
-	K0.32Ca0.225Fe0.25Mg0.39Al1.47Al0.46Si3.54O10(OH)2 + 9.88H2O + 0.12H3O+ = 0.32K+ +0.225Ca+2 + 0.25Fe+2 + 0.39Mg+2 + 1.47Al(OH)4- \
-			+ 0.46Al(OH)4- + 3.54H4SiO4 + 0.12 H2O
-        log_k           -40.267   # Illite, phreeqc.dat
-        delta_h 54.684 kcal
+Biotite    # Kinetics
+K0.85(Al0.10Si0.2Fe1.3Fe0.05Mg1.25)Si2.8Al1.2O10(OH)2 + 10.0H3O+ = 0.85K+ + 0.1Al+3 + 0.2H4SiO4 + 1.3Fe+2 + 0.05Fe+3 + 1.25Mg+2 + 2.8H4SiO4 + 1.2Al+3 + 10H2O 
+log_k 20 # 12.7 phreeqc.dat
+
+Hornblende # Kinetics
+(Na0.34K0.05)(Ca1.71Mg2.84Fe2.06Al0.89)Al1.0Si6.68O22(OH)2 + 19.28H3O+ = \
+  0.34Na+ + 0.05K+ + 1.71Ca+2 + 2.84Mg+2 + 2.06Fe+2 + 0.00Fe+3 + \
+  0.89Al+3 + 1.0Al+3 + 6.68H4SiO4 + 16.56H2O
+  log_k 0
+  
+Regolith_biotite    # Equilibrium phase
+K0.65(Al1.10Si0.15Fe0.35Fe0.15Mg0.55)Si3.2Al0.8O10(OH)2 + 8.6H3O+ = \
+  0.65K+ + 1.1Al+3 + 0.15H4SiO4 + 0.35Fe+2 + 0.15Fe+3 + 0.55Mg+2 + \
+  3.2H4SiO4 + 0.8Al+3 + 7.2H2O 
+       # log_k           -40.267   Illite, Al(OH)4-, phreeqc.dat
+       # delta_h 54.684 kcal
+       # Al+3 + 8 H2O = Al(OH)4- + 4 H3O+
+       #        log_k           -22.7
+       # delta_h 42.30           kcal
+       # log_k = -40.267 - 1.9x-22.7 = 2.683
+       # delta_h = 50.685 - 1.9x42.30 =  -29.685
+       log_k 2.683
+       delta_h -29.685
+
 END
 SOLUTION_SPECIES
    H2O + 0.01e- = H2O-0.01
@@ -238,35 +247,6 @@ Calcite
 2070 RETURN
 	-end
 
-Smectite-Illite # Secondary phase, rate not used
-	-start
-10  REM PARM(1) is log10 surface area in m^2
-20  DATA "Smectite-Illite", -10.98, 23.6, 0.34, 1, 1,   -12.78, 35.0, 0, 1, 1,   -16.52, 58.9, -0.4, 1, 1
-30  RESTORE 20
-40  READ name$
-50  DIM p(3,5)
-60  FOR i = 1 to 3
-70    FOR j = 1 to 5
-80      READ p(i,j)
-100   NEXT j
-110 NEXT i
-120 omega = SR(name$)
-130 GOSUB 2000  # calculate rates
-140 moles = PARM(1) * rate * time
-150 SAVE moles
-160 PUT (rate, 1,10)
-180 END
-
-2000 REM Palandri and Kharaka rate subroutine
-2010 R = 0.00831470	# kJ/deg-mol 
-2020 aH = act("H3O+")
-2030 FOR i = 1 to 3
-2040   rate_i = 10^p(i,1) * exp(-p(i,2)/R*(1/TK - 1/298.15)) * aH^p(i,3) * (1 - omega^p(i,4))^p(i,5)
-2050   rate = rate + rate_i
-2060 NEXT i
-2070 RETURN
-	-end
-
 Nitrification
  -start
    1 REM parm(1) is log factor to speed or slow reaction
@@ -348,20 +328,21 @@ END
 
 KINETICS 1 O-Horizon and UZ (normal and preferential)
 
-Oligoclase
-	-parm % koligu       %                # fit the first parameter as log10 Surface Area
+Andesine
+	-parm % kandiu       %                # fit the first parameter as log10 Surface Area
         -m    1000
+
+K-spar
+	-parm % kkspru       %                # fit the first parameter as log10 Surface Area
+        -m    1000
+        
 
 Biotite
 	-parm % kbiotu       %              # fit the first parameter as log10 Surface Area
         -m    1000
 
-Chlorite
-	-parm % kchlru       %  # fit the first parameter as log10 Surface Area
-        -m    1000
-
-Calcite
-        -parm % kcalcu       % # fit the first parameter as log10 Surface Area
+Hornblende
+	-parm % khnbdu       %              # fit the first parameter as log10 Surface Area
         -m    1000
         
 Pyrite_O2
@@ -376,20 +357,6 @@ Nitrification
     -m        1000
     -parms    % knitru       %
 
-#Potassium_Cycling
-#    -formula KHCO3 1  Mg(HCO3)2 1 # Ca(HCO3)2 1 
-#    -m       0
-#    -parms   % kK_sum       % % kK_win       %
-
-#Amm_assimilation
-#	-formula AmmHHCO3 -1
-#	-m       1000
-#	-parms   -5.5
-	
-#NO3_assimilation
-#	-formula NO3 -1 HCO3 1
-#	-m       1000
-#	-parms   -7.5	
 
 -step 86400
 #        -cvode
@@ -398,35 +365,30 @@ END
 
 
 KINETICS 2 Sat and Preferential Sat 
-Oligoclase
-	-parm % koligs       %              # fit the first parameter as log10 Surface Area
+
+Andesine
+	-parm % kandis       %                # fit the first parameter as log10 Surface Area
         -m    1000
 
+K-spar
+	-parm % kksprs       %                # fit the first parameter as log10 Surface Area
+        -m    1000
+        
+
+Hornblende
+	-parm % khnbds       %              # fit the first parameter as log10 Surface Area
+        -m    1000
+        
 Biotite
 	-parm % kbiots       %              # fit the first parameter as log10 Surface Area
         -m    1000
 
-Chlorite
-	-parm % kchlrs       %              # fit the first parameter as log10 Surface Area
-        -m    1000
-
-Calcite
-        -parm % kcalcs       %              # fit the first parameter as log10 Surface Area
-        -m    1000
-        
 Pyrite_O2
     -formula  Pyrite 1
     -m        1000
     -m0       1000
     -parms    % kpyr_s       % 0 0.5 -0.11
     -tol      1e-008	
-
-#Pyrite_O2_xtreme
-#    -formula  FeS2 1 H2O 0.5 O2 3.75
-#    -m        1000
-#    -m0       1000
-#    -parms    % kpyrxt       % 0 0.5 -0.11 %    tpyrxt    %
-#    -tol      1e-008	
 
 Nitrification
     -formula Amm -1 NH3 +1
@@ -452,7 +414,7 @@ EQUILIBRIUM_PHASES 30 Unsaturated zone
 	Kaolinite   0 0 #precipitate
 	Goethite    0 0 #precipitate
 	Gibbsite    0 0 #precipitate
-	Smectite-Illite 0 0 #precipitate  # fit the first 0, equilibrium constant
+	Regolith_biotite %   ksBiou   % 0 #precipitate  # fit the first 0, equilibrium constant
 #	Calcite     0 0
 #	O2(g)       -0.9 100      # atmospheric, could adjust Use this for gradient of O2, this being the most oxygen rich
 	O2(g)       % O2uz         % 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
@@ -462,8 +424,7 @@ EQUILIBRIUM_PHASES 4 Saturated zone
 	Kaolinite   0 1e-2 # precipitate
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
-#	Calcite     0 0
-	Smectite-Illite 0 0 # precipitate  # fit the first 0, equilibrium constant
+	Regolith_biotite %   ksBios   % 0 #precipitate  # fit the first 0, equilibrium constant
 END
 EXCHANGE 1
 X	.001

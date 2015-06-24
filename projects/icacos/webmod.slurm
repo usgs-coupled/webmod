@@ -1,11 +1,11 @@
 #!/bin/sh
 
-PROCESSES=5
+PROCESSES=36
 #SBATCH -p prod
 #SBATCH -A nrp
 #SBATCH --output=webmod.pest.out
-#SBATCH --mem-per-cpu=1000M
-#SBATCH -t00:10:00
+#SBATCH --mem-per-cpu=2000M
+#SBATCH -t72:00:00
 #SBATCH --exclusive
 
 module load tools/beopest-12.2-gnu
@@ -14,6 +14,7 @@ module load mpi/openmpi-1.6.5-gcc
 
 LOCAL_HOME=`pwd`
 INPUT_DIR=${LOCAL_HOME}/input
+OUTPUT_DIR=${LOCAL_HOME}/output
 PEST_FILES_DIR=${LOCAL_HOME}/pest_files
 CONTROL_DIR=${LOCAL_HOME}/control
 PROJECT_DIR=${LOCAL_HOME}/pest_run_dir
@@ -66,7 +67,7 @@ sed -i "7s/.*/0.2   2.0   1.0e-3/"                                 ${PROJECT_DIR
 # Line 9 of the pst file. NOPTMAX Max # of optimizations. Default is 30, set to 0 for single run with phi contributions, 1 for sensitivities, or a small number to test PEST loops.
 sed -i "9s/.*/30   .005  4   4  .005   4/"                         ${PROJECT_DIR}/webmod.pst
 # Line 13. SVD block MAXSING EIGTHRESH. Replace MAXSING the maximum number of adjustable variables (number of singlular valuess at which truncation occurs)
-sed -i "13s/.*/19 5e-7/"                                           ${PROJECT_DIR}/webmod.pst
+sed -i "13s/.*/34 5e-7/"                                           ${PROJECT_DIR}/webmod.pst
 # Line 14 EIGWRITE. 0 if not using SVD output file
 sed -i "14s/.*/1/"                                                 ${PROJECT_DIR}/webmod.pst
 
@@ -105,6 +106,7 @@ mpirun -np ${PROCESSES} ppest ${PROJECT_DIR}/webmod.pst /M /L ${PROJECT_DIR}/pst
 # Tidy up
 rm -rf ${PROJECT_DIR}/../pest_results
 mkdir ${PROJECT_DIR}/../pest_results
+cp tsproc.dat         ../pest_results
 cp tsproc.sim.out.ins ../pest_results
 cp webmod.jac         ../pest_results
 cp webmod.jco         ../pest_results
@@ -124,9 +126,14 @@ cp webmod.seo         ../pest_results
 cp webmod.svd         ../pest_results
 cp webmod.pqi         ../pest_results
 cp webmod.params      ../pest_results
+cp webmod.hydro.out   ../pest_results
+cp webmod.statvar     ../pest_results
 cp webmod.pqi         ../input/webmod.pqi.pest
 cp webmod.params      ../input/webmod.params.pest
-cp tsproc.dat         ../pest_results
+mkdir -p output
+cp webmod.hydro.out   ../output/webmod.hydro.out.pest
+cp webmod.stavar      ../output/webmod.statvar.pest
+
 
 cd ${PROJECT_DIR}/..
 

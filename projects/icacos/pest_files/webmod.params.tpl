@@ -676,7 +676,7 @@ chem_sim 9
 one
 1
 1
-0
+1
 ####
 MFMAX 8
 1
