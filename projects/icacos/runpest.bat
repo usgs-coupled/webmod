@@ -203,6 +203,14 @@ IF "%ERRORLEVEL%" == "0" (
     copy webmod.hydro.out   ..\output\webmod.hydro.out.pest
     copy webmod.statvar     ..\output\webmod.statvar.pest
     copy tsproc.dat         ..\pest_results
+REM Plot residuals and correlation
+    %PEST_BIN_DIR%\pest_plot webmod.rei ..\webmod__fit.pdf none
+REM Plot parameters changes
+    %PEST_BIN_DIR%\parm_plot webmod.pst webmod.sen ..\webmod_par_calib.pdf none
+REM Plot sensitivities
+    %PEST_BIN_DIR%\sen_plot webmod.sen ..\webmod_sensitivity.pdf
+REM Plot contributions to phi by observation group
+    %PEST_BIN_DIR%\pcon_plot webmod.rec ..\webmod_phi.pdf none
     cd   %PROJECT_DIR%\..
 REM
 REM run sensitivity plots here
