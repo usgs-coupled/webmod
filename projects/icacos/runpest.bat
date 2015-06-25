@@ -12,6 +12,8 @@ set HOME=%cd%
 set HOME_SED=%HOME:\=/%
 set "INPUT_DIR=%HOME%\input"
 set INPUT_DIR_SED=%INPUT_DIR:\=/%
+set "OUTPUT_DIR=%HOME%\output"
+set OUTPUT_DIR_SED=%OUTPUT_DIR:\=/%
 set "PEST_FILES_DIR=%HOME%\pest_files"
 set PEST_FILES_DIR_SED=%PEST_FILES_DIR:\=/%
 set "CONTROL_DIR=%HOME%\control"
@@ -65,6 +67,9 @@ if %errors% == 2 (
     
 REM set port number
 set PORT=4004 
+
+REM setup output directory 
+if NOT exist %OUTPUT_DIR% mkdir %OUTPUT_DIR%
 
 REM setup working directory PROJECT_DIR=pest_run_dir
 if exist %PROJECT_DIR% rmdir /s/q %PROJECT_DIR%
@@ -191,8 +196,12 @@ IF "%ERRORLEVEL%" == "0" (
     copy webmod.svd         ..\pest_results
     copy webmod.pqi         ..\pest_results
     copy webmod.params      ..\pest_results
+    copy webmod.hydro.out   ..\pest_results
+    copy webmod.statvar     ..\pest_results
     copy webmod.pqi         ..\input\webmod.pqi.pest
     copy webmod.params      ..\input\webmod.params.pest
+    copy webmod.hydro.out   ..\output\webmod.hydro.out.pest
+    copy webmod.statvar     ..\output\webmod.statvar.pest
     copy tsproc.dat         ..\pest_results
     cd   %PROJECT_DIR%\..
 REM
