@@ -230,11 +230,11 @@ Hornblende
 80      READ p(i,j)
 100   NEXT j
 110 NEXT i
-120 omega = SR(name$)QyQy
+120 omega = SR(name$)
 130 GOSUB 2000  # calculate rates
 140 moles = 10^PARM(1) * rate * time
 150 SAVE moles
-160 PUT (rate, 1,10)Qy
+160 PUT (rate, 1,10)
 180 END
  
 2000 REM Palandri and Kharaka rate subroutine
@@ -328,25 +328,6 @@ Pyrite_O2
    25  rate = -9.14 + parm(1) + parm(3)*lm("O2") + parm(4)*lm("H3O+") + parm(2)*log10(m/m0)
    26  rate = 10^rate * (1 - SR("pyrite"))
 #   26  rate = 10^rate
-   30  moles = rate * time
-#   40 if (moles > m) then moles = m
-   200 save moles
-  -end
-
-Pyrite_O2_xtreme
-  -start
-   1 rem        Handcart Gulch model numbers, round 1, Linear increase to add sulfate as water table drops
-   2 rem        parm(1) = log10(A/V, m^2/L water)      parm(2) = exp for (m/m0)
-   3 rem        parm(3) = exp for O2            parm(4) = exp for H+
-#   10 if (m <= 0) then goto 200
-   20 if (si("Pyrite") >= 0) then goto 200
-# log pO2 of -1.8 converted to log molal = -4.476
-   25  rate = -9.14 + parm(1) + parm(3)*-4.476 + parm(4)*lm("H3O+") + parm(2)*log10(m/m0)
-   26  rate = 10^rate * (1 - SR("pyrite"))
-#   26  rate = 10^rate
-   27 gwsto = callback(cell_no,dummy,"gwsto")
-# linear enhancement when gwsto below parm(5)
-   28 if(gwsto < parm(5)) then rate = rate * (parm(5)-gwsto) else rate = 0
    30  moles = rate * time
 #   40 if (moles > m) then moles = m
    200 save moles
