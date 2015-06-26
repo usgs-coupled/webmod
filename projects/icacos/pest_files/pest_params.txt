@@ -16,8 +16,8 @@ kbiots	none	relative	5.5	1	10	phq_k	1.333E+00	-1.133E+01	1
 kpyr_s	none	relative	5.77	1	10	phq_k	1.111E+00	-1.111E+01	1
 knitrs	none	relative	4.525	1	10	phq_k	1.333E+00	-1.133E+01	1
 ksbios	none	relative	5.5	1	10	phq_eq	4.444E-01	-2.444E+00	1
-kk_sum	none	relative	9.8692	1	10	phq_k	5.544E-02	-5.554E-01	1
-kk_win	none	relative	1.6811	1	10	phq_k	5.544E-02	-5.444E-02	1
+kk_sum	fixed	relative	9.8692	1	10	phq_k	5.544E-02	-5.554E-01	1
+kk_win	fixed	relative	1.6811	1	10	phq_k	5.544E-02	-5.444E-02	1
 kpyrxt	none	relative	1	1	10	phq_t	5.556E-01	-8.556E+00	1
 tpyrxt	none	relative	1	1	10	phq_t	2.222E+01	-2.222E+01	1
 todays	fixed	factor	1.225345556	1	10	phq_t	9.889E+00	-8.889E+00	1
