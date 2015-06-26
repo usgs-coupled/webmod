@@ -128,10 +128,10 @@ SOLUTION 4 Saturated Zone
     -water    1 # kg
 END
 RATES
-Oligoclase
+Andesine
 	-start
 10  REM PARM(1) is log10 surface area in m^2
-20  DATA "Oligoclase", -9.67, 65.0, 0.457, 1, 1,   -11.84, 69.8, 0, 1, 1,   -99, 0, 0, 1, 1     
+20  DATA "Andesine", -8.88, 53.5, 0.541, 1, 1,   -11.47, 57.4, 0, 1, 1,   -99, 0, 0, 1, 1
 30  RESTORE 20
 40  READ name$
 50  DIM p(3,5)
@@ -146,9 +146,39 @@ Oligoclase
 150 SAVE moles
 160 PUT (rate, 1,10)
 180 END
-
+ 
 2000 REM Palandri and Kharaka rate subroutine
-2010 R = 0.00831470	# kJ/deg-mol 
+2010 R = 0.00831470	# kJ/deg-mol
+2020 aH = act("H3O+")
+2030 FOR i = 1 to 3
+2040   rate_i = 10^p(i,1) * exp(-p(i,2)/R*(1/TK - 1/298.15)) * aH^p(i,3) # * (1 - omega^p(i,4))^p(i,5)
+#2040   rate_i = 10^p(i,1) * exp(-p(i,2)/R*(1/TK - 1/298.15)) * aH^p(i,3) * (1 - omega^p(i,4))^p(i,5)
+2050   rate = rate + rate_i
+2060 NEXT i
+2070 RETURN
+		-end
+
+K-spar
+	-start
+10  REM PARM(1) is log10 surface area in m^2
+20  DATA "K-spar", -10.06, 51.7, 0.500, 1, 1,   -12.41, 38.0, 0, 1, 1,   -21.20, 94.1, -0.823, 1, 1
+30  RESTORE 20
+40  READ name$
+50  DIM p(3,5)
+60  FOR i = 1 to 3
+70    FOR j = 1 to 5
+80      READ p(i,j)
+100   NEXT j
+110 NEXT i
+120 omega = SR(name$)
+130 GOSUB 2000  # calculate rates
+140 moles = 10^PARM(1) * rate * time
+150 SAVE moles
+160 PUT (rate, 1,10)
+180 END
+ 
+2000 REM Palandri and Kharaka rate subroutine
+2010 R = 0.00831470	# kJ/deg-mol
 2020 aH = act("H3O+")
 2030 FOR i = 1 to 3
 2040   rate_i = 10^p(i,1) * exp(-p(i,2)/R*(1/TK - 1/298.15)) * aH^p(i,3) # * (1 - omega^p(i,4))^p(i,5)
@@ -188,10 +218,10 @@ Biotite
 2070 RETURN
 	-end
 
-Chlorite
+Hornblende
 	-start
 10  REM PARM(1) is log10 surface area in m^2
-20  DATA "Chlorite", -11.11, 88.0, 0.5, 1, 1,   -12.52, 88.0, 0, 1, 1,   -99, 0, 0, 1, 1     
+20  DATA "Hornblende", -7.00, 75.5, 0.600, 1, 1,   -10.3, 94.4, 0, 1, 1,   -99, 0, 0, 1, 1
 30  RESTORE 20
 40  READ name$
 50  DIM p(3,5)
@@ -200,15 +230,15 @@ Chlorite
 80      READ p(i,j)
 100   NEXT j
 110 NEXT i
-120 omega = SR(name$)
+120 omega = SR(name$)QyQy
 130 GOSUB 2000  # calculate rates
 140 moles = 10^PARM(1) * rate * time
 150 SAVE moles
-160 PUT (rate, 1,10)
+160 PUT (rate, 1,10)Qy
 180 END
-
+ 
 2000 REM Palandri and Kharaka rate subroutine
-2010 R = 0.00831470	# kJ/deg-mol 
+2010 R = 0.00831470	# kJ/deg-mol
 2020 aH = act("H3O+")
 2030 FOR i = 1 to 3
 2040   rate_i = 10^p(i,1) * exp(-p(i,2)/R*(1/TK - 1/298.15)) * aH^p(i,3) # * (1 - omega^p(i,4))^p(i,5)
@@ -216,8 +246,7 @@ Chlorite
 2050   rate = rate + rate_i
 2060 NEXT i
 2070 RETURN
-	-end
-
+		-end
 Calcite
 	-start
 10  REM PARM(1) is log10 surface area in m^2
@@ -365,7 +394,6 @@ END
 
 
 KINETICS 2 Sat and Preferential Sat 
-
 Andesine
 	-parm % kandis       %                # fit the first parameter as log10 Surface Area
         -m    1000
@@ -374,13 +402,12 @@ K-spar
 	-parm % kksprs       %                # fit the first parameter as log10 Surface Area
         -m    1000
         
+Biotite
+	-parm % kbiots       %              # fit the first parameter as log10 Surface Area
+        -m    1000
 
 Hornblende
 	-parm % khnbds       %              # fit the first parameter as log10 Surface Area
-        -m    1000
-        
-Biotite
-	-parm % kbiots       %              # fit the first parameter as log10 Surface Area
         -m    1000
 
 Pyrite_O2
@@ -413,7 +440,7 @@ END
 EQUILIBRIUM_PHASES 30 Unsaturated zone
 	Kaolinite   0 0 #precipitate
 	Goethite    0 0 #precipitate
-	Gibbsite    0 0 #precipitate
+#	Gibbsite    0 0 #precipitate
 	Regolith_biotite %   ksBiou   % 0 #precipitate  # fit the first 0, equilibrium constant
 #	Calcite     0 0
 #	O2(g)       -0.9 100      # atmospheric, could adjust Use this for gradient of O2, this being the most oxygen rich
@@ -425,15 +452,6 @@ EQUILIBRIUM_PHASES 4 Saturated zone
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
 	Regolith_biotite %   ksBios   % 0 #precipitate  # fit the first 0, equilibrium constant
-END
-EXCHANGE 1
-X	.001
--eq solution 2
-SURFACE 1
-Hfo_w .001 1 50
--eq solution 2
-REACTION_TEMPERATURE 1
-0
 END
 #USE SOLUTION 3
 #USE EQUILIBRIUM_PHASES 30
