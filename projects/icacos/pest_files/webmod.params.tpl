@@ -168,7 +168,7 @@ xdebug_start 4
 one
 1
 1
-2568
+0
 ####
 C_metric 9
 1
@@ -804,7 +804,7 @@ xdebug_stop 4
 one
 1
 1
-2572
+0
 ####
 NMF 8
 1
