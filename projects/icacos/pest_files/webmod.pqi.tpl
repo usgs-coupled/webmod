@@ -421,10 +421,8 @@ END
 EQUILIBRIUM_PHASES 30 Unsaturated zone
 	Kaolinite   0 0 #precipitate
 	Goethite    0 0 #precipitate
-#	Gibbsite    0 0 #precipitate
+	Gibbsite    0 0 #precipitate
 	Regolith_biotite %   ksBiou   % 0 #precipitate  # fit the first 0, equilibrium constant
-#	Calcite     0 0
-#	O2(g)       -0.9 100      # atmospheric, could adjust Use this for gradient of O2, this being the most oxygen rich
 	O2(g)       % O2uz         % 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
        CO2(g)       % CO2uz        %  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
 END

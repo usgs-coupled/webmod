@@ -276,35 +276,6 @@ Calcite
 2070 RETURN
 	-end
  
-Smectite-Illite # Secondary phase, rate not used
-	-start
-10  REM PARM(1) is log10 surface area in m^2
-20  DATA "Smectite-Illite", -10.98, 23.6, 0.34, 1, 1,   -12.78, 35.0, 0, 1, 1,   -16.52, 58.9, -0.4, 1, 1
-30  RESTORE 20
-40  READ name$
-50  DIM p(3,5)
-60  FOR i = 1 to 3
-70    FOR j = 1 to 5
-80      READ p(i,j)
-100   NEXT j
-110 NEXT i
-120 omega = SR(name$)
-130 GOSUB 2000  # calculate rates
-140 moles = PARM(1) * rate * time
-150 SAVE moles
-160 PUT (rate, 1,10)
-180 END
- 
-2000 REM Palandri and Kharaka rate subroutine
-2010 R = 0.00831470	# kJ/deg-mol
-2020 aH = act("H3O+")
-2030 FOR i = 1 to 3
-2040   rate_i = 10^p(i,1) * exp(-p(i,2)/R*(1/TK - 1/298.15)) * aH^p(i,3) * (1 - omega^p(i,4))^p(i,5)
-2050   rate = rate + rate_i
-2060 NEXT i
-2070 RETURN
-	-end
- 
 Nitrification
  -start
    1 REM parm(1) is log factor to speed or slow reaction
@@ -362,27 +333,7 @@ Pyrite_O2
    200 save moles
   -end
  
-Pyrite_O2_xtreme
-  -start
-   1 rem        Handcart Gulch model numbers, round 1, Linear increase to add sulfate as water table drops
-   2 rem        parm(1) = log10(A/V, m^2/L water)      parm(2) = exp for (m/m0)
-   3 rem        parm(3) = exp for O2            parm(4) = exp for H+
-#   10 if (m <= 0) then goto 200
-   20 if (si("Pyrite") >= 0) then goto 200
-# log pO2 of -1.8 converted to log molal = -4.476
-   25  rate = -9.14 + parm(1) + parm(3)*-4.476 + parm(4)*lm("H3O+") + parm(2)*log10(m/m0)
-   26  rate = 10^rate * (1 - SR("pyrite"))
-#   26  rate = 10^rate
-   27 gwsto = callback(cell_no,dummy,"gwsto")
-# linear enhancement when gwsto below parm(5)
-   28 if(gwsto < parm(5)) then rate = rate * (parm(5)-gwsto) else rate = 0
-   30  moles = rate * time
-#   40 if (moles > m) then moles = m
-   200 save moles
-  -end
- 
 END
- 
  
 KINETICS 1 O-Horizon and UZ (normal and preferential)
  
@@ -412,29 +363,6 @@ Nitrification
     -formula  Amm -1 NH3 +1
     -m        1000
     -parms      -5.8415058E+00
- 
-#Chlorite
-#	-parm   -3.0565561E+00  # fit the first parameter as log10 Surface Area
-#        -m    1000
- 
-#Calcite
-#        -parm   -6.2137962E+00 # fit the first parameter as log10 Surface Area
-#        -m    1000
- 
-#Potassium_Cycling
-#    -formula KHCO3 1  Mg(HCO3)2 1 # Ca(HCO3)2 1
-#    -m       0
-#    -parms     -8.2515520E-03    3.8760184E-02
- 
-#Amm_assimilation
-#	-formula AmmHHCO3 -1
-#	-m       1000
-#	-parms   -5.5
-	
-#NO3_assimilation
-#	-formula NO3 -1 HCO3 1
-#	-m       1000
-#	-parms   -7.5	
  
 -step 86400
 #        -cvode
@@ -487,7 +415,7 @@ END
 EQUILIBRIUM_PHASES 30 Unsaturated zone
 	Kaolinite   0 0 #precipitate
 	Goethite    0 0 #precipitate
-	#Gibbsite    0 0 #precipitate
+	Gibbsite    0 0 #precipitate
 	Regolith_biotite 0 0 #precipitate  # fit the first 0, equilibrium constant
 	O2(g)          -1.0178100E+00 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
         CO2(g)         -2.0851312E+00  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
@@ -495,7 +423,7 @@ END
 EQUILIBRIUM_PHASES 4 Saturated zone
 	Kaolinite   0 1e-2 # precipitate
 	Goethite    0 1e-2 # precipitate
-	#Gibbsite    0 0 # precipitate
+	Gibbsite    0 0 # precipitate
 	Regolith_biotite 0 0 # precipitate  # fit the first 0, equilibrium constant
 END
 #USE SOLUTION 3
