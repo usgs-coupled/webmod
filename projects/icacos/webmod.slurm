@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PROCESSES=23
+PROCESSES=19
 #SBATCH -p prod
 #SBATCH -A nrp
 #SBATCH --output=webmod.pest.out
@@ -65,9 +65,9 @@ sed -i "6s/.*/10.0  -3.0    0.3    0.03     -10  999  LAMFORGIVE/" ${PROJECT_DIR
 # Line 7 of the pst file RELPARMAX FACPARMAX FACORIG.....	
 sed -i "7s/.*/0.2   2.0   1.0e-3/"                                 ${PROJECT_DIR}/webmod.pst
 # Line 9 of the pst file. NOPTMAX Max # of optimizations. Default is 30, set to 0 for single run with phi contributions, 1 for sensitivities, or a small number to test PEST loops.
-sed -i "9s/.*/30   .005  4   4  .005   4/"                         ${PROJECT_DIR}/webmod.pst
+sed -i "9s/.*/0   .005  4   4  .005   4/"                         ${PROJECT_DIR}/webmod.pst
 # Line 13. SVD block MAXSING EIGTHRESH. Replace MAXSING the maximum number of adjustable variables (number of singlular valuess at which truncation occurs)
-sed -i "13s/.*/22 5e-7/"                                           ${PROJECT_DIR}/webmod.pst
+sed -i "13s/.*/18 5e-7/"                                           ${PROJECT_DIR}/webmod.pst
 # Line 14 EIGWRITE. 0 if not using SVD output file
 sed -i "14s/.*/1/"                                                 ${PROJECT_DIR}/webmod.pst
 
