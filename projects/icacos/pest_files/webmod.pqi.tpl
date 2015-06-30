@@ -409,22 +409,22 @@ Nitrification
 END
 
 EQUILIBRIUM_PHASES 0 Equilibrate precipitation and irrigation with atmospheric pO2 and pCO2 @ 686 meters above mean sea level, in log ppm
-	O2(g)         -0.713  100     # log(ppO2)  ~ ppO2 = 0.193 @ 686 m above sea level; = 0.21 at sea level
-	CO2(g)        -3.43   10      # log(ppCO2) ~ ppCO2 = 369 ppm @ 686 m above sea level; ppCO2 400ppm at sea level
+	O2(g)         -0.713  1000      # log(ppO2)  ~ ppO2 = 0.193 @ 686 m above sea level; = 0.21 at sea level
+	CO2(g)        -3.43   1000      # log(ppCO2) ~ ppCO2 = 369 ppm @ 686 m above sea level; ppCO2 400ppm at sea level
 
 
 EQUILIBRIUM_PHASES 2 Equilibrate stream pO2 and pCO2, in log ppm
 # CO2 should be greater than atmosphere. Stream O2 not sensitive in this model.
-	O2(g)       % O2str        % 100      # 
-	CO2(g)      % CO2str       %  10      # ~ PCO2 
+	O2(g)       % O2str        % 1000      # 
+	CO2(g)      % CO2str       % 1000      # ~ PCO2 
 END
 EQUILIBRIUM_PHASES 30 Unsaturated zone
 	Kaolinite   0 0 #precipitate
 	Goethite    0 0 #precipitate
 	Gibbsite    0 0 #precipitate
 	Regolith_biotite %   ksBiou   % 0 #precipitate  # fit the first 0, equilibrium constant
-	O2(g)       % O2uz         % 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
-       CO2(g)       % CO2uz        %  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
+	O2(g)       % O2uz         % 1000      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
+       CO2(g)       % CO2uz        % 1000      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
 END
 EQUILIBRIUM_PHASES 4 Saturated zone
 	Kaolinite   0 1e-2 # precipitate
