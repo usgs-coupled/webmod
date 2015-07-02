@@ -5,6 +5,21 @@ Andesine   # Kinetics
 Ca0.40Na0.60Al1.4Si2.6O8 + 8H2O = 0.4Ca+2 + 0.6Na+ + 1.4Al(OH)4- + 2.6H4SiO4
 	log_k          -19.0  # Ab -18; An -19.714
 
+Albite
+        NaAlSi3O8 + 8 H2O = Na+ + Al(OH)4- + 3 H4SiO4
+        log_k           -18.002
+        delta_h 25.896 kcal
+        
+Anorthite
+        CaAl2Si2O8 + 8 H2O = Ca+2 + 2 Al(OH)4- + 2 H4SiO4
+        log_k           -19.714
+        delta_h 11.580 kcal
+
+Kaolinite
+        Al2Si2O5(OH)4 + 6 H3O+ = 7H2O + 2 H4SiO4 + 2 Al+3
+        log_k           7.435
+        delta_h -35.300 kcal
+       
 K-spar     # Kinetics
 Na0.09K0.91AlSi3O8 + 8H2O = 0.09Na+ + 0.91K+ + Al(OH)4- + 3H4SiO4
         log_k           -20.573
@@ -157,7 +172,65 @@ Andesine
 2060 NEXT i
 2070 RETURN
 		-end
-
+Albite
+	-start
+10  REM PARM(1) is log10 surface area in m^2
+20  DATA "Albite", -10.16, 65.0, 0.457, 1, 1,   -12.56, 69.8, 0, 1, 1,   -15.6, 71.0, -0.572, 1, 1
+30  RESTORE 20
+40  READ name$
+50  DIM p(3,5)
+60  FOR i = 1 to 3
+70    FOR j = 1 to 5
+80      READ p(i,j)
+100   NEXT j
+110 NEXT i
+120 omega = SR(name$)
+130 GOSUB 2000  # calculate rates
+140 moles = 10^PARM(1) * rate * time
+150 SAVE moles
+160 PUT (rate, 1,10)
+180 END
+ 
+2000 REM Palandri and Kharaka rate subroutine
+2010 R = 0.00831470	# kJ/deg-mol
+2020 aH = act("H3O+")
+2030 FOR i = 1 to 3
+2040   rate_i = 10^p(i,1) * exp(-p(i,2)/R*(1/TK - 1/298.15)) * aH^p(i,3) # * (1 - omega^p(i,4))^p(i,5)
+#2040   rate_i = 10^p(i,1) * exp(-p(i,2)/R*(1/TK - 1/298.15)) * aH^p(i,3) * (1 - omega^p(i,4))^p(i,5)
+2050   rate = rate + rate_i
+2060 NEXT i
+2070 RETURN
+		-end
+Anorthite
+	-start
+10  REM PARM(1) is log10 surface area in m^2
+20  DATA "Anorthite", -3.50, 16.6, 1.411, 1, 1,   -9.12, 17.8, 0, 1, 1,   -99, 0, 0, 1, 1
+30  RESTORE 20
+40  READ name$
+50  DIM p(3,5)
+60  FOR i = 1 to 3
+70    FOR j = 1 to 5
+80      READ p(i,j)
+100   NEXT j
+110 NEXT i
+120 omega = SR(name$)
+130 GOSUB 2000  # calculate rates
+140 moles = 10^PARM(1) * rate * time
+150 SAVE moles
+160 PUT (rate, 1,10)
+180 END
+ 
+2000 REM Palandri and Kharaka rate subroutine
+2010 R = 0.00831470	# kJ/deg-mol
+2020 aH = act("H3O+")
+2030 FOR i = 1 to 3
+2040   rate_i = 10^p(i,1) * exp(-p(i,2)/R*(1/TK - 1/298.15)) * aH^p(i,3) # * (1 - omega^p(i,4))^p(i,5)
+#2040   rate_i = 10^p(i,1) * exp(-p(i,2)/R*(1/TK - 1/298.15)) * aH^p(i,3) * (1 - omega^p(i,4))^p(i,5)
+2050   rate = rate + rate_i
+2060 NEXT i
+2070 RETURN
+		-end
+		
 K-spar
 	-start
 10  REM PARM(1) is log10 surface area in m^2
@@ -247,6 +320,36 @@ Hornblende
 2060 NEXT i
 2070 RETURN
 		-end
+Kaolinite
+	-start
+10  REM PARM(1) is log10 surface area in m^2
+20  DATA "Kaolinite", -11.31, 65.9, 0.777, 1, 1,   -13.18, 22.2, 0, 1, 1,   -17.05, 17.9, -0.472, 1, 1
+30  RESTORE 20
+40  READ name$
+50  DIM p(3,5)
+60  FOR i = 1 to 3
+70    FOR j = 1 to 5
+80      READ p(i,j)
+100   NEXT j
+110 NEXT i
+120 omega = SR(name$)
+130 GOSUB 2000  # calculate rates
+140 moles = 10^PARM(1) * rate * time
+150 SAVE moles
+160 PUT (rate, 1,10)
+180 END
+ 
+2000 REM Palandri and Kharaka rate subroutine
+2010 R = 0.00831470	# kJ/deg-mol
+2020 aH = act("H3O+")
+2030 FOR i = 1 to 3
+#2040   rate_i = 10^p(i,1) * exp(-p(i,2)/R*(1/TK - 1/298.15)) * aH^p(i,3) # * (1 - omega^p(i,4))^p(i,5)
+2040   rate_i = 10^p(i,1) * exp(-p(i,2)/R*(1/TK - 1/298.15)) * aH^p(i,3) * (1 - omega^p(i,4))^p(i,5)
+2050   rate = rate + rate_i
+2060 NEXT i
+2070 RETURN
+		-end		
+		
 Calcite
 	-start
 10  REM PARM(1) is log10 surface area in m^2
@@ -337,11 +440,16 @@ END
 
 
 KINETICS 1 O-Horizon and UZ (normal and preferential)
+-cvode
 
 Andesine
 	-parm % kandiu       %                # fit the first parameter as log10 Surface Area
         -m    1000
-
+        
+Albite
+	-parm  % kalbiu       %             # fit the first parameter as log10 Surface Area
+        -m    1000
+        
 K-spar
 	-parm % kkspru       %                # fit the first parameter as log10 Surface Area
         -m    1000
@@ -353,6 +461,10 @@ Biotite
 
 Hornblende
 	-parm % khnbdu       %              # fit the first parameter as log10 Surface Area
+        -m    1000
+
+Kaolinite
+	-parm  % kkaolu       %        # fit the first parameter as log10 Surface Area
         -m    1000
         
 Pyrite_O2
@@ -375,10 +487,15 @@ END
 
 
 KINETICS 2 Sat and Preferential Sat 
+-cvode
 Andesine
 	-parm % kandis       %                # fit the first parameter as log10 Surface Area
         -m    1000
-
+        
+Albite
+	-parm  % kalbis       %             # fit the first parameter as log10 Surface Area
+        -m    1000
+        
 K-spar
 	-parm % kksprs       %                # fit the first parameter as log10 Surface Area
         -m    1000
@@ -391,6 +508,10 @@ Hornblende
 	-parm % khnbds       %              # fit the first parameter as log10 Surface Area
         -m    1000
 
+Kaolinite
+	-parm  % kkaols       %        # fit the first parameter as log10 Surface Area
+        -m    1000
+        
 Pyrite_O2
     -formula  Pyrite 1
     -m        1000
@@ -419,7 +540,7 @@ EQUILIBRIUM_PHASES 2 Equilibrate stream pO2 and pCO2, in log ppm
 	CO2(g)      % CO2str       % 1000      # ~ PCO2 
 END
 EQUILIBRIUM_PHASES 30 Unsaturated zone
-	Kaolinite   0 0 #precipitate
+#	Kaolinite   0 0 #precipitate
 	Goethite    0 0 #precipitate
 	Gibbsite    0 0 #precipitate
 	Regolith_biotite %   ksBiou   % 0 #precipitate  # fit the first 0, equilibrium constant
@@ -427,7 +548,7 @@ EQUILIBRIUM_PHASES 30 Unsaturated zone
        CO2(g)       % CO2uz        % 1000      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
 END
 EQUILIBRIUM_PHASES 4 Saturated zone
-	Kaolinite   0 1e-2 # precipitate
+#	Kaolinite   0 1e-2 # precipitate
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
 	Regolith_biotite %   ksBios   % 0 #precipitate  # fit the first 0, equilibrium constant
