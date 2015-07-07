@@ -3417,7 +3417,6 @@
         sel_mix%lun = my_newunit()
         open (unit=sel_mix%lun,file=sel_mix%file,access='sequential',&
           form='formatted', status='new')
-        write(sf_bas%lun,10) (trim(ent_label(j)), j=3,ntally_cols)
         close (unit = sel_mix%lun)
       end if
       

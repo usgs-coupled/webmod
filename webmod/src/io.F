@@ -171,8 +171,7 @@ c End-period variables
       ioinit = 1
 
       step1 = .true.
-
-
+      nowtime = 0  ! use nowtime as flag for init looops to print Initial Mixes to select_mixes file
 ! Get Dimensions
       nmru = getdim('nmru')
       IF (nmru.EQ.-1) RETURN
