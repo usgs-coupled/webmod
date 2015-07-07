@@ -36,6 +36,7 @@
 
 
       CHARACTER(80) line
+      CHARACTER(16) Now_Time
       INTEGER       i
       INTEGER       cols
       INTEGER       vtype
@@ -182,11 +183,18 @@
 !          ' # of inputs/solns: ',count, (solutions(j),j=1,count)
 !        write(25,130)"Date:  ",(nowtime(i),i=1,3)        
 !        iresult = SetOutputFileOn(ID,.FALSE.)
+        if(.not.nowtime(1)) then
+            write(Now_time,10)'Initial Mixes '  ! Initial Mixes
+        else
+            write(Now_Time,15) nowtime(2),nowtime(3),nowtime(1) ! Date of mix and reaction
+        endif
+          
 #if defined(_WIN32)
 !        I = SYSTEM('copy .\output\select_mixes + .\phreeqc.0.out .\output\select_mixes')
+        I = SYSTEM('echo '// Now_time//'>> '//sel_mix%file)
         I = SYSTEM('copy '//sel_mix%file//' + .\phreeqc.0.out '//sel_mix%file)
 #else
-!        I = SYSTEM('cat .\phreeqc.0.out >> .\output\select_mixes')
+        I = SYSTEM('cat '// Now_time  //' >> '//sel_mix%file)
         I = SYSTEM('cat .\phreeqc.0.out >> '//sel_mix%file)
 #endif
       endif
@@ -194,6 +202,9 @@
       iresult = SetOutputFileOn(ID,files_on)
       et_hold = endmix(1)
 
+10    format (A)
+15    format ('Date: ', i2.2, '/', i2.2, '/', i4.4)
+      
 ! 1000 format(I5,' ', 4(I8.8," "),A, 2I10, A, I3, 20I10) 
  1000 format(I5,' ', 8I10 ,A, 2I10, A, I3, 22I10) 
 
