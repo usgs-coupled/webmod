@@ -1,12 +1,14 @@
 #!/bin/sh
 
-PROCESSES=19
-#SBATCH -p prod
+##PROCESSES=7
+#SBATCH -n 15
+#SBATCH -p UV
 #SBATCH -A nrp
 #SBATCH --output=webmod.pest.out
 #SBATCH --mem-per-cpu=2000M
-#SBATCH -t72:00:00
-#SBATCH --exclusive
+#SBATCH -t20:00:00
+##SBATCH --exclusive
+export SLURM_CPU_BIND=none
 
 module load tools/beopest-12.2-gnu
 module load intel/psxe-2015
@@ -65,16 +67,16 @@ sed -i "6s/.*/10.0  -3.0    0.3    0.03     -10  999  LAMFORGIVE/" ${PROJECT_DIR
 # Line 7 of the pst file RELPARMAX FACPARMAX FACORIG.....	
 sed -i "7s/.*/0.2   2.0   1.0e-3/"                                 ${PROJECT_DIR}/webmod.pst
 # Line 9 of the pst file. NOPTMAX Max # of optimizations. Default is 30, set to 0 for single run with phi contributions, 1 for sensitivities, or a small number to test PEST loops.
-sed -i "9s/.*/0   .005  4   4  .005   4/"                         ${PROJECT_DIR}/webmod.pst
+sed -i "9s/.*/30   .005  4   4  .005   4/"                         ${PROJECT_DIR}/webmod.pst
 # Line 13. SVD block MAXSING EIGTHRESH. Replace MAXSING the maximum number of adjustable variables (number of singlular valuess at which truncation occurs)
-sed -i "13s/.*/18 5e-7/"                                           ${PROJECT_DIR}/webmod.pst
+sed -i "13s/.*/15 5e-7/"                                           ${PROJECT_DIR}/webmod.pst
 # Line 14 EIGWRITE. 0 if not using SVD output file
 sed -i "14s/.*/1/"                                                 ${PROJECT_DIR}/webmod.pst
 
 # Make temp directories
 i=1
-while [ "$i" -le "${PROCESSES}" ]; do
-#for i in {1.."${PROCESSES}"}
+while [ "$i" -le "${SLURM_NTASKS}" ]; do
+#for i in {1.."${SLURM_NTASKS}"}
 #do
     cd ${PROJECT_DIR}
     rm -rf ${TEMP_DIR}$i
@@ -101,7 +103,10 @@ cp ${INPUT_DIR}/webmod.chem.dat        .
 cp ${INPUT_DIR}/phreeq_lut             .
 cp ${INPUT_DIR}/phreeqc_web_lite.dat   .
 
-mpirun -np ${PROCESSES} ppest ${PROJECT_DIR}/webmod.pst /M /L ${PROJECT_DIR}/psttemp
+mpirun -np ${SLURM_NTASKS} ppest ${PROJECT_DIR}/webmod.pst /M /L ${PROJECT_DIR}/psttemp
+# cd ${LOCAL_HOME}
+# ../../bin/webmod -C./control/webmod.control > webmod.log
+# exit 0
 
 # Tidy up
 rm -rf ${PROJECT_DIR}/../pest_results
