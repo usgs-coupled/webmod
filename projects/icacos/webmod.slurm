@@ -1,12 +1,12 @@
 #!/bin/sh
 
 ##PROCESSES=7
-#SBATCH -n 15
-#SBATCH -p UV
+#SBATCH -n 16
+#SBATCH -p prod
 #SBATCH -A nrp
 #SBATCH --output=webmod.pest.out
 #SBATCH --mem-per-cpu=2000M
-#SBATCH -t20:00:00
+#SBATCH -t14:00:00
 ##SBATCH --exclusive
 export SLURM_CPU_BIND=none
 
