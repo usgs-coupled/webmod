@@ -1,6 +1,7 @@
 ptf %
 # Par2par file for PRMS parameter estimation
 * parameter data
+dryfal = %    dryfal    %
 CO2uz =  %    CO2uz     %
 CO2str = %    CO2str    %
 O2uz =   %    O2uz      %

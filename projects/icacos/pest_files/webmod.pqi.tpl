@@ -440,32 +440,32 @@ END
 
 
 KINETICS 1 O-Horizon and UZ (normal and preferential)
-#-cvode
+-cvode
 
-#Andesine
-#	-parm % kandiu       %                # fit the first parameter as log10 Surface Area
-#        -m    1000
+Andesine
+	-parm % kandiu       %                # fit the first parameter as log10 Surface Area
+        -m    1000
         
-#Albite
-#	-parm  % kalbiu       %             # fit the first parameter as log10 Surface Area
-#        -m    1000
+Albite
+	-parm  % kalbiu       %             # fit the first parameter as log10 Surface Area
+        -m    1000
         
 K-spar
 	-parm % kkspru       %                # fit the first parameter as log10 Surface Area
         -m    1000
         
 
-#Biotite
-#	-parm % kbiotu       %              # fit the first parameter as log10 Surface Area
-#        -m    1000
+Biotite
+	-parm % kbiotu       %              # fit the first parameter as log10 Surface Area
+        -m    1000
 
-#Hornblende
-#	-parm % khnbdu       %              # fit the first parameter as log10 Surface Area
-#        -m    1000
+Hornblende
+	-parm % khnbdu       %              # fit the first parameter as log10 Surface Area
+        -m    1000
 
-#Kaolinite
-#	-parm  % kkaolu       %        # fit the first parameter as log10 Surface Area
-#        -m    1000
+Kaolinite
+	-parm  % kkaolu       %        # fit the first parameter as log10 Surface Area
+        -m    1000
         
 Pyrite_O2
     -formula  Pyrite  1
@@ -487,22 +487,22 @@ END
 
 
 KINETICS 2 Sat and Preferential Sat 
-#-cvode
+-cvode
 Andesine
 	-parm % kandis       %                # fit the first parameter as log10 Surface Area
         -m    1000
         
-#Albite
-#	-parm  % kalbis       %             # fit the first parameter as log10 Surface Area
-#        -m    1000
+Albite
+	-parm  % kalbis       %             # fit the first parameter as log10 Surface Area
+        -m    1000
         
 K-spar
 	-parm % kksprs       %                # fit the first parameter as log10 Surface Area
         -m    1000
         
-#Biotite
-#	-parm % kbiots       %              # fit the first parameter as log10 Surface Area
-#        -m    1000
+Biotite
+	-parm % kbiots       %              # fit the first parameter as log10 Surface Area
+        -m    1000
 
 Hornblende
 	-parm % khnbds       %              # fit the first parameter as log10 Surface Area
@@ -552,6 +552,19 @@ EQUILIBRIUM_PHASES 4 Saturated zone
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
 #	Regolith_biotite %   ksBiou   % 0 #precipitate  # fit the first 0, equilibrium constant
+END
+REACTION 1 Sea salt
+C       2.180677103e-03 
+Ca      1.066093459e-02 
+Cl      5.665211193e-01 
+K       1.057772844e-02 
+Mg      5.506609125e-02 
+Na      4.854108848e-01 
+S       2.925759851e-02 
+Si      7.382312412e-05 
+H       2.255504347e-03 
+O       1.243079188e-01 
+%   dryfal   %   # 1 mol makes a liter of seawater 
 END
 #USE SOLUTION 3
 #USE EQUILIBRIUM_PHASES 30
