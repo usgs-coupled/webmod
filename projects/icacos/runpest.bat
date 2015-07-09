@@ -125,13 +125,13 @@ for /f "tokens=1,* delims=]" %%A in ('"type %pstfile%|find /n /v """') do (
     if "!COUNTER!" == "1" (
         ECHO !line! > %tmppest%
     ) else if "!COUNTER!" == "6" (
-        ECHO 10.0  -3.0    0.3    0.03     -10  999  LAMFORGIVE >> %tmppest%
+        ECHO 10.0  -3.0    0.3    0.03     -%NODES%  999  LAMFORGIVE >> %tmppest%
     ) else if "!COUNTER!" == "7" ( 
         ECHO 0.2   2.0   1.0e-3 >> %tmppest%
     ) else if "!COUNTER!" == "9" ( 
         ECHO 30   .005  4   4  .005   4 >> %tmppest%
     ) else if "!COUNTER!" == "13" ( 
-        ECHO 7 5e-7 >> %tmppest%
+        ECHO 15 5e-7 >> %tmppest%
     ) else if "!COUNTER!" == "14" ( 
         ECHO 1 >> %tmppest%
     ) else (
@@ -170,7 +170,7 @@ copy %INPUT_DIR%\phreeqc_web_lite.dat   .\
 
 REM Run parallel pest Master
 cd %PROJECT_DIR%
-%PEST_BIN_DIR%\beopest64.exe %PROJECT_DIR%\%PST% /H /L :%PORT% 
+%PEST_BIN_DIR%\beopest64.exe %PROJECT_DIR%\%PST% /H /L /p1 :%PORT% 
 
 REM tidy up
 IF "%ERRORLEVEL%" == "0" (
