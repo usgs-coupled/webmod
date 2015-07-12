@@ -1584,7 +1584,7 @@ nmru_res
 nchem_sets
 90
 1
--1
+10
 -1
 -1
 1
