@@ -831,7 +831,7 @@ c
 
       ALLOCATE (sumquz(Nmru))
       if(declvar('topc', 'sumquz', 'nmru', nmru, 'real', 
-     + 'Sum of predicted flux from unsaturated zone'//
+     + 'Sum of predicted flux from unsaturated zone '//
      + 'to the saturated zone for each subcatchment',
      +  'meters',sumquz).ne.0) return
 

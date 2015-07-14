@@ -89,51 +89,51 @@ c
       ALLOCATE(mru_soltab(ndays,nmru))
       if(declvar('soltab', 'mru_soltab', 'ndays,nmru',
      +      ndays*nmru,'real',
-     +     'Potential shortwave radiation for each model response '//
-     +     'unit for each timestep',
+     +     'Potential shortwave radiation for each MRU '//
+     +     'for each timestep',
      +     'langleys',
      +   mru_soltab).ne.0) return
 
       ALLOCATE(sunhrs_soltab(ndays,nmru))
       if(declvar('soltab', 'sunhrs_soltab', 'ndays,nmru',
      +      ndays*nmru,'real',
-     +     'Hours between sunrise and sunset for model response unit',
+     +     'Hours between sunrise and sunset for MRU',
      +     'hours',
      +   sunhrs_soltab).ne.0) return
 
       ALLOCATE(mru_cossl(nmru))
       if(declvar('soltab', 'mru_cossl', 'nmru', nmru,
      +     'real',
-     +     'Cosine of the slope of the model response unit',
+     +     'Cosine of the slope of the MRU',
      +     'none',
      +   mru_cossl).ne.0) return
 
       ALLOCATE(mru_sunrise(nmru))
       if(declvar('soltab', 'mru_sunrise', 'nmru', nmru,
      +     'real',
-     +     'Time of sunrise on the model response unit',
+     +     'Time of sunrise on the MRU',
      +     'hours',
      +   mru_sunrise).ne.0) return
 
       ALLOCATE(mru_sunset(nmru))
       if(declvar('soltab', 'mru_sunset', 'nmru', nmru,
      +     'real',
-     +     'Time of sunset on model response unit',
+     +     'Time of sunset on MRU',
      +     'hours',
      +   mru_sunset).ne.0) return
 
       ALLOCATE(mru_sunrise2(nmru))
       if(declvar('soltab', 'mru_sunrise2', 'nmru', nmru,
      +     'real',
-     +     'Time of second sunrise on the model response unit if '//
+     +     'Time of second sunrise on the MRU if '//
      +     'applicable',
      +     'hours',
      +   mru_sunrise2).ne.0) return
 
       ALLOCATE(mru_sunset2(nmru))
       if(declvar('soltab', 'mru_sunset2', 'nmru', nmru,
-     +     'real', 'Time of second sunset on the model response '//
-     +     'unit if applicable', 'hours',
+     +     'real', 'Time of second sunset on the MRU '//
+     +     'if applicable', 'hours',
      +   mru_sunset2).ne.0) return
 
       ALLOCATE(mru_slope(nmru))
@@ -147,16 +147,16 @@ c
       ALLOCATE(mru_aspect(nmru))
       if(declparam('soltab', 'mru_aspect', 'nmru', 'real',
      +   '0.0', '0.0', '360.0',
-     +   'Aspect of model response unit',
-     +   'Aspect for each model response unit',
+     +   'MRU aspect, in degrees clockwise from north',
+     +   'MRU aspect, in degrees clockwise from north',
      +   'degrees')
      +   .ne.0) return
 
       ALLOCATE(mru_lat(nmru))
       if(declparam('soltab', 'mru_lat', 'nmru', 'real',
      +   '40.0', '20.0', '60.0',
-     +   'Latitude of model response unit',
-     +   'Latitude of model response unit',
+     +   'Latitude of MRU',
+     +   'Latitude of MRU',
      +   'degrees')
      +   .ne.0) return
 

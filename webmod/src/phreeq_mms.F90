@@ -1344,7 +1344,7 @@
 
       allocate(ch_basin_permil_ET(nsolute))
       if(declvar('phreeqmms', 'ch_basin_permil_ET', 'nsolute', nsolute,&
-           'double','Delta of evapotransiration for basin',&
+           'double','Delta of evapotranspiration for basin',&
            'permil', ch_basin_permil_ET).ne.0) return
 
       allocate(ch_basin_permil_final(nsolute))
@@ -2776,11 +2776,11 @@
            '0 - External chemistry is constant as '//&
            'defined by init_soln_ext and the pqi file; '//&
            '1 - External chemistry is provided in '//&
-           'the chemdep file for every time.',&
+           'the chem.dat file for every time step.',&
            '0 - External chemistry is constant as '//&
            'defined by init_soln_ext and the pqi file; '//&
            '1 - External chemistry is provided in '//&
-           'the chemdep file for every time.',&
+           'the chem.dat file for every time step.',&
            'none') .ne.0) return
 
 !
@@ -2835,9 +2835,9 @@
       allocate(solnset_table(nmru_res,nchem_sets))
       if(declparam('phreeqmms','solnset_table', 'nmru_res,nchem_sets',&
          'integer', '1', '1', '100',&
-         'Sets of solutions available for initializing mru reservoir '//&
+         'Sets of solutions available for initializing MRU reservoir '//&
          'compositions',&
-         'Sets of solutions for initializing mru reservoir compositions'//&
+         'Sets of solutions for initializing MRU reservoir compositions'//&
          'The solution numbers correspond to those read '//&
          'from the phreeq input file, *.pqi.',&
          'none') .ne.0) return
