@@ -1533,7 +1533,7 @@ iso_n 8
 nmru
 1
 3
-0.5
+% iso_n        %
 ####
 ppt_rad_adj 4
 1
