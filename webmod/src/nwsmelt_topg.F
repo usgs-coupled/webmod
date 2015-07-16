@@ -228,8 +228,8 @@ c
       ALLOCATE (ELEV(Nmru))  ! renamed in getparam
       if(declparam('basin', 'mru_elev', 'nmru', 'real',
      +   '0.', '-300.', '10000',
-     +   'Mean elevation for each MRU',
-     +   'Mean elevation for each MRU',
+     +   'Mean altitude of MRU',
+     +   'Mean altitude of MRU',
      +   'meters').ne.0) return
      
       ALLOCATE (mruarea(Nmru)) ! renamed in getparam

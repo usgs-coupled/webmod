@@ -222,10 +222,10 @@ C23456789112345678921234567893123456789412345678951234567896123456789712
      +     'degrees F',
      +   tmin_rain_sta).ne.0) return
 
-      if (declparam ('xyz_dist', 'mru_elev', 'nmru', 'real',
+      if (declparam('xyz_dist', 'mru_elev', 'nmru', 'real',
      +   '0.', '-300.', '10000',
-     +   'Mean elevation for each MRU',
-     +   'Mean elevation for each MRU',
+     +   'Mean altitude of MRU',
+     +   'Mean altitude of MRU',
      +   'meters').ne.0) return
 
       if (declparam ('xyz_dist', 'mru_x', 'nmru', 'real',

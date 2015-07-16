@@ -94,8 +94,8 @@ c
       ALLOCATE (mru_elev(Nmru))
       if(declparam('basin', 'mru_elev', 'nmru', 'real',
      +   '0.', '-300.', '10000',
-     +   'Mean elevation for each MRU',
-     +   'Mean elevation for each MRU',
+     +   'Mean altitude of MRU',
+     +   'Mean altitude of MRU',
      +   'meters').ne.0) return
      
       ALLOCATE (mru_area(Nmru))
@@ -108,9 +108,9 @@ c
       ALLOCATE (mru_slope(Nmru))
       if(declparam('basin', 'mru_slope', 'nmru', 'real',
      +   '0.0', '0.0', '10.0',
-     +   'MRU slope in decimal vertical feet/horizontal feet',
-     +   'MRU slope in decimal vertical feet/horizontal feet',
-     +   'decimal percent')
+     +   'MRU slope in vertical distance/horizontal distance',
+     +   'MRU slope in vertical distance/horizontal distance',
+     +   'unitless')
      +   .ne.0) return
 
       ALLOCATE (mru_percent_imperv(Nmru))

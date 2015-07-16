@@ -336,10 +336,10 @@ c
      +   'km2').ne.0) return
       
       ALLOCATE (mru_elev(nmru))
-      if(declparam('temp_1sta', 'mru_elev', 'nmru', 'real',
+      if(declparam('temp1sta', 'mru_elev', 'nmru', 'real',
      +   '0.', '-300.', '10000',
-     +   'Mean elevation for each MRU',
-     +   'Mean elevation for each MRU',
+     +   'Mean altitude of MRU',
+     +   'Mean altitude of MRU',
      +   'meters').ne.0) return
 !
 ! Allocate local variables

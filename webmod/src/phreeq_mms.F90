@@ -2923,7 +2923,7 @@
 
       allocate(iso_n(nmru))
       if(declparam('phreeqmms','iso_n', 'nmru',&
-         'double', '0.5', '0.5', '1.0',&
+         'double', '0.4', '0.0', '1.0',&
          'Isotopic fractionation factor "n"',&
          'Isotopic fractionation factor "n" of the '//&
          'Craig-Gordon evaporative fractionation model (1965)',&
@@ -3188,8 +3188,8 @@
       ALLOCATE (mru_elev(nmru))
       if(declparam('basin', 'mru_elev', 'nmru', 'real',&
          '0.', '-300.', '10000',&
-         'Mean elevation for each MRU',&
-         'Mean elevation for each MRU',&
+         'Mean altitude of MRU',&
+         'Mean altitude of MRU',&
          'meters').ne.0) return
      
 !
@@ -7982,11 +7982,13 @@
                  rh=relhum(1)
 !                   iresult=fractionate(water, indx,evap,totvol,ison,rh,tempc)  ! Rayleigh fractionation of evapaporated (or sublimated) water
 !                 if(srzwet(ia,is).gt.0) then ! water table is close to surface so permit fractionation
-                 if(riparian(ia,is)) then ! water table is close to surface so permit fractionation
-                   iresult=fractionate(water, indx,evap,totvol,ison,rh,tempc)  ! Rayleigh fractionation of evapaporated (or sublimated) water
-                 else
-                   iresult=fractionate(transp, indx,evap,totvol,ison,rh,tempc)  ! transp keywork results in no fractionation for UZ bins with thick UZ
-                 endif
+                 !if(riparian(ia,is)) then ! water table is close to surface so permit fractionation
+                 !  iresult=fractionate(water, indx,evap,totvol,ison,rh,tempc)  ! Rayleigh fractionation of evapaporated (or sublimated) water
+                 !else
+                 !  iresult=fractionate(transp, indx,evap,totvol,ison,rh,tempc)  ! transp keywork results in no fractionation for UZ bins with thick UZ
+                 !endif
+! revise so that fractionation is possible over the entire hillslope and let iso_n calibrate to a value related to the amount of open water.
+                 iresult=fractionate(water, indx,evap,totvol,ison,rh,tempc)  ! Rayleigh fractionation of evapaporated (or sublimated) water
                  IF (iresult.NE.0) THEN
                   PRINT *, 'Errors during transpiration fractionation'
                   CALL OutputErrorString(id)
