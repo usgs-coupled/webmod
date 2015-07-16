@@ -592,11 +592,6 @@ O       1.243079188e-01
 END
 NAMED_EXPRESSIONS
 
-Log_alpha_18O_H2O(g)/H2O(l)             # 1000ln(alpha(0C)) = -9.3
-     # 0-100 C
-     -ln_alpha1000   2.0667   0.0     0.4156e3       0.0     -1.137e6
-     #-ln_alpha1000   %   ofrac        %   0.0     0.4156e3       0.0     -1.137e6
-     #-ln_alpha1000   0
 #USE SOLUTION 3
 #USE EQUILIBRIUM_PHASES 30
 #USE EXCHANGE 1

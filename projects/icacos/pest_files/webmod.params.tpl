@@ -1050,7 +1050,7 @@ riparian_thresh 6
 nmru
 1
 2
-% ripthr       %
+10.0
 ####
 irrig_int_init 15
 1
@@ -1533,7 +1533,21 @@ iso_n 8
 nmru
 1
 3
-% iso_n        %
+0.5
+####
+iso_theta 8
+1
+nmru
+1
+3
+1.0
+####
+iso_f 8
+1
+nmru
+1
+3
+% iso_f        %
 ####
 ppt_rad_adj 4
 1
