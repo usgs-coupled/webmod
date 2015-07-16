@@ -347,13 +347,13 @@ c
       if(declparam('obs_chem', 'chem_ext', 'one', 'integer',
      +     '0', '0', '1',
      +     '0 - External chemistry is constant as '//
-     $     'defined by init_soln_ext and the pqi file; '//
-     $     '1 - External chemistry is provided in '//
-     +     'the chemdep file for every time.',
+     +     'defined by init_soln_ext and the pqi file; '//
+     +     '1 - External chemistry is provided in '//
+     +     'the chem.dat file for every time step.',
      +     '0 - External chemistry is constant as '//
-     $     'defined by init_soln_ext and the pqi file; '//
-     $     '1 - External chemistry is provided in '//
-     +     'the chemdep file for every time.',
+     +     'defined by init_soln_ext and the pqi file; '//
+     +     '1 - External chemistry is provided in '//
+     +     'the chem.dat file for every time step.',
      +     'none') .ne.0) return
 
       if(declparam('phreeqmms', 'chem_sim', 'one', 'integer',

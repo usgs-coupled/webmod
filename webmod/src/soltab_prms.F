@@ -141,7 +141,7 @@ c
      +   '0.0', '0.0', '10.0',
      +   'MRU slope in decimal vertical feet/horizontal feet',
      +   'MRU slope in decimal vertical feet/horizontal feet',
-     +   'decimal percent')
+     +   'unitless')
      +   .ne.0) return
 
       ALLOCATE(mru_aspect(nmru))

@@ -146,10 +146,10 @@
       DATA yes_m,yes_b,yes_rxn/3*.TRUE./
       DATA not_m,not_b,not_rxn/3*.FALSE./
       INTERFACE
-         FUNCTION fractionate(phase,indx,evap,totvol,ison,rh,tempevap)
+         FUNCTION fractionate(phase,indx,evap,totvol,ison,isoth,isofac,rh,tempevap)
            IMPLICIT NONE
            INTEGER :: phase, indx
-           DOUBLE PRECISION :: evap,totvol,ison,rh,tempevap
+           DOUBLE PRECISION :: evap,totvol,ison,isoth,isofac,rh,tempevap
            INTEGER :: fractionate
          END FUNCTION fractionate
       END INTERFACE
@@ -573,7 +573,7 @@
       double precision,allocatable:: mru_in_vol(:),mru_out_vol(:)
       double precision, save, allocatable :: fracs(:), conc(:)
       double precision, allocatable :: fracsdep(:)
-      double precision :: evap, ison, rh  ! for raleigh fractionation
+      double precision :: evap, ison,isoth,isofac, rh  ! for raleigh fractionation
 
 ! convfactor times Moles per liter converts to user units
 
@@ -627,7 +627,8 @@
       integer, PARAMETER :: snow = 0  ! flags sublimation from snow so use vapor/solid curve
       integer, PARAMETER :: water = 1 ! evaporation from canopy and UZ as water so use vapor/liquid curve
       integer, PARAMETER :: transp = 3 ! transpired water undergoes no fractionation
-      double precision, save, allocatable :: iso_n(:)    ! iso_n
+      double precision, save, allocatable :: iso_n(:),iso_theta(:),iso_fac(:) ! Terms for kinetic 
+                       ! fractionation and throttle for both equilibrium and kinetic fractionation
       double precision,allocatable:: evap_iso(:)    ! delta values for evap distinct from remaining water
       double precision :: eps_eq, delta_evap_permil
 !
@@ -2923,10 +2924,26 @@
 
       allocate(iso_n(nmru))
       if(declparam('phreeqmms','iso_n', 'nmru',&
-         'double', '0.4', '0.0', '1.0',&
+         'double', '0.5', '0.5', '1.0',&
          'Isotopic fractionation factor "n"',&
          'Isotopic fractionation factor "n" of the '//&
          'Craig-Gordon evaporative fractionation model (1965)',&
+         'none') .ne.0) return
+      
+      allocate(iso_theta(nmru))
+      if(declparam('phreeqmms','iso_theta', 'nmru',&
+         'double', '1.0', '0.5', '1.0',&
+         'Isotopic fractionation factor "theta"',&
+         'Isotopic fractionation factor "theta" of the '//&
+         'Craig-Gordon evaporative fractionation model (1965)',&
+         'none') .ne.0) return
+      
+      allocate(iso_fac(nmru))
+      if(declparam('phreeqmms','iso_fac', 'nmru',&
+         'double', '0.1', '0.0', '1.0',&
+         'Areal fractionation factor',&
+         'Areal fractionation factor'//&
+         'to reduce simulated open water fractionation',&
          'none') .ne.0) return
 
       allocate(init_soln_mru(nmru))
@@ -3583,6 +3600,12 @@
 
       if(getparam('phreeqmms', 'iso_n', nmru, 'double',&
            iso_n) .ne.0) return
+
+      if(getparam('phreeqmms', 'iso_theta', nmru, 'double',&
+           iso_theta) .ne.0) return
+
+      if(getparam('phreeqmms', 'iso_fac', nmru, 'double',&
+           iso_fac) .ne.0) return
 
       if(getparam('phreeqmms', 'snow_ion_factor', nmru, 'real',&
            snow_ion_factor) .ne.0) return
@@ -7127,10 +7150,12 @@
                if(n_iso.ne.0.and.vmix_can(is,6).gt.0) then
                  evap=vmix_can(is,6)
                  ison=iso_n(is)
+                 isoth=iso_theta(is)
+                 isofac=iso_fac(is)
                  rh=relhum(1)
                  totvol_can = totvol - vmin_canopy(is)
 ! Rayleigh fractionation of evaporated water. Reduce volume 
-                 iresult=fractionate(water,indx,evap,totvol_can,ison,rh,tempc)
+                 iresult=fractionate(water,indx,evap,totvol_can,ison,isoth,isofac,rh,tempc)
                  IF (iresult.NE.0) THEN
                   PRINT *, 'Errors during evaporation fractionation'
                   CALL OutputErrorString(id)
@@ -7348,8 +7373,10 @@
                if(n_iso.ne.0.and.vmix_snow(is,6).gt.0) then
                  evap=vmix_snow(is,6)
                  ison=iso_n(is)
+                 isoth=iso_theta(is)
+                 isofac=iso_fac(is)
                  rh=relhum(1)
-                 iresult=fractionate(snow,indx,evap,totvol,ison,rh,tempc)  ! Rayleigh fractionation of evaporated (or sublimated) water
+                 iresult=fractionate(snow,indx,evap,totvol,ison,isoth,isofac,rh,tempc)  ! Rayleigh fractionation of evaporated (or sublimated) water
                  IF (iresult.NE.0) THEN
                   PRINT *, 'Errors during sublimation fractionation'
                   CALL OutputErrorString(id)
@@ -7979,6 +8006,8 @@
                if(n_iso.ne.0.and.vmix_uz(ia,is,6).gt.0) then
                  evap=vmix_uz(ia,is,6)
                  ison=iso_n(is)
+                 isoth=iso_theta(is)
+                 isofac=iso_fac(is)
                  rh=relhum(1)
 !                   iresult=fractionate(water, indx,evap,totvol,ison,rh,tempc)  ! Rayleigh fractionation of evapaporated (or sublimated) water
 !                 if(srzwet(ia,is).gt.0) then ! water table is close to surface so permit fractionation
@@ -7988,7 +8017,7 @@
                  !  iresult=fractionate(transp, indx,evap,totvol,ison,rh,tempc)  ! transp keywork results in no fractionation for UZ bins with thick UZ
                  !endif
 ! revise so that fractionation is possible over the entire hillslope and let iso_n calibrate to a value related to the amount of open water.
-                 iresult=fractionate(water, indx,evap,totvol,ison,rh,tempc)  ! Rayleigh fractionation of evapaporated (or sublimated) water
+                 iresult=fractionate(water, indx,evap,totvol,ison,isoth,isofac,rh,tempc)  ! Rayleigh fractionation of evapaporated (or sublimated) water
                  IF (iresult.NE.0) THEN
                   PRINT *, 'Errors during transpiration fractionation'
                   CALL OutputErrorString(id)
@@ -8191,9 +8220,11 @@
                if(n_iso.ne.0.and.vmix_can(is,6).gt.0) then
                  evap = vmix_can(is,6)
                  ison=iso_n(is)
+                 isoth=iso_theta(is)
+                 isofac=iso_fac(is)
                  rh=relhum(1)
                  totvol_can = totvol - vmin_canopy(is)
-                 iresult=fractionate(water,indx,evap,totvol_can,ison,rh,tempc)  ! Rayleigh fractionation of evaporated water
+                 iresult=fractionate(water,indx,evap,totvol_can,ison,isoth,isofac,rh,tempc)  ! Rayleigh fractionation of evaporated water
                  IF (iresult.NE.0) THEN
                   PRINT *, 'Errors during evaporation fractionation'
                   CALL OutputErrorString(id)
@@ -10962,9 +10993,9 @@
 !        in deep UZ or transpiration from dry canopy)
 ! If phase = 3, reset to 1 to find right evaporation index in conc array
 !
-      integer function fractionate(phase,resindx,evapvol,resv,ison,rh,tempevap)
+      integer function fractionate(phase,resindx,evapvol,resv,ison,isoth,isofac,rh,tempevap)
    
-      USE WEBMOD_PHREEQ_MMS, only : aline, one, a_thousand, rxn, iso_n,&
+      USE WEBMOD_PHREEQ_MMS, only : aline, one, a_thousand, rxn, &
              almost_one, fill_factor, phr_tf, no_rxn, n_ent,&
              rxnmols, tempc, pH, ph_final, tsec, tally_table, ires,&
              ntally_rows, ntally_cols, conc, &
@@ -10987,7 +11018,7 @@
 !      integer, external  ::  accumulateline, runaccumulated
 ! local variables use resv in argument list to avoid changing totvol in the calling routine
       double precision :: evapvol, resvol, resv, evap_frac, rh, tempevap, tot_16O, tot_H
-      double precision :: log_a, eps_eq, eps_diff,ison,fracs(1)
+      double precision :: log_a, eps_eq, eps_diff,ison,isoth,isofac,fracs(1)
       double precision :: delta_res0, delta_res, delta_evap_permil,evap_D_M,evap_18O_M
 !
       fractionate = 1
@@ -11017,8 +11048,8 @@
        if(evap_frac.lt.almost_one.and.phase.ne.3) then
          log_a = conc(nsolute+3*i-phase)    ! common log of alpha of 1st isotope water=1(vapor-liquid), snow=0 (vapor-ice), returned from phreeq mix based on temperature
          eps_eq = ln_10 * log_a  ! equilibrium fractionation (small number i.e. permil/1000)
-         eps_diff = (1.0-rh)*ison*phq_lut(sol_id(iso_list(i))%phq)%isofrac_max  ! diffusive fractionation (small number i.e. permil/1000)
-         delta_res = (delta_res0+1)*(1-evap_frac)**(eps_eq+eps_diff)-1
+         eps_diff = (1.0-rh)*ison*isoth*phq_lut(sol_id(iso_list(i))%phq)%isofrac_max  ! diffusive fractionation (small number i.e. permil/1000)
+         delta_res = (delta_res0+1)*(1-evap_frac)**(isofac*(eps_eq+eps_diff))-1
          delta_evap_permil = (delta_res0-delta_res*(1-evap_frac))/evap_frac*a_thousand
          delta_res_permil = delta_res*a_thousand
        else

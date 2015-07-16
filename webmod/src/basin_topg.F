@@ -106,10 +106,10 @@ c
      +   'km2').ne.0) return
 
       ALLOCATE (mru_slope(Nmru))
-      if(declparam('basin', 'mru_slope', 'nmru', 'real',
+      if(declparam('soltab', 'mru_slope', 'nmru', 'real',
      +   '0.0', '0.0', '10.0',
-     +   'MRU slope in vertical distance/horizontal distance',
-     +   'MRU slope in vertical distance/horizontal distance',
+     +   'MRU slope in decimal vertical feet/horizontal feet',
+     +   'MRU slope in decimal vertical feet/horizontal feet',
      +   'unitless')
      +   .ne.0) return
 
