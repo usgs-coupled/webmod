@@ -1,6 +1,6 @@
 #!/bin/sh
 
-PROCESSES=20
+PROCESSES=26
 
 LOCAL_HOME=`pwd`
 INPUT_DIR=${LOCAL_HOME}/input
@@ -51,13 +51,13 @@ sed -i "2s/CONTEXT pest_prep/CONTEXT model_run/"                   ${PROJECT_DIR
 
 # Sed andcrk.pst
 # Line 6 of the pst file RLAMBDA1 .....	
-sed -i "6s/.*/10.0  -3.0    0.3    0.03     -10  999  LAMFORGIVE/" ${PROJECT_DIR}/webmod.pst
+sed -i "6s/.*/10.0  -3.0    0.3    0.03     -${PROCESSES}  999  LAMFORGIVE/" ${PROJECT_DIR}/webmod.pst
 # Line 7 of the pst file RELPARMAX FACPARMAX FACORIG.....	
 sed -i "7s/.*/0.2   2.0   1.0e-3/"                                 ${PROJECT_DIR}/webmod.pst
 # Line 9 of the pst file. NOPTMAX Max # of optimizations. Default is 30, set to 0 for single run with phi contributions, 1 for sensitivities, or a small number to test PEST loops.
 sed -i "9s/.*/30   .005  4   4  .005   4/"                         ${PROJECT_DIR}/webmod.pst
 # Line 13. SVD block MAXSING EIGTHRESH. Replace MAXSING the maximum number of adjustable variables (number of singlular valuess at which truncation occurs)
-sed -i "13s/.*/18 5e-7/"                                           ${PROJECT_DIR}/webmod.pst
+sed -i "13s/.*/${PROCESSES} 5e-7/"                                           ${PROJECT_DIR}/webmod.pst
 # Line 14 EIGWRITE. 0 if not using SVD output file
 sed -i "14s/.*/1/"                                                 ${PROJECT_DIR}/webmod.pst
 
@@ -98,7 +98,7 @@ cp ${INPUT_DIR}/phreeqc_web_lite.dat   .
 
 #/usr/lib64/openmpi/bin/mpirun -np ${PROCESSES} ${BIN_DIR}/ppest ${PROJECT_DIR}/webmod.pst /M /L ${PROJECT_DIR}/psttemp
 echo ${PEST_BIN_DIR}/beopest ${PROJECT_DIR}/webmod.pst /H /L :${PORT}
-${PEST_BIN_DIR}/beopest ${PROJECT_DIR}/webmod.pst /H /L :${PORT}
+${PEST_BIN_DIR}/beopest ${PROJECT_DIR}/webmod.pst /H /L  /p1 :${PORT}
 
 # Tidy up
 rm -rf ${PROJECT_DIR}/../pest_results

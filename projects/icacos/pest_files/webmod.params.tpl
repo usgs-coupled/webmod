@@ -1542,7 +1542,7 @@ nmru
 3
 1.0
 ####
-iso_f 8
+iso_fac 8
 1
 nmru
 1
