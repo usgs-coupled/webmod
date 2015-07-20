@@ -204,7 +204,8 @@ Albite
 Anorthite
 	-start
 10  REM PARM(1) is log10 surface area in m^2
-20  DATA "Anorthite", -3.50, 16.6, 1.411, 1, 1,   -9.12, 17.8, 0, 1, 1,   -99, 0, 0, 1, 1
+#20  DATA "Anorthite", -3.50, 16.6, 1.411, 1, 1,   -9.12, 17.8, 0, 1, 1,   -99, 0, 0, 1, 1
+20  DATA "Albite", -10.16, 65.0, 0.457, 1, 1,   -12.56, 69.8, 0, 1, 1,   -15.6, 71.0, -0.572, 1, 1
 30  RESTORE 20
 40  READ name$
 50  DIM p(3,5)
