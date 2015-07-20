@@ -488,14 +488,18 @@ END
 
 KINETICS 2 Sat and Preferential Sat 
 #-cvode
-Andesine
-	-parm % kandis       %                # fit the first parameter as log10 Surface Area
-        -m    1000
-        
-#Albite
-#	-parm  % kalbis       %             # fit the first parameter as log10 Surface Area
+#Andesine
+#	-parm % kandis       %                # fit the first parameter as log10 Surface Area
 #        -m    1000
         
+Albite
+	-parm  % kalbis       %             # fit the first parameter as log10 Surface Area
+        -m    1000
+
+Anorthite
+	-parm  % kanors       %             # fit the first parameter as log10 Surface Area
+        -m    1000
+     
 K-spar
 	-parm % kksprs       %                # fit the first parameter as log10 Surface Area
         -m    1000

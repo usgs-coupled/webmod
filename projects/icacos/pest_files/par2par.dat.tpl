@@ -17,6 +17,7 @@ knitru = %    knitru    %
 ksBiou = %    ksBiou    %
 kandis = %    kandis    %
 kalbis = %    kalbis    %
+kanors = %    kanors    %
 kksprs = %    kksprs    %
 khnbds = %    khnbds    %
 kkaols = %    kkaols    %
