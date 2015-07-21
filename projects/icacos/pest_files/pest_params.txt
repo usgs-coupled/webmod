@@ -1,5 +1,5 @@
-dryfal	log	relative	1.73033	1	10	phq_eq	1.111E-04	-1.111E-04	1
-co2uz	none	relative	9.18132	1	10	phq_eq	2.556E-01	-4.056E+00	1
+dryfal	log	relative	1.6	1	10	phq_eq	1.111E-04	-1.111E-04	1
+co2uz	none	relative	6.5	1	10	phq_eq	2.556E-01	-4.056E+00	1
 co2str	none	relative	4.76885	1	10	phq_eq	3.667E-01	-4.167E+00	1
 o2uz	fixed	relative	6.49	1	10	phq_eq	1.667E-01	-2.167E+00	1
 o2str	fixed	relative	8.72	1	10	phq_eq	1.667E-01	-2.167E+00	1
@@ -13,11 +13,11 @@ kpyr_u	fixed	relative	5.16	1	10	phq_k	1.111E+00	-1.111E+01	1
 knitru	none	relative	4.47626	1	10	phq_k	1.333E+00	-1.133E+01	1
 ksbiou	fixed	relative	5.32	1	10	phq_eq	4.444E-01	-2.444E+00	1
 kandis	fixed	relative	8.54978	1	10	phq_k	1.333E+00	-1.133E+01	1
-kalbis	none	relative	7.76034	1	10	phq_k	1.333E+00	-1.133E+01	1
-kanors	none	relative	6.64872	1	10	phq_k	1.333E+00	-1.133E+01	1
-kksprs	none	relative	7.21545	1	10	phq_k	1.333E+00	-1.133E+01	1
+kalbis	none	relative	7.35	1	10	phq_k	1.333E+00	-1.133E+01	1
+kanors	none	relative	7.23	1	10	phq_k	1.333E+00	-1.133E+01	1
+kksprs	none	relative	7.0	1	10	phq_k	1.333E+00	-1.133E+01	1
 khnbds	none	relative	6.94639	1	10	phq_k	1.333E+00	-1.133E+01	1
-kkaols	none	relative	7.85171	1	10	phq_k	1.333E+00	-1.133E+01	1
+kkaols	fixed	relative	7.85171	1	10	phq_k	1.333E+00	-1.133E+01	1
 kbiots	fixed	relative	5.97	1	10	phq_k	1.333E+00	-1.133E+01	1
 kpyr_s	fixed	relative	4.40	1	10	phq_k	1.111E+00	-1.111E+01	1
 knitrs	none	relative	1.87067	1	10	phq_k	1.333E+00	-1.133E+01	1

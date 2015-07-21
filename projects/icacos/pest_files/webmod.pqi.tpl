@@ -513,9 +513,9 @@ Hornblende
 	-parm % khnbds       %              # fit the first parameter as log10 Surface Area
         -m    1000
 
-Kaolinite
-	-parm  % kkaols       %        # fit the first parameter as log10 Surface Area
-        -m    1000
+#Kaolinite
+#	-parm  % kkaols       %        # fit the first parameter as log10 Surface Area
+#        -m    1000
         
 #Pyrite_O2
 #    -formula  Pyrite 1
