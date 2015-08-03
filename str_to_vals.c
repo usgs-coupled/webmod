@@ -42,10 +42,14 @@ long str_to_vals (char *encoded_string, long size, long type, char *store_addr) 
   long i, isource;
   long ndecoded, repeat;
   char *scopy, *token, *valstr, *asterisk, *end_point;
-  char tcopy[MAXDATALNLEN];
+  static char *tcopy = NULL;
   double dvalue, *dval;
   float fvalue, *fval;
   int lvalue, *lval;
+  
+  if (tcopy == NULL) {
+	  tcopy = (char *) umalloc(max_data_ln_len * sizeof(char));
+  }
 
   /*
    * set up pointer for data type

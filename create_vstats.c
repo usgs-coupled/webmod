@@ -59,10 +59,11 @@ void create_vstats (void) {
 
 		if (curr_stat_list == NULL) {
 			curr_stat_list = (STAT_LIST_TYPE *)umalloc(sizeof(STAT_LIST_TYPE));
+			curr_stat_list->key = (char *) umalloc(max_data_ln_len * sizeof(char));
 			Mfirst_stat_list = curr_stat_list;
 		} else {
-			curr_stat_list->next =
-				(STAT_LIST_TYPE *)umalloc(sizeof(STAT_LIST_TYPE));
+			curr_stat_list->next =(STAT_LIST_TYPE *)umalloc(sizeof(STAT_LIST_TYPE));
+			curr_stat_list->next->key = (char *) umalloc(max_data_ln_len * sizeof(char));
 			curr_stat_list = curr_stat_list->next;
 		}
 

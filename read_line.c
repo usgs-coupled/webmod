@@ -54,8 +54,12 @@ long read_line (void) {
    DATETIME   prevtime;
    FILE_DATA   *cur_fd;
    char   *err_ptr;
-   char line[MAXDATALNLEN];
+   static char *line = NULL;
   
+   if (line == NULL) {
+	   line = (char *) umalloc(max_data_ln_len * sizeof(char));
+   }
+
 /*
 **   get initial delta-t from control data base
 */
@@ -83,9 +87,8 @@ long read_line (void) {
 **  9999 in the year field is the code for EOF. 
 */
       if (cur_fd->time.year == 9999) {
-		  (void)fprintf (stderr,"\nWARNING, date of end_time reached the last date in the Data File \n");
-		  (void)fprintf(stderr, "         simulation stopped on: %ld %ld %ld \n", Mnowtime->year, Mnowtime->month, Mnowtime->day);
-	      return ENDOFFILE;
+		  (void)fprintf (stderr,"9999  1 \n");
+         return ENDOFFILE;
 	  }
 
 /*
@@ -239,7 +242,7 @@ cur_fd->time = {year = 1956, month = 2, day = 19, hour = 0, min = 0, sec = 0,
 
          Mprevjt = Mnowtime->jt;
 
-         if (!(fgets (cur_fd->line, MAXDATALNLEN, cur_fd->fp))) {
+         if (!(fgets (cur_fd->line, max_data_ln_len, cur_fd->fp))) {
             fclose (cur_fd->fp);
             cur_fd->fp = NULL;
             cur_fd->time.year = 9999;
@@ -276,7 +279,7 @@ cur_fd->time = {year = 1956, month = 2, day = 19, hour = 0, min = 0, sec = 0,
 */
          Mprevjt = Mnowtime->jt;
 
-         if (!(fgets (cur_fd->line, MAXDATALNLEN, cur_fd->fp))) {
+         if (!(fgets (cur_fd->line, max_data_ln_len, cur_fd->fp))) {
             fclose (cur_fd->fp);
             cur_fd->fp = NULL;
             cur_fd->time.year = 9999;
@@ -307,8 +310,13 @@ char *DATA_read_init (void) {
 
    int      i;
    static int      num_data_files = 0;
-   char   **fname, line[MAXDATALNLEN], *err_ptr;
+   char   **fname, *err_ptr;
    static char      buf[256];
+   static char   *line = NULL;
+
+   if (line == NULL) {
+	   line = (char *) umalloc(max_data_ln_len * sizeof(char));
+   }
 
 /*
 **   Clean up the old files
@@ -327,6 +335,8 @@ char *DATA_read_init (void) {
    fd = (FILE_DATA **)malloc (num_data_files * sizeof (FILE_DATA *));
     for (i = 0; i < num_data_files; i++) {
       fd[i] = (FILE_DATA *)malloc (sizeof (FILE_DATA));
+	  fd[i]->line = (char *) umalloc(max_data_ln_len * sizeof(char));
+	  fd[i]->info = (char *) umalloc(max_data_ln_len * sizeof(char));
     }
 
 /*
@@ -340,9 +350,9 @@ char *DATA_read_init (void) {
          return (err);
       }
 
-      fgets (line, MAXDATALNLEN, (fd[i])->fp);
+      fgets (line, max_data_ln_len, (fd[i])->fp);
       while (strncmp (line, "####", 4)) {
-         if (!(fgets (line, MAXDATALNLEN, (fd[i])->fp))) {
+         if (!(fgets (line, max_data_ln_len, (fd[i])->fp))) {
                (void)sprintf (buf, "DATA_read_init - Spacing fwd to data - Check format of file %s.", fname[i]);
                return (buf);
             }
@@ -353,7 +363,7 @@ char *DATA_read_init (void) {
      * PJR 7/10/95
      */
        (fd[i])->time.year = 0;
-      fgets ((fd[i])->line, MAXDATALNLEN, (fd[i])->fp);
+      fgets ((fd[i])->line, max_data_ln_len, (fd[i])->fp);
 /* DANGER
       if (err_ptr = EXTRACT_time (&(fd[i])))
 */
@@ -379,6 +389,9 @@ char *READ_data_info (void) {
    char   **fname, *err_ptr;
    FILE_DATA  lfd;
    struct stat stbuf;
+
+   lfd.info = (char *) umalloc(max_data_ln_len * sizeof(char));
+   lfd.line = (char *) umalloc(max_data_ln_len * sizeof(char));
 
    fname =   (char **) control_var ("data_file");
    num_data_files = control_var_size ("data_file");
@@ -513,7 +526,7 @@ FILE_DATA * FILE_with_next_ts (void) {
 
                Mprevjt = fd_ptr->time.jt;
 
-               if (!(fgets (fd_ptr->line, MAXDATALNLEN, fd_ptr->fp))) {
+               if (!(fgets (fd_ptr->line, max_data_ln_len, fd_ptr->fp))) {
                   fclose (fd_ptr->fp);
                       fd_ptr->fp = NULL;
                   fd_ptr->time.year = 9999;
@@ -531,7 +544,7 @@ FILE_DATA * FILE_with_next_ts (void) {
 
                Mprevjt = cur_fd->time.jt;
 
-               if (!(fgets (cur_fd->line, MAXDATALNLEN, cur_fd->fp))) {
+               if (!(fgets (cur_fd->line, max_data_ln_len, cur_fd->fp))) {
                   fclose (cur_fd->fp);
                       cur_fd->fp = NULL;
                   cur_fd->time.year = 9999;
@@ -565,8 +578,16 @@ FILE_DATA * FILE_with_next_ts (void) {
 \*--------------------------------------------------------------------*/
 char * EXTRACT_time (FILE_DATA *data) {
    char   *start_point, *end_point;
-   char   line[MAXDATALNLEN];
-   static char   err_buf[MAXDATALNLEN];
+   static char   *line = NULL;
+   static char   *err_buf = NULL;
+
+   if (line == NULL) {
+	   line = (char *) umalloc(max_data_ln_len * sizeof(char));
+   }
+
+   if (err_buf == NULL) {
+	   err_buf = (char *) umalloc(max_data_ln_len * sizeof(char));
+   }
 
    if (data->time.year == 9999) {
 	   (void)fprintf (stderr,"9990\n");
@@ -703,7 +724,11 @@ void DATA_find_end (DATETIME *start_of_data, DATETIME *end_of_data) {
   FILE   *f_ptr;
   int      i, num_data_files;
   DATETIME check;
-  char line[MAXDATALNLEN];
+  static char *line = NULL;
+
+   if (line == NULL) {
+	   line = (char *) umalloc(max_data_ln_len * sizeof(char));
+   }
 
   num_data_files = control_var_size ("data_file");
 
@@ -712,14 +737,14 @@ void DATA_find_end (DATETIME *start_of_data, DATETIME *end_of_data) {
   */
   f_ptr = fopen ((fd[0])->name, "r");
   
-  fgets (line, MAXDATALNLEN, f_ptr);
+  fgets (line, max_data_ln_len, f_ptr);
   while (strncmp (line, "####", 4))
-    fgets (line, MAXDATALNLEN, f_ptr);
+    fgets (line, max_data_ln_len, f_ptr);
 
-  fgets (line, MAXDATALNLEN, f_ptr);
+  fgets (line, max_data_ln_len, f_ptr);
   INSERT_time (line, start_of_data);
 
-  while (fgets (line, MAXDATALNLEN, f_ptr));
+  while (fgets (line, max_data_ln_len, f_ptr));
 
   INSERT_time (line, end_of_data);
 
@@ -731,11 +756,11 @@ void DATA_find_end (DATETIME *start_of_data, DATETIME *end_of_data) {
   for (i = 1; i < num_data_files; i++) {
     f_ptr = fopen ((fd[i])->name, "r");
 
-    fgets (line, MAXDATALNLEN, f_ptr);
+    fgets (line, max_data_ln_len, f_ptr);
     while (strncmp (line, "####", 4))
-      fgets (line, MAXDATALNLEN, f_ptr);
+      fgets (line, max_data_ln_len, f_ptr);
 
-    fgets (line, MAXDATALNLEN, f_ptr);
+    fgets (line, max_data_ln_len, f_ptr);
     INSERT_time (line, &check);
 
     if (check.jt < start_of_data->jt) {
@@ -749,7 +774,7 @@ void DATA_find_end (DATETIME *start_of_data, DATETIME *end_of_data) {
       start_of_data->jt = check.jt;
     }
 
-    while (fgets (line, MAXDATALNLEN, f_ptr));
+    while (fgets (line, max_data_ln_len, f_ptr));
     INSERT_time (line, &check);
 
     if (check.jt > end_of_data->jt) {

@@ -50,6 +50,16 @@ int main (int argc, char *argv[]) {
    char   **fname;
    char pathname[MAXPATHLEN];
 
+
+    /*
+	**  Maximum buffer size for reading lines from files.
+	**  This used to be set as a C precompiler directive.
+	**  That is still the default, but now users are give.
+	**  the option to set this on the command line, otherwise
+	**  size still comes from the defs.h file.
+	*/
+    max_data_ln_len = MAXDATALNLEN;
+
 	/*
 	**  List of modules that are used by the model. This is
 	**  determined by calls to declmodule

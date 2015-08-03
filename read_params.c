@@ -87,12 +87,20 @@ char *read_dims (char *param_file_name) {
   DIMEN *dim;
   int dim_size, i, j;
 
-  char line[MAXDATALNLEN], key[MAXDATALNLEN];
+  static char *line = NULL;
+  static char *key = NULL;
   static char buf[256];
   char *endptr;
   char *nch;
   int		done;
+  
+   if (line == NULL) {
+	   line = (char *) umalloc(max_data_ln_len * sizeof(char));
+   }
 
+   if (key == NULL) {
+	   key = (char *) umalloc(max_data_ln_len * sizeof(char));
+   }
 
 /*
 * get param name, open file
@@ -109,7 +117,7 @@ char *read_dims (char *param_file_name) {
 /*
 * read in run info string
 */
-	if (!fgets (line, MAXDATALNLEN, param_file)) {
+	if (!fgets (line, max_data_ln_len, param_file)) {
 		if (param_file != NULL) {
 		   fclose (param_file);
 		   param_file = NULL;
@@ -127,7 +135,7 @@ char *read_dims (char *param_file_name) {
 /*
 **	See if version number is set
 */
-	if (!fgets (line, MAXDATALNLEN, param_file)) {
+	if (!fgets (line, max_data_ln_len, param_file)) {
 		if (param_file != NULL) {
 		   fclose (param_file);
 		   param_file = NULL;
@@ -137,7 +145,7 @@ char *read_dims (char *param_file_name) {
 		return (buf);
 	}
 
-	if (!fgets (line, MAXDATALNLEN, param_file)) {
+	if (!fgets (line, max_data_ln_len, param_file)) {
 		if (param_file != NULL) {
 		   fclose (param_file);
 		   param_file = NULL;
@@ -155,7 +163,7 @@ char *read_dims (char *param_file_name) {
 	nComments = 0;
 
 	while (strncmp (line, "** Dimensions **", 16)) {
-		if (!fgets (line, MAXDATALNLEN, param_file)) {
+		if (!fgets (line, max_data_ln_len, param_file)) {
 		   if (param_file != NULL) {
 		      fclose (param_file);
 		      param_file = NULL;
@@ -184,7 +192,7 @@ char *read_dims (char *param_file_name) {
 		return (buf);
 	}
   
-	if (!fgets (line, MAXDATALNLEN, param_file)) {
+	if (!fgets (line, max_data_ln_len, param_file)) {
 		if (param_file != NULL) {
 		   fclose (param_file);
 		   param_file = NULL;
@@ -210,7 +218,7 @@ char *read_dims (char *param_file_name) {
 /*
 **	Read dimension name from parameter file.
 */
-		if (fgets (key, MAXDATALNLEN, param_file) == NULL) {
+		if (fgets (key, max_data_ln_len, param_file) == NULL) {
 		   if (param_file != NULL) {
 		      fclose (param_file);
 		      param_file = NULL;
@@ -226,7 +234,7 @@ char *read_dims (char *param_file_name) {
 /*
 **	Read dimension size from parameter file.
 */
-			if (fgets (line, MAXDATALNLEN, param_file) == NULL) {
+			if (fgets (line, max_data_ln_len, param_file) == NULL) {
 		       if (param_file != NULL) {
 		          fclose (param_file);
 		          param_file = NULL;
@@ -257,7 +265,7 @@ char *read_dims (char *param_file_name) {
 /*
 * check if there are index names below
 */
-			if (fgets (line, MAXDATALNLEN, param_file)) {
+			if (fgets (line, max_data_ln_len, param_file)) {
 				if (strncmp (line, "** Parameters **", 16)) {
 					if (dim->names) {
 				//        free (dim->names);
@@ -290,7 +298,7 @@ char *read_dims (char *param_file_name) {
 									*nch = '\0';
 								}
 								dim->notes[i] = strdup (&(line[1]));
-								fgets (line, MAXDATALNLEN, param_file);
+								fgets (line, max_data_ln_len, param_file);
 								i++;
 
 							} else {
@@ -299,7 +307,7 @@ char *read_dims (char *param_file_name) {
 									*nch = '\0';
 								}
 								dim->names[i] = strdup (line);
-								fgets (line, MAXDATALNLEN, param_file);
+								fgets (line, max_data_ln_len, param_file);
 								i++;
 							}
 
@@ -322,8 +330,8 @@ char *read_dims (char *param_file_name) {
 			}
 		} else {
 			(void)fprintf (stderr,"\nWARNING: dimension '%s' is not required; set in parameter file:\n         %s\n", key, param_file_name);
-			fgets (line, MAXDATALNLEN, param_file);
-			fgets (line, MAXDATALNLEN, param_file);
+			fgets (line, max_data_ln_len, param_file);
+			fgets (line, max_data_ln_len, param_file);
 		}
 	}
 
@@ -346,13 +354,16 @@ static char *rp (char *param_file_name, int index, int map_flag) {
   FILE *param_file;
   PARAM *param;
 
-  char line[MAXDATALNLEN];
+  static char *line = NULL;
   static char buf[256], *buf_ptr;
   char *pf_value, *mapParamName;
   int i, j, k;
   PARAM *mapping_param;
 //  int *mapping;
 
+  if (line == NULL) {
+	  line = (char *) umalloc(max_data_ln_len * sizeof(char));
+  }
 
 /*
 * get param name, open file
@@ -366,10 +377,10 @@ static char *rp (char *param_file_name, int index, int map_flag) {
 		return (buf);
 	}
 
-	fgets (line, MAXDATALNLEN, param_file);
+	fgets (line, max_data_ln_len, param_file);
 	if (index == 0) {  // if index equals zero, than this parameter file has dimension stuff and we need to skip over it.
 		while (strncmp (line, "** Parameters **", 16)) {
-			if (!fgets (line, MAXDATALNLEN, param_file)) {  // return if hits eol
+			if (!fgets (line, max_data_ln_len, param_file)) {  // return if hits eol
 		       if (param_file != NULL) {
 		          fclose (param_file);
 		          param_file = NULL;
@@ -377,7 +388,7 @@ static char *rp (char *param_file_name, int index, int map_flag) {
 			   return (NULL);
 			}
 		}
-		fgets (line, MAXDATALNLEN, param_file);
+		fgets (line, max_data_ln_len, param_file);
 	}
 
 /*
@@ -716,19 +727,28 @@ static char *rp (char *param_file_name, int index, int map_flag) {
  | RESTRICTIONS :
 \*--------------------------------------------------------------------*/
 static char *READ_param_head (PARAM **param_ptr, FILE **param_file, char *param_file_name, char line[], int map_flag) {
-  char key[MAXDATALNLEN];
-  char dimen[MAXDATALNLEN];
+  static char *key = NULL;
+  static char *dimen = NULL;
   static char buf[256];
   char *temp, *npos, *tempfmt;
   int tempwidth, i, param_size, type;
 
   int badFlag;
   
+  if (key == NULL) {
+	  key = (char *) umalloc(max_data_ln_len * sizeof(char));
+  }
+
+   if (dimen == NULL) {
+	  dimen = (char *) umalloc(max_data_ln_len * sizeof(char));
+  }
+
+
 /*
 * space fwd to #### header
 */
   while (strncmp (line, "####", 4))
-    if (!fgets (line, MAXDATALNLEN, *param_file)) {
+    if (!fgets (line, max_data_ln_len, *param_file)) {
 		if (*param_file != NULL) {
 		   fclose (*param_file);
 		   *param_file = NULL;
@@ -739,7 +759,7 @@ static char *READ_param_head (PARAM **param_ptr, FILE **param_file, char *param_
 /*
 * get key, column width and format
 */
-  if (fgets (line, MAXDATALNLEN, *param_file) == NULL) {
+  if (fgets (line, max_data_ln_len, *param_file) == NULL) {
 	  (void)sprintf (buf, "\nERROR: Early end of Parameter File: %s", param_file_name);
     return (buf);
   }
@@ -829,7 +849,7 @@ static char *READ_param_head (PARAM **param_ptr, FILE **param_file, char *param_
 /*
 * get number of dimensions
 */
-		if(fgets(line, MAXDATALNLEN, *param_file) == NULL) {
+		if(fgets(line, max_data_ln_len, *param_file) == NULL) {
 			(void)sprintf (buf,"ERROR: reading param number of dimensions for %s in Parameter File %s", key, param_file_name);
 			return buf;
 		}
@@ -856,7 +876,7 @@ static char *READ_param_head (PARAM **param_ptr, FILE **param_file, char *param_
 * get dimension name.
 */
 /*			for (i = 0; i < (*param_ptr)->ndimen; i++) {
-				if(fgets(dimen, MAXDATALNLEN, *param_file) == NULL) {
+				if(fgets(dimen, max_data_ln_len, *param_file) == NULL) {
 					(void)sprintf (buf, "\nERROR: number of dimensions is wrong for %s in Parameter File %s", key, param_file_name);
 					return (buf);
 				}
@@ -871,7 +891,7 @@ static char *READ_param_head (PARAM **param_ptr, FILE **param_file, char *param_
 			(*param_ptr)->pf_dimNames = (char **)malloc ((*param_ptr)->pf_ndimen * sizeof (char *));
 
 			for (i = 0; i < (*param_ptr)->pf_ndimen; i++) {
-				if(fgets(dimen, MAXDATALNLEN, *param_file) == NULL) {
+				if(fgets(dimen, max_data_ln_len, *param_file) == NULL) {
 					(void)sprintf (buf, "\nERROR: number of dimensions is wrong for %s in Parameter File %s", key, param_file_name);
 					return (buf);
 				}
@@ -906,7 +926,7 @@ static char *READ_param_head (PARAM **param_ptr, FILE **param_file, char *param_
 /*
 * get param size
 */
-			fgets(line, MAXDATALNLEN, *param_file);
+			fgets(line, max_data_ln_len, *param_file);
 			if(line == NULL) {
 				(void)sprintf (buf, "ERROR: incorrect parameter size for %s in Parameter File %s", key, param_file_name);
 				return (buf);
@@ -939,7 +959,7 @@ static char *READ_param_head (PARAM **param_ptr, FILE **param_file, char *param_
 /*
 * get type
 */
-		fgets(line, MAXDATALNLEN, *param_file);
+		fgets(line, max_data_ln_len, *param_file);
 		if(line == NULL) {
 			(void)sprintf (buf, "\nERROR: incorrect data type specified for parameter %s in Parameter File %s", key, param_file_name);
 			return (buf);
@@ -973,7 +993,7 @@ static char *READ_param_head (PARAM **param_ptr, FILE **param_file, char *param_
  | RESTRICTIONS :
 \*--------------------------------------------------------------------*/
 static char *READ_param_values (long size, long type, char *name, char *value,
-								FILE *param_file, char line[]) {
+								FILE *param_file, char *line) {
 	int i, j;
 //	char *nch;
 //	int l1, l2
@@ -983,13 +1003,21 @@ static char *READ_param_values (long size, long type, char *name, char *value,
 	char delims[] = ",";
 	char *result = NULL;
 	char *comp_ptr = NULL;
-	static char crap[MAXDATALNLEN], crap2[MAXDATALNLEN];
+	static char *crap = NULL;
+	static char *crap2 = NULL;
 	static char buf[256];
 	float foo;
 	double d;
 	char *endp;
 	long l;
+	
+	if (crap == NULL) {
+		crap = (char *) umalloc(max_data_ln_len * sizeof(char));
+	}
 
+	if (crap2 == NULL) {
+		crap2 = (char *) umalloc(max_data_ln_len * sizeof(char));
+	}
 
 /*
 **  Space for the values and value_desc are allocated in declparam
@@ -997,7 +1025,7 @@ static char *READ_param_values (long size, long type, char *name, char *value,
 	done = FALSE;
 	i = 0;
 	while (!done) {
-		fgets (line, MAXDATALNLEN, param_file);
+		fgets (line, max_data_ln_len, param_file);
 		if (!line) {
 			done = TRUE;
 
@@ -1035,14 +1063,14 @@ static char *READ_param_values (long size, long type, char *name, char *value,
 			desc_count = 0;
 			result = NULL;
 			//printf ("READ_param_values: line is %s\n", line);
-			strncpy (crap, line, MAXDATALNLEN);
+			strncpy (crap, line, max_data_ln_len);
 			//printf ("crap is %s\n", crap);
 
 			result = strtok (crap, delims);
 			while (result != NULL && !done) {
 				//printf ("   READ_param_values: result is |%s|\n", result);
 
-				strncpy (crap2, result, MAXDATALNLEN);
+				strncpy (crap2, result, max_data_ln_len);
 				//printf ("crap2 is %s\n", crap2);
 				comp_ptr = strchr (crap2, '*');
 				//printf ("comp_ptr is %s\n", comp_ptr);
