@@ -18,6 +18,7 @@ src/stdcall.cpp
 include_directories("${PROJECT_SOURCE_DIR}")
 include_directories("${PROJECT_SOURCE_DIR}/IPhreeqc/src")
 include_directories("${PROJECT_SOURCE_DIR}/IPhreeqc/src/phreeqcpp")
+include_directories("${PROJECT_SOURCE_DIR}/IPhreeqc/src/phreeqcpp/common")
 include_directories("${PROJECT_SOURCE_DIR}/IPhreeqc/src/phreeqcpp/PhreeqcKeywords")
 
 # library
