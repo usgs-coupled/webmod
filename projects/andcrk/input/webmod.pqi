@@ -51,10 +51,10 @@ SOLUTION 0 Precipitation
 	N(5)	0.21
 	Si	0.001
 	Doc	0.001
-	Al  	0.001
+	Al  	0.001 kaolinite 0.0
 	Fe	0.001
 	O(0)	1 O2(g) -1.8
-	[18O]   -15.6
+	[18O]   -8.0
 SOLUTION 1 E.T. or DI
 SOLUTION 2 Canopy,  Snow
 	-units	mg/kgw
@@ -81,19 +81,19 @@ SOLUTION 3 Unsaturated Zone and Stream Segments
     redox     pe
     units     mol/kgw
     density   1
-    Al            3.58E-08
-    Amm           1.62E-07
-    C             3.84E-04
-    Ca            1.26E-04
-    Cl            1.00E-05
-    Doc           1.35E-09
-    Fe            4.60E-13
-    K             5.38E-06
-    Mg            2.44E-05
-    N(5)          1.02E-04
-    Na            9.21E-05
-    S             8.59E-05
-    Si            1.13E-04
+	Al               3.578e-008
+	Amm              3.129e-007
+	C                3.840e-004
+	Ca               3.310e-005
+	Cl               1.567e-006
+	Doc              1.352e-009
+	Fe               4.598e-013
+	K                3.491e-006
+	Mg               1.026e-005
+	N(5)             2.155e-005
+	Na               2.279e-005
+	S                1.365e-005
+	Si               4.466e-005
 #    Ca        1.92E+00
 #    Mg        3.45E-01
 #    Na        9.38E-01
@@ -108,7 +108,7 @@ SOLUTION 3 Unsaturated Zone and Stream Segments
 #    Fe        7.73E-09
 #    Alkalinity 4.3
     O(0)      1 O2(g)      -1.55
-    [18O]     -13.4
+    [18O]     -15.15
     -water    1 # kg
 SOLUTION 4 Saturated Zone
     temp      1.52
@@ -117,19 +117,19 @@ SOLUTION 4 Saturated Zone
     redox     pe
     units     mol/kgw
     density   1
-    Al     4.70E-09
-    Amm    6.60E-07
-    C      4.17E-04
-    Ca     2.95E-05
-    Cl     2.38E-06
-    Doc    3.65E-08
-    Fe     1.68E-13
-    K      3.34E-06
-    Mg     9.99E-06
-    N(5)   2.42E-05
-    Na     1.57E-05
-    S      1.85E-05
-    Si     2.85E-05
+	Al               4.704e-009
+	Amm              1.296e-009
+	C                4.165e-004
+	Ca               5.321e-005
+	Cl               2.923e-006
+	Doc              3.646e-008
+	Fe               1.679e-013
+	K                5.355e-006
+	Mg               1.476e-005
+	N(5)             2.442e-005
+	Na               4.868e-005
+	S                3.054e-005
+	Si               8.033e-005
 #    Ca        1.92E+00
 #    Mg        3.45E-01
 #    Na        9.38E-01
@@ -144,7 +144,7 @@ SOLUTION 4 Saturated Zone
 #    Fe        7.73E-09 Goethite   0
 #    Alkalinity 4.3
     O(0)      1 O2(g)      -2.41
-    [18O]     -17.22
+    [18O]     -18.34
     -water    1 # kg
 END
 RATES
@@ -353,25 +353,25 @@ Pyrite_O2
    200 save moles
   -end
  
-Pyrite_O2_xtreme
-  -start
-   1 rem        Handcart Gulch model numbers, round 1, Linear increase to add sulfate as water table drops
-   2 rem        parm(1) = log10(A/V, m^2/L water)      parm(2) = exp for (m/m0)
-   3 rem        parm(3) = exp for O2            parm(4) = exp for H+
-#   10 if (m <= 0) then goto 200
-   20 if (si("Pyrite") >= 0) then goto 200
-# log pO2 of -1.8 converted to log molal = -4.476
-#   25  rate = -9.14 + parm(1) + parm(3)*-4.476 + parm(4)*lm("H3O+") + parm(2)*log10(m/m0)
-   25  rate = -9.14 + parm(1) + parm(3)*lm("O2")+ parm(4)*lm("H3O+") + parm(2)*log10(m/m0)
-   26  rate = 10^rate * (1 - SR("pyrite"))
-#   26  rate = 10^rate
-   27 gwsto = callback(cell_no,dummy,"gwsto")
-# linear enhancement when gwsto below parm(5)
-   28 if(gwsto < parm(5)) then rate = rate * (parm(5)-gwsto) else rate = 0
-   30  moles = rate * time
-#   40 if (moles > m) then moles = m
-   200 save moles
-  -end
+#Pyrite_O2_xtreme
+#  -start
+#   1 rem        Handcart Gulch model numbers, round 1, Linear increase to add sulfate as water table drops
+#   2 rem        parm(1) = log10(A/V, m^2/L water)      parm(2) = exp for (m/m0)
+#   3 rem        parm(3) = exp for O2            parm(4) = exp for H+
+##   10 if (m <= 0) then goto 200
+#   20 if (si("Pyrite") >= 0) then goto 200
+## log pO2 of -1.8 converted to log molal = -4.476
+##   25  rate = -9.14 + parm(1) + parm(3)*-4.476 + parm(4)*lm("H3O+") + parm(2)*log10(m/m0)
+#   25  rate = -9.14 + parm(1) + parm(3)*lm("O2")+ parm(4)*lm("H3O+") + parm(2)*log10(m/m0)
+#   26  rate = 10^rate * (1 - SR("pyrite"))
+##   26  rate = 10^rate
+#   27 gwsto = callback(cell_no,dummy,"gwsto")
+## linear enhancement when gwsto below parm(5)
+#   28 if(gwsto < parm(5)) then rate = rate * (parm(5)-gwsto) else rate = 0
+#   30  moles = rate * time
+##   40 if (moles > m) then moles = m
+#   200 save moles
+#  -end
  
 END
  
@@ -379,79 +379,82 @@ END
 KINETICS 1 O-Horizon and UZ (normal and preferential)
  
 Oligoclase
-	-parm    0.87           # fit the first parameter as log10 Surface Area
+	-parm    1.4713000E-01                # fit the first parameter as log10 Surface Area
         -m    1000
  
 Biotite
-	-parm    0.15           # fit the first parameter as log10 Surface Area
+	-parm   -4.2606000E-01              # fit the first parameter as log10 Surface Area
         -m    1000
  
 Chlorite
-	-parm   -1.69           # fit the first parameter as log10 Surface Area
+	-parm    3.8707000E-01  # fit the first parameter as log10 Surface Area
         -m    1000
  
 Calcite
-        -parm   -6.27           # fit the first parameter as log10 Surface Area
+        -parm   -6.5845200E+00 # fit the first parameter as log10 Surface Area
         -m    1000
  
 Pyrite_O2
     -formula  Pyrite  1
     -m        1000
     -m0       1000
-    -parms      -2.12 0 0.5 -0.11
+    -parms      -3.2996700E+00 0 0.5 -0.11
     -tol      1e-008	
  
 Nitrification
     -formula  Amm -1 NH3 +1
     -m        1000
-    -parms      -5.33
+    -parms      -5.6380900E+00
  
 Potassium_Cycling
     -formula KHCO3 1  Mg(HCO3)2 1 # Ca(HCO3)2 1
     -m       0
-    -parms     -0.0056    0.001
+    -parms     -1.0000800E-02    4.0003200E-02
  
+#Amm_assimilation
+#	-formula AmmHHCO3 -1
+#	-m       1000
+#	-parms   -5.5
+	
+#NO3_assimilation
+#	-formula NO3 -1 HCO3 1
+#	-m       1000
+#	-parms   -7.5	
  
 -step 86400
 #        -cvode
  
 END
  
+ 
 KINETICS 2 Sat and Preferential Sat
 Oligoclase
-	-parm   -0.69              # fit the first parameter as log10 Surface Area
+	-parm    3.8707000E-01              # fit the first parameter as log10 Surface Area
         -m    1000
  
 Biotite
-	-parm   -1.48              # fit the first parameter as log10 Surface Area
+	-parm   -6.5267000E-01              # fit the first parameter as log10 Surface Area
         -m    1000
  
 Chlorite
-	-parm   -0.134             # fit the first parameter as log10 Surface Area
+	-parm    2.2711000E-01              # fit the first parameter as log10 Surface Area
         -m    1000
  
 Calcite
-        -parm   -7.43              # fit the first parameter as log10 Surface Area
+        -parm   -6.6778300E+00              # fit the first parameter as log10 Surface Area
         -m    1000
  
 Pyrite_O2
     -formula  Pyrite 1
     -m        1000
     -m0       1000
-    -parms      -3.44 0 0.5 -0.11
-    -tol      1e-008	
- 
-Pyrite_O2_xtreme
-    -formula  FeS2 1 H2O 0.5 O2 3.75
-    -m        1000
-    -m0       1000
-    -parms      -8.00 0 0.5 -0.11    0.0000000E+00
+    -parms      -3.0996900E+00 0 0.5 -0.11
     -tol      1e-008	
  
 Nitrification
     -formula Amm -1 NH3 +1
     -m       1000
-    -parms     -7.42
+    -parms     -6.9177700E+00
  
  
 -step 86400
@@ -459,31 +462,32 @@ Nitrification
 END
  
 EQUILIBRIUM_PHASES 0 Equilibrate precipitation and irrigation with atmospheric pO2 and pCO2 @ 3500 meters above mean sea level, in log ppm
-	O2(g)         -0.865 100      #
-	CO2(g)        -3.64   10      # ~ PCO2
+	O2(g)         -8.6551E-01 100      #
+	CO2(g)        -3.643659    10      # ~ PCO2
 END
  
 EQUILIBRIUM_PHASES 2 Equilibrate stream pO2 and pCO2, in log ppm
-# CO2 should be greater than atmosphere. Stream O2 not sensitive in this model.
-	O2(g)         -1.00 100      #
-	CO2(g)        -3.38  10      # ~ PCO2
+# should be greater than atmosphere
+	O2(g)         -7.1004200E-01 100      #
+	CO2(g)        -3.1992360E+00  10      # ~ PCO2
 END
 EQUILIBRIUM_PHASES 30 Unsaturated zone
 	Kaolinite   0 1e-2 # precipitate
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
 #	Calcite    -.5 0
-	Smectite-Illite 0 0 # precipitate  # fit the first 0, equilibrium constant
+	Smectite-Illite    1.0000000E-04 0 # precipitate  # fit the first 0, equilibrium constant
 #	Calcite     0 0
-	O2(g)         -0.50 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
-       CO2(g)         -1.71  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
+#	O2(g)       -0.9 100      # atmospheric, could adjust Use this for gradient of O2, this being the most oxygen rich
+	O2(g)         -1.0001000E+00 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
+       CO2(g)         -2.4993960E+00  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
 END
 EQUILIBRIUM_PHASES 4 Saturated zone
 	Kaolinite   0 1e-2 # precipitate
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
 #	Calcite    0 0
-	Smectite-Illite -0.05 0 # precipitate  # fit the first 0, equilibrium constant
+	Smectite-Illite    1.0000000E-04 0 # precipitate  # fit the first 0, equilibrium constant
 END
 EXCHANGE 1
 X	.001

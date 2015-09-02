@@ -3335,7 +3335,7 @@
 ! #endif
       USE WEBMOD_PHREEQ_MMS
       USE WEBMOD_OBSCHEM, ONLY :phq_lut,sol_id,sol_name,n_iso,iso_list
-      USE WEBMOD_IO, only: phreeqout, chemout, print_vse, chemout,nf,vse_lun, xdebug_start, xdebug_stop
+      USE WEBMOD_IO, only: phreeqout, chemout, print_vse, chemout,nf,vse_lun, xdebug_start, xdebug_stop, debug
 
 ! Mixing variables from webmod_res
       USE WEBMOD_RESMOD, ONLY : vmix_can, vmix_snow, vmix_ohoriz, &
@@ -4581,12 +4581,14 @@
             STOP
          ENDIF
 
-      write(chemout%lun,'(A)')'row, chemrow, src, dest, '//&
-                'chemvar?, src_init->'
-      write(chemout%lun,123)(i,isoln(dest(i),nchemdat,nmru,nac,&
-           clark_segs,ires,ichemdat,imru,inac,ihydro),&
-           src(i),dest(i),c_indx(i,2),(src_init(i,j),j=1,11)&
-              ,i=1,nphrsolns)
+         if(xdebug_start.gt.0) then
+           write(debug%lun,'(A)')'row, chemrow, src, dest, '//&
+                     'chemvar?, src_init->'
+           write(debug%lun,123)(i,isoln(dest(i),nchemdat,nmru,nac,&
+                clark_segs,ires,ichemdat,imru,inac,ihydro),&
+                src(i),dest(i),c_indx(i,2),(src_init(i,j),j=1,11)&
+                   ,i=1,nphrsolns)
+         end if
  123  format(16I10)
  
 !
@@ -5365,7 +5367,7 @@
 !$$$      ENDIF
 !
 !
-! Concentrations in discharge are always printed in the *.chemout file when chem_sim=1
+! Concentrations in discharge are always printed in the *.chem.out file when chem_sim=1
 ! Write additional headers for solutes (s_) and entities (e_) when print_vse.ge.1
 ! if print_vse = 1 additional files for solutes and entities for basin and mrus. 
 ! if print_vse = 2 additional files for solutes and entities for all reservoirs

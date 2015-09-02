@@ -354,25 +354,25 @@ Pyrite_O2
    200 save moles
   -end
  
-Pyrite_O2_xtreme
-  -start
-   1 rem        Handcart Gulch model numbers, round 1, Linear increase to add sulfate as water table drops
-   2 rem        parm(1) = log10(A/V, m^2/L water)      parm(2) = exp for (m/m0)
-   3 rem        parm(3) = exp for O2            parm(4) = exp for H+
-#   10 if (m <= 0) then goto 200
-   20 if (si("Pyrite") >= 0) then goto 200
-# log pO2 of -1.8 converted to log molal = -4.476
-#   25  rate = -9.14 + parm(1) + parm(3)*-4.476 + parm(4)*lm("H3O+") + parm(2)*log10(m/m0)
-   25  rate = -9.14 + parm(1) + parm(3)*lm("O2")+ parm(4)*lm("H3O+") + parm(2)*log10(m/m0)
-   26  rate = 10^rate * (1 - SR("pyrite"))
-#   26  rate = 10^rate
-   27 gwsto = callback(cell_no,dummy,"gwsto")
-# linear enhancement when gwsto below parm(5)
-   28 if(gwsto < parm(5)) then rate = rate * (parm(5)-gwsto) else rate = 0
-   30  moles = rate * time
-#   40 if (moles > m) then moles = m
-   200 save moles
-  -end
+#Pyrite_O2_xtreme
+#  -start
+#   1 rem        Handcart Gulch model numbers, round 1, Linear increase to add sulfate as water table drops
+#   2 rem        parm(1) = log10(A/V, m^2/L water)      parm(2) = exp for (m/m0)
+#   3 rem        parm(3) = exp for O2            parm(4) = exp for H+
+##   10 if (m <= 0) then goto 200
+#   20 if (si("Pyrite") >= 0) then goto 200
+## log pO2 of -1.8 converted to log molal = -4.476
+##   25  rate = -9.14 + parm(1) + parm(3)*-4.476 + parm(4)*lm("H3O+") + parm(2)*log10(m/m0)
+#   25  rate = -9.14 + parm(1) + parm(3)*lm("O2")+ parm(4)*lm("H3O+") + parm(2)*log10(m/m0)
+#   26  rate = 10^rate * (1 - SR("pyrite"))
+##   26  rate = 10^rate
+#   27 gwsto = callback(cell_no,dummy,"gwsto")
+## linear enhancement when gwsto below parm(5)
+#   28 if(gwsto < parm(5)) then rate = rate * (parm(5)-gwsto) else rate = 0
+#   30  moles = rate * time
+##   40 if (moles > m) then moles = m
+#   200 save moles
+#  -end
  
 END
  
@@ -452,13 +452,6 @@ Pyrite_O2
     -parms    % kpyr_s       % 0 0.5 -0.11
     -tol      1e-008	
 
-Pyrite_O2_xtreme
-    -formula  FeS2 1 H2O 0.5 O2 3.75
-    -m        1000
-    -m0       1000
-    -parms    % kpyrxt       % 0 0.5 -0.11 %    tpyrxt    %
-    -tol      1e-008	
-
 Nitrification
     -formula Amm -1 NH3 +1
     -m       1000
@@ -484,7 +477,7 @@ EQUILIBRIUM_PHASES 30 Unsaturated zone
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
 #	Calcite    -.5 0
-	Smectite-Illite 0 0 # precipitate  # fit the first 0, equilibrium constant
+	Smectite-Illite % ksmecu       % 0 # precipitate  # fit the first 0, equilibrium constant
 #	Calcite     0 0
 #	O2(g)       -0.9 100      # atmospheric, could adjust Use this for gradient of O2, this being the most oxygen rich
 	O2(g)       % O2uz         % 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
@@ -495,7 +488,7 @@ EQUILIBRIUM_PHASES 4 Saturated zone
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
 #	Calcite    0 0
-	Smectite-Illite -0.05 0 # precipitate  # fit the first 0, equilibrium constant
+	Smectite-Illite % ksmecs       % 0 # precipitate  # fit the first 0, equilibrium constant
 END
 EXCHANGE 1
 X	.001

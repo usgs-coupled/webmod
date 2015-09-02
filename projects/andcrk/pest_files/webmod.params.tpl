@@ -310,13 +310,6 @@ nmru
 2
 % pmacst       %
 ####
-resp_coef_min 14
-1
-nmru
-1
-2
-0.01
-####
 init_eq_ph_mru 15
 1
 nmru
@@ -1678,6 +1671,20 @@ nmru
 3
 0.5
 ####
+iso_theta 8
+1
+nmru
+1
+3
+1.0
+####
+iso_fac 8
+1
+nmru
+1
+3
+% isofac       %
+####
 snow_ion_factor 14
 1
 nmru
@@ -1749,7 +1756,7 @@ riparian_thresh 6
 nmru
 1
 2
-% ripthr       %
+60,0
 ####
 basin_area 14
 1
@@ -1855,13 +1862,6 @@ nchemvar
 0
 0
 ####
-resp_hr_min 12
-1
-nmru
-1
-2
-0.083
-####
 init_rxn_mru 13
 1
 nmru
@@ -1895,7 +1895,7 @@ chem_sim 9
 one
 1
 1
-0
+1
 ####
 tmin_adj 9
 1
@@ -1938,13 +1938,6 @@ nmru
 1
 1
 0
-####
-resp_hr_full 13
-1
-nmru
-1
-2
-36.0
 ####
 PLWHC 8
 1

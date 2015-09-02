@@ -38,6 +38,7 @@
 c 17apr09 - Add Fortran90 Module: WEBMOD_SUM
 c
 c
+c
 c***********************************************************************
 
 **********************************************************************
@@ -114,10 +115,25 @@ C   Declared Variables
       real, save ::  basin_qobs_cm_sum(5)
       real, save ::  basin_qsim_m3s_avg(5)
       real, save ::  basin_qobs_m3s_avg(5)
+      real, save ::  basin_init_m3_tot(5)
       real, save ::  wat_bal_cm,wat_bal_cm_sum(5)
       real, save ::  obj_func(5),obj_func_sum(5,5)
       real, save ::  tot_basin_qsim_m3s(5),tot_basin_qobs_m3s(5)
       real, save :: last_basin_stor,last_chan_stor
+      
+c total discharge of water and solutes at basin outlet
+      double precision, save :: ch_outlet_m3_sum(5)
+      double precision, save :: ch_outlet_tempC_avg(5)
+      double precision, save :: ch_outlet_pH_avg(5)
+      double precision, save, allocatable :: ch_outlet_M_sum(:,:)
+
+c in, out, ET or rxn, final for water and solutes
+      double precision, save :: ch_basin_m3_in_sum(5)
+      double precision, save :: ch_basin_m3_out_sum(5)
+      double precision, save :: ch_basin_m3_ET_sum(5)
+      double precision, save, allocatable :: ch_basin_M_in_sum(:,:)
+      double precision, save, allocatable :: ch_basin_M_out_sum(:,:)
+      double precision, save, allocatable :: ch_basin_M_rxn_sum(:,:)
 
       END MODULE WEBMOD_SUM
 
@@ -164,9 +180,12 @@ c
       integer function sumbdecl()
 
       USE WEBMOD_SUM
+      USE WEBMOD_IO, only: debug
+      USE WEBMOD_PHREEQ_MMS, only: nsolute
+
       IMPLICIT NONE
       sumbdecl = 1
-
+      
       if(declparam('sumb', 'print_explanation', 'one', 'integer', 
      +   '1', '0', '1',
      +   'Print detailed explanation in output file (0,No;1,Yes)',
@@ -219,8 +238,81 @@ c
      +   'Total basin area',
      +   'km2').ne.0) return
 
-c computed incoming shortwave radiation in Watts per square meters
+c total discharge of water and solutes at basin outlet
 
+      if(declvar('phreeqmms', 'ch_outlet_m3_sum', 'five', 5,
+     +  'double','Total volume of water discharged at outlet '//
+     $   'for time step of (1) unit, (2) day, (3) month, '//
+     $   '(4) year, or (5) entire run.',
+     +  'm3', ch_outlet_m3_sum).ne.0) return
+      ch_outlet_m3_sum = 0.0d0
+
+      if(declvar('phreeqmms', 'ch_outlet_tempC_avg', 'five', 5,
+     +  'double','Temperature of water discharged at outlet '//
+     $  'for time step of (1) unit, (2) day, (3) month, '//
+     $  '(4) year, or (5) entire run.',
+     +  'deg C', ch_outlet_tempC_avg).ne.0) return
+      ch_outlet_tempC_avg = 0.0d0
+
+      if(declvar('phreeqmms', 'ch_outlet_pH_avg', 'five', 5,
+     +  'double','pH of water discharged at outlet '//
+     $  'for time step of (1) unit, (2) day, (3) month, '//
+     $  '(4) year, or (5) entire run.',
+     +  'pH units', ch_outlet_pH_avg).ne.0) return
+      ch_outlet_pH_avg = 0.0d0
+
+      allocate(ch_outlet_M_sum(nsolute,5))
+      if(declvar('phreeqmms', 'ch_outlet_M_sum', 'nsolute,five', 
+     +  nsolute*5,'double','Moles of solute discharged at outlet '//
+     $  'for time step of (1) unit, (2) day, (3) month, '//
+     $  '(4) year, or (5) entire run.',
+     +  'Moles', ch_outlet_M_sum).ne.0) return
+      ch_outlet_M_sum = 0.0d0
+
+c in, out, ET or rxn, final for water and solutes
+      
+      if(declvar('phreeqmms', 'ch_basin_m3_in_sum', 'five', 5,
+     +     'double','Total volume of water entering the basin'//
+     $     'for time step of (1) unit, (2) day, (3) month, '//
+     $     '(4) year, or (5) entire run.',
+     +      'm3', ch_basin_m3_in_sum).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_basin_m3_out_sum', 'five', 5,
+     +      'double','Total volume of water leaving the basin'//
+     $     'for time step of (1) unit, (2) day, (3) month, '//
+     $     '(4) year, or (5) entire run.',
+     +      'm3', ch_basin_m3_out_sum).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_basin_m3_ET_sum', 'five', 5,'double',
+     +      'Total volume of evapotranspiration from the basin'//
+     $     'for time step of (1) unit, (2) day, (3) month, '//
+     $     '(4) year, or (5) entire run.',
+     +      'm3', ch_basin_m3_ET_sum).ne.0) return
+
+      allocate(ch_basin_M_in_sum(nsolute,5))
+      if(declvar('phreeqmms', 'ch_basin_M_in_sum', 'nsolute,five',
+     +      nsolute*5,'double','Moles of solute entering the basin '//
+     $     'for time step of (1) unit, (2) day, (3) month, '//
+     $     '(4) year, or (5) entire run.',
+     +     'Moles', ch_basin_M_in_sum).ne.0) return
+
+      allocate(ch_basin_M_out_sum(nsolute,5))
+      if(declvar('phreeqmms', 'ch_basin_M_out_sum', 'nsolute,five',
+     +     nsolute*5,'double','Moles of solute leaving the basin '//
+     $     'for time step of (1) unit, (2) day, (3) month, '//
+     $     '(4) year, or (5) entire run.',
+     +     'Moles', ch_basin_M_out_sum).ne.0) return
+
+      allocate(ch_basin_M_rxn_sum(nsolute,5))
+      if(declvar('phreeqmms', 'ch_basin_M_rxn_sum', 'nsolute,five',
+     +  nsolute*5, 'double','Moles of solute produced (+) or '//
+     +     'consumed (-) by reactions in the basin '//
+     $     'for time step of (1) unit, (2) day, (3) month, '//
+     $     '(4) year, or (5) entire run.',
+     +     'Moles', ch_basin_M_rxn_sum).ne.0) return
+c
+c computed incoming shortwave radiation in Watts per square meters
+c
       if(declvar('sumb', 'swrad_W', 'one', 1, 'real', 
      + 'Basin average incident shortwave radiation on a '//
      $ 'horizontal surface.',
@@ -650,9 +742,12 @@ c
       USE IFPORT
 #endif
       USE WEBMOD_SUM
+      USE WEBMOD_IO, only: chemout
       USE WEBMOD_RESMOD, ONLY : basin_sto_cm, basin_chan_sto_cm,
      $  basin_intcp_sto_cm,basin_pweqv_cm,basin_sssto_cm,
      $  basin_soil_moist_cm, basin_gw_sto_cm
+      USE WEBMOD_PHREEQ_MMS, ONLY : cheminit_file, c_chem_basin
+
       IMPLICIT NONE
       !integer, external :: getdataname  ! (defined in obs_chem)
 
@@ -798,13 +893,20 @@ c Get the date/time and names of the data file and the parameter file
         return
       end if
       lengdat = index(datafile,achar(0))-1
+      
       IF (control_string(paramfile, 'param_file')
      &       .NE.0 ) then
         print*,'Problems retrieving parameter file name',
      $           ' Run has been stopped.'
       end if
-
       lengpar = index(paramfile,achar(0))-1
+c
+c Print header for chemical output file. Acknowledge no content if chem_sim = 0.
+c
+
+c
+c Print header for hydrology output file. Describe fields if print_explanation = 1.
+c
       if(print_explanation.eq.1) then
          write (buffer_txt, 10)char(13),today(2),today(1), 
      $   today(3),now,char(13), datafile(1:lengdat),char(13),
@@ -1022,6 +1124,7 @@ c     sumbrun - Computes summary values
       integer function sumbrun()
 
       USE WEBMOD_SUM
+      USE WEBMOD_IO, ONLY : chemout
       USE WEBMOD_RESMOD, ONLY : basin_sto_cm, basin_in_cm, basin_out_cm,
      + basin_ppt_cm, basin_irr_ext_cm, basin_irr_sat_cm, 
      + basin_irr_hyd_cm, basin_intcp_sto_cm, basin_intcp_cm, 
@@ -1038,12 +1141,15 @@ c     sumbrun - Computes summary values
      + basin_chan_div_cm, basin_chan_loss_cm, basin_qsim_cm, 
      + basin_qsim_m3s, basin_qobs_cm, basin_qobs_m3s, basin_et_cm, 
      + basin_transp_cm
+      USE WEBMOD_PHREEQ_MMS, ONLY : 
+     +  ch_outlet_m3,ch_outlet_tempC,ch_outlet_pH, ch_outlet_M,
+     +  ch_basin_m3_in, ch_basin_m3_out, ch_basin_m3_ET, 
+     +  ch_basin_m3_final, ch_basin_M_in, ch_basin_M_out, 
+     +  ch_basin_M_rxn, ch_basin_M_final
+
       IMPLICIT NONE
 
-
-c$$$      integer maketempC     ! Fn to convert Temps if necessary
       integer endper
-
 
 c*****local variables
 
@@ -1148,7 +1254,7 @@ c     First step zeros all since lastper was set to all 1s in init
 
 c
 c Count time steps for computing average discharge values for radiation
-c   and discharge
+c   discharge, temperature, and pH
 c
       do 8 i = 1,5
          tot_steps(i) = tot_steps(i) + 1
@@ -1809,7 +1915,7 @@ C New formats for unit value runs - RW
  2005 format(' ================================================')
  2006 format(2x,f5.0,19x,f11.4,1x,f11.4)
  2007 format(' ************************************************')
- 2008 format(' Total for run',12x,2f12.4)
+ 2008 format(' Total for run',12x,2f12.2)
 
  2010 format(
      $     '    Date  /  Time   Basin_sto  Precip   ',
@@ -1827,7 +1933,7 @@ C New formats for unit value runs - RW
 
  2014 format(i4.4,1x,i2.2,1x,12x,10(f9.4,1x))
  2016 format(i4.4,16x,10(f9.4,1x))
- 2018 format(' Total for run',6x,10(f9.4,1x))
+ 2018 format(' Total for run',6x,10(f9.2,1x))
 
  2020 format(
      $ '    Date  /  Time   srad tmax tmin  Pot_',
@@ -1878,7 +1984,7 @@ C New formats for unit value runs - RW
  924  format(i4.4,1x,2(i2.2,1x),9x,3(i4.3,1x),2f7.2,49(1x,f9.4))
  2024 format(i4.4,1x,i2.2,13x,3(i4.3,1x),2f7.2,49(1x,f9.4))
  2026 format(i4.4,16x,3(i4.3,1x),2f7.2,49(1x,f9.4))
- 2028 format(' Total for Run ',5x,3(i4.3,1x),2f7.2,49(1x,f9.2))
+ 2028 format(' Total for Run ',5x,3(i4.3,1x),2f7.1,49(1x,f9.2))
 
       sumbrun = 0
       if(end_run) print*, "Finished"

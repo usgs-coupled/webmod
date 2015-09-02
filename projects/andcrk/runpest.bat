@@ -12,6 +12,8 @@ set HOME=%cd%
 set HOME_SED=%HOME:\=/%
 set "INPUT_DIR=%HOME%\input"
 set INPUT_DIR_SED=%INPUT_DIR:\=/%
+set "OUTPUT_DIR=%HOME%\output"
+set OUTPUT_DIR_SED=%OUTPUT_DIR:\=/%
 set "PEST_FILES_DIR=%HOME%\pest_files"
 set PEST_FILES_DIR_SED=%PEST_FILES_DIR:\=/%
 set "CONTROL_DIR=%HOME%\control"
@@ -65,6 +67,9 @@ if %errors% == 2 (
     
 REM set port number
 set PORT=4004 
+
+REM setup output directory 
+if NOT exist %OUTPUT_DIR% mkdir %OUTPUT_DIR%
 
 REM setup working directory PROJECT_DIR=pest_run_dir
 if exist %PROJECT_DIR% rmdir /s/q %PROJECT_DIR%
@@ -120,13 +125,13 @@ for /f "tokens=1,* delims=]" %%A in ('"type %pstfile%|find /n /v """') do (
     if "!COUNTER!" == "1" (
         ECHO !line! > %tmppest%
     ) else if "!COUNTER!" == "6" (
-        ECHO 10.0  -3.0    0.3    0.03     -10  999  LAMFORGIVE >> %tmppest%
+        ECHO 10.0  -3.0    0.3    0.03     -%NODES%  999  LAMFORGIVE >> %tmppest%
     ) else if "!COUNTER!" == "7" ( 
         ECHO 0.2   2.0   1.0e-3 >> %tmppest%
     ) else if "!COUNTER!" == "9" ( 
         ECHO 30   .005  4   4  .005   4 >> %tmppest%
     ) else if "!COUNTER!" == "13" ( 
-        ECHO 19 5e-7 >> %tmppest%
+        ECHO 52 5e-7 >> %tmppest%
     ) else if "!COUNTER!" == "14" ( 
         ECHO 1 >> %tmppest%
     ) else (
@@ -165,7 +170,7 @@ copy %INPUT_DIR%\phreeqc_web_lite.dat   .\
 
 REM Run parallel pest Master
 cd %PROJECT_DIR%
-%PEST_BIN_DIR%\beopest64.exe %PROJECT_DIR%\%PST% /H /L :%PORT% 
+%PEST_BIN_DIR%\beopest64.exe %PROJECT_DIR%\%PST% /H /L /p1 :%PORT% 
 
 REM tidy up
 IF "%ERRORLEVEL%" == "0" (
@@ -191,9 +196,22 @@ IF "%ERRORLEVEL%" == "0" (
     copy webmod.svd         ..\pest_results
     copy webmod.pqi         ..\pest_results
     copy webmod.params      ..\pest_results
+    copy webmod.hydro.out   ..\pest_results
+    copy webmod.statvar     ..\pest_results
     copy webmod.pqi         ..\input\webmod.pqi.pest
     copy webmod.params      ..\input\webmod.params.pest
+    copy webmod.hydro.out   ..\output\webmod.hydro.out.pest
+    copy webmod.statvar     ..\output\webmod.statvar.pest
     copy tsproc.dat         ..\pest_results
+    cd ../pest_results
+REM Plot residuals and correlation
+    %PEST_BIN_DIR%\pest_plot webmod.rei webmod__fit.pdf none
+REM Plot parameters changes
+    %PEST_BIN_DIR%\parm_plot webmod.pst webmod.sen webmod_par_calib.pdf none
+REM Plot sensitivities
+    %PEST_BIN_DIR%\sen_plot webmod.sen webmod_sensitivity.pdf
+REM Plot contributions to phi by observation group
+    %PEST_BIN_DIR%\pcon_plot webmod.rec webmod_phi.pdf none
     cd   %PROJECT_DIR%\..
 REM
 REM run sensitivity plots here
