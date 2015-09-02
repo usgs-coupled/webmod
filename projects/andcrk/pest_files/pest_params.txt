@@ -55,7 +55,7 @@ radmax	fixed	relative	8.00	1	10	hyd_evap	1.000E-01	0.000E+00	1
 rainad	fixed	relative	2.80	1	10	hyd_evap	5.556E-02	9.444E-01	1
 s_ohor	fixed	relative	1.18	1	10	hyd_runoff	5.556E-02	-5.556E-02	1
 s_thpo	log	factor	1.00	1	10	hyd_soil	4.444E-02	3.556E-01	1
-s_thfc	log	factor	-3.00	1	10	hyd_soil	2.000E-02	1.900E-01	1
+s_thfc	log	factor	1.5	1	10	hyd_soil	2.000E-02	1.900E-01	1
 awc	log	factor	4.32	1	10	hyd_soil	2.111E-02	-1.111E-02	1
 s_rock	fixed	relative	1.30	1	10	hyd_soil	3.310E+01	-3.100E+01	1
 s_root	log	factor	1.99	1	10	hyd_soil	2.111E-01	-1.111E-01	1
