@@ -192,10 +192,11 @@
 #if defined(_WIN32)
 !        I = SYSTEM('copy .\output\select_mixes + .\phreeqc.0.out .\output\select_mixes')
         I = SYSTEM('echo '// Now_time//'>> '//sel_mix%file)
-        I = SYSTEM('copy '//sel_mix%file//' + .\phreeqc.0.out '//sel_mix%file)
+        !I = SYSTEM('copy '//sel_mix%file//' + .\phreeqc.0.out '//sel_mix%file)
+        I = SYSTEM('type phreeqc.0.out >> '//sel_mix%file)
 #else
         I = SYSTEM('cat '// Now_time  //' >> '//sel_mix%file)
-        I = SYSTEM('cat .\phreeqc.0.out >> '//sel_mix%file)
+        I = SYSTEM('cat ./phreeqc.0.out >> '//sel_mix%file)
 #endif
       endif
       files_on = fil_temp
