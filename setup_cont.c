@@ -88,6 +88,10 @@ void setup_cont (void) {
 		lval[0] = 1;
 		decl_control_int_array ("subbasin_flag", 1, lval);
 
+        lval = (long *)umalloc (sizeof (long));
+		lval[0] = 0;
+		decl_control_int_array ("gwr_swale_flag", 1, lval);
+
 		lval = (long *)umalloc (sizeof (long));
 		lval[0] = 0;
 		decl_control_int_array ("frozen_flag", 1, lval);
