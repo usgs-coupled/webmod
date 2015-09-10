@@ -232,12 +232,13 @@
 
 ! Booleans
 
-      logical, save ::  chemdat_exists, phr_tf
+      logical, save ::  chemdat_exists
 
 ! The c_ parameters determine what reservoirs and metrics are
 ! loaded into the ch_var variables
 
       integer, save ::  nphrsolns
+      logical ::  phr_tf
 ! chvar_lut is an integer array describing the reservoirs and metrics 
 ! flagged in the nchemvar pars. The reservoir is described both by the
 ! unique solution number and the row number of the c_indx/c_chem tables.
@@ -3407,6 +3408,8 @@
 !
         if(xdebug_start.gt.0) then
          phr_tf=.true.
+         print*,'Detailed PHREEQC output will be written to select mixes ',&
+               'for intial mixes and for run steps ',xdebug_start,' and ',xdebug_stop 
         else if(xdebug_start.eq.0) then
          phr_tf=.false.
         else
@@ -3417,7 +3420,7 @@
       iresult = SetErrorFileOn(ID,phr_tf)
       iresult = SetLogFileOn(ID,phr_tf)
       iresult = SetSelectedOutputFileOn(ID,phr_tf)
-!
+      !
 ! Open selct_mixes if xdebug_start > 0 and solute files if print_vse= 1 (basin and mru) or 2 (all reservoirs)
 !
       IF(control_string(out_dir,'output_dir').NE.0) RETURN
@@ -6242,7 +6245,7 @@
          phr_tf = .false.
          if(xdebug_start.ne.0) then
             if(nstep.le.xdebug_stop.and.nstep.ge.xdebug_start)&
-                 phr_tf =.true.
+                 phr_tf = .true.
          end if
          iresult = SetOutputFileOn(ID,phr_tf)
          iresult = SetErrorFileOn(ID,phr_tf)

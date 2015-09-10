@@ -2043,7 +2043,7 @@ c
       integer function webrrun()
 
       USE WEBMOD_RESMOD
-      USE WEBMOD_IO, only: phreeqout, print_vse
+      USE WEBMOD_IO, only: phreeqout, print_vse, debug
       USE WEBMOD_TOPMOD, only: z_wt_local, srzwet, riparian,
      $                         s_theta_0, s_root_depth
       IMPLICIT NONE
@@ -3546,6 +3546,14 @@ c
         write(vf_hyd%lun,123) nstep,(datetime(i),i=1,3),
      $     basin_qsim_cm/m3cm, (vmix_stream(i),i=1,nhydro)
       end if
+! temp print out  uz vols
+       !if(end_run) then
+       !    write(debug%lun,*)'O Horiz:',vmix_ohoriz(1,4)
+       !    write(debug%lun,*)'UZ_pref:',vmix_qdf(1,4)
+       !    write(debug%lun,*)'Sat:',vmix_sat(1,4)
+       !    write(debug%lun,*)'UZ volumes_m3:',(vmix_uz(ia,1,4),ia=1,11)
+       !endif
+!        
  123  format(2I5,2I3,21(E14.6,1X))
 !      if (end_dy) write(*,"(85E14.6)")
 !     $ (vmix_can(1,i), i=1,6),(vmix_ohoriz(1,i), i=1,6),(vmix_snow(1,i),
