@@ -52,7 +52,6 @@
       integer, external  ::  getstep, elapsed_time
       logical   fil_temp
       integer, save      ::  et_hold
-!      LOGICAL          fil_temp, step1
       LOGICAL          step1, phr_print
 !
       data step1/.true./
