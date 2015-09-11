@@ -11,6 +11,7 @@
 export SLURM_CPU_BIND=none
 
 module load tools/beopest-12.2-gnu
+# module load tools/beopest-13.3-gnu
 module load intel/psxe-2015
 module load mpi/openmpi-1.6.5-gcc
 
@@ -103,7 +104,7 @@ cp ${INPUT_DIR}/webmod.chem.dat        .
 cp ${INPUT_DIR}/phreeq_lut             .
 cp ${INPUT_DIR}/phreeqc_web_lite.dat   .
 
-mpirun -np ${SLURM_NTASKS} ppest ${PROJECT_DIR}/webmod.pst /M /L ${PROJECT_DIR}/psttemp
+mpirun -np ${SLURM_NTASKS} ppest ${PROJECT_DIR}/webmod.pst /P1 /M /L ${PROJECT_DIR}/psttemp
 # cd ${LOCAL_HOME}
 # ../../bin/webmod -C./control/webmod.control > webmod.log
 # exit 0

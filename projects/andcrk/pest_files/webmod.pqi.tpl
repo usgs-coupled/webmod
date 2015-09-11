@@ -510,3 +510,11 @@ END
 PRINT
 # -RESET FALSE
 -STATUS FALSE
+
+USER_PRINT
+10 PRINT "Oligoclase      ", KIN("Oligoclase") - 1e3
+20 PRINT "Biotite         ", KIN("Biotite") - 1e3
+30 PRINT "Chlorite        ", KIN("Chlorite") - 1e3
+40 PRINT "Calcite         ", KIN("Calcite") - 1e3
+50 PRINT "Pyrite_O2       ", KIN("Pyrite_O2") - 1e3
+60 PRINT "Nitrification   ", KIN("Nitrification") - 1e3

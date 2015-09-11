@@ -3,7 +3,7 @@
 #SBATCH -p UV
 #SBATCH -A nrp
 #SBATCH --output=webmod.pest.out
-#SBATCH -n 52
+#SBATCH -n 51
 ##SBATCH --ntasks=53
 ##SBATCH --mem-per-cpu=1000M
 #SBATCH -t48:00:00

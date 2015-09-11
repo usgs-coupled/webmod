@@ -13,7 +13,7 @@ koligs	none	relative	8.16	1	10	phq_k	1.333E+00	-1.133E+01	1
 kbiots	none	relative	7.40	1	10	phq_k	1.333E+00	-1.133E+01	1
 kchlrs	none	relative	8.42	1	10	phq_k	1.333E+00	-1.133E+01	1
 kcalcs	none	relative	2.32	1	10	phq_k	1.333E+00	-1.133E+01	1
-kpyr_s	none	relative	1.90	1	10	phq_k	1.111E+00	-1.111E+01	1
+kpyr_s	none	relative	8.28	1	10	phq_k	1.111E+00	-1.111E+01	1
 ksmecs	none	relative	5.50	1	10	phq_eq	2.222E-01	-1.222E+00	1
 knitrs	none	relative	2.94	1	10	phq_k	1.333E+00	-1.133E+01	1
 kK_sum	none	relative	9.91	1	10	phq_k	5.556E-02	-5.556E-01	1
