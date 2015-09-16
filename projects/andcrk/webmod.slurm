@@ -4,12 +4,10 @@
 #SBATCH -A nrp
 #SBATCH --output=webmod.pest.out
 #SBATCH -n 51
-##SBATCH --ntasks=53
 ##SBATCH --mem-per-cpu=1000M
 #SBATCH -t48:00:00
 #SBATCH --exclusive
-
-SLURM_CPU_BIND=none
+export SLURM_CPU_BIND=none
 
 PROCESSES=${SLURM_NTASKS}
 
@@ -65,7 +63,7 @@ sed -i "2s/CONTEXT pest_prep/CONTEXT model_run/"                   ${PROJECT_DIR
 
 # Sed andcrk.pst
 # Line 6 of the pst file RLAMBDA1 .....	
-sed -i "6s/.*/10.0  -3.0    0.3    0.03     -10  999  LAMFORGIVE/" ${PROJECT_DIR}/webmod.pst
+sed -i "6s/.*/10.0  -3.0    0.3    0.03     -${PROCESSES} 999  LAMFORGIVE/" ${PROJECT_DIR}/webmod.pst
 # Line 7 of the pst file RELPARMAX FACPARMAX FACORIG.....	
 sed -i "7s/.*/0.2   2.0   1.0e-3/"                                 ${PROJECT_DIR}/webmod.pst
 # Line 9 of the pst file. NOPTMAX Max # of optimizations. Default is 30, set to 0 for single run with phi contributions, 1 for sensitivities, or a small number to test PEST loops.
@@ -110,7 +108,8 @@ time mpirun -np ${PROCESSES} --bind-to-core ppest ${PROJECT_DIR}/webmod.pst /M /
 # Tidy up
 rm -rf ${PROJECT_DIR}/../pest_results
 mkdir ${PROJECT_DIR}/../pest_results
-cp tsproc.sim.out.ins ../pest_results
+cp tsproc.dat         ../pest_results
+cp tsproc.sim.out     ../pest_results
 cp webmod.jac         ../pest_results
 cp webmod.jco         ../pest_results
 cp webmod.jst         ../pest_results
@@ -131,7 +130,13 @@ cp webmod.pqi         ../pest_results
 cp webmod.params      ../pest_results
 cp webmod.pqi         ../input/webmod.pqi.pest
 cp webmod.params      ../input/webmod.params.pest
-cp tsproc.dat         ../pest_results
+cp webmod.statvar     ../pest_results
+cp webmod.hydro.out   ../pest_results
+cp webmod.chem.out    ../pest_results
+cp webmod.topout      ../pest_results
+mkdir -p output
+cp webmod.hydro.out   ../output/webmod.hydro.out.pest
+cp webmod.stavar      ../output/webmod.statvar.pest
 
 cd ${PROJECT_DIR}/..
 
