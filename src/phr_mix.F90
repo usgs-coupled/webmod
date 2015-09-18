@@ -182,7 +182,7 @@
 !          ' # of inputs/solns: ',count, (solutions(j),j=1,count)
 !        write(25,130)"Date:  ",(nowtime(i),i=1,3)        
 !        iresult = SetOutputFileOn(ID,.FALSE.)
-        if(.not.nowtime(1)) then
+        if(nowtime(1).eq.0) then
             write(Now_time,10)'Initial Mixes '  ! Initial Mixes
         else
             write(Now_Time,15) nowtime(2),nowtime(3),nowtime(1) ! Date of mix and reaction
