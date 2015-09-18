@@ -7,10 +7,12 @@ set(WEBMOD_END_DAY                     "6")
 set(WEBMOD_INPUT_ANDCRK_PARAMS         "./input/andcrk.params")
 set(WEBMOD_INPUT_ANDCRK_DAT            "./input/andcrk.dat")
 set(WEBMOD_INPUT_PHREEQC_WEB_LITE_DAT  "./input/phreeqc_web_lite.dat")
+set(WEBMOD_INPUT_CHEMDAT_FILE          "./input/webmod.chem.dat")
+set(WEBMOD_INPUT_PHREEQ_FILE           "./input/webmod.pqi")
 set(WEBMOD_OUTPUT_ANDCRK_OUT           "./output/andcrk.out")
 set(WEBMOD_INPUT_DIR                   "./input/")
 set(WEBMOD_OUTPUT_DIR                  "./output/")
-set(WEBMOD_ANI_OUTPUT                  "./output/animation.out")
+set(WEBMOD_ANI_OUTPUT                  "./output/webmod.aniout")
 set(WEBMOD_STAT_VAR                    "./output/andcrk.statvar")
 set(WEBMOD_VAR_INIT                    "./input/prms_ic.in")
 set(WEBMOD_SAVE                        "./output/andcrk.ics")  
@@ -20,6 +22,8 @@ set(WEBMOD_SENS_OUTPUT                 "./output/andcrk.sens")
 set(WEBMOD_VAR_PRINT                   "./output/andcrk.vars")
 set(WEBMOD_GIS_OUTPUT                  "./output/andcrk.gis")
 set(WEBMOD_STATS_OUTPUT                "./output/andcrk.stats")
+set(WEBMOD_MODEL_CHEMOUT_FILE          "./output/webmod.chem.out")
+set(WEBMOD_MODEL_TOPOUT_FILE           "./output/webmod.topout")
 set(WEBMOD_EXE_MODEL                   "../../bin/webmod_1.0")
 
 # make paths native
@@ -74,12 +78,18 @@ configure_file(
   "input/andcrk.dat.chemdat"
   )
   
-# input/andcrk.dat.pqi  
+# input/webmod.pqi
 configure_file(
-  "input/andcrk.dat.pqi"
-  "input/andcrk.dat.pqi"
+  "input/webmod.pqi"
+  "input/webmod.pqi"
   )
-  
+
+# input/webmod.chem.dat
+configure_file(
+  "input/webmod.chem.dat"
+  "input/webmod.chem.dat"
+  )
+
 # input/phreeqc_web_lite.dat
 configure_file(
   "input/phreeqc_web_lite.dat"
