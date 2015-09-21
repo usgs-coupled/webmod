@@ -4,7 +4,7 @@
 #SBATCH -A nrp
 #SBATCH --output=webmod.pest.out
 #SBATCH -n 51
-##SBATCH --mem-per-cpu=1000M
+#SBATCH --mem-per-cpu=10000M
 #SBATCH -t48:00:00
 #SBATCH --exclusive
 export SLURM_CPU_BIND=none
@@ -136,7 +136,7 @@ cp webmod.chem.out    ../pest_results
 cp webmod.topout      ../pest_results
 mkdir -p output
 cp webmod.hydro.out   ../output/webmod.hydro.out.pest
-cp webmod.stavar      ../output/webmod.statvar.pest
+cp webmod.statvar      ../output/webmod.statvar.pest
 
 cd ${PROJECT_DIR}/..
 
