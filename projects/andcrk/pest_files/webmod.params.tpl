@@ -55,7 +55,7 @@ nchemvar
 10
 ####
 nhydro
-4
+1
 ####
 nlapse
 3
@@ -739,11 +739,8 @@ one
 init_eq_ph_hydro 17
 1
 nhydro
-4
 1
-2
-2
-2
+1
 2
 ####
 gwbnd_len2 11
@@ -1235,11 +1232,8 @@ nmru
 init_rxn_hydro 15
 1
 nhydro
-4
 1
--1
--1
--1
+1
 -1
 ####
 mru_lat 8
@@ -1448,11 +1442,8 @@ one
 init_kin_hydro 15
 1
 nhydro
-4
 1
--1
--1
--1
+1
 -1
 ####
 print_freq 11
@@ -1539,11 +1530,8 @@ one
 init_exch_hydro 16
 1
 nhydro
-4
 1
--1
--1
--1
+1
 -1
 ####
 eq_phset_table 15
@@ -1709,11 +1697,8 @@ nmru
 init_soln_hydro 16
 1
 nhydro
-4
 1
-3
-3
-3
+1
 3
 ####
 s_satpref_zmax 15
@@ -1972,11 +1957,8 @@ nmru
 init_surf_hydro 16
 1
 nhydro
-4
 1
--1
--1
--1
+1
 -1
 ####
 ppt_rad_adj 4
