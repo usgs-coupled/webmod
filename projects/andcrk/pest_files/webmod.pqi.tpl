@@ -321,6 +321,7 @@ Nitrification
  -start
    1 REM parm(1) is log factor to speed or slow reaction
    10 rate = 10^parm(1) * TOT("Amm") * MOL("O2") / (MOL("O2") + 1e-5)
+   15 rate = rate * MOL("Amm") / (MOL("Amm") + 1e-8)
    20 moles = rate * TIME
    100 SAVE moles
  -end
