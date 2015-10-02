@@ -16,8 +16,8 @@ kcalcs	none	relative	3.26948 	1	10	phq_k	1.333E+00	-1.133E+01	1
 kpyr_s	none	relative	7.58060 	1	10	phq_k	1.111E+00	-1.111E+01	1
 ksmecs	none	relative	6.05065 	1	10	phq_eq	4.444E-01	-3.444E+00	1
 knitrs	none	relative	5.51287 	1	10	phq_k	1.333E+00	-1.133E+01	1
-kK_sum	none	relative	9.92854 	1	10	phq_k	5.556E-02	-5.556E-01	1
-kK_win	none	relative	1.65635 	1	10	phq_k	5.556E-02	-5.556E-02	1
+kK_sum	fixed	relative	9.92854 	1	10	phq_k	5.556E-02	-5.556E-01	1
+kK_win	fixed	relative	1.65635 	1	10	phq_k	5.556E-02	-5.556E-02	1
 todays	log	factor		1.96128 	1	10	phq_t	9.889E+00	-8.889E+00	1
 tudays	log	factor		1.39525 	1	10	phq_t	1.103E+02	-1.033E+02	1
 tsdays	log	factor		1.85429 	1	10	phq_t	4.411E+02	-4.111E+02	1

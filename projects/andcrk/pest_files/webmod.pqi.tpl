@@ -428,10 +428,10 @@ Nitrification
     -m        1000
     -parms    % knitru       %
 
-Potassium_Cycling
-    -formula KHCO3 1  Mg(HCO3)2 1 # Ca(HCO3)2 1 
-    -m       0
-    -parms   % kK_sum       % % kK_win       %
+#Potassium_Cycling
+#    -formula KHCO3 1  Mg(HCO3)2 1 # Ca(HCO3)2 1 
+#    -m       0
+#    -parms   % kK_sum       % % kK_win       %
  
 #Amm_assimilation
 #	-formula AmmHHCO3 -1
