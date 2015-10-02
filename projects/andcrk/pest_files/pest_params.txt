@@ -65,7 +65,7 @@ s_zmin	fixed	relative	9.82000 	1	10	hyd_soil	1.111E+01	-1.111E+02	1
 sn_thr	fixed	relative	3.98000 	1	10	hyd_snow	1.111E+01	-1.111E+01	1
 sn_adj	log	factor		8.86928 	1	10	hyd_snow	1.111E-01	9.889E-01	1
 sn_int	fixed	relative	1.76000 	1	10	hyd_evap	5.444E-02	-4.444E-02	1
-sn_ion	log	factor		1.93752 	1	10	phq_hyd	1.110E+02	-1.100E+02	1
+sn_ion	fixed	factor		2.8 	1	10	phq_hyd	1.110E+02	-1.100E+02	1
 sO_dpl	log	factor		6.93763 	1	10	phq_iso	5.556E-01	-5.556E+00	1
 sD_dpl	fixed	relative	9.10000 	1	10	phq_iso	4.444E+00	-4.444E+01	1
 sraini	fixed	relative	1.70000 	1	10	hyd_evap	5.000E-02	0.000E+00	1
