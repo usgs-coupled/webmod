@@ -364,11 +364,12 @@ c***********************************************************************
       integer function csolrun()
 
       USE WEBMOD_CSOL
+      USE WEBMOD_IO, ONLY: nowtime
       IMPLICIT NONE
 
 C Local Variables
       logical ppt
-      integer nowtime(6), mo, j, jkeep
+      integer mo, j, jkeep
       integer ip, jp, ipday, jpday, day
       integer myr, jsol, k
       integer nstep
@@ -386,7 +387,7 @@ C Save Variables
 c***********************************************************************
       csolrun = 1
 
-      call dattim('now', nowtime)
+c      call dattim('now', nowtime)
       myr = nowtime(1)
       mo = nowtime(2)
       day = nowtime(3)

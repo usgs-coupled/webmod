@@ -3336,7 +3336,7 @@
 ! #endif
       USE WEBMOD_PHREEQ_MMS
       USE WEBMOD_OBSCHEM, ONLY :phq_lut,sol_id,sol_name,n_iso,iso_list
-      USE WEBMOD_IO, only: phreeqout, chemout, print_vse, chemout,nf,vse_lun, xdebug_start, xdebug_stop, debug
+      USE WEBMOD_IO, only: phreeqout, chemout, print_vse, chemout,nf,vse_lun, nowtime, xdebug_start, xdebug_stop, debug
 
 ! Mixing variables from webmod_res
       USE WEBMOD_RESMOD, ONLY : vmix_can, vmix_snow, vmix_ohoriz, &

@@ -286,10 +286,11 @@ c
       integer function pptrun()
 
       USE WEBMOD_PRECIP
+      USE WEBMOD_IO, ONLY: nowtime
       IMPLICIT NONE
       
       integer i, ip, jday, mo
-      integer nowtime(6)
+c      integer nowtime(6)
       real ppt, pcor
       double precision dt
       integer  nstep
@@ -316,7 +317,7 @@ c
       if(getvar('temp', 'tmin_c', nmru, 'real', tmin_c)
      +     .ne.0) return
 
-      call dattim('now', nowtime)
+c      call dattim('now', nowtime)
       jday = julian('now', 'calendar')
       mo = nowtime(2)
       basin_dep = 0.

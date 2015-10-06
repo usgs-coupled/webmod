@@ -639,6 +639,7 @@ c     &   .ne.0) return
       integer function nwsmrun()
 
       USE WEBMOD_SNOW
+      USE WEBMOD_IO, ONLY: nowtime
       USE WEBMOD_OBSHYD, ONLY : datetime
       implicit none
 

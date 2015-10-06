@@ -267,9 +267,10 @@ c
       integer function petrun()
 
       USE WEBMOD_POTET
+      USE WEBMOD_IO, ONLY: nowtime
       IMPLICIT NONE
 
-      integer nowtime(6), mo, i, jday, day
+      integer mo, i, jday, day
       real dyl, vpsat, vdsat, factor
       double precision dt
 
@@ -277,7 +278,7 @@ c
 
       dt = deltim()
 
-      call dattim('now', nowtime)
+c      call dattim('now', nowtime)
       mo = nowtime(2)
       day = nowtime(3)
       jday = julian('now', 'calendar')

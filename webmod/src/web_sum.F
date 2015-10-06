@@ -125,6 +125,7 @@ c total discharge of water and solutes at basin outlet
       double precision, save :: ch_outlet_m3_sum(5)
       double precision, save :: ch_outlet_tempC_avg(5)
       double precision, save :: ch_outlet_pH_avg(5)
+      double precision, save, allocatable :: ch_outlet_permil_avg(:,:)
       double precision, save, allocatable :: ch_outlet_M_sum(:,:)
 
 c in, out, ET or rxn, final for water and solutes
@@ -260,6 +261,14 @@ c total discharge of water and solutes at basin outlet
      $  '(4) year, or (5) entire run.',
      +  'pH units', ch_outlet_pH_avg).ne.0) return
       ch_outlet_pH_avg = 0.0d0
+
+      allocate(ch_outlet_permil_avg(nsolute,5))
+      if(declvar('phreeqmms', 'ch_outlet_permil_avg', 'nsolute,five', 
+     +  nsolute*5,'double','Average delta of isotope discharged at '//
+     $  'outlet for time step of (1) unit, (2) day, (3) month, '//
+     $  '(4) year, or (5) entire run.',
+     +  'permil', ch_outlet_permil_avg).ne.0) return
+      ch_outlet_permil_avg = 0.0d0
 
       allocate(ch_outlet_M_sum(nsolute,5))
       if(declvar('phreeqmms', 'ch_outlet_M_sum', 'nsolute,five', 
@@ -1124,7 +1133,7 @@ c     sumbrun - Computes summary values
       integer function sumbrun()
 
       USE WEBMOD_SUM
-      USE WEBMOD_IO, ONLY : chemout
+      USE WEBMOD_IO, ONLY: nowtime, chemout
       USE WEBMOD_RESMOD, ONLY : basin_sto_cm, basin_in_cm, basin_out_cm,
      + basin_ppt_cm, basin_irr_ext_cm, basin_irr_sat_cm, 
      + basin_irr_hyd_cm, basin_intcp_sto_cm, basin_intcp_cm, 
@@ -1158,7 +1167,7 @@ c*****local variables
       character(80) buffer
       character(120) bufferw
       character(560) bufferd
-      integer nowtime(6),year, mo, day
+      integer year, mo, day
       integer hr, min, sec
       integer nstep
       integer i,j,jj
@@ -1176,7 +1185,7 @@ c$$$      double precision timestep,stepcheck,wyday,cday, jday
 
       if(print_freq.gt.0) then
 
-        call dattim('now', nowtime)
+c        call dattim('now', nowtime)
 c$$$      wyday = julian('now', 'water')
 c$$$      cday = julian('now','calendar')
         jday = djulian('now', 'absolute')

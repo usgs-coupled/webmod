@@ -400,37 +400,37 @@ END
 KINETICS 1 O-Horizon and UZ (normal and preferential)
  
 Oligoclase
-	-parm    7.2400000E-01                # fit the first parameter as log10 Surface Area
+	-parm    5.1261436E-01                # fit the first parameter as log10 Surface Area
         -m    1000
  
 Biotite
-	-parm    1.5600000E-01              # fit the first parameter as log10 Surface Area
+	-parm   -2.7095347E-01              # fit the first parameter as log10 Surface Area
         -m    1000
  
 Chlorite
-	-parm   -1.6450000E+00  # fit the first parameter as log10 Surface Area
+	-parm    5.8192367E-01  # fit the first parameter as log10 Surface Area
         -m    1000
  
 Calcite
-        -parm   -6.3150000E+00 # fit the first parameter as log10 Surface Area
+        -parm   -6.6057851E+00 # fit the first parameter as log10 Surface Area
         -m    1000
  
 Pyrite_O2
     -formula  Pyrite  1
     -m        1000
     -m0       1000
-    -parms      -1.9270000E+00 0 0.5 -0.11
+    -parms      -2.0497608E+00 0 0.5 -0.11
     -tol      1e-008	
  
 Nitrification
     -formula  Amm -1 NH3 +1
     -m        1000
-    -parms       -1.0
+    -parms      -3.3803832E+00
  
-Potassium_Cycling
-    -formula KHCO3 1  Mg(HCO3)2 1 # Ca(HCO3)2 1
-    -m       0
-    -parms     -4.0000000E-03    1.0000000E-03
+#Potassium_Cycling
+#    -formula KHCO3 1  Mg(HCO3)2 1 # Ca(HCO3)2 1
+#    -m       0
+#    -parms     -3.9725400E-03    3.6469584E-02
  
 #Amm_assimilation
 #	-formula AmmHHCO3 -1
@@ -450,32 +450,32 @@ END
  
 KINETICS 2 Sat and Preferential Sat
 Oligoclase
-	-parm   -7.7200000E-01              # fit the first parameter as log10 Surface Area
+	-parm    5.1261436E-01              # fit the first parameter as log10 Surface Area
         -m    1000
  
 Biotite
-	-parm   -2.5180000E+00              # fit the first parameter as log10 Surface Area
+	-parm   -2.7095347E-01              # fit the first parameter as log10 Surface Area
         -m    1000
  
 Chlorite
-	-parm   -4.5900000E-01              # fit the first parameter as log10 Surface Area
+	-parm    5.8192367E-01              # fit the first parameter as log10 Surface Area
         -m    1000
  
 Calcite
-        -parm   -7.6210000E+00              # fit the first parameter as log10 Surface Area
+        -parm   -6.6057851E+00              # fit the first parameter as log10 Surface Area
         -m    1000
  
 Pyrite_O2
     -formula  Pyrite 1
     -m        1000
     -m0       1000
-    -parms      -3.5530000E+00 0 0.5 -0.11
+    -parms      -2.0497608E+00 0 0.5 -0.11
     -tol      1e-008	
  
 Nitrification
     -formula Amm -1 NH3 +1
     -m       1000
-    -parms      -1.0
+    -parms     -3.3803832E+00
  
  
 -step 86400
@@ -489,48 +489,48 @@ END
  
 EQUILIBRIUM_PHASES 2 Equilibrate stream pO2 and pCO2, in log ppm
 # should be greater than atmosphere
-	O2(g)         -1.0000000E+00 100      #
-	CO2(g)        -3.3570000E+00  10      # ~ PCO2
+	O2(g)         -1.0001000E+00 100      #
+	CO2(g)        -3.3918587E+00  10      # ~ PCO2
 END
 EQUILIBRIUM_PHASES 3 O-Horizon
 	Kaolinite   0 1e-2 # precipitate
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
 #	Calcite    -.5 0
-	Smectite-Illite   -3.7600000E-01 0 # precipitate  # fit the first 0, equilibrium constant
+	Smectite-Illite   -9.8457621E-01 0 # precipitate  # fit the first 0, equilibrium constant
 #	Calcite     0 0
 #	O2(g)       -0.9 100      # atmospheric, could adjust Use this for gradient of O2, this being the most oxygen rich
-	O2(g)         -1.0460000E+00 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
-       CO2(g)         -1.8120000E+00  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
+	O2(g)         -1.6662821E+00 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
+       CO2(g)         -1.8716419E+00  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
 END
 EQUILIBRIUM_PHASES 30 Unsaturated zone TTI bin 1
 	Kaolinite   0 1e-2 # precipitate
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
 #	Calcite    -.5 0
-	Smectite-Illite   -3.7600000E-01 0 # precipitate  # fit the first 0, equilibrium constant
+	Smectite-Illite   -9.8457621E-01 0 # precipitate  # fit the first 0, equilibrium constant
 #	Calcite     0 0
 #	O2(g)       -0.9 100      # atmospheric, could adjust Use this for gradient of O2, this being the most oxygen rich
-	O2(g)         -1.0460000E+00 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
-       CO2(g)         -1.8120000E+00  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
+	O2(g)         -1.6662821E+00 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
+       CO2(g)         -1.8716419E+00  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
 END
 EQUILIBRIUM_PHASES 40 Unsaturated zone TTI bins 2-11 and UZ pref
 	Kaolinite   0 1e-2 # precipitate
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
 #	Calcite    -.5 0
-	Smectite-Illite   -3.7600000E-01 0 # precipitate  # fit the first 0, equilibrium constant
+	Smectite-Illite   -9.8457621E-01 0 # precipitate  # fit the first 0, equilibrium constant
 #	Calcite     0 0
 #	O2(g)       -0.9 100      # atmospheric, could adjust Use this for gradient of O2, this being the most oxygen rich
-	O2(g)         -1.0460000E+00 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
-       CO2(g)         -1.8120000E+00  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
+	O2(g)         -1.6662821E+00 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
+       CO2(g)         -1.8716419E+00  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
 END
 EQUILIBRIUM_PHASES 4 Saturated zone
 	Kaolinite   0 1e-2 # precipitate
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
 #	Calcite    0 0
-	Smectite-Illite    0.0000000E+00 0 # precipitate  # fit the first 0, equilibrium constant
+	Smectite-Illite   -9.8457621E-01 0 # precipitate  # fit the first 0, equilibrium constant
 END
 EXCHANGE 1
 X	.001

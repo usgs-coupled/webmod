@@ -461,16 +461,17 @@ c             saturated zone.
       integer function t1run()
  
       USE WEBMOD_TEMP1STA
+      USE WEBMOD_IO, ONLY: nowtime
       IMPLICIT NONE
       
       integer j,mo,k,yr
-      integer nowtime(6), nstep, day
+      integer nstep, day
       
       double precision dt
 
       t1run = 1
 
-      call dattim('now',nowtime)
+c      call dattim('now',nowtime)
       nstep = getstep()
       day = nowtime(3)
       mo = nowtime(2)

@@ -26,6 +26,7 @@ c***********************************************************************
 !   Dimensions and Local Variables
 !      integer, SAVE:: topout_file_unit, chemout_file_unit, phreeqout ! standard output, in addition to MMS files *.out, *.statvar, etc
       integer, save:: endper, yrdays, modays(12),nowtime(6)
+      data nowtime/6*0/
       integer, save:: xdebug_start, xdebug_stop
       integer, save, allocatable :: vse_lun(:) ! LUNs for volume, solute, and entitity files
       integer, save:: print_vse, nf  ! In addition to the four standard files, additional detailed files
@@ -171,7 +172,7 @@ c End-period variables
       ioinit = 1
 
       step1 = .true.
-      nowtime = 0  ! use nowtime as flag for init looops to print Initial Mixes to select_mixes file
+c      nowtime = 0  ! use nowtime as flag for init looops to print Initial Mixes to select_mixes file
 ! Get Dimensions
       nmru = getdim('nmru')
       IF (nmru.EQ.-1) RETURN

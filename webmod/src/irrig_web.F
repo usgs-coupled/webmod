@@ -286,10 +286,11 @@ c
       integer function irrrun()
 
       USE WEBMOD_IRRIG
+      USE WEBMOD_IO, ONLY: nowtime
       IMPLICIT NONE
 
       integer i, jday, mo
-      integer nowtime(6)
+c      integer nowtime(6)
       real basin_dep, dep
       double precision dt, diff
       integer  nstep,iext, iint, isrc
@@ -355,7 +356,7 @@ c
       if(getvar('temp', 'tmin_c', nmru, 'real', tmin_c)
      +     .ne.0) return
 
-      call dattim('now', nowtime)
+c      call dattim('now', nowtime)
       jday = julian('now', 'calendar')
       mo = nowtime(2)
 

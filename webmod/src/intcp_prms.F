@@ -317,9 +317,10 @@ c
       integer function intrun()
 
       USE WEBMOD_INTCP
+      USE WEBMOD_IO, ONLY: nowtime
       IMPLICIT NONE
 
-      integer i, nstep, mo, nowtime(6)
+      integer i, nstep, mo
       real cov, stor, evcan, ta, sw, tc, air, can, bal, xmlt, z, xlos, d
       double precision dt
 
@@ -357,7 +358,7 @@ c
      +   .ne.0) return
 
 
-      call dattim('now', nowtime)
+c      call dattim('now', nowtime)
       mo = nowtime(2)
 
       dt = deltim()
