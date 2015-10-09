@@ -38,7 +38,7 @@ crdcof	fixed	relative	5.50000 	1	10	hyd_snow	6.667E-02	3.333E-02	1
 crddexp	fixed	relative	7.15000 	1	10	hyd_snow	6.667E-02	1.333E-01	1
 daymlt	fixed	relative	2.80000 	1	10	hyd_snow	1.111E-02	-1.111E-02	1
 pancof	fixed	relative	3.57000 	1	10	hyd_evap	3.111E-01	-1.111E-01	1
-gwloss	fixed	relative	10.0000 	1	10	hyd_soil	1.333E+00	-2.333E+00	1
+gwloss	log	factor  	9.93000 	1	10	hyd_soil	1.333E+00	-2.333E+00	1
 hamcof	log	factor		9.22014 	1	10	hyd_evap	2.222E-03	-2.222E-03	1
 isofac	log	factor		1.82994 	1	10	phq_iso	1.111E-01	-1.111E-01	1
 meltba	log	factor		2.88391 	1	10	hyd_snow	8.889E-01	3.111E+01	1
