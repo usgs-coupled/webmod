@@ -1,11 +1,11 @@
-hyd_ppt	relative	0.01	0	always_3	2	parabolic
-hyd_evap	relative	0.01	0	always_3	2	parabolic
-hyd_runoff	relative	0.01	0	always_3	2	parabolic
-hyd_snow	relative	0.01	0	always_3	2	parabolic
-hyd_soil	relative	0.01	0	always_3	2	parabolic
-phq_hyd	relative	0.01	0	always_3	2	parabolic
-phq_k	relative	0.01	0	always_3	2	parabolic
-phq_t	relative	0.01	0	always_3	2	parabolic
-phq_eq	relative	0.01	0	always_3	2	parabolic
-phq_iso	relative	0.01	0	always_3	2	parabolic
+hyd_ppt	relative	0.01	0	always_2	2	parabolic
+hyd_evap	relative	0.01	0	always_2	2	parabolic
+hyd_runoff	relative	0.01	0	always_2	2	parabolic
+hyd_snow	relative	0.01	0	always_2	2	parabolic
+hyd_soil	relative	0.01	0	always_2	2	parabolic
+phq_hyd	relative	0.01	0	always_2	2	parabolic
+phq_k	relative	0.01	0	always_2	2	parabolic
+phq_t	relative	0.01	0	always_2	2	parabolic
+phq_eq	relative	0.01	0	always_2	2	parabolic
+phq_iso	relative	0.01	0	always_2	2	parabolic
 
