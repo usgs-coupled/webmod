@@ -203,7 +203,19 @@ IF "%ERRORLEVEL%" == "0" (
     copy webmod.hydro.out   ..\output\webmod.hydro.out.pest
     copy webmod.statvar     ..\output\webmod.statvar.pest
     copy tsproc.dat         ..\pest_results
-    cd ../pest_results
+    cd ..\pest_results
+    mkdir pest_files
+    copy ..\pest_files\par2par.dat.tpl        .\pest_files
+    copy ..\pest_files\pest_groups.txt        .\pest_files
+    copy ..\pest_files\pest_params.txt        .\pest_files
+    copy ..\pest_files\pest_webmod.bat.tpl    .\pest_files
+    copy ..\pest_files\tsproc.dat.tpl         .\pest_files
+    copy ..\pest_files\tsproc.in              .\pest_files
+    copy ..\pest_files\webmod.chem.obs.ssf    .\pest_files
+    copy ..\pest_files\webmod.hydro.obs.ssf   .\pest_files
+    copy ..\pest_files\webmod.params.tpl      .\pest_files
+    copy ..\pest_files\webmod.pqi.tpl         .\pest_files
+    copy ..\pest_files\webmod.statvar         .\pest_files
 REM Plot residuals and correlation
     %PEST_BIN_DIR%\pest_plot webmod.rei webmod__fit.pdf none
 REM Plot parameters changes
