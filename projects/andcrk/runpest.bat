@@ -129,7 +129,7 @@ for /f "tokens=1,* delims=]" %%A in ('"type %pstfile%|find /n /v """') do (
     ) else if "!COUNTER!" == "7" ( 
         ECHO 0.2   2.0   1.0e-3 >> %tmppest%
     ) else if "!COUNTER!" == "9" ( 
-        ECHO 0   .005  4   4  .005   4 >> %tmppest%
+        ECHO 30   .005  4   4  .005   4 >> %tmppest%
     ) else if "!COUNTER!" == "13" ( 
         ECHO 32 5e-7 >> %tmppest%
     ) else if "!COUNTER!" == "14" ( 
