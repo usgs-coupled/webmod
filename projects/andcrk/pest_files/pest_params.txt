@@ -70,7 +70,7 @@ sO_dpl	log	factor	6.68	1	10	phq_iso	5.556E-01	-5.556E+00	1
 sD_dpl	fixed	relative	9.10	1	10	phq_iso	4.444E+00	-4.444E+01	1
 sraini	fixed	relative	1.70	1	10	hyd_evap	5.000E-02	0.000E+00	1
 wraini	fixed	relative	1.03	1	10	hyd_evap	5.444E-02	-4.444E-02	1
-recess	fixed	relative	2.01	1	10	hyd_soil	3.333E-01	-3.333E-01	1
+recess	log	factor  	2.01	1	10	hyd_soil	3.333E-01	-3.333E-01	1
 sn_flx	fixed	relative	3.25	1	10	hyd_snow	4.444E-02	1.556E-01	1
 tmxadj	fixed	relative	5.28	1	10	hyd_evap	2.222E+00	-1.222E+01	1
 tmxalr	fixed	relative	7.75	1	10	hyd_evap	4.444E-01	1.056E+01	1
