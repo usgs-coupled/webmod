@@ -224,6 +224,8 @@ REM Plot sensitivities
     %PEST_BIN_DIR%\sen_plot webmod.sen webmod_sensitivity.pdf
 REM Plot contributions to phi by observation group
     %PEST_BIN_DIR%\pcon_plot webmod.rec webmod_phi.pdf none
+REM Compute influence statistics
+    %PEST_BIN_DIR%\infstat webmod webmod.infstat
     cd   %PROJECT_DIR%\..
 REM
 REM run sensitivity plots here
