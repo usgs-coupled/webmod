@@ -6,7 +6,7 @@
 # $Id$
 #
 
-MOWSDIR  = /data/projects/usgs/water/mows/NHM/PRMS_SVN/
+MOWSDIR  = ../..
 MLIBDIR  = $(MOWSDIR)/lib
 CC       = gcc
 RM       = rm -f
