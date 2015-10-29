@@ -615,7 +615,7 @@ xdebug_start 4
 one
 1
 1
-7086
+0
 ####
 tmax_allsnow_c 14
 1
@@ -1404,7 +1404,7 @@ xdebug_stop 4
 one
 1
 1
-7087
+0
 ####
 tmin_lapse 11
 1
@@ -1879,7 +1879,7 @@ chem_sim 9
 one
 1
 1
-0
+1
 ####
 tmin_adj 9
 1

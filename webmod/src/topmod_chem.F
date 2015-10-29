@@ -1772,9 +1772,6 @@ c
             xk(is,1)=xk0(is)
             nxk(is) = 1
          endif
-         
-
-c
  50   continue
 c      write(80,605) sumar
 c  605 format(1X,'Sum of histogram ordinates for'//

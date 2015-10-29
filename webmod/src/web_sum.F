@@ -120,7 +120,10 @@ C   Declared Variables
       real, save ::  obj_func(5),obj_func_sum(5,5)
       real, save ::  tot_basin_qsim_m3s(5),tot_basin_qobs_m3s(5)
       real, save :: last_basin_stor,last_chan_stor
-      
+      character (len=40000) :: buffercspan  ! chemout buffer for header and span lines
+      character (len=40000) :: buffercdat  ! chemout buffer for data lines
+      character (len=100) :: span1, spansol
+
 c total discharge of water and solutes at basin outlet
       double precision, save :: ch_outlet_m3_sum(5)
       double precision, save :: ch_outlet_tempC_avg(5)
@@ -132,6 +135,13 @@ c in, out, ET or rxn, final for water and solutes
       double precision, save :: ch_basin_m3_in_sum(5)
       double precision, save :: ch_basin_m3_out_sum(5)
       double precision, save :: ch_basin_m3_ET_sum(5)
+      double precision, save :: ch_basin_tempC_in_avg(5)
+      double precision, save :: ch_basin_tempC_out_avg(5)
+      double precision, save :: ch_basin_pH_in_avg(5)
+      double precision, save :: ch_basin_pH_out_avg(5)
+      double precision, save, allocatable:: ch_basin_permil_in_avg(:,:)
+      double precision, save, allocatable:: ch_basin_permil_out_avg(:,:)
+      double precision, save, allocatable:: ch_basin_permil_ET_avg(:,:)
       double precision, save, allocatable :: ch_basin_M_in_sum(:,:)
       double precision, save, allocatable :: ch_basin_M_out_sum(:,:)
       double precision, save, allocatable :: ch_basin_M_rxn_sum(:,:)
@@ -298,6 +308,51 @@ c in, out, ET or rxn, final for water and solutes
      $     '(4) year, or (5) entire run.',
      +      'm3', ch_basin_m3_ET_sum).ne.0) return
 
+      if(declvar('phreeqmms', 'ch_basin_tempC_in_avg', 'five', 5,
+     +     'double','Average temperature of water entering the basin'//
+     $     'for time step of (1) unit, (2) day, (3) month, '//
+     $     '(4) year, or (5) entire run.',
+     +      'degC', ch_basin_tempC_in_avg).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_basin_tempC_out_avg', 'five', 5,
+     +     'double','Average temperature of water leaving the basin'//
+     $     'for time step of (1) unit, (2) day, (3) month, '//
+     $     '(4) year, or (5) entire run.',
+     +      'degC', ch_basin_tempC_out_avg).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_basin_pH_in_avg', 'five', 5,
+     +     'double','Average pH of water entering the basin'//
+     $     'for time step of (1) unit, (2) day, (3) month, '//
+     $     '(4) year, or (5) entire run.',
+     +      'pH units', ch_basin_pH_in_avg).ne.0) return
+
+      if(declvar('phreeqmms', 'ch_basin_pH_out_avg', 'five', 5,
+     +     'double','Average pH of water leaving the basin'//
+     $     'for time step of (1) unit, (2) day, (3) month, '//
+     $     '(4) year, or (5) entire run.',
+     +      'pH units', ch_basin_pH_out_avg).ne.0) return
+
+      allocate(ch_basin_permil_in_avg(nsolute,5))
+      if(declvar('phreeqmms', 'ch_basin_permil_in_avg', 'nsolute,five',
+     +     nsolute*5,'double','Average delta of water entering the '//
+     $     'basin for time step of (1) unit, (2) day, (3) month, '//
+     $     '(4) year, or (5) entire run.',
+     +     'permil', ch_basin_permil_in_avg).ne.0) return
+
+      allocate(ch_basin_permil_out_avg(nsolute,5))
+      if(declvar('phreeqmms', 'ch_basin_permil_out_avg', 'nsolute,five',
+     +     nsolute*5,'double','Average delta of water leaving the '//
+     $     'basin for time step of (1) unit, (2) day, (3) month, '//
+     $     '(4) year, or (5) entire run.',
+     +     'permil', ch_basin_permil_out_avg).ne.0) return
+
+      allocate(ch_basin_permil_ET_avg(nsolute,5))
+      if(declvar('phreeqmms', 'ch_basin_permil_ET_avg', 'nsolute,five',
+     +      nsolute*5, 'double','Average delta of water evaporated '//
+     $     'from the basin for time step of (1) unit, (2) day, '//
+     $     '(3) month, (4) year, or (5) entire run.',
+     +     'permil', ch_basin_permil_ET_avg).ne.0) return
+      
       allocate(ch_basin_M_in_sum(nsolute,5))
       if(declvar('phreeqmms', 'ch_basin_M_in_sum', 'nsolute,five',
      +      nsolute*5,'double','Moles of solute entering the basin '//
@@ -752,10 +807,12 @@ c
 #endif
       USE WEBMOD_SUM
       USE WEBMOD_IO, only: chemout
+      USE WEBMOD_OBSCHEM, ONLY :phq_lut,sol_id,sol_name,n_iso,iso_list
       USE WEBMOD_RESMOD, ONLY : basin_sto_cm, basin_chan_sto_cm,
      $  basin_intcp_sto_cm,basin_pweqv_cm,basin_sssto_cm,
      $  basin_soil_moist_cm, basin_gw_sto_cm
-      USE WEBMOD_PHREEQ_MMS, ONLY : cheminit_file, c_chem_basin
+      USE WEBMOD_PHREEQ_MMS, ONLY : cheminit_file, c_chem_basin,
+     $  c_chem_hyd, chem_sim, nsolute
 
       IMPLICIT NONE
       !integer, external :: getdataname  ! (defined in obs_chem)
@@ -763,7 +820,7 @@ c
       integer, external :: length  ! (defined in obs_chem)
      
       integer pftemp, nstep
-      integer i, lengdat, lengpar
+      integer i, lengdat, lengpar, lengpqi
       double precision timestep
 
       integer ret, today(3), now(3)
@@ -912,9 +969,50 @@ c Get the date/time and names of the data file and the parameter file
 c
 c Print header for chemical output file. Acknowledge no content if chem_sim = 0.
 c
-
+      if(chem_sim.eq.1) then
+         span1   = '==== == =='
+         spansol = '  ================'
+         buffercspan = span1
+         if(print_type.lt.2) then  ! print properties of dischage at outlet
+            write (chemout%lun, 3010)char(13),today(2),today(1), 
+     $        today(3),now,char(13), datafile(1:lengdat),char(13),
+     $        paramfile(1:lengpar),char(13),trim(cheminit_file),
+     $        (char(13),i=1,8)
+            write(chemout%lun, 5000)(trim(sol_name(i)),i=1,nsolute)
+            do i=1,nsolute+3
+                buffercspan=trim(buffercspan)//spansol
+            enddo
+            write(chemout%lun,'(A)')trim(buffercspan)
+         else ! print mass balance for watershed
+             write (chemout%lun, 3020)char(13),today(2),today(1), 
+     $        today(3),now,char(13), datafile(1:lengdat),char(13),
+     $        paramfile(1:lengpar),char(13),trim(cheminit_file),
+     $        (char(13),i=1,9)
+            write(chemout%lun, 5020)(trim(sol_name(i))//'_in',
+     $        trim(sol_name(i))//'_out',trim(sol_name(i))//'_rxn',
+     $        trim(sol_name(i))//'_fin', i=1,nsolute)
+            do i=1,4*nsolute+8
+                buffercspan=trim(buffercspan)//spansol
+            enddo
+            write(chemout%lun,'(A)')trim(buffercspan)
+            write(buffercdat,5022)'Init',c_chem_basin%vol(1)
+            do i=1,nsolute
+                if(sol_id(i)%iso) then
+                   write(buffercdat,'(A,56x,F16.1)')trim(buffercdat),
+     $               c_chem_basin%delta(i,1)/c_chem_basin%vol(1)
+                else
+                   write(buffercdat,'(A,56X,F16.1)')trim(buffercdat),
+     $               c_chem_basin%M(i,1)
+                endif
+            enddo           
+            write(chemout%lun,'(A)')trim(buffercdat)
+         endif
+      else
+         write (chemout%lun, *)'The parameter chem_sim(one)=0 '//
+     $                  ' so no geochemisty has been simulated'
+      end if
 c
-c Print header for hydrology output file. Describe fields if print_explanation = 1.
+c Print header for hydrology output files. Describe fields if print_explanation = 1.
 c
       if(print_explanation.eq.1) then
          write (buffer_txt, 10)char(13),today(2),today(1), 
@@ -930,16 +1028,14 @@ c
 c
 c Print field labels
 c
-      if(print_type.eq.0) then
+        if(print_type.eq.0) then
          write(buffer,2000)
          call opstr(trim(buffer))
          write(buffer,2001)
          call opstr(trim(buffer))
          write(buffer,2003)
          call opstr(trim(buffer))
-      end if
-
-      if(print_type.eq.1) then
+        elseif(print_type.eq.1) then
          write(bufferw,2010)
          call opstr(trim(bufferw))
          write(bufferw,2011)
@@ -948,9 +1044,7 @@ c
          call opstr(trim(bufferw))
          write(bufferw,2012) basin_sto_cm
          call opstr(trim(bufferw))
-      end if
-
-      if(print_type.eq.2) then
+        else
          write(bufferd,2020)
          call opstr(trim(bufferd))
          write(bufferd,2021)
@@ -961,10 +1055,12 @@ c
      $        basin_pweqv_cm,basin_soil_moist_cm,
      $        basin_sssto_cm,basin_gw_sto_cm,basin_chan_sto_cm
          call opstr(trim(bufferd))
-      end if
+        end if
 
       end if
-      
+c
+c formats for hydro.out file
+c
  10   format('WEBMOD version 1.0',A,
      $ 'Model Run: ', i2.2, '/', i2.2, '/', i4.4, '; ',
      &   i2.2, ':', i2.2, ':', i2.2,A,
@@ -1121,6 +1217,51 @@ c
  2022 format(50x,f9.4,71x,f9.4,71x,f9.4,70x,2(1x,f9.4),
      $     21x,f9.4,121x,f9.4)
 
+c
+c Formats for chem.out file
+c
+ 3010 format('WEBMOD version 1.0',A,
+     $ 'Model Run: ', i2.2, '/', i2.2, '/', i4.4, '; ',
+     &   i2.2, ':', i2.2, ':', i2.2,A,
+     $ 'Data File ',2A ,
+     $ 'Parameter File ',2A,
+     $ 'PHREEQC Initialization File ',3A,
+     $ 'Stream discharge and chemistry at outlet:',A,
+     $ 'Volume      total, in cubic meters',A,
+     $ 'TempC       volume-weighted average, in degrees celsius',A,
+     $ 'pH          volume-weighted average, in standard units',A,
+     $ 'Solute      total, in moles, or ',A,
+     $ 'D or [18O]  volume-weighted average, in permil',4A1)
+
+ 3020 format('WEBMOD version 1.0',A,
+     $ 'Model Run: ', i2.2, '/', i2.2, '/', i4.4, '; ',
+     &   i2.2, ':', i2.2, ':', i2.2,A,
+     $ 'Data File ',2A ,
+     $ 'Parameter File ',2A,
+     $ 'PHREEQC Initialization File ',3A,
+     $ 'Watershed Mass Balance (_in; _out; _ET, evapotranspiration;',
+     $ ' _rxn, (+) added to or (-) removed from solution; _fin,',
+     $ ' volume or mass in watershed at end of time step',A,
+     $ 'Vol         total volume, in cubic meters',A,
+     $ 'Temp        volume-weighted average of stream temperature at ',
+     $              'the outlet, in degrees celsius',A,
+     $ 'pH          volume-weighted average of stream pH at the ',
+     $              'outlet, in standard units',A,
+     $ 'Solute      total, in moles, or ',A,
+     $ 'D or [18O]  volume-weighted average, in permil. _ET ',
+     $              'reflects average delta of evaporated water.',A
+     $ 'NA          Not Available. Value assigned to volume-weighted ',
+     $             'average on days with no precipitation, ',
+     $             'irrigation, or upgradient inputs',4A1)
+
+ 5000 format('Year Mo Dy               Vol',
+     $ '              Temp                pH', 50(2x,A16))
+ 5020 format('Year Mo Dy           Temp_in          Temp_out',
+     $ '             pH_in            pH_out            Vol_in',
+     $ '           Vol_out            Vol_ET           Vol_Fin',
+     $  200(2x,A16))
+ 5022 format(A4,134x,F16.1,100(56x,F16.1))
+
       sumbinit = 0
 
       return
@@ -1134,6 +1275,7 @@ c     sumbrun - Computes summary values
 
       USE WEBMOD_SUM
       USE WEBMOD_IO, ONLY: nowtime, chemout
+      USE WEBMOD_OBSCHEM, ONLY :phq_lut,sol_id,sol_name,n_iso,iso_list
       USE WEBMOD_RESMOD, ONLY : basin_sto_cm, basin_in_cm, basin_out_cm,
      + basin_ppt_cm, basin_irr_ext_cm, basin_irr_sat_cm, 
      + basin_irr_hyd_cm, basin_intcp_sto_cm, basin_intcp_cm, 
@@ -1152,21 +1294,25 @@ c     sumbrun - Computes summary values
      + basin_transp_cm
       USE WEBMOD_PHREEQ_MMS, ONLY : 
      +  ch_outlet_m3,ch_outlet_tempC,ch_outlet_pH, ch_outlet_M,
-     +  ch_basin_m3_in, ch_basin_m3_out, ch_basin_m3_ET, 
-     +  ch_basin_m3_final, ch_basin_M_in, ch_basin_M_out, 
-     +  ch_basin_M_rxn, ch_basin_M_final
-
+     +  ch_outlet_permil, ch_basin_m3_in, ch_basin_m3_out, 
+     +  ch_basin_m3_ET, ch_basin_m3_final, ch_basin_tempC_in, 
+     +  ch_basin_tempC_out, ch_basin_pH_in, ch_basin_pH_out,
+     +  ch_basin_M_in,ch_basin_M_out,ch_basin_M_rxn,ch_basin_M_final,
+     $  ch_basin_permil_in, ch_basin_permil_out,ch_basin_permil_ET,
+     $  ch_basin_permil_final, chem_sim, nsolute
+      
       IMPLICIT NONE
 
       integer endper
 
 c*****local variables
 
-      logical end_run, end_yr, end_mo, end_dy, end_storm
+      logical end_run, end_yr, end_mo, end_dy, end_storm, NoInputs
 
       character(80) buffer
       character(120) bufferw
       character(560) bufferd
+      character(16) :: na='              NA'
       integer year, mo, day
       integer hr, min, sec
       integer nstep
@@ -1257,13 +1403,37 @@ c     First step zeros all since lastper was set to all 1s in init
             do 3 j= 1,5
                obj_func_sum(j,i) = 0
  3          continue
+c
+c Accumulators for geochemistry
+c
+            ch_outlet_m3_sum(i) = 0
+            ch_outlet_tempC_avg(i) = 0
+            ch_outlet_pH_avg(i) = 0
+            ch_basin_m3_in_sum(i) = 0
+            ch_basin_m3_out_sum(i) = 0
+            ch_basin_m3_ET_sum(i) = 0
+            ch_basin_tempC_in_avg(i) = 0
+            ch_basin_tempC_out_avg(i) = 0
+            ch_basin_pH_in_avg(i) = 0
+            ch_basin_pH_out_avg(i) = 0
+            do 4 j=1,nsolute
+              ch_outlet_permil_avg(j,i) = 0
+              ch_outlet_M_sum(j,i) = 0
+              ch_basin_permil_in_avg(j,i) = 0
+              ch_basin_permil_out_avg(j,i) = 0
+              ch_basin_permil_ET_avg(j,i) = 0
+              ch_basin_M_in_sum(j,i) = 0
+              ch_basin_M_out_sum(j,i) = 0
+              ch_basin_M_rxn_sum(j,i) = 0
+ 4          continue            
             lastper(i) = 0
          end if
  5    continue
-
+      NoInputs=.false.  ! test to assign NA value to average Temp, pH, and deltas when no input
 c
 c Count time steps for computing average discharge values for radiation
-c   discharge, temperature, and pH
+c   and discharge. Volume weights will be used for temperatures and pH
+c   entering and leaving the basin
 c
       do 8 i = 1,5
          tot_steps(i) = tot_steps(i) + 1
@@ -1379,7 +1549,7 @@ c****** Accumulate unit values into sums for storm, day,
 c       month, year, and run totals
 
       do 130 i = 1,5
-
+c  Hydrology
       tot_swrad_W(i) = tot_swrad_W(i) + swrad_W
       swrad_W_avg(i) = tot_swrad_W(i) / tot_steps(i)
       if(basin_tmax_c.gt.basin_tmaxc_max(i))
@@ -1446,9 +1616,46 @@ c       month, year, and run totals
       basin_qsim_m3s_avg(i) = tot_basin_qsim_m3s(i) / tot_steps(i)
       basin_qobs_m3s_avg(i) = tot_basin_qobs_m3s(i) / tot_steps(i)
       wat_bal_cm_sum(i) = wat_bal_cm_sum(i) + wat_bal_cm
-      do 125 jj = 1,5
+         do 125 jj = 1,5
             obj_func_sum(jj,i) = obj_func_sum(jj,i) + obj_func(jj)
- 125     end do
+ 125  end do
+c  Geochemisty
+      if(chem_sim.eq.1) then
+       ch_outlet_m3_sum(i) = ch_outlet_m3_sum(i)+ch_outlet_m3 
+       ch_outlet_tempC_avg(i) = ch_outlet_tempC_avg(i)
+     +     +ch_outlet_tempC*ch_outlet_m3
+       ch_outlet_pH_avg(i) = ch_outlet_pH_avg(i)
+     +     +ch_outlet_pH*ch_outlet_m3
+       ch_basin_m3_in_sum(i)= ch_basin_m3_in_sum(i)+ ch_basin_m3_in
+       ch_basin_m3_out_sum(i)= ch_basin_m3_out_sum(i)+ ch_basin_m3_out
+       ch_basin_m3_ET_sum(i)= ch_basin_m3_ET_sum(i)+ ch_basin_m3_ET
+       ch_basin_tempC_in_avg(i) = ch_basin_tempC_in_avg(i)
+     +     +ch_basin_tempC_in*ch_basin_m3_in
+       ch_basin_tempC_out_avg(i) = ch_basin_tempC_out_avg(i)
+     +     +ch_basin_tempC_out*ch_basin_m3_in
+       ch_basin_pH_in_avg(i) = ch_basin_pH_in_avg(i)
+     +     +ch_basin_pH_in*ch_basin_m3_in
+       ch_basin_pH_out_avg(i) = ch_basin_pH_out_avg(i)
+     +     +ch_basin_pH_out*ch_basin_m3_in
+         do 129 jj=1,nsolute
+          ch_outlet_permil_avg(jj,i) = ch_outlet_permil_avg(jj,i)+
+     +           ch_outlet_permil(jj)*ch_outlet_m3
+          ch_outlet_M_sum(jj,i) = ch_outlet_M_sum(jj,i) +
+     +           ch_outlet_M(jj)
+          ch_basin_permil_in_avg(jj,i) = ch_basin_permil_in_avg(jj,i)+
+     +           ch_basin_permil_in(jj)*ch_basin_m3_in
+          ch_basin_permil_out_avg(jj,i) = ch_basin_permil_out_avg(jj,i)+
+     +           ch_basin_permil_out(jj)*ch_basin_m3_out
+          ch_basin_permil_ET_avg(jj,i) = ch_basin_permil_ET_avg(jj,i)+
+     +           ch_basin_permil_ET(jj)*ch_basin_m3_ET
+          ch_basin_M_in_sum(jj,i) = ch_basin_M_in_sum(jj,i) +
+     +           ch_basin_M_in(jj)
+          ch_basin_M_out_sum(jj,i) = ch_basin_M_out_sum(jj,i)+ 
+     +           ch_basin_M_out(jj)
+          ch_basin_M_rxn_sum(jj,i) = ch_basin_M_rxn_sum(jj,i)+ 
+     +           ch_basin_M_rxn(jj)
+ 129    end do    
+      endif ! chem_sim.eq.1
  130  end do
 
 c Begin unit value reporting
@@ -1503,11 +1710,60 @@ c Begin unit value reporting
      $          basin_qsim_m3s,basin_qobs_m3s,
      $          wat_bal_cm
           call opstr(trim(bufferd))
-       end if
+c Geochem          
+        end if
+        if(chem_sim.eq.1) then
+          if(print_type.lt.2) then ! print outlet chem
+            write(buffercdat,5012)year,mo,day,ch_outlet_m3,
+     +        ch_outlet_tempC,ch_outlet_pH
+              do i=1,nsolute
+                if(sol_id(i)%iso) then
+                   write(buffercdat,'(A,2x,F16.1)')trim(buffercdat),
+     $               ch_outlet_permil(i)
+                else
+                   write(buffercdat,'(A,56X,F16.1)')trim(buffercdat),
+     $               ch_outlet_M(i)
+                endif
+              enddo
+            write(chemout%lun,'(A)')trim(buffercdat)
+          else ! print basin mass balance
+            if(ch_basin_m3_in.eq.0) NoInputs=.TRUE.
+            if(NoInputs) then ! NA values for average input temp, pH, and deltas
+              write(buffercdat,5021)year,mo,day,NA,
+     +          ch_basin_tempC_out,NA, ch_basin_pH_out,
+     +          ch_basin_m3_in, ch_basin_m3_out, ch_basin_m3_ET,
+     +          ch_basin_m3_final
+            else
+              write(buffercdat,5022)year,mo,day,ch_basin_tempC_in,
+     +          ch_basin_tempC_out,ch_basin_pH_in, ch_basin_pH_out,
+     +          ch_basin_m3_in, ch_basin_m3_out, ch_basin_m3_ET,
+     +          ch_basin_m3_final
+            endif
+            do i=1,nsolute
+              if(sol_id(i)%iso) then
+                if(NoInputs) then
+                  write(buffercdat,'(A,2x,A16,3(2x,F16.1))')
+     $               trim(buffercdat),NA, ch_basin_permil_out(i),
+     $               ch_basin_permil_ET(i),ch_basin_permil_final(i)
+                else
+                  write(buffercdat,'(A,4(2x,F16.1))')
+     $               trim(buffercdat),ch_basin_permil_in(i),
+     $                ch_basin_permil_out(i),ch_basin_permil_ET(i),
+     $                ch_basin_permil_final(i)
+                endif
+              else
+               write(buffercdat,'(A,4(2x,F16.1))')trim(buffercdat),
+     $                   ch_basin_M_in(i), ch_basin_M_out(i),
+     $                   ch_basin_M_rxn(i),ch_basin_M_final(i)
+              endif
+            enddo
+            write(chemout%lun,'(A)')trim(buffercdat)
+          end if
+        end if
       end if
 
 c
-c Storm summary section should be included here once
+c Storm summary section (index 1 of 5) should be included here once
 c implemented
 c
 
@@ -1994,6 +2250,15 @@ C New formats for unit value runs - RW
  2024 format(i4.4,1x,i2.2,13x,3(i4.3,1x),2f7.2,49(1x,f9.4))
  2026 format(i4.4,16x,3(i4.3,1x),2f7.2,49(1x,f9.4))
  2028 format(' Total for Run ',5x,3(i4.3,1x),2f7.1,49(1x,f9.2))
+c
+c Formats for geochem output
+c print_type = 0 or 1
+c
+ 5012 format(i4.4,1x,2(i2.2,1x),3(2x,F16.1))  ! Year month day Vol tempc pH
+c print_type = 2
+c
+ 5021 format(i4.4,2(1x,i2.2),2(2x,A16,2x,F16.1),4(2x,F16.1))  ! Year month day 2tempcs 2pHs 4Vols, NA for input temp and pH
+ 5022 format(i4.4,1x,i2.2,1x,i2.2,8(2x,F16.1))  ! Year month day 2tempcs 2pHs 4Vols
 
       sumbrun = 0
       if(end_run) print*, "Finished"
