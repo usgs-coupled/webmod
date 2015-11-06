@@ -9490,19 +9490,20 @@
           if(sol_id(n)%iso) then ! Record delta of isotope, in permil
            nis=nis+1
            if(ch_basin_m3_in.gt.0.) then
-             ch_basin_permil_in = c_chem_basin%delta(n,in)/ch_basin_m3_in
+             ch_basin_permil_in(n) = c_chem_basin%delta(n,in)/ch_basin_m3_in
            else
-             ch_basin_permil_in = 0D0
+             ch_basin_permil_in(n) = 0D0
            end if
            if(ch_hyd_m3_in.gt.0.) then
-             ch_hyd_permil_in = c_chem_hyd%delta(n,in)/ch_hyd_m3_in
+             ch_hyd_permil_in(n) = c_chem_hyd%delta(n,in)/ch_hyd_m3_in
            else
-             ch_hyd_permil_in = 0D0
+             ch_hyd_permil_in(n) = 0D0
            end if
-           ch_basin_permil_out = c_chem_basin%delta(n,out)/ch_basin_m3_out
-           ch_basin_permil_final =  c_chem_basin%delta(n,fin)/ch_basin_m3_final 
-           ch_hyd_permil_out = c_chem_hyd%delta(n,out)/ch_hyd_m3_out
-           ch_hyd_permil_final =  c_chem_hyd%delta(n,fin)/ch_hyd_m3_final 
+           ch_basin_permil_ET(n) = c_chem_basin%delta(n,rxn)/ch_basin_m3_ET
+           ch_basin_permil_out(n) = c_chem_basin%delta(n,out)/ch_basin_m3_out
+           ch_basin_permil_final(n) =  c_chem_basin%delta(n,fin)/ch_basin_m3_final 
+           ch_hyd_permil_out(n) = c_chem_hyd%delta(n,out)/ch_hyd_m3_out
+           ch_hyd_permil_final(n) =  c_chem_hyd%delta(n,fin)/ch_hyd_m3_final 
         end if
         do is=1,nmru
 ! composite MRUs
@@ -10697,27 +10698,42 @@
           if(ih.gt.1) then ! ih=1 is the outlet reservoir that gets exported so don't count it as a basin or hyd composite volume.
             vol = vmix_stream(ih-1) ! except for stream reservoirs that react in the the original volume plus inputs (the ih-1 index)
             c_chem_basin%vol(fin) = c_chem_basin%vol(fin) + vol
+            c_chem_basin%Temp(fin) = c_chem_basin%Temp(fin) + vwtempc
+            c_chem_basin%pH(fin) = c_chem_basin%pH(fin) + vwpH
             c_chem_hyd%vol(fin) = c_chem_hyd%vol(im) + vol
+            c_chem_hyd%Temp(fin) = c_chem_hyd%Temp(fin) + vwtempc
+            c_chem_hyd%pH(fin) = c_chem_hyd%pH(fin) + vwpH
           else ! outlet so react in discharged volume but no longer included in composite volume
             vol = basin_qsim_cm*1e4*basin_area 
           end if
         else ! all other reservoirs that react accumulate final volumes in basin and mru composites
           c_chem_basin%vol(fin) = c_chem_basin%vol(fin) + vol
+          c_chem_basin%Temp(fin) = c_chem_basin%Temp(fin) + vwtempc
+          c_chem_basin%pH(fin) = c_chem_basin%pH(fin) + vwpH
           c_chem_mru(is)%vol(fin) = c_chem_mru(is)%vol(fin) + vol
           c_chem_mru%vol(ET) = c_chem_mru%vol(ET) + c_chem(indx)%vol(ET)
+          c_chem_mru(is)%Temp(fin) = c_chem_mru(is)%Temp(fin) + vwtempc
+          c_chem_mru(is)%pH(fin) = c_chem_mru(is)%pH(fin) + vwpH
           if(unsat) then
             c_chem_uzgen(is)%vol(fin) = c_chem_uzgen(is)%vol(fin) + vol
             c_chem_uzgen%vol(ET) = c_chem_uzgen%vol(ET) + c_chem(indx)%vol(ET)
+            c_chem_uzgen(is)%Temp(fin) = c_chem_uzgen(is)%Temp(fin) + vwtempc
+            c_chem_uzgen(is)%pH(fin) = c_chem_uzgen(is)%pH(fin) + vwpH
             if(riparian(ia,is))then
               c_chem_uzrip(is)%vol(fin) = c_chem_uzrip(is)%vol(fin) + vol
               c_chem_uzrip%vol(ET) = c_chem_uzrip%vol(ET) + c_chem(indx)%vol(ET)
+              c_chem_uzrip(is)%Temp(fin) = c_chem_uzrip(is)%Temp(fin) + vwtempc
+              c_chem_uzrip(is)%pH(fin) = c_chem_uzrip(is)%pH(fin) + vwpH
             else
               c_chem_uzup(is)%vol(fin) = c_chem_uzup(is)%vol(fin) + vol
               c_chem_uzup%vol(ET) = c_chem_uzup%vol(ET) + c_chem(indx)%vol(ET)
+              c_chem_uzup(is)%Temp(fin) = c_chem_uzup(is)%Temp(fin) + vwtempc
+              c_chem_uzup(is)%pH(fin) = c_chem_uzup(is)%pH(fin) + vwpH
             endif
           end if
         endif
-        do 20 n = 1,nsolute
+      nis=0  ! counter for number of isotopes tracked (currently limited to two: 18O and D).
+      do 20 n = 1,nsolute
           k=sol_id(n)%tally ! row of solute
           ke=sol_id(n)%tally_e ! row of element (unvalenced solute)
           M_rxn = tally_table(k,2) *vol*a_thousand 
@@ -10725,6 +10741,22 @@
           if(sol_id(n)%iso) then ! reaction of isotopes reflects moles lost to evaporation
             M_diff = c_chem(indx)%M(n,rxn) ! Moles of isotope lost to evaporation as recorded in fractionate(). Recorded in 
                                            ! reactive index even though entities do not affect the delta of the reservoir water
+            ! Distinct from %M, the %delta for the composite reservoirs are volume weighted
+            nis=nis+1
+            vwdelta=conc1(nsolute+nis)*vol
+            c_chem_basin%delta(n,fin) = c_chem_basin%delta(n,fin) + vwdelta
+            if(stream) c_chem_hyd%delta(n,fin) = c_chem_hyd%delta(n,fin) + vwdelta
+            if(mru) then ! Mru reservoir
+               c_chem_mru(is)%delta(n,fin) = c_chem_mru(is)%delta(n,fin) + vwdelta
+               if(unsat) then
+                 c_chem_uzgen(is)%delta(n,fin) = c_chem_uzgen(is)%delta(n,fin) + vwdelta
+                 if(riparian(ia,is))then
+                   c_chem_uzrip(is)%delta(n,fin) = c_chem_uzrip(is)%delta(n,fin) + vwdelta
+                 else  
+                   c_chem_uzup(is)%delta(n,fin) = c_chem_uzup(is)%delta(n,fin) + vwdelta
+                 endif
+               endif 
+            endif   
           else
             M_cons = conc1(n)  *vol*a_thousand ! moles of solute in reservoir after conservative mix
             M_diff = M_rxn - M_cons ! composite production (+) or consumption (-) of solute by reactions
@@ -11004,7 +11036,7 @@
              almost_one, fill_factor, phr_tf, no_rxn, n_ent,&
              rxnmols, tempc, pH, ph_final, tsec, tally_table, ires,&
              ntally_rows, ntally_cols, conc, &
-             ln_10, c_chem,ID, SETOUTPUTFILEON, SETERRORFILEON, &
+             ln_10, c_chem, c_chem_basin, ID, SETOUTPUTFILEON, SETERRORFILEON, &
              SETLOGFILEON, SETSELECTEDOUTPUTFILEON, res_D_permil, evap_D_permil, &
              res_18O_permil,evap_18O_permil, delta_res_permil
 
@@ -11061,6 +11093,14 @@
          delta_evap_permil = delta_res0*a_thousand
          delta_res_permil = delta_evap_permil
        end if
+       !
+! Volume weight the permil of the ET (in rxn slot) for output in the chemout file
+!
+       c_chem(resindx)%delta(iso_list(i),rxn) = c_chem(resindx)%delta(iso_list(i),rxn) + delta_evap_permil*evapvol
+       c_chem_basin%delta(iso_list(i),rxn) = c_chem_basin%delta(iso_list(i),rxn) + delta_evap_permil*evapvol
+!
+! Provide mole checks
+!
        id_len = length(sol_name(iso_list(i)))
        if(sol_name(iso_list(i))(1:id_len).eq."D") then
           res_D_permil = delta_res_permil
