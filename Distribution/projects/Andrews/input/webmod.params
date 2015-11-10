@@ -1080,7 +1080,7 @@ chem_sim 9
 one
 1
 1
-0
+1
 ####
 MFMAX 8
 1
@@ -1222,7 +1222,7 @@ print_vse 11
 one
 1
 1
-0
+1
 ####
 nchan_d 8
 1
