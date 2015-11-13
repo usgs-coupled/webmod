@@ -133,7 +133,7 @@ model_chemout_file
 model_topout_file
 1
 4
-./output/webmod.topout
+.\output\webmod.topout
 ####
 naniOutVars
 1
@@ -153,12 +153,12 @@ nstatVars
 param_file
 1
 4
-D:\System\Users\rmwebb\Desktop\webmod\Distribution\projects\Andrews\input\webmod.params
+.\input\webmod.params
 ####
 phreeq_file
 1
 4
-./input/webmod.pqi
+.\input\webmod.pqi
 ####
 precip_module
 1
