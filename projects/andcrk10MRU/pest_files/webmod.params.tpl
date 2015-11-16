@@ -1,3 +1,4 @@
+ptf %
 Andrews Creek
 Version: 1.7
 ** Dimensions **
@@ -2110,16 +2111,16 @@ s_theta_fc 11
 nmru
 10
 2
-0.21
-0.21
-0.21
-0.21
-0.21
-0.21
-0.21
-0.21
-0.21
-0.21
+% s_thfc       %
+% s_thfc       %
+% s_thfc       %
+% s_thfc       %
+% s_thfc       %
+% s_thfc       %
+% s_thfc       %
+% s_thfc       %
+% s_thfc       %
+% s_thfc       %
 ####
 dtinit 7
 1
@@ -2282,7 +2283,7 @@ radj_wppt 14
 one
 1
 2
-0.5
+% radjwp       %
 ####
 src_ext_irrig 14
 1
@@ -2754,8 +2755,8 @@ nmonths
 % sn_adj       %
 % sn_adj       %
 % sn_adj       %
-% sn_adjb      %
-% sn_adjb      %
+% snadjb      %
+% snadjb      %
 % sn_adj       %
 % sn_adj       %
 % sn_adj       %
@@ -2766,8 +2767,8 @@ nmonths
 % sn_adj       %
 % sn_adj       %
 % sn_adj       %
-% sn_adjb      %
-% sn_adjb      %
+% snadjb      %
+% snadjb      %
 % sn_adj       %
 % sn_adj       %
 % sn_adj       %
@@ -2778,8 +2779,8 @@ nmonths
 % sn_adj       %
 % sn_adj       %
 % sn_adj       %
-% sn_adjb      %
-% sn_adjb      %
+% snadjb      %
+% snadjb      %
 % sn_adj       %
 % sn_adj       %
 % sn_adj       %
@@ -2790,8 +2791,8 @@ nmonths
 % sn_adj       %
 % sn_adj       %
 % sn_adj       %
-% sn_adjb      %
-% sn_adjb      %
+% snadjb      %
+% snadjb      %
 % sn_adj       %
 % sn_adj       %
 % sn_adj       %
@@ -2802,8 +2803,8 @@ nmonths
 % sn_adj       %
 % sn_adj       %
 % sn_adj       %
-% sn_adjb      %
-% sn_adjb      %
+% snadjb      %
+% snadjb      %
 % sn_adj       %
 % sn_adj       %
 % sn_adj       %
@@ -2814,8 +2815,8 @@ nmonths
 % sn_adj       %
 % sn_adj       %
 % sn_adj       %
-% sn_adjb      %
-% sn_adjb      %
+% snadjb      %
+% snadjb      %
 % sn_adj       %
 % sn_adj       %
 % sn_adj       %
@@ -2826,8 +2827,8 @@ nmonths
 % sn_adj       %
 % sn_adj       %
 % sn_adj       %
-% sn_adjb      %
-% sn_adjb      %
+% snadjb      %
+% snadjb      %
 % sn_adj       %
 % sn_adj       %
 % sn_adj       %
@@ -2838,8 +2839,8 @@ nmonths
 % sn_adj       %
 % sn_adj       %
 % sn_adj       %
-% sn_adjb      %
-% sn_adjb      %
+% snadjb      %
+% snadjb      %
 % sn_adj       %
 % sn_adj       %
 % sn_adj       %
@@ -2850,8 +2851,8 @@ nmonths
 % sn_adj       %
 % sn_adj       %
 % sn_adj       %
-% sn_adjb      %
-% sn_adjb      %
+% snadjb      %
+% snadjb      %
 % sn_adj       %
 % sn_adj       %
 % sn_adj       %
@@ -3094,15 +3095,6 @@ tmax_allsnow_c 14
 one
 1
 2
-% tmxals       %
-% tmxals       %
-% tmxals       %
-% tmxals       %
-% tmxals       %
-% tmxals       %
-% tmxals       %
-% tmxals       %
-% tmxals       %
 % tmxals       %
 ####
 tmin_lapse 11
