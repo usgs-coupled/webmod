@@ -1,10 +1,10 @@
 #!/bin/sh
 
-# SBATCH -p UV
-#SBATCH -p prod
+#SBATCH -p UV
+# SBATCH -p prod
 #SBATCH -A nrp
 #SBATCH --output=webmod.pest.out
-#SBATCH -n 46
+#SBATCH -n 33
 #SBATCH --mem-per-cpu=10000M
 #SBATCH -t48:00:00
 #SBATCH --exclusive
@@ -12,8 +12,8 @@ export SLURM_CPU_BIND=none
 
 PROCESSES=${SLURM_NTASKS}
 
-#module load tools/beopest-12.2-gnu
-module load tools/pest-13.4-gnu
+module load tools/beopest-12.2-gnu
+# module load tools/pest-13.4-gnu
 module load intel/psxe-2015
 module load mpi/openmpi-1.6.5-gcc
 
@@ -138,6 +138,7 @@ cp webmod.chem.out    ../pest_results
 cp webmod.topout      ../pest_results
 mkdir -p output
 cp webmod.hydro.out   ../output/webmod.hydro.out.pest
+cp webmod.chem.out   ../output/webmod.chem.out.pest
 cp webmod.statvar      ../output/webmod.statvar.pest
 
 cd ${PROJECT_DIR}/..
