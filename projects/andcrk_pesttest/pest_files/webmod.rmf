@@ -1,5 +1,5 @@
 prf
-33 0 3 -9999
+12 0 3 -9999
 psttemp1 ./psttemp1
 psttemp2 ./psttemp2
 psttemp3 ./psttemp3
@@ -12,25 +12,4 @@ psttemp9 ./psttemp9
 psttemp10 ./psttemp10
 psttemp11 ./psttemp11
 psttemp12 ./psttemp12
-psttemp13 ./psttemp13
-psttemp14 ./psttemp14
-psttemp15 ./psttemp15
-psttemp16 ./psttemp16
-psttemp17 ./psttemp17
-psttemp18 ./psttemp18
-psttemp19 ./psttemp19
-psttemp20 ./psttemp20
-psttemp21 ./psttemp21
-psttemp22 ./psttemp22
-psttemp23 ./psttemp23
-psttemp24 ./psttemp24
-psttemp25 ./psttemp25
-psttemp26 ./psttemp26
-psttemp27 ./psttemp27
-psttemp28 ./psttemp28
-psttemp29 ./psttemp29
-psttemp30 ./psttemp30
-psttemp31 ./psttemp31
-psttemp32 ./psttemp32
-psttemp33 ./psttemp33
-14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400
+14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400
