@@ -10,7 +10,7 @@ CONTROL_DIR=${LOCAL_HOME}/control
 PROJECT_DIR=${LOCAL_HOME}/pest_run_dir
 BIN_DIR=${LOCAL_HOME}/../../bin
 PEST_BIN_DIR=${BIN_DIR}
-TEMP_DIR=psttemp
+TEMP_DIR=tmpest
 
 # setup working directory PROJECT_DIR=pest_run_dir
 rm -rf ${PROJECT_DIR}
@@ -57,7 +57,7 @@ sed -i "7s/.*/0.2   2.0   1.0e-3/"                                 ${PROJECT_DIR
 # Line 9 of the pst file. NOPTMAX Max # of optimizations. Default is 30, set to 0 for single run with phi contributions, 1 for sensitivities, or a small number to test PEST loops.
 sed -i "9s/.*/30   .005  4   4  .005   4/"                         ${PROJECT_DIR}/webmod.pst
 # Line 13. SVD block MAXSING EIGTHRESH. Replace MAXSING the maximum number of adjustable variables (number of singlular valuess at which truncation occurs)
-sed -i "13s/.*/18 5e-7/"                                           ${PROJECT_DIR}/webmod.pst
+sed -i "13s/.*/${PROCESSES} 5e-7/"                                           ${PROJECT_DIR}/webmod.pst
 # Line 14 EIGWRITE. 0 if not using SVD output file
 sed -i "14s/.*/1/"                                                 ${PROJECT_DIR}/webmod.pst
 
@@ -123,13 +123,16 @@ cp webmod.seo         ../pest_results
 cp webmod.svd         ../pest_results
 cp webmod.pqi         ../pest_results
 cp webmod.params      ../pest_results
-cp webmod.hydro.out   ../pest_results
-cp webmod.statvar     ../pest_results
 cp webmod.pqi         ../input/webmod.pqi.pest
 cp webmod.params      ../input/webmod.params.pest
+cp webmod.statvar     ../pest_results
+cp webmod.hydro.out   ../pest_results
+cp webmod.chem.out    ../pest_results
+cp webmod.topout      ../pest_results
 mkdir -p output
 cp webmod.hydro.out   ../output/webmod.hydro.out.pest
-cp webmod.stavar      ../output/webmod.statvar.pest
+cp webmod.chem.out    ../output/webmod.chem.out.pest
+cp webmod.statvar     ../output/webmod.statvar.pest
 
 
 cd ${PROJECT_DIR}/..

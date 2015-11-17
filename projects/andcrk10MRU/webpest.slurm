@@ -1,15 +1,29 @@
 #!/bin/sh
 
-PROCESSES=26
+#SBATCH -p UV
+# SBATCH -p prod
+#SBATCH -A nrp
+#SBATCH --output=webmod.pest.out
+#SBATCH -n 33
+#SBATCH --mem-per-cpu=10000M
+#SBATCH -t48:00:00
+#SBATCH --exclusive
+export SLURM_CPU_BIND=none
+
+PROCESSES=${SLURM_NTASKS}
+
+module load tools/beopest-12.2-gnu
+# module load tools/pest-13.4-gnu
+module load intel/psxe-2015
+module load mpi/openmpi-1.6.5-gcc
 
 LOCAL_HOME=`pwd`
 INPUT_DIR=${LOCAL_HOME}/input
-OUTPUT_DIR=${LOCAL_HOME}/output
 PEST_FILES_DIR=${LOCAL_HOME}/pest_files
 CONTROL_DIR=${LOCAL_HOME}/control
 PROJECT_DIR=${LOCAL_HOME}/pest_run_dir
 BIN_DIR=${LOCAL_HOME}/../../bin
-PEST_BIN_DIR=${BIN_DIR}
+PEST_BIN_DIR=
 TEMP_DIR=psttemp
 
 # setup working directory PROJECT_DIR=pest_run_dir
@@ -20,11 +34,11 @@ mkdir ${PROJECT_DIR}
 sed "s#@PROJECT_DIR@#${PROJECT_DIR}/#g"    ${PEST_FILES_DIR}/tsproc.dat.tpl > ${PROJECT_DIR}/tsproc.dat
 
 #Sed to make pest_webmod.bat in PROJECT_DIR
-sed "s#@PROJECT_DIR@#${PROJECT_DIR}/#g"     ${PEST_FILES_DIR}/pest_webmod.bat.tpl >  ${PROJECT_DIR}/pest_webmod.bat
-sed -i "s#@PEST_BIN_DIR@#${PEST_BIN_DIR}/#" ${PROJECT_DIR}/pest_webmod.bat
-sed -i "s#@TSPROC_BIN_DIR@#${BIN_DIR}/#"    ${PROJECT_DIR}/pest_webmod.bat
-sed -i "s#@DEL@#rm -f#"                     ${PROJECT_DIR}/pest_webmod.bat
-sed -i "s#\.exe##g"                         ${PROJECT_DIR}/pest_webmod.bat
+sed "s#@PROJECT_DIR@#${PROJECT_DIR}/#g"    ${PEST_FILES_DIR}/pest_webmod.bat.tpl >  ${PROJECT_DIR}/pest_webmod.bat
+sed -i "s#@PEST_BIN_DIR@#${PEST_BIN_DIR}#" ${PROJECT_DIR}/pest_webmod.bat
+sed -i "s#@TSPROC_BIN_DIR@#${BIN_DIR}/#"   ${PROJECT_DIR}/pest_webmod.bat
+sed -i "s#@DEL@#rm -f#"                    ${PROJECT_DIR}/pest_webmod.bat
+sed -i "s#\.exe##g"                        ${PROJECT_DIR}/pest_webmod.bat
 chmod 755 ${PROJECT_DIR}/pest_webmod.bat
 
 # Copy files to tsproc directory
@@ -51,7 +65,7 @@ sed -i "2s/CONTEXT pest_prep/CONTEXT model_run/"                   ${PROJECT_DIR
 
 # Sed andcrk.pst
 # Line 6 of the pst file RLAMBDA1 .....	
-sed -i "6s/.*/10.0  -3.0    0.3    0.03     -${PROCESSES}  999  LAMFORGIVE/" ${PROJECT_DIR}/webmod.pst
+sed -i "6s/.*/10.0  -3.0    0.3    0.03     -${PROCESSES} 999  LAMFORGIVE/" ${PROJECT_DIR}/webmod.pst
 # Line 7 of the pst file RELPARMAX FACPARMAX FACORIG.....	
 sed -i "7s/.*/0.2   2.0   1.0e-3/"                                 ${PROJECT_DIR}/webmod.pst
 # Line 9 of the pst file. NOPTMAX Max # of optimizations. Default is 30, set to 0 for single run with phi contributions, 1 for sensitivities, or a small number to test PEST loops.
@@ -60,9 +74,6 @@ sed -i "9s/.*/30   .005  4   4  .005   4/"                         ${PROJECT_DIR
 sed -i "13s/.*/${PROCESSES} 5e-7/"                                           ${PROJECT_DIR}/webmod.pst
 # Line 14 EIGWRITE. 0 if not using SVD output file
 sed -i "14s/.*/1/"                                                 ${PROJECT_DIR}/webmod.pst
-
-PORT=4004 
-MASTER=${HOSTNAME}
 
 # Make temp directories
 i=1
@@ -82,8 +93,6 @@ while [ "$i" -le "${PROCESSES}" ]; do
     cp ${PROJECT_DIR}/pest_webmod.bat      .
     cp ${PROJECT_DIR}/tsproc.sim.out.ins   .
     cp ${PROJECT_DIR}/tsproc.dat           .
-#    echo     ${PEST_BIN_DIR}/beopest ${PROJECT_DIR}/webmod.pst /H ${MASTER}:${PORT} & cd ${PROJECT_DIR}/..
-    ${PEST_BIN_DIR}/beopest ${PROJECT_DIR}/webmod.pst /H ${MASTER}:${PORT} & cd ${PROJECT_DIR}/..
     i=$(($i+1))
 done
 
@@ -96,15 +105,13 @@ cp ${INPUT_DIR}/webmod.chem.dat        .
 cp ${INPUT_DIR}/phreeq_lut             .
 cp ${INPUT_DIR}/phreeqc_web_lite.dat   .
 
-#/usr/lib64/openmpi/bin/mpirun -np ${PROCESSES} ${BIN_DIR}/ppest ${PROJECT_DIR}/webmod.pst /M /L ${PROJECT_DIR}/psttemp
-echo ${PEST_BIN_DIR}/beopest ${PROJECT_DIR}/webmod.pst /H /L :${PORT}
-${PEST_BIN_DIR}/beopest ${PROJECT_DIR}/webmod.pst /H /L  /p1 :${PORT}
+time mpirun -np ${PROCESSES} --bind-to-core ppest ${PROJECT_DIR}/webmod.pst /M /L ${PROJECT_DIR}/psttemp
 
 # Tidy up
 rm -rf ${PROJECT_DIR}/../pest_results
 mkdir ${PROJECT_DIR}/../pest_results
 cp tsproc.dat         ../pest_results
-cp tsproc.sim.out.ins ../pest_results
+cp tsproc.sim.out     ../pest_results
 cp webmod.jac         ../pest_results
 cp webmod.jco         ../pest_results
 cp webmod.jst         ../pest_results
@@ -123,14 +130,16 @@ cp webmod.seo         ../pest_results
 cp webmod.svd         ../pest_results
 cp webmod.pqi         ../pest_results
 cp webmod.params      ../pest_results
-cp webmod.hydro.out   ../pest_results
-cp webmod.statvar     ../pest_results
 cp webmod.pqi         ../input/webmod.pqi.pest
 cp webmod.params      ../input/webmod.params.pest
+cp webmod.statvar     ../pest_results
+cp webmod.hydro.out   ../pest_results
+cp webmod.chem.out    ../pest_results
+cp webmod.topout      ../pest_results
 mkdir -p output
 cp webmod.hydro.out   ../output/webmod.hydro.out.pest
-cp webmod.stavar      ../output/webmod.statvar.pest
-
+cp webmod.chem.out    ../output/webmod.chem.out.pest
+cp webmod.statvar     ../output/webmod.statvar.pest
 
 cd ${PROJECT_DIR}/..
 

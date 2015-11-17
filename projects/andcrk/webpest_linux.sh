@@ -10,7 +10,7 @@ CONTROL_DIR=${LOCAL_HOME}/control
 PROJECT_DIR=${LOCAL_HOME}/pest_run_dir
 BIN_DIR=${LOCAL_HOME}/../../bin
 PEST_BIN_DIR=${BIN_DIR}
-TEMP_DIR=psttemp
+TEMP_DIR=tmpest
 
 # setup working directory PROJECT_DIR=pest_run_dir
 rm -rf ${PROJECT_DIR}
@@ -96,7 +96,7 @@ cp ${INPUT_DIR}/webmod.chem.dat        .
 cp ${INPUT_DIR}/phreeq_lut             .
 cp ${INPUT_DIR}/phreeqc_web_lite.dat   .
 
-#/usr/lib64/openmpi/bin/mpirun -np ${PROCESSES} ${BIN_DIR}/ppest ${PROJECT_DIR}/webmod.pst /M /L ${PROJECT_DIR}/psttemp
+#/usr/lib64/openmpi/bin/mpirun -np ${PROCESSES} ${BIN_DIR}/ppest ${PROJECT_DIR}/webmod.pst /M /L ${PROJECT_DIR}/tmpest
 echo ${PEST_BIN_DIR}/beopest ${PROJECT_DIR}/webmod.pst /H /L :${PORT}
 ${PEST_BIN_DIR}/beopest ${PROJECT_DIR}/webmod.pst /H /L :${PORT}
 
@@ -123,13 +123,16 @@ cp webmod.seo         ../pest_results
 cp webmod.svd         ../pest_results
 cp webmod.pqi         ../pest_results
 cp webmod.params      ../pest_results
-cp webmod.hydro.out   ../pest_results
-cp webmod.statvar     ../pest_results
 cp webmod.pqi         ../input/webmod.pqi.pest
 cp webmod.params      ../input/webmod.params.pest
+cp webmod.statvar     ../pest_results
+cp webmod.hydro.out   ../pest_results
+cp webmod.chem.out    ../pest_results
+cp webmod.topout      ../pest_results
 mkdir -p output
 cp webmod.hydro.out   ../output/webmod.hydro.out.pest
-cp webmod.stavar      ../output/webmod.statvar.pest
+cp webmod.chem.out    ../output/webmod.chem.out.pest
+cp webmod.statvar     ../output/webmod.statvar.pest
 
 
 cd ${PROJECT_DIR}/..

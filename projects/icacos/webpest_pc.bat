@@ -197,13 +197,14 @@ IF "%ERRORLEVEL%" == "0" (
     copy webmod.pqi         ..\pest_results
     copy webmod.params      ..\pest_results
     copy webmod.hydro.out   ..\pest_results
+    copy webmod.chem.out    ..\pest_results
     copy webmod.statvar     ..\pest_results
     copy webmod.pqi         ..\input\webmod.pqi.pest
     copy webmod.params      ..\input\webmod.params.pest
     copy webmod.hydro.out   ..\output\webmod.hydro.out.pest
+    copy webmod.chem.out    ..\output\webmod.chem.out.pest
     copy webmod.statvar     ..\output\webmod.statvar.pest
     copy tsproc.dat         ..\pest_results
-    copy ..\pest_files\pest_params.txt         ..\pest_results
     cd ..\pest_results
 REM Plot residuals and correlation
     %PEST_BIN_DIR%\pest_plot webmod.rei webmod__fit.pdf none
@@ -226,7 +227,7 @@ GOTO :FINISH_UP
 
 :USAGE
 echo.
-echo usage: runpest n 
+echo usage: webpest_pc n 
 echo where  n is number of workers to start
 GOTO :EOF
 

@@ -132,13 +132,16 @@ cp webmod.seo         ../pest_results
 cp webmod.svd         ../pest_results
 cp webmod.pqi         ../pest_results
 cp webmod.params      ../pest_results
-cp webmod.hydro.out   ../pest_results
-cp webmod.statvar     ../pest_results
 cp webmod.pqi         ../input/webmod.pqi.pest
 cp webmod.params      ../input/webmod.params.pest
+cp webmod.statvar     ../pest_results
+cp webmod.hydro.out   ../pest_results
+cp webmod.chem.out    ../pest_results
+cp webmod.topout      ../pest_results
 mkdir -p output
 cp webmod.hydro.out   ../output/webmod.hydro.out.pest
-cp webmod.stavar      ../output/webmod.statvar.pest
+cp webmod.chem.out    ../output/webmod.chem.out.pest
+cp webmod.statvar     ../output/webmod.statvar.pest
 
 
 cd ${PROJECT_DIR}/..
