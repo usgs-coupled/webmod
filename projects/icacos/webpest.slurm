@@ -23,7 +23,7 @@ CONTROL_DIR=${LOCAL_HOME}/control
 PROJECT_DIR=${LOCAL_HOME}/pest_run_dir
 BIN_DIR=${LOCAL_HOME}/../../bin
 PEST_BIN_DIR=
-TEMP_DIR=psttemp
+TEMP_DIR=tmpest
 
 # setup working directory PROJECT_DIR=pest_run_dir
 rm -rf ${PROJECT_DIR}
@@ -64,7 +64,7 @@ sed -i "2s/CONTEXT pest_prep/CONTEXT model_run/"                   ${PROJECT_DIR
 
 # Sed andcrk.pst
 # Line 6 of the pst file RLAMBDA1 .....	
-sed -i "6s/.*/10.0  -3.0    0.3    0.03     -${SLURM_NTASKS}  999  LAMFORGIVE/" ${PROJECT_DIR}/webmod.pst
+sed -i "6s/.*/10.0  -3.0    0.3    0.03  -${SLURM_NTASKS} 999 LAMFORGIVE/" ${PROJECT_DIR}/webmod.pst
 # Line 7 of the pst file RELPARMAX FACPARMAX FACORIG.....	
 sed -i "7s/.*/0.2   2.0   1.0e-3/"                                 ${PROJECT_DIR}/webmod.pst
 # Line 9 of the pst file. NOPTMAX Max # of optimizations. Default is 30, set to 0 for single run with phi contributions, 1 for sensitivities, or a small number to test PEST loops.
@@ -104,7 +104,7 @@ cp ${INPUT_DIR}/webmod.chem.dat        .
 cp ${INPUT_DIR}/phreeq_lut             .
 cp ${INPUT_DIR}/phreeqc_web_lite.dat   .
 
-mpirun -np ${SLURM_NTASKS} ppest ${PROJECT_DIR}/webmod.pst /P1 /M /L ${PROJECT_DIR}/psttemp
+mpirun -np ${SLURM_NTASKS} ppest ${PROJECT_DIR}/webmod.pst /P1 /M /L ${PROJECT_DIR}/tmpest
 # cd ${LOCAL_HOME}
 # ../../bin/webmod -C./control/webmod.control > webmod.log
 # exit 0
