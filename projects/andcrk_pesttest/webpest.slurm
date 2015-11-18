@@ -1,10 +1,10 @@
 #!/bin/sh
 
-# SBATCH -p UV
-#SBATCH -p prod
+#SBATCH -p UV
+# SBATCH -p prod
 #SBATCH -A nrp
 #SBATCH --output=webmod.pest.out
-#SBATCH -n 46
+#SBATCH -n 13
 #SBATCH --mem-per-cpu=10000M
 #SBATCH -t48:00:00
 #SBATCH --exclusive
@@ -12,8 +12,8 @@ export SLURM_CPU_BIND=none
 
 PROCESSES=${SLURM_NTASKS}
 
-#module load tools/beopest-12.2-gnu
-module load tools/pest-13.4-gnu
+module load tools/beopest-12.2-gnu
+#module load tools/pest-13.4-gnu
 module load intel/psxe-2015
 module load mpi/openmpi-1.6.5-gcc
 
@@ -24,7 +24,7 @@ CONTROL_DIR=${LOCAL_HOME}/control
 PROJECT_DIR=${LOCAL_HOME}/pest_run_dir
 BIN_DIR=${LOCAL_HOME}/../../bin
 PEST_BIN_DIR=
-TEMP_DIR=psttemp
+TEMP_DIR=tmpest
 
 # setup working directory PROJECT_DIR=pest_run_dir
 rm -rf ${PROJECT_DIR}
@@ -86,6 +86,7 @@ while [ "$i" -le "${PROCESSES}" ]; do
     cd ${TEMP_DIR}$i
     cp ${PEST_FILES_DIR}/webmod.params.tpl .
     cp ${PEST_FILES_DIR}/webmod.pqi.tpl    .
+    cp ${PEST_FILES_DIR}/webmod.rmf        .
     cp ${INPUT_DIR}/webmod.hydro.dat       .
     cp ${INPUT_DIR}/webmod.chem.dat        .
     cp ${INPUT_DIR}/phreeq_lut             .
@@ -100,12 +101,13 @@ done
 cd ${PROJECT_DIR}
 cp ${PEST_FILES_DIR}/webmod.params.tpl .
 cp ${PEST_FILES_DIR}/webmod.pqi.tpl    .
+cp ${PEST_FILES_DIR}/webmod.rmf        .
 cp ${INPUT_DIR}/webmod.hydro.dat       .
 cp ${INPUT_DIR}/webmod.chem.dat        .
 cp ${INPUT_DIR}/phreeq_lut             .
 cp ${INPUT_DIR}/phreeqc_web_lite.dat   .
 
-time mpirun -np ${PROCESSES} --bind-to-core ppest ${PROJECT_DIR}/webmod.pst /M /L ${PROJECT_DIR}/psttemp
+time mpirun -np ${PROCESSES} --bind-to-core ppest ${PROJECT_DIR}/webmod.pst /M /L ${PROJECT_DIR}/tmpest
 
 # Tidy up
 rm -rf ${PROJECT_DIR}/../pest_results

@@ -1,15 +1,16 @@
 prf
-12 0 3 -9999
-psttemp1 ./psttemp1
-psttemp2 ./psttemp2
-psttemp3 ./psttemp3
-psttemp4 ./psttemp4
-psttemp5 ./psttemp5
-psttemp6 ./psttemp6
-psttemp7 ./psttemp7
-psttemp8 ./psttemp8
-psttemp9 ./psttemp9
-psttemp10 ./psttemp10
-psttemp11 ./psttemp11
-psttemp12 ./psttemp12
-14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400 14400
+13 0 3 -9999
+tmpest1 ./tmpest1
+tmpest2 ./tmpest2
+tmpest3 ./tmpest3
+tmpest4 ./tmpest4
+tmpest5 ./tmpest5
+tmpest6 ./tmpest6
+tmpest7 ./tmpest7
+tmpest8 ./tmpest8
+tmpest9 ./tmpest9
+tmpest10 ./tmpest10
+tmpest11 ./tmpest11
+tmpest12 ./tmpest12
+tmpest13 ./tmpest13
+20 20 20 20 20 20 20 20 20 20 20 20 20
