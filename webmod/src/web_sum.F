@@ -334,14 +334,14 @@ c in, out, ET or rxn, final for water and solutes
      +      'pH units', ch_basin_pH_out_avg).ne.0) return
 
       allocate(ch_basin_permil_in_avg(nsolute,5))
-      if(declvar('phreeqmms', 'ch_basin_permil_in_avg', 'nsolute,five',
+      if(declvar('phreeqmms','ch_basin_permil_in_avg','nsolute,five',
      +     nsolute*5,'double','Average delta of water entering the '//
      $     'basin for time step of (1) unit, (2) day, (3) month, '//
      $     '(4) year, or (5) entire run.',
      +     'permil', ch_basin_permil_in_avg).ne.0) return
 
       allocate(ch_basin_permil_out_avg(nsolute,5))
-      if(declvar('phreeqmms', 'ch_basin_permil_out_avg', 'nsolute,five',
+      if(declvar('phreeqmms','ch_basin_permil_out_avg','nsolute,five',
      +     nsolute*5,'double','Average delta of water leaving the '//
      $     'basin for time step of (1) unit, (2) day, (3) month, '//
      $     '(4) year, or (5) entire run.',
