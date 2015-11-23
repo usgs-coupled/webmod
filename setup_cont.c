@@ -57,6 +57,7 @@ void setup_cont (void) {
         decl_control_string ("transp_module", "transp_tindex");
         decl_control_string ("gsflow_output_file", "gsflow.out");
         decl_control_string ("gsflow_csv_file", "gsflow.csv");
+		decl_control_string ("creator_email", "unknown");
 
 /*
         cval = (char *)umalloc (sizeof (long));
