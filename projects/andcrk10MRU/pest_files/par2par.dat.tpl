@@ -65,8 +65,8 @@ s_satk = %    s_satk    %
 s_zmax = %    s_zmax    %
 s_zmin = %    s_zmin    %
 sn_thr = %    sn_thr    %
-snadja = %    snadja   %
-snadjb = %    snadjb   %
+snadja = %    snadja    %
+snadjb = %    snadjb    %
 sn_int = %    sn_int    %
 sn_ion = %    sn_ion    %
 sO_dpl = %    sO_dpl    %
@@ -83,9 +83,8 @@ trdegc = %    trdegc    %
 windad = %    windad    %
 xkcvar = %    xkcvar    %
 xkvert = %    xkvert    %
-#Compute sn_adj, snow_adjust for MRUs 1-4,7-10 that do not receive extra blown snow (snadjb)
-#MRUs 5-6 are 28.734 percent of the Andrews Creek Watershed, the others the remaining 71.266 percent
-sn_adj = (snadja-0.28734*snadjb)/0.71266
+# Compute sn_5_6, the snow correction factor for MRUs 5-6, that receives extra snow in from the western slope 
+sn_5_6 = snadja*snadjb
 # Compute wilting point
 s_thwp = s_thfc-awc
 # T_decay = 0, original exponential decay, T0 (transm) not constrained by szm (shape factor)
