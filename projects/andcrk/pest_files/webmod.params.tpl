@@ -1181,7 +1181,7 @@ tsta_elev 10
 ntemp
 1
 2
-3505.0
+3150.0
 ####
 snowmelt_18O_depl 14
 1
