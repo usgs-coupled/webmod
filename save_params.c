@@ -124,6 +124,7 @@ static void write_parameters (FILE *param_file, int writeAllParams) {
 	float	*fvalptr;
 //	long	*lvalptr;
 	int	*lvalptr;
+    char *cvalptr;
 /*
 * Write out parameter values and description if any.
 */
@@ -135,6 +136,8 @@ static void write_parameters (FILE *param_file, int writeAllParams) {
 		param = Mparambase[i];
 
 		if (writeAllParams || param->preprocess ) {
+            if (Mdebuglevel >= M_FULLDEBUG)
+                (void)fprintf (stderr, "Writing string param '%s'\n", param->key);
 
 			(void)fprintf(param_file, "####\n");
 			(void)fprintf(param_file, "%s %ld", param->key, param->column_width);
@@ -218,8 +221,22 @@ static void write_parameters (FILE *param_file, int writeAllParams) {
 						//}
 					}
 					break;
+
+                // 2015-12-17 PAN: Added following block to write out
+                //                 parameters of type M_STRING. This
+                //                 code does not handle writing out a
+                //                 single parameter value.
+				case M_STRING:
+                    if (writeAllParams) {
+                        for (j = 0; j < param->size; j++) {
+                            (void)fprintf(param_file, "%s\n", *((char **) param->value + j));
+                            cvalptr++;
 			}
 		}
+					break;
+                    
+	}
+}
 	}
 }
 
