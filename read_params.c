@@ -732,6 +732,7 @@ static char *READ_param_head (PARAM **param_ptr, FILE **param_file, char *param_
   static char buf[256];
   char *temp, *npos, *tempfmt;
   int tempwidth, i, param_size, type;
+  static long silent_flag;
 
   int badFlag;
   
@@ -977,8 +978,11 @@ static char *READ_param_head (PARAM **param_ptr, FILE **param_file, char *param_
   
 	} else {
 		if (!map_flag) {
-			(void)printf ("\nWARNING: parameter %s is ignored as it is not required.\n", key);
-			(void)printf ("         Read from Parameter File: %s\n", param_file_name);
+			silent_flag = *control_lvar("print_debug");
+			if (silent_flag > -2) {
+				(void)printf("\nWARNING: parameter %s is ignored as it is not required.\n", key);
+				(void)printf("         Read from Parameter File: %s\n", param_file_name);
+			}
 		}
 	}
 
