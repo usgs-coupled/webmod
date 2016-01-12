@@ -42,7 +42,6 @@ crddexp = %    crddexp   %
 daymlt = %    daymlt    %
 pancof = %    pancof    %
 gwloss = %    gwloss    %
-hamcof = %    hamcof    %
 isofac = %    isofac    %
 meltba = %    meltba    %
 meltmx = %    meltmx    %

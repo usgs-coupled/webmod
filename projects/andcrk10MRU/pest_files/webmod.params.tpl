@@ -2607,18 +2607,18 @@ hamon_coef 11
 nmonths
 12
 2
-% hamcof       %
-% hamcof       %
-% hamcof       %
-% hamcof       %
-% hamcof       %
-% hamcof       %
-% hamcof       %
-% hamcof       %
-% hamcof       %
-% hamcof       %
-% hamcof       %
-% hamcof       %
+0.015853
+0.018364
+0.019156
+0.017939
+0.015147
+0.012033
+0.010571
+0.011373
+0.014426
+0.018272
+0.020824
+0.018511
 ####
 kinset_table 13
 2
