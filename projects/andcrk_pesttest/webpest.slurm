@@ -1,16 +1,23 @@
 #!/bin/sh
 
-#SBATCH -p UV
-# SBATCH -p prod
+#SBATCH -p prod
+# SBATCH -p UV,prod
 #SBATCH -A nrp
 #SBATCH --output=webmod.pest.out
 #SBATCH -n 13
 #SBATCH --mem-per-cpu=10000M
 #SBATCH -t48:00:00
 #SBATCH --exclusive
-export SLURM_CPU_BIND=none
+#SBATCH --hint=compute_bound
+
+#export SLURM_CPU_BIND=none
 
 PROCESSES=${SLURM_NTASKS}
+
+# Use this for OpenMPI
+MPITYPE=openmpi
+# Use the for Intel MPI
+#MPITYPE=pmi2
 
 module load tools/beopest-12.2-gnu
 #module load tools/pest-13.4-gnu
@@ -107,7 +114,7 @@ cp ${INPUT_DIR}/webmod.chem.dat        .
 cp ${INPUT_DIR}/phreeq_lut             .
 cp ${INPUT_DIR}/phreeqc_web_lite.dat   .
 
-time mpirun -np ${PROCESSES} --bind-to-core ppest ${PROJECT_DIR}/webmod.pst /M /L ${PROJECT_DIR}/tmpest
+time srun --mpi=${MPITYPE} -n ${PROCESSES} ppest ${PROJECT_DIR}/webmod.pst /M /L ${PROJECT_DIR}/tmpest
 
 # Tidy up
 rm -rf ${PROJECT_DIR}/../pest_results
