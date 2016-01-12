@@ -124,7 +124,7 @@ static void write_parameters (FILE *param_file, int writeAllParams) {
 	float	*fvalptr;
 //	long	*lvalptr;
 	int	*lvalptr;
-    int *cvalptr;
+    char *cvalptr;
 /*
 * Write out parameter values and description if any.
 */
@@ -227,7 +227,7 @@ static void write_parameters (FILE *param_file, int writeAllParams) {
                 //                 code does not handle writing out a
                 //                 single parameter value.
 				case M_STRING:
-					if (writeAllParams) {
+                    if (writeAllParams) {
 						cvalptr = (int *)param->value;
 					}
 					else {
@@ -240,13 +240,7 @@ static void write_parameters (FILE *param_file, int writeAllParams) {
 			}
 		}
 					break;
-                    					if (writeAllParams) {
-//						lvalptr = (long *) param->value;
-						lvalptr = (int *) param->value;
-					} else {
-//						lvalptr = (long *) (param->references[0]);
-						lvalptr = (int *) (param->references[0]);
-					}
+                    
 	}
 }
 	}
