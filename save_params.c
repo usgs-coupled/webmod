@@ -227,16 +227,17 @@ static void write_parameters (FILE *param_file, int writeAllParams) {
                 //                 code does not handle writing out a
                 //                 single parameter value.
 				case M_STRING:
-                    if (writeAllParams) {
-						cvalptr = (int *)param->value;
-					}
-					else {
-						cvalptr = (int *)(param->references[0]);
-					}
+//                    if (writeAllParams) {
+//						cvalptr = (char *)param->value;
+//					}
+//					else {
+//						cvalptr = (char *)(param->references[0]);
+//					}
 					if (writeAllParams) {
                         for (j = 0; j < param->size; j++) {
-                            (void)fprintf(param_file, "%s\n", *((char **) param->value + j));
-                            cvalptr++;
+							(void)fprintf(param_file, "%s\n", *((char **)param->value + j));
+//							(void)fprintf(param_file, "%s\n", *cvalptr);
+//                          cvalptr++;
 			}
 		}
 					break;
