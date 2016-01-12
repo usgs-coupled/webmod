@@ -73,7 +73,7 @@ nac_nmru_nresinp
 2310
 ####
 nhydro
-1
+4
 ####
 one
 1
@@ -1444,8 +1444,11 @@ one
 init_rxn_hydro 15
 1
 nhydro
+4
 1
-1
+-1
+-1
+-1
 -1
 ####
 td 8
@@ -2274,8 +2277,11 @@ ntemp
 init_kin_hydro 15
 1
 nhydro
+4
 1
-1
+-1
+-1
+-1
 -1
 ####
 radj_wppt 14
@@ -2304,8 +2310,11 @@ nmru
 init_surf_hydro 16
 1
 nhydro
+4
 1
-1
+-1
+-1
+-1
 -1
 ####
 infex 8
@@ -2557,8 +2566,11 @@ nmru
 init_exch_hydro 16
 1
 nhydro
+4
 1
-1
+-1
+-1
+-1
 -1
 ####
 iso_n 8
@@ -2895,8 +2907,11 @@ nmru
 init_soln_hydro 16
 1
 nhydro
+4
 1
-1
+3
+3
+3
 3
 ####
 iso_theta 8
@@ -3251,8 +3266,11 @@ nmru
 init_eq_ph_hydro 17
 1
 nhydro
+4
 1
-1
+2
+2
+2
 2
 ####
 init_soln_ppt 14
