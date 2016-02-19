@@ -41,7 +41,7 @@ C   Declared Private Variables
       integer, save :: step1
 
 C   Undeclared Static Variables gotten from from other modules - soltab
-      integer, save :: route_on   ! from obs
+c      integer, save :: route_on   ! from obs
       integer, save ::  form_data(1)  ! from obs
       real, save, allocatable :: precip(:), tmax_c(:), tmin_c(:) ! from obs and temp
       
@@ -308,8 +308,8 @@ c      integer nowtime(6)
      +   .ne.0) return
       endif
       
-      if(getvar('obs', 'route_on', 1, 'integer', route_on)
-     +   .ne.0) return
+c      if(getvar('obs', 'route_on', 1, 'integer', route_on)
+c     +   .ne.0) return
 
       if(getvar('temp', 'tmax_c', nmru, 'real', tmax_c)
      +     .ne.0) return
@@ -352,19 +352,19 @@ C******by storm adjustment factor. Storm routing assumes all rain since
 c      only summer storms are simulated to avoid complications with snowpack
 c      processes.
 
-        if(route_on.eq.1) then
-          pcor = strain_adj(i,mo)
-          pptmix(i) = 0
-          prmx(i) = 1
-          mru_ppt(i) = ppt * pcor
-          mru_rain(i) = mru_ppt(i)
-          mru_snow(i) = 0.
+c        if(route_on.eq.1) then
+c          pcor = strain_adj(i,mo)
+c          pptmix(i) = 0
+c          prmx(i) = 1
+c          mru_ppt(i) = ppt * pcor
+c          mru_rain(i) = mru_ppt(i)
+c          mru_snow(i) = 0.
 
 C******If observed temperature data are not available or if observed
 C******form data are available and rain is explicitly specified then
 C******precipitation is all rain.
 
-        else if(form_data(1).eq.2) then
+        if(form_data(1).eq.2) then
           pcor = rain_adj(i,mo)
           pptmix(i) = 0
           prmx(i)=1
