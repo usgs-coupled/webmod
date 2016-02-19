@@ -44,7 +44,7 @@ C   Declared Private Variables
       data irrig_warn/.false./
 
 C   Undeclared Static Variables gotten from from other modules
-      integer, save :: route_on, clark_segs
+      integer, save :: clark_segs
       real, save, allocatable :: irrig_ext(:), irrig_sat_next(:)
       real, save, allocatable :: mru_dep(:), mru_ppt(:), mru_rain(:)
       real, save, allocatable :: mru_snow(:),newsnow(:)
@@ -347,9 +347,6 @@ c
      +   .ne.0) return
       endif
 
-      if(getvar('obs', 'route_on', 1, 'integer', route_on)
-     +   .ne.0) return
-
       if(getvar('temp', 'tmax_c', nmru, 'real', tmax_c)
      +     .ne.0) return
 
@@ -467,17 +464,17 @@ C******by storm adjustment factor. Storm routing assumes all rain since
 c      only summer storms are simulated to avoid complications with snowpack
 c      processes.
 
-        if(route_on.eq.1) then
-          pptmix(i) = 0
-          prmx(i) = 1
-          mru_rain(i) = dep
-          mru_snow(i) = 0.
+c        if(route_on.eq.1) then
+c          pptmix(i) = 0
+c          prmx(i) = 1
+c          mru_rain(i) = dep
+c          mru_snow(i) = 0.
 
 C******If observed temperature data are not available or if observed
 C******form data are available and rain is explicitly specified then
 C******precipitation is all rain.
 
-       else if(form_data(1).eq.2) then
+       if(form_data(1).eq.2) then
           pptmix(i) = 0
           prmx(i)=1
           mru_rain(i) = dep

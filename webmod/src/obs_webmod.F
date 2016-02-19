@@ -17,7 +17,7 @@ c **********************************************************************
       IMPLICIT NONE
 #include "fmodules.inc"
 
-      integer, save :: route_on, temp_units, nobs, nsol
+      integer, save :: temp_units, nobs, nsol
       integer, save :: ntemp, nrain, nsnow, nform, ngw_ext, nevap
       integer, save :: nirrig_ext, nirrig_int, nhum
       integer, save :: form_data(1), datetime(6)
@@ -195,10 +195,10 @@ c
      +     'none',
      +   form_data).ne.0) return
 
-      if(declvar('obs', 'route_on', 'one', 1, 'integer',
-     +     'Kinematic routing switch - 1=storm period',
-     +     'none',
-     +   route_on).ne.0) return
+c      if(declvar('obs', 'route_on', 'one', 1, 'integer',
+c     +     'Kinematic routing switch - 1=storm period',
+c     +     'none',
+c     +   route_on).ne.0) return
  
       obsdecl = 0
 
@@ -286,7 +286,7 @@ c end kludge
       if(nform.gt.0) then
         if(readvar('obs','form_data').ne.0) return
       endif
-      route_on = 0
+c      route_on = 0
 
       if(temp_units.eq.1) then
          if(readvar('obs','tsta_min_c').ne.0) then
@@ -323,11 +323,11 @@ c end kludge
       endif
 
 
-      if(dt.lt.24.) then
-
-         if(readvar('obs','route_on').ne.0) return
-
-      endif
+c      if(dt.lt.24.) then
+c      
+c         if(readvar('obs','route_on').ne.0) return
+c      
+c      endif
 c
 c     print out nstep, deltim, time and julian dates
 c
