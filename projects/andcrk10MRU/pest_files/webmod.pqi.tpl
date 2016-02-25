@@ -16,7 +16,7 @@ Chlorite
         log_k           68.38 # phreeqc.dat Chlorite14A
         delta_h -151.494 kcal
  
-Smectite-Illite              45
+Smectite-Illite
 	#K0.6Mg0.25Al2.3Si3.5O10(OH)2 + 11.2H2O = 0.6K+ +0.25Mg+2 + 2.3Al(OH)4- + 3.5H4SiO4 + 1.2H3O+
 	#K0.32Ca0.1Fe0.25Mg0.39Al1.47Al0.46Si3.54O10(OH)2 + 11.2H2O = 0.32K+ +0.1Ca+2 + 0.25Fe+2 + 0.39Mg+2 + 1.47Al(OH)4- \
 	#		+ 0.46Al(OH)4- + 3.54H4SiO4 + 1.2H3O+
@@ -398,7 +398,7 @@ Pyrite_O2
 END
  
  
-KINETICS 1 O-Horizon and UZ (normal and preferential)
+KINETICS 1 O-Horizon, UZ, and saturated zone (both matrix and preferential flow
  
 Oligoclase
 	-parm % koligu       %                # fit the first parameter as log10 Surface Area
@@ -428,61 +428,11 @@ Nitrification
     -m        1000
     -parms    % knitru       %
 
-#Potassium_Cycling
-#    -formula KHCO3 1  Mg(HCO3)2 1 # Ca(HCO3)2 1 
-#    -m       0
-#    -parms   % kK_sum       % % kK_win       %
- 
-#Amm_assimilation
-#	-formula AmmHHCO3 -1
-#	-m       1000
-#	-parms   -5.5
-	
-#NO3_assimilation
-#	-formula NO3 -1 HCO3 1
-#	-m       1000
-#	-parms   -7.5	
- 
 -step 86400
-#        -cvode
  
 END
  
  
-KINETICS 2 Sat and Preferential Sat 
-Oligoclase
-	-parm % koligs       %              # fit the first parameter as log10 Surface Area
-        -m    1000
-
-Biotite
-	-parm % kbiots       %              # fit the first parameter as log10 Surface Area
-        -m    1000
-
-Chlorite
-	-parm % kchlrs       %              # fit the first parameter as log10 Surface Area
-        -m    1000
-
-Calcite
-        -parm % kcalcs       %              # fit the first parameter as log10 Surface Area
-        -m    1000
-        
-Pyrite_O2
-    -formula  Pyrite 1
-    -m        1000
-    -m0       1000
-    -parms    % kpyr_s       % 0 0.5 -0.11
-    -tol      1e-008	
-
-Nitrification
-    -formula Amm -1 NH3 +1
-    -m       1000
-    -parms   % knitrs       %
-
-
--step 86400
-
-END
-
 EQUILIBRIUM_PHASES 0 Equilibrate precipitation and irrigation with atmospheric pO2 and pCO2 @ 3500 meters above mean sea level, in log ppm
 	O2(g)         -8.6551E-01 100      #
 	CO2(g)        -3.643659    10      # ~ PCO2
@@ -493,45 +443,18 @@ EQUILIBRIUM_PHASES 2 Equilibrate stream pO2 and pCO2, in log ppm
 	O2(g)       % O2str        % 100      # 
 	CO2(g)      % CO2str       %  10      # ~ PCO2 
 END
-EQUILIBRIUM_PHASES 3 O-Horizon
+EQUILIBRIUM_PHASES 3 O-Horizon and UZ matrix and preferential flow
 	Kaolinite   0 1e-2 # precipitate
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
-#	Calcite    -.5 0
-	Smectite-Illite % ksmecu       % 0 # precipitate  # fit the first 0, equilibrium constant
-#	Calcite     0 0
-#	O2(g)       -0.9 100      # atmospheric, could adjust Use this for gradient of O2, this being the most oxygen rich
 	O2(g)       % O2uz         % 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
-       CO2(g)       % CO2uz        %  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
+        CO2(g)      % CO2uz        %  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
 END
-EQUILIBRIUM_PHASES 30 Unsaturated zone TTI bin 1
-	Kaolinite   0 1e-2 # precipitate
-	Goethite    0 1e-2 # precipitate
-	Gibbsite    0 0 # precipitate
-#	Calcite    -.5 0
-	Smectite-Illite % ksmecu       % 0 # precipitate  # fit the first 0, equilibrium constant
-#	Calcite     0 0
-#	O2(g)       -0.9 100      # atmospheric, could adjust Use this for gradient of O2, this being the most oxygen rich
-	O2(g)       % O2uz         % 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
-       CO2(g)       % CO2uz        %  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
-END
-EQUILIBRIUM_PHASES 40 Unsaturated zone TTI bins 2-11 and UZ pref
-	Kaolinite   0 1e-2 # precipitate
-	Goethite    0 1e-2 # precipitate
-	Gibbsite    0 0 # precipitate
-#	Calcite    -.5 0
-	Smectite-Illite % ksmecu       % 0 # precipitate  # fit the first 0, equilibrium constant
-#	Calcite     0 0
-#	O2(g)       -0.9 100      # atmospheric, could adjust Use this for gradient of O2, this being the most oxygen rich
-	O2(g)       % O2uz         % 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
-       CO2(g)       % CO2uz        %  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
-END
+
 EQUILIBRIUM_PHASES 4 Saturated zone
 	Kaolinite   0 1e-2 # precipitate
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
-#	Calcite    0 0
-	Smectite-Illite % ksmecs       % 0 # precipitate  # fit the first 0, equilibrium constant
 END
 EXCHANGE 1
 X	.001
