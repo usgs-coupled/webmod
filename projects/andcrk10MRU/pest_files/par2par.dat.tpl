@@ -80,8 +80,22 @@ sn_5_6 = snadja*snadjb
 s_thwp = s_thfc-awc
 # T_decay = 0, original exponential decay, T0 (transm) not constrained by szm (shape factor)
 #transm  =  recess
-# T_decay = 1, parabolic decay
-transm  =  (recess*8.12775)**2
+# T_decay = 1, parabolic decay with TL values from GIS
+# sa is the slope of 1/sqrt(Q), Q in m3/hr for outlet, times the sqrt(area), area of basin in square meters
+# homogeneous recess, szm, transm, To, varies as the square of lambda, the mean TTI
+alpha = 8.6e-5
+basarea = 1.74e6
+sa = alpha * sqrt(basarea)
+transm01  =  (recess*sa*78.0)**2
+transm02  =  (recess*sa*111.7)**2
+transm03  =  (recess*sa*36.5)**2
+transm04  =  (recess*sa*125.9)**2
+transm05  =  (recess*sa*65.8)**2
+transm06  =  (recess*sa*84.0)**2
+transm07  =  (recess*sa*90.5)**2
+transm08  =  (recess*sa*102.6)**2
+transm09  =  (recess*sa*43.6)**2
+transm10  =  (recess*sa*54.3)**2
 # T_decay = 2, linear decay
 #transm  =  recess*92.72550721
 # Distribute temp adjustment and melt factors according to slope and aspect

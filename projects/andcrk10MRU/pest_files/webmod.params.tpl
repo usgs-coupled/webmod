@@ -2144,16 +2144,16 @@ To 8
 nmru
 10
 2
-% transm       %
-% transm       %
-% transm       %
-% transm       %
-% transm       %
-% transm       %
-% transm       %
-% transm       %
-% transm       %
-% transm       %
+% transm01     %
+% transm02     %
+% transm03     %
+% transm04     %
+% transm05     %
+% transm06     %
+% transm07     %
+% transm08     %
+% transm09     %
+% transm10     %
 ####
 trxn_uz_c_adj 9
 1
