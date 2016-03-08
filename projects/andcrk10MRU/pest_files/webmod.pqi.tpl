@@ -283,7 +283,7 @@ Calcite
 2020 aH = act("H3O+")
 2030 FOR i = 1 to 3
 2035   if i = 3 then f = SR("CO2(g)") else f = aH
-2040   rate_i = 10^p(i,1) * exp(-p(i,2)/R*(1/TK - 1/298.15)) * aH^p(i,3) * (1 - omega^p(i,4))^p(i,5)
+2040   rate_i = 10^p(i,1) * exp(-p(i,2)/R*(1/TK - 1/298.15)) * f^p(i,3) * (1 - omega^p(i,4))^p(i,5)
 2050   rate = rate + rate_i
 2060 NEXT i
 2070 RETURN
