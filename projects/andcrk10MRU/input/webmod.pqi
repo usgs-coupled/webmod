@@ -281,6 +281,7 @@ Calcite
 2010 R = 0.00831470	# kJ/deg-mol
 2020 aH = act("H3O+")
 2030 FOR i = 1 to 3
+2035   if i = 3 then f = SR("CO2(g)") else f = aH
 2040   rate_i = 10^p(i,1) * exp(-p(i,2)/R*(1/TK - 1/298.15)) * aH^p(i,3) * (1 - omega^p(i,4))^p(i,5)
 2050   rate = rate + rate_i
 2060 NEXT i
@@ -400,26 +401,26 @@ END
 KINETICS 1 O-Horizon, UZ, and saturated zone (both matrix and preferential flow
  
 Oligoclase
-	-parm    0.476                # fit the first parameter as log10 Surface Area
+	-parm    4.7590645E-01                # fit the first parameter as log10 Surface Area
         -m    1000
  
 Biotite
-	-parm   -0.321              # fit the first parameter as log10 Surface Area
+	-parm   -3.2065303E-01              # fit the first parameter as log10 Surface Area
         -m    1000
  
 Chlorite
-	-parm    0.492            # fit the first parameter as log10 Surface Area
+	-parm    4.9217172E-01  # fit the first parameter as log10 Surface Area
         -m    1000
  
 Calcite
-        -parm   -6.39             # fit the first parameter as log10 Surface Area
+        -parm   -6.3946621E+00 # fit the first parameter as log10 Surface Area
         -m    1000
  
 Pyrite_O2
     -formula  Pyrite  1
     -m        1000
     -m0       1000
-    -parms      -2.51   0 0.5 -0.11
+    -parms      -2.5075281E+00 0 0.5 -0.11
     -tol      1e-008	
  
 Nitrification
@@ -433,21 +434,21 @@ END
  
  
 EQUILIBRIUM_PHASES 0 Equilibrate precipitation and irrigation with atmospheric pO2 and pCO2 @ 3500 meters above mean sea level, in log ppm
-	O2(g)         -0.86   100      #
-	CO2(g)        -3.64    10      # ~ PCO2
+	O2(g)         -8.6551E-01 100      #
+	CO2(g)        -3.643659    10      # ~ PCO2
 END
  
 EQUILIBRIUM_PHASES 2 Equilibrate stream pO2 and pCO2, in log ppm
 # should be greater than atmosphere
-	O2(g)         -1.00 100      #
-	CO2(g)        -3.39  10      # ~ PCO2
+	O2(g)         -1.0001000E+00 100      #
+	CO2(g)        -3.3947248E+00  10      # ~ PCO2
 END
 EQUILIBRIUM_PHASES 3 O-Horizon and UZ matrix and preferential flow
 	Kaolinite   0 1e-2 # precipitate
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
-	O2(g)         -1.00 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
-        CO2(g)        -2.04  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
+	O2(g)         -1.0001000E+00 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
+        CO2(g)        -2.0399568E+00  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
 END
  
 EQUILIBRIUM_PHASES 4 Saturated zone
