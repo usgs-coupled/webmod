@@ -29,7 +29,8 @@ C   Declared Variables
       real, save, allocatable :: mru_ppt(:)
       integer, save, allocatable :: newsnow(:), pptmix(:)
       real, save, allocatable :: mru_dep(:), mru_rain(:), mru_snow(:)
-      real, save, allocatable :: prmx(:),strain_adj(:,:)
+C      real, save, allocatable :: prmx(:),strain_adj(:,:)
+      real, save, allocatable :: prmx(:)
 C   Declared Parameters
       real, save :: tmax_allsnow_c
       integer, save, allocatable ::  mru_psta(:)
@@ -206,15 +207,15 @@ c
      +   'none')
      +   .ne.0) return
 
-      ALLOCATE (strain_adj(nmru,nmonths))
-      if(declparam('precip', 'strain_adj', 'nmru,nmonths', 'real',
-     +   '1.0', '0.2', '5.0',
-     +   'Storm rain adjustment factor, by month for each mru',
-     +   'Monthly factor to adjust measured precipitation to '//
-     +   'each mru to account for differences in elevation, etc.'//
-     +   'This factor is for the rain gage used for kinematic or'//
-     +   'storm routing',
-     +   'none').ne.0) return
+c      ALLOCATE (strain_adj(nmru,nmonths))
+c      if(declparam('precip', 'strain_adj', 'nmru,nmonths', 'real',
+c     +   '1.0', '0.2', '5.0',
+c     +   'Storm rain adjustment factor, by month for each mru',
+c     +   'Monthly factor to adjust measured precipitation to '//
+c     +   'each mru to account for differences in elevation, etc.'//
+c     +   'This factor is for the rain gage used for kinematic or'//
+c     +   'storm routing',
+c     +   'none').ne.0) return
 
       ALLOCATE (mru_area_frac(nmru))
       if(declparam('topc', 'mru_area_frac', 'nmru', 'real',
@@ -264,8 +265,8 @@ c
       if(getparam('precip', 'snow_adj', nmru*nmonths, 'real', snow_adj)
      +   .ne.0) return
 
-      if(getparam('precip', 'strain_adj', nmru*nmonths, 'real',
-     +   strain_adj).ne.0) return
+c      if(getparam('precip', 'strain_adj', nmru*nmonths, 'real',
+c     +   strain_adj).ne.0) return
 
       if(getparam('basin', 'mru_area_frac', nmru, 'real',
      $     mru_area_frac) .ne.0) return
