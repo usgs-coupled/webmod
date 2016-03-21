@@ -7,6 +7,7 @@ kbiotu	none	relative	8.37	1	10	phq_k	1.333E+00	-1.133E+01	1
 kchlru	none	relative	8.97	1	10	phq_k	1.333E+00	-1.133E+01	1
 kcalcu	none	relative	3.77	1	10	phq_k	1.333E+00	-1.133E+01	1
 kpyr_u	none	relative	7.90	1	10	phq_k	1.111E+00	-1.111E+01	1
+ksmecu	none	relative	7.64	1	10	phq_eq	4.444E-01	-3.444E+00	1
 knitru	none	relative	6.22	1	10	phq_k	1.333E+00	-1.133E+01	1
 kK_sum	fixed	relative	9.93	1	10	phq_k	5.556E-02	-5.556E-01	1
 kK_win	fixed	relative	1.66	1	10	phq_k	5.556E-02	-5.556E-02	1
@@ -23,7 +24,7 @@ candep	fixed	relative	10.00	1	10	hyd_evap	1.111E-03	-1.111E-03	1
 ccvint	fixed	relative	4.29	1	10	hyd_evap	5.556E-01	-5.556E-01	1
 ccvslp	fixed	relative	7.80	1	10	hyd_evap	5.444E-02	-5.544E-01	1
 chloss	fixed	relative	1.00	1	10	hyd_runoff	1.111E+01	-1.111E+01	1
-chvelo	fixed	relative	1.04	1	10	hyd_runoff	1.111E+03	-1.110E+03	1
+chvelo	fixed	relative	1.36	1	10	hyd_runoff	1.111E+03	-1.110E+03	1
 cdensm	fixed	relative	1.00	1	10	hyd_evap	1.056E-01	-5.556E-02	1
 cdenwn	fixed	relative	1.00	1	10	hyd_evap	1.089E-01	-9.889E-02	1
 crdcof	fixed	relative	5.50	1	10	hyd_snow	6.667E-02	3.333E-02	1

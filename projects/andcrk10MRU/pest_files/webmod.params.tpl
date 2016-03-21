@@ -73,7 +73,7 @@ nac_nmru_nresinp
 2310
 ####
 nhydro
-4
+1
 ####
 one
 1
@@ -88,7 +88,7 @@ nexlag
 2
 ####
 ntopchan
-5
+2
 ####
 ndeplval
 22
@@ -1230,7 +1230,7 @@ nchan_d 8
 nchan
 1
 1
-5
+2
 ####
 st 8
 2
@@ -1369,13 +1369,10 @@ d 12
 2
 ntopchan
 nchan
-5
+2
 2
 0.0
-1000.0
-2000.0
-3000.0
-4000.0
+600.0
 ####
 trxn_sat_c_adj 9
 1
@@ -1444,11 +1441,8 @@ one
 init_rxn_hydro 15
 1
 nhydro
-4
 1
--1
--1
--1
+1
 -1
 ####
 td 8
@@ -1760,12 +1754,9 @@ ach 12
 2
 ntopchan
 nchan
-5
+2
 2
 0.0
-0.274
-0.742
-0.982
 1.0
 ####
 riparian_thresh 6
@@ -2277,11 +2268,8 @@ ntemp
 init_kin_hydro 15
 1
 nhydro
-4
 1
--1
--1
--1
+1
 -1
 ####
 radj_wppt 14
@@ -2310,11 +2298,8 @@ nmru
 init_surf_hydro 16
 1
 nhydro
-4
 1
--1
--1
--1
+1
 -1
 ####
 infex 8
@@ -2566,11 +2551,8 @@ nmru
 init_exch_hydro 16
 1
 nhydro
-4
 1
--1
--1
--1
+1
 -1
 ####
 iso_n 8
@@ -2907,11 +2889,8 @@ nmru
 init_soln_hydro 16
 1
 nhydro
-4
 1
-3
-3
-3
+1
 3
 ####
 iso_theta 8
@@ -3266,11 +3245,8 @@ nmru
 init_eq_ph_hydro 17
 1
 nhydro
-4
 1
-2
-2
-2
+1
 2
 ####
 init_soln_ppt 14

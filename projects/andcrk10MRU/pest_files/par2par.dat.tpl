@@ -11,6 +11,7 @@ kchlru = %    kchlru    %
 kcalcu = %    kcalcu    %
 kpyr_u = %    kpyr_u    %
 knitru = %    knitru    %
+ksmecu = %    ksmecu    %
 kK_sum = %    kK_sum    %
 kK_win = %    kK_win    %
 todays = %    todays    %

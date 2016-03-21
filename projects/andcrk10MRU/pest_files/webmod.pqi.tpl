@@ -435,19 +435,20 @@ END
  
  
 EQUILIBRIUM_PHASES 0 Equilibrate precipitation and irrigation with atmospheric pO2 and pCO2 @ 3500 meters above mean sea level, in log ppm
-	O2(g)         -8.6551E-01 100      #
-	CO2(g)        -3.643659    10      # ~ PCO2
+	O2(g)         -8.6551E-01 100      # ~ PO2  @ 3500m with log(21%)   = -0.678 at sea level
+	CO2(g)        -3.59        10      # ~ PCO2 @ 3500m with log(400ppm)= -3.40 at sea level
 END
  
 EQUILIBRIUM_PHASES 2 Equilibrate stream pO2 and pCO2, in log ppm
 # should be greater than atmosphere 
-	O2(g)       % O2str        % 100      # 
+	O2(g)       % O2str        % 100      #
 	CO2(g)      % CO2str       %  10      # ~ PCO2 
 END
 EQUILIBRIUM_PHASES 3 O-Horizon and UZ matrix and preferential flow
 	Kaolinite   0 1e-2 # precipitate
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
+	Smectite-Illite % ksmecu       % 0    # precipitate  # fit the first 0, equilibrium constant
 	O2(g)       % O2uz         % 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
         CO2(g)      % CO2uz        %  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
 END
@@ -456,6 +457,7 @@ EQUILIBRIUM_PHASES 4 Saturated zone
 	Kaolinite   0 1e-2 # precipitate
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
+	Smectite-Illite % ksmecu       % 0    # precipitate  # fit the first 0, equilibrium constant
 END
 EXCHANGE 1
 X	.001
