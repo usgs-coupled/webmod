@@ -7,7 +7,7 @@ kbiotu	none	relative	8.37	1	10	phq_k	1.333E+00	-1.133E+01	1
 kchlru	none	relative	8.97	1	10	phq_k	1.333E+00	-1.133E+01	1
 kcalcu	none	relative	3.77	1	10	phq_k	1.333E+00	-1.133E+01	1
 kpyr_u	none	relative	7.90	1	10	phq_k	1.111E+00	-1.111E+01	1
-ksmecu	none	relative	7.64	1	10	phq_eq	4.444E-01	-3.444E+00	1
+ksmecu	fixed	relative	7.75	1	10	phq_eq	4.444E-01	-3.444E+00	1
 knitru	none	relative	6.22	1	10	phq_k	1.333E+00	-1.133E+01	1
 kK_sum	fixed	relative	9.93	1	10	phq_k	5.556E-02	-5.556E-01	1
 kK_win	fixed	relative	1.66	1	10	phq_k	5.556E-02	-5.556E-02	1
