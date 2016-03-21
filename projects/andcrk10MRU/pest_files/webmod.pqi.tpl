@@ -435,7 +435,7 @@ END
  
  
 EQUILIBRIUM_PHASES 0 Equilibrate precipitation and irrigation with atmospheric pO2 and pCO2 @ 3500 meters above mean sea level, in log ppm
-	O2(g)         -8.6551E-01 100      # ~ PO2  @ 3500m with log(21%)   = -0.678 at sea level
+	O2(g)         -8.6551E-01 100      # ~ PO2  @ 3500m with log(21percent)   = -0.678 at sea level
 	CO2(g)        -3.59        10      # ~ PCO2 @ 3500m with log(400ppm)= -3.40 at sea level
 END
  
