@@ -1,12 +1,12 @@
 #!/bin/sh
 
-#SBATCH -p UV,prod
+#SBATCH -p normal
 # SBATCH -p prod
 #SBATCH -A nrp
 #SBATCH --output=webmod.pest.out
 #SBATCH -n 63
 #SBATCH --mem-per-cpu=10000M
-#SBATCH -t48:00:00
+#SBATCH -t24:00:00
 #SBATCH --exclusive
 #SBATCH --hint=compute_bound
 
