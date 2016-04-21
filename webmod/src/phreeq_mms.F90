@@ -213,7 +213,7 @@
 !  Dimensions, indices, and counters
       integer ::  i,j,ia,is,ih,ires,imru,inac,ihydro,irip
       integer :: ichemdat,iunit,imet,unit_type
-      integer, save :: nchem_ext, chem_ext,ppt_chem, nchem_sets
+      integer, save :: nchem_ext, chem_ext,ppt_chem, nhcs
       integer, save ::  nmru, nac, nsolute, nchemobs,nchemdat
       integer, save ::  nchemdat_obs, nchemdep, nsoln, nchan
       integer, save ::  nresinp, nmru_res,nac_nmru_nresinp
@@ -660,18 +660,18 @@
              eq_phset_table(:,:),&
              exchset_table(:,:),&
              init_eq_ph_hydro(:),&
-             init_eq_ph_mru(:),&
+             init_eq_phset_mru(:),&
              init_exch_hydro(:),&
-             init_exch_mru(:),&
+             init_exchset_mru(:),&
              init_kin_hydro(:),&
-             init_kin_mru(:),&
+             init_kinset_mru(:),&
              init_rxn_hydro(:),&
-             init_rxn_mru(:),&
+             init_rxnset_mru(:),&
              init_soln_ext(:),&
              init_soln_hydro(:),&
-             init_soln_mru(:),&
+             init_solnset_mru(:),&
              init_surf_hydro(:),&
-             init_surf_mru(:),&
+             init_surfset_mru(:),&
              kinset_table(:,:),&
              rxnset_table(:,:),&
              solnset_table(:,:),&
@@ -776,8 +776,8 @@
         if(nac_nmru_nresinp.eq.-1) return
       nmru_res = getdim('nmru_res')
         if ( nmru_res.eq.-1 ) return
-      nchem_sets = getdim('nchem_sets')
-        if ( nchem_sets.eq.-1 ) return
+      nhcs = getdim('nhcs')
+        if ( nhcs.eq.-1 ) return
 ! nchemdat is equal to the number of deposition sources
 ! (nchemdep = one precip + nchem_ext), plus the number of unique
 ! water quality sampling sites, nchemobs.
@@ -2834,8 +2834,8 @@
          'Simulate solute fluxes (0=no; 1=yes)',&
          'integer').ne.0) return
 
-      allocate(solnset_table(nmru_res,nchem_sets))
-      if(declparam('phreeqmms','solnset_table', 'nmru_res,nchem_sets',&
+      allocate(solnset_table(nmru_res,nhcs))
+      if(declparam('phreeqmms','solnset_table', 'nmru_res,nhcs',&
          'integer', '1', '1', '100',&
          'Sets of solutions available for initializing MRU reservoir '//&
          'compositions',&
@@ -2844,8 +2844,8 @@
          'from the phreeq input file, *.pqi.',&
          'none') .ne.0) return
 
-      allocate(rxnset_table(nmru_res,nchem_sets))
-      if(declparam('phreeqmms','rxnset_table', 'nmru_res,nchem_sets',&
+      allocate(rxnset_table(nmru_res,nhcs))
+      if(declparam('phreeqmms','rxnset_table', 'nmru_res,nhcs',&
          'integer', '-1', '-1', '100',&
          'Sets of reaction IDs available for initializing MRU '//&
          'reservoir reactants (-1 if none).',&
@@ -2855,8 +2855,8 @@
          'from the phreeq input file, *.pqi.',&
          'none') .ne.0) return
 
-      allocate(exchset_table(nmru_res,nchem_sets))
-      if(declparam('phreeqmms','exchset_table', 'nmru_res,nchem_sets',&
+      allocate(exchset_table(nmru_res,nhcs))
+      if(declparam('phreeqmms','exchset_table', 'nmru_res,nhcs',&
          'integer', '-1', '-1', '100',&
          'Sets of exchanger IDs available for initializing MRU '//&
          'reservoir exchange sites (-1 if none)',&
@@ -2866,8 +2866,8 @@
          'from the phreeq input file, *.pqi.',&
          'none') .ne.0) return
 
-      allocate(surfset_table(nmru_res,nchem_sets))
-      if(declparam('phreeqmms','surfset_table', 'nmru_res,nchem_sets',&
+      allocate(surfset_table(nmru_res,nhcs))
+      if(declparam('phreeqmms','surfset_table', 'nmru_res,nhcs',&
          'integer', '-1', '-1', '100',&
          'Sets of surface species available for initializing MRU '//&
          'reservoirs (-1 if none)',&
@@ -2877,8 +2877,8 @@
          'from the phreeq input file, *.pqi.',&
          'none') .ne.0) return
 
-      allocate(eq_phset_table(nmru_res,nchem_sets))
-      if(declparam('phreeqmms','eq_phset_table', 'nmru_res,nchem_sets',&
+      allocate(eq_phset_table(nmru_res,nhcs))
+      if(declparam('phreeqmms','eq_phset_table', 'nmru_res,nhcs',&
          'integer', '-1', '-1', '100',&
          'Sets of equilibrium phases available for initializing MRU '//&
          'reservoirs (-1 if none)',&
@@ -2888,8 +2888,8 @@
          'from the phreeq input file, *.pqi.',&
          'none') .ne.0) return
 
-      allocate(kinset_table(nmru_res,nchem_sets))
-      if(declparam('phreeqmms','kinset_table', 'nmru_res,nchem_sets',&
+      allocate(kinset_table(nmru_res,nhcs))
+      if(declparam('phreeqmms','kinset_table', 'nmru_res,nhcs',&
          'integer', '-1', '-1', '100',&
          'Sets of kinetic reactions available for initializing MRU '//&
          'reservoirs (-1 if none)',&
@@ -2947,8 +2947,8 @@
          'to reduce simulated open water fractionation',&
          'none') .ne.0) return
 
-      allocate(init_soln_mru(nmru))
-      if(declparam('phreeqmms','init_soln_mru', 'nmru',&
+      allocate(init_solnset_mru(nmru))
+      if(declparam('phreeqmms','init_solnset_mru', 'nmru',&
          'integer', '1', '1', '100',&
          'Solution set to use for initializing the solute '//&
          'composition for each reservoir in an MRU',&
@@ -2958,8 +2958,8 @@
          'parameter in conjuction with the .pqi file.',&
          'none') .ne.0) return
 
-      allocate(init_rxn_mru(nmru))
-      if(declparam('phreeqmms','init_rxn_mru', 'nmru',&
+      allocate(init_rxnset_mru(nmru))
+      if(declparam('phreeqmms','init_rxnset_mru', 'nmru',&
          'integer', '1', '1', '100',&
          'Reactant set to use for initializing the reactants '//&
          'in each reservoir in an MRU',&
@@ -2970,8 +2970,8 @@
          'parameter in conjuction with the .pqi file.',&
          'none') .ne.0) return
 
-      allocate(init_exch_mru(nmru))
-      if(declparam('phreeqmms','init_exch_mru', 'nmru',&
+      allocate(init_exchset_mru(nmru))
+      if(declparam('phreeqmms','init_exchset_mru', 'nmru',&
          'integer', '1', '1', '100',&
          'Exchanger set to use for initializing the solute '//&
          'composition for each reservoir in an MRU',&
@@ -2981,8 +2981,8 @@
          'parameter in conjuction with the .pqi file.',&
          'none') .ne.0) return
 
-      allocate(init_surf_mru(nmru))
-      if(declparam('phreeqmms','init_surf_mru', 'nmru',&
+      allocate(init_surfset_mru(nmru))
+      if(declparam('phreeqmms','init_surfset_mru', 'nmru',&
          'integer', '1', '1', '100',&
          'Surface-species set to use for initializing '//&
          'each reservoir in an MRU',&
@@ -2993,8 +2993,8 @@
          'parameter in conjuction with the .pqi file.',&
          'none') .ne.0) return
 
-      allocate(init_eq_ph_mru(nmru))
-      if(declparam('phreeqmms','init_eq_ph_mru', 'nmru',&
+      allocate(init_eq_phset_mru(nmru))
+      if(declparam('phreeqmms','init_eq_phset_mru', 'nmru',&
          'integer', '1', '1', '100',&
          'Equilibrium-phase set to use for initializing '//&
          'each reservoir in an MRU',&
@@ -3005,8 +3005,8 @@
          'parameter in conjuction with the .pqi file.',&
          'none') .ne.0) return
 
-      allocate(init_kin_mru(nmru))
-      if(declparam('phreeqmms','init_kin_mru', 'nmru',&
+      allocate(init_kinset_mru(nmru))
+      if(declparam('phreeqmms','init_kinset_mru', 'nmru',&
          'integer', '1', '1', '100',&
          'Kinetic sets to use for initializing '//&
          'each reservoir in an MRU',&
@@ -3508,22 +3508,22 @@
       if(getparam('topc', 'qdffrac', nmru, 'real', qdffrac)&
          .ne.0) return
 
-      if(getparam('phreeqmms', 'solnset_table', nmru_res*nchem_sets,&
+      if(getparam('phreeqmms', 'solnset_table', nmru_res*nhcs,&
            'integer', solnset_table) .ne.0) return
 
-      if(getparam('phreeqmms', 'rxnset_table', nmru_res*nchem_sets,&
+      if(getparam('phreeqmms', 'rxnset_table', nmru_res*nhcs,&
            'integer', rxnset_table) .ne.0) return
 
-      if(getparam('phreeqmms', 'exchset_table', nmru_res*nchem_sets,&
+      if(getparam('phreeqmms', 'exchset_table', nmru_res*nhcs,&
            'integer', exchset_table) .ne.0) return
 
-      if(getparam('phreeqmms', 'surfset_table', nmru_res*nchem_sets,&
+      if(getparam('phreeqmms', 'surfset_table', nmru_res*nhcs,&
            'integer', surfset_table) .ne.0) return
 
-      if(getparam('phreeqmms', 'eq_phset_table', nmru_res*nchem_sets,&
+      if(getparam('phreeqmms', 'eq_phset_table', nmru_res*nhcs,&
            'integer', eq_phset_table) .ne.0) return
 
-      if(getparam('phreeqmms', 'kinset_table', nmru_res*nchem_sets,&
+      if(getparam('phreeqmms', 'kinset_table', nmru_res*nhcs,&
            'integer', kinset_table) .ne.0) return
 
 !      if(getparam('phreeqmms', 'riparian_thresh', nmru, 'real',&
@@ -3538,23 +3538,23 @@
       if(getparam('phreeqmms', 'init_soln_ext', nchem_ext,&
            'integer', init_soln_ext) .ne.0) return
 
-      if(getparam('phreeqmms', 'init_soln_mru', nmru, 'integer',&
-           init_soln_mru) .ne.0) return
+      if(getparam('phreeqmms', 'init_solnset_mru', nmru, 'integer',&
+           init_solnset_mru) .ne.0) return
 
-      if(getparam('phreeqmms', 'init_rxn_mru', nmru, 'integer',&
-           init_rxn_mru) .ne.0) return
+      if(getparam('phreeqmms', 'init_rxnset_mru', nmru, 'integer',&
+           init_rxnset_mru) .ne.0) return
 
-      if(getparam('phreeqmms', 'init_exch_mru', nmru, 'integer',&
-           init_exch_mru) .ne.0) return
+      if(getparam('phreeqmms', 'init_exchset_mru', nmru, 'integer',&
+           init_exchset_mru) .ne.0) return
 
-      if(getparam('phreeqmms', 'init_surf_mru', nmru, 'integer',&
-           init_surf_mru) .ne.0) return
+      if(getparam('phreeqmms', 'init_surfset_mru', nmru, 'integer',&
+           init_surfset_mru) .ne.0) return
 
-      if(getparam('phreeqmms', 'init_eq_ph_mru', nmru, 'integer',&
-           init_eq_ph_mru) .ne.0) return
+      if(getparam('phreeqmms', 'init_eq_phset_mru', nmru, 'integer',&
+           init_eq_phset_mru) .ne.0) return
 
-      if(getparam('phreeqmms', 'init_kin_mru', nmru, 'integer',&
-           init_kin_mru) .ne.0) return
+      if(getparam('phreeqmms', 'init_kinset_mru', nmru, 'integer',&
+           init_kinset_mru) .ne.0) return
 
       if(getparam('phreeqmms', 'init_soln_hydro', nhydro, 'integer',&
            init_soln_hydro) .ne.0) return
@@ -4246,8 +4246,8 @@
 !
       do i=1,nmru
 ! solutions
-        uzwet=solnset_table(5,init_soln_mru(i))
-        uzdry=solnset_table(6,init_soln_mru(i))
+        uzwet=solnset_table(5,init_solnset_mru(i))
+        uzdry=solnset_table(6,init_solnset_mru(i))
           if(uzdry.lt.-1) then
             PRINT *, 'Solnset_table, row 6 (dry uz) must be '//&
                   'greater than or equal to -1. Run stopped'
@@ -4285,8 +4285,8 @@
            
         end do ! 1, nacsc
 ! reactions
-        uzwet=rxnset_table(5,init_rxn_mru(i))
-        uzdry=rxnset_table(6,init_rxn_mru(i))
+        uzwet=rxnset_table(5,init_rxnset_mru(i))
+        uzdry=rxnset_table(6,init_rxnset_mru(i))
           if(uzdry.lt.-1) then
             PRINT *, 'Exchset_table, row 6 (dry uz) must be '//&
                   'greater than or equal to -1. Run stopped'
@@ -4321,8 +4321,8 @@
            
         end do ! 1, nacsc
 ! exchange
-        uzwet=exchset_table(5,init_exch_mru(i))
-        uzdry=exchset_table(6,init_exch_mru(i))
+        uzwet=exchset_table(5,init_exchset_mru(i))
+        uzdry=exchset_table(6,init_exchset_mru(i))
           if(uzdry.lt.-1) then
             PRINT *, 'Exchset_table, row 6 (dry uz) must be '//&
                   'greater than or equal to -1. Run stopped'
@@ -4357,8 +4357,8 @@
            
         end do ! 1, nacsc
 ! surface complexation
-        uzwet=surfset_table(5,init_surf_mru(i))
-        uzdry=surfset_table(6,init_surf_mru(i))
+        uzwet=surfset_table(5,init_surfset_mru(i))
+        uzdry=surfset_table(6,init_surfset_mru(i))
           if(uzdry.lt.-1) then
             PRINT *, 'Surfset_table, row 6 (dry uz) must be '//&
                   'greater than or equal to -1. Run stopped'
@@ -4392,8 +4392,8 @@
           end if
         end do ! 1, nacsc
 ! equilibrium phases
-        uzwet=eq_phset_table(5,init_eq_ph_mru(i))
-        uzdry=eq_phset_table(6,init_eq_ph_mru(i))
+        uzwet=eq_phset_table(5,init_eq_phset_mru(i))
+        uzdry=eq_phset_table(6,init_eq_phset_mru(i))
           if(uzdry.lt.-1) then
             PRINT *, 'Eq_phtable, row 6 (dry uz) must be '//&
                   'greater than or equal to -1. Run stopped'
@@ -4427,8 +4427,8 @@
           end if
         end do ! 1, nacsc
 ! kinetics
-        uzwet=kinset_table(5,init_kin_mru(i))
-        uzdry=kinset_table(6,init_kin_mru(i))
+        uzwet=kinset_table(5,init_kinset_mru(i))
+        uzdry=kinset_table(6,init_kinset_mru(i))
           if(uzdry.lt.-1) then
             PRINT *, 'Kinset_table, row 6 (dry uz) must be '//&
                   'greater than or equal to -1. Run stopped'
@@ -4480,17 +4480,17 @@
            src_init(i,ET_SOLUTION) = init_soln_ext(ichemdat-1)
         else if(ires.ge.1.and.ires.le.9) then ! hillslope reservoirs
            src_init(i,ET_SOLUTION) = &
-               solnset_table(ires, init_soln_mru(imru))
+               solnset_table(ires, init_solnset_mru(imru))
            src_init(i,ET_REACTION) = &
-               rxnset_table(ires,init_rxn_mru(imru))
+               rxnset_table(ires,init_rxnset_mru(imru))
            src_init(i,ET_EXCHANGE) = &
-               exchset_table(ires,init_exch_mru(imru))
+               exchset_table(ires,init_exchset_mru(imru))
            src_init(i,ET_SURFACE) = &
-                surfset_table(ires,init_surf_mru(imru))
+                surfset_table(ires,init_surfset_mru(imru))
            src_init(i,ET_PURE_PHASE) = &
-                eq_phset_table(ires,init_eq_ph_mru(imru))
+                eq_phset_table(ires,init_eq_phset_mru(imru))
            src_init(i,ET_KINETICS) = &
-                kinset_table(ires,init_kin_mru(imru))
+                kinset_table(ires,init_kinset_mru(imru))
 !
 !           This block sets initial geochemistry for the unsaturated zone bins.
 !
@@ -4941,7 +4941,7 @@
 !
 !              The solnset_table lists the initial solution sets for each of the 9
 !              reservoir in a hillslope (see discussion of reservoir ID above).
-            src(res_id) = solnset_table(res_id, init_soln_mru(is))
+            src(res_id) = solnset_table(res_id, init_solnset_mru(is))
 !              solnnum(time,reservoir ID,chemdat, mru,nac,hydro,stat)
             dest(res_id) = solnnum(0,res_id,0,is,0,0,0)
  32      continue

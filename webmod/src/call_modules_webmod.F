@@ -304,9 +304,8 @@
      $     'Number of user-defined factors to convert arbitrary '//
      $     'concentrations to Moles per Liter').ne.0) return
 
-      if(decldim('nchem_sets', 10, MAXSOLNSETS,
-     $     'Number of unique solution and/or reaction entities '//
-     $     'describing variety of typical hillslopes').ne.0) return
+      if(decldim('nhcs', 10, MAXSOLNSETS,
+     $     'Number of unique hillslope chemistry sets').ne.0) return
 
       if(decldim('nac_nmru_nresinp', MAXNMR_3D, MAXNMR_3D,
      $     'Vector of volumes used to calculate mixing ratios needed '//

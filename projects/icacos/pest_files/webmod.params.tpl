@@ -39,7 +39,7 @@ SatPref
 nphq_lut
 75
 ####
-nchem_sets
+nhcs
 10
 ####
 nac
@@ -271,7 +271,7 @@ nmru
 solnset_table 14
 2
 nmru_res
-nchem_sets
+nhcs
 90
 1
 2
@@ -400,7 +400,7 @@ nmru
 eq_phset_table 15
 2
 nmru_res
-nchem_sets
+nhcs
 90
 1
 -1
@@ -1076,7 +1076,7 @@ nmru
 exchset_table 14
 2
 nmru_res
-nchem_sets
+nhcs
 90
 1
 -1
@@ -1385,7 +1385,7 @@ nmru
 rxnset_table 13
 2
 nmru_res
-nchem_sets
+nhcs
 90
 1
 -1
@@ -1595,7 +1595,7 @@ nmonths
 kinset_table 13
 2
 nmru_res
-nchem_sets
+nhcs
 90
 1
 10
@@ -1790,7 +1790,7 @@ one
 surfset_table 14
 2
 nmru_res
-nchem_sets
+nhcs
 90
 1
 -1

@@ -39,7 +39,7 @@ SatPref
 nphq_lut
 75
 ####
-nchem_sets
+nhcs
 10
 ####
 nac
@@ -307,7 +307,7 @@ nmru
 solnset_table 14
 2
 nmru_res
-nchem_sets
+nhcs
 90
 1
 2
@@ -454,7 +454,7 @@ nmru
 eq_phset_table 15
 2
 nmru_res
-nchem_sets
+nhcs
 90
 1
 -1
@@ -734,7 +734,7 @@ one
 2
 % radjsp       %
 ####
-init_kin_mru 13
+init_kinset_mru 13
 1
 nmru
 10
@@ -757,7 +757,7 @@ one
 2
 % todays       %
 ####
-init_surf_mru 14
+init_surfset_mru 14
 1
 nmru
 10
@@ -853,7 +853,7 @@ nmru
 % qdffrac      %
 % qdffrac      %
 ####
-init_rxn_mru 13
+init_rxnset_mru 13
 1
 nmru
 10
@@ -900,133 +900,6 @@ nmru
 % pmacst       %
 % pmacst       %
 % pmacst       %
-####
-strain_adj 11
-2
-nmru
-nmonths
-120
-2
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
 ####
 WEI 8
 1
@@ -1621,7 +1494,7 @@ nmru
 3
 3
 ####
-init_exch_mru 14
+init_exchset_mru 14
 1
 nmru
 10
@@ -1817,7 +1690,7 @@ nmru
 exchset_table 14
 2
 nmru_res
-nchem_sets
+nhcs
 90
 1
 -1
@@ -2367,7 +2240,7 @@ nmru
 rxnset_table 13
 2
 nmru_res
-nchem_sets
+nhcs
 90
 1
 -1
@@ -2617,7 +2490,7 @@ nmonths
 kinset_table 13
 2
 nmru_res
-nchem_sets
+nhcs
 90
 1
 -1
@@ -2870,7 +2743,7 @@ nchemvar
 8
 99
 ####
-init_soln_mru 14
+init_solnset_mru 14
 1
 nmru
 10
@@ -2990,7 +2863,7 @@ one
 surfset_table 14
 2
 nmru_res
-nchem_sets
+nhcs
 90
 1
 -1
@@ -3256,7 +3129,7 @@ one
 1
 0
 ####
-init_eq_ph_mru 15
+init_eq_phset_mru 15
 1
 nmru
 10

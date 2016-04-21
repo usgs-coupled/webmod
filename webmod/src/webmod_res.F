@@ -475,7 +475,7 @@ c
       if(nhydro.eq.-1) return
       nsolute = getdim('nsolute')
       if(nsolute.eq.-1) return
-!      nchem_sets = get*dim('nchem_sets')
+!      nhcs = get*dim('nhcs')
       nchemvar = getdim('nchemvar')
       if(nchemvar.eq.-1) return
 !      nmru_res = get*dim('nmru_res')

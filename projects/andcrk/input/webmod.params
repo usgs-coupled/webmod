@@ -111,7 +111,7 @@ nobs
 nhum
 1
 ####
-nchem_sets
+nhcs
 10
 ####
 nmonths
@@ -197,7 +197,7 @@ nmru
 2
 0.0199659
 ####
-init_surf_mru
+init_surfset_mru
 1
 nmru
 1
@@ -371,7 +371,7 @@ nmru
 exchset_table
 2
 nmru_res
-nchem_sets
+nhcs
 90
 1
 -1
@@ -468,7 +468,7 @@ nchem_sets
 surfset_table
 2
 nmru_res
-nchem_sets
+nhcs
 90
 1
 -1
@@ -763,7 +763,7 @@ nmru
 solnset_table
 2
 nmru_res
-nchem_sets
+nhcs
 90
 1
 2
@@ -1074,26 +1074,7 @@ nhydro
 1
 -1
 ####
-strain_adj
-2
-nmru
-nmonths
-12
-2
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-####
-init_soln_mru
+init_solnset_mru
 1
 nmru
 1
@@ -1117,7 +1098,7 @@ nmru
 kinset_table
 2
 nmru_res
-nchem_sets
+nhcs
 90
 1
 -1
@@ -1357,7 +1338,7 @@ nchemvar
 5
 5
 ####
-init_eq_ph_mru
+init_eq_phset_mru
 1
 nmru
 1
@@ -1454,7 +1435,7 @@ one
 1
 1
 ####
-init_kin_mru
+init_kinset_mru
 1
 nmru
 1
@@ -1468,7 +1449,7 @@ nmru
 2
 0.0
 ####
-init_exch_mru
+init_exchset_mru
 1
 nmru
 1
@@ -1542,7 +1523,7 @@ one
 1
 1
 ####
-init_rxn_mru
+init_rxnset_mru
 1
 nmru
 1
@@ -1687,7 +1668,7 @@ nmru
 eq_phset_table
 2
 nmru_res
-nchem_sets
+nhcs
 90
 1
 -1
@@ -1846,7 +1827,7 @@ nmru
 rxnset_table
 2
 nmru_res
-nchem_sets
+nhcs
 90
 1
 -1

@@ -296,7 +296,7 @@ nmonths
 % sn_adj       %
 % sn_adj       %
 ####
-init_surf_mru 14
+init_surfset_mru 14
 1
 nmru
 1
@@ -310,7 +310,7 @@ nmru
 2
 % pmacst       %
 ####
-init_eq_ph_mru 15
+init_eq_phset_mru 15
 1
 nmru
 1
@@ -646,7 +646,7 @@ nmru
 2
 % sraini       %
 ####
-init_exch_mru 14
+init_exchset_mru 14
 1
 nmru
 1
@@ -709,25 +709,6 @@ nmonths
 % ccvint       %
 % ccvint       %
 % ccvint       %
-####
-strain_adj 11
-2
-nmru
-nmonths
-12
-2
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
-1.0
 ####
 c_can_depth 12
 1
@@ -1847,7 +1828,7 @@ nchemvar
 0
 0
 ####
-init_rxn_mru 13
+init_rxnset_mru 13
 1
 nmru
 1
@@ -2005,7 +1986,7 @@ nchan
 0.982
 1.0
 ####
-init_soln_mru 14
+init_solnset_mru 14
 1
 nmru
 1
@@ -2058,7 +2039,7 @@ nmru
 0.1
 0.1
 ####
-init_kin_mru 13
+init_kinset_mru 13
 1
 nmru
 1

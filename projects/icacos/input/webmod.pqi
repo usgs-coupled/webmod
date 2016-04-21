@@ -3,41 +3,41 @@ PHASES
 Andesine   # Kinetics
 Ca0.40Na0.60Al1.4Si2.6O8 + 8H2O = 0.4Ca+2 + 0.6Na+ + 1.4Al(OH)4- + 2.6H4SiO4
 	log_k          -19.0  # Ab -18; An -19.714
-
+ 
 Albite
         NaAlSi3O8 + 8 H2O = Na+ + Al(OH)4- + 3 H4SiO4
         log_k           -18.002
         delta_h 25.896 kcal
-        
+ 
 Anorthite
         CaAl2Si2O8 + 8 H2O = Ca+2 + 2 Al(OH)4- + 2 H4SiO4
         log_k           -19.714
         delta_h 11.580 kcal
-
+ 
 Kaolinite
         Al2Si2O5(OH)4 + 6 H3O+ = 7H2O + 2 H4SiO4 + 2 Al+3
         log_k           7.435
         delta_h -35.300 kcal
-       
+ 
 K-spar     # Kinetics
 Na0.09K0.91AlSi3O8 + 8H2O = 0.09Na+ + 0.91K+ + Al(OH)4- + 3H4SiO4
         log_k           -20.573
         delta_h 30.820  kcal
-
+ 
 Biotite    # Kinetics
-K0.85(Al0.10Si0.2Fe1.3Fe0.05Mg1.25)Si2.8Al1.2O10(OH)2 + 10.0H3O+ = 0.85K+ + 0.1Al+3 + 0.2H4SiO4 + 1.3Fe+2 + 0.05Fe+3 + 1.25Mg+2 + 2.8H4SiO4 + 1.2Al+3 + 10H2O 
+K0.85(Al0.10Si0.2Fe1.3Fe0.05Mg1.25)Si2.8Al1.2O10(OH)2 + 10.0H3O+ = 0.85K+ + 0.1Al+3 + 0.2H4SiO4 + 1.3Fe+2 + 0.05Fe+3 + 1.25Mg+2 + 2.8H4SiO4 + 1.2Al+3 + 10H2O
 log_k 20 # 12.7 phreeqc.dat
-
+ 
 Hornblende # Kinetics
 (Na0.34K0.05)(Ca1.71Mg2.84Fe2.06Al0.89)Al1.0Si6.68O22(OH)2 + 19.28H3O+ = \
   0.34Na+ + 0.05K+ + 1.71Ca+2 + 2.84Mg+2 + 2.06Fe+2 + 0.00Fe+3 + \
   0.89Al+3 + 1.0Al+3 + 6.68H4SiO4 + 16.56H2O
   log_k 0
-  
+ 
 Regolith_biotite    # Equilibrium phase
 K0.65(Al1.10Si0.15Fe0.35Fe0.15Mg0.55)Si3.2Al0.8O10(OH)2 + 8.6H3O+ = \
   0.65K+ + 1.1Al+3 + 0.15H4SiO4 + 0.35Fe+2 + 0.15Fe+3 + 0.55Mg+2 + \
-  3.2H4SiO4 + 0.8Al+3 + 7.2H2O 
+  3.2H4SiO4 + 0.8Al+3 + 7.2H2O
        # log_k           -40.267   Illite, Al(OH)4-, phreeqc.dat
        # delta_h 54.684 kcal
        # Al+3 + 8 H2O = Al(OH)4- + 4 H3O+
@@ -47,7 +47,7 @@ K0.65(Al1.10Si0.15Fe0.35Fe0.15Mg0.55)Si3.2Al0.8O10(OH)2 + 8.6H3O+ = \
        # delta_h = 50.685 - 1.9x42.30 =  -29.685
        log_k 2.683
        delta_h -29.685
-
+ 
 END
 SOLUTION_SPECIES
    H2O + 0.01e- = H2O-0.01
@@ -171,7 +171,6 @@ Andesine
 2060 NEXT i
 2070 RETURN
 		-end
-
 Albite
 	-start
 10  REM PARM(1) is log10 surface area in m^2
@@ -204,7 +203,8 @@ Albite
 Anorthite
 	-start
 10  REM PARM(1) is log10 surface area in m^2
-20  DATA "Anorthite", -3.50, 16.6, 1.411, 1, 1,   -9.12, 17.8, 0, 1, 1,   -99, 0, 0, 1, 1
+#20  DATA "Anorthite", -3.50, 16.6, 1.411, 1, 1,   -9.12, 17.8, 0, 1, 1,   -99, 0, 0, 1, 1
+20  DATA "Albite", -10.16, 65.0, 0.457, 1, 1,   -12.56, 69.8, 0, 1, 1,   -15.6, 71.0, -0.572, 1, 1
 30  RESTORE 20
 40  READ name$
 50  DIM p(3,5)
@@ -260,7 +260,7 @@ K-spar
 2060 NEXT i
 2070 RETURN
 		-end
-
+ 
 Biotite
 	-start
 10  REM PARM(1) is log10 surface area in m^2
@@ -348,7 +348,7 @@ Kaolinite
 2050   rate = rate + rate_i
 2060 NEXT i
 2070 RETURN
-		-end
+		-end		
 		
 Calcite
 	-start
@@ -438,39 +438,47 @@ Pyrite_O2
  
 END
  
-KINETICS 1 O-Horizon and UZ (normal and preferential)
  
-Andesine
-	-parm   -5.5967797E+00              # fit the first parameter as log10 Surface Area
-        -m    1000
-
+KINETICS 1 O-Horizon and UZ (normal and preferential)
+#-cvode
+ 
+#Andesine
+#	-parm   -4.5317000E+00                # fit the first parameter as log10 Surface Area
+#        -m    1000
+ 
+#Albite
+#	-parm    -4.6650000E+00             # fit the first parameter as log10 Surface Area
+#        -m    1000
+ 
 K-spar
-	-parm   4.3369853E-01              # fit the first parameter as log10 Surface Area
+	-parm    1.5970388E-01                # fit the first parameter as log10 Surface Area
         -m    1000
-        
-Biotite
-	-parm   -2.4743864E+00          # fit the first parameter as log10 Surface Area
-        -m    1000
-
-Hornblende
-	-parm   -1.8648363E+00         # fit the first parameter as log10 Surface Area
-        -m    1000
-
-Kaolinite
-	-parm    -2.0E-01              # fit the first parameter as log10 Surface Area
-        -m    1000
-        
-Pyrite_O2
-    -formula  Pyrite  1
-    -m        1000
-    -m0       1000
-    -parms       -4.1563496E+00 0 0.5 -0.11
-    -tol      1e-008	
+ 
+ 
+#Biotite
+#	-parm   -3.4386400E+00              # fit the first parameter as log10 Surface Area
+#        -m    1000
+ 
+#Hornblende
+#	-parm   -6.1313000E+00              # fit the first parameter as log10 Surface Area
+#        -m    1000
+ 
+#Kaolinite
+#	-parm    -4.4517200E+00        # fit the first parameter as log10 Surface Area
+#        -m    1000
+ 
+#Pyrite_O2
+#    -formula  Pyrite  1
+#    -m        1000
+#    -m0       1000
+#    -parms      -5.3772400E+00 0 0.5 -0.11
+#    -tol      1e-008	
  
 Nitrification
     -formula  Amm -1 NH3 +1
     -m        1000
-    -parms      -7.2768055E+00
+    -parms      -5.1896412E+00
+ 
  
 -step 86400
 #        -cvode
@@ -479,69 +487,115 @@ END
  
  
 KINETICS 2 Sat and Preferential Sat
-Andesine
-	-parm   -5.5965224E+00              # fit the first parameter as log10 Surface Area
-        -m    1000
-        
+#-cvode
+#Andesine
+#	-parm    6.6883400E-02                # fit the first parameter as log10 Surface Area
+#        -m    1000
+ 
 Albite
-	-parm   -5.5965224E+00              # fit the first parameter as log10 Surface Area
-        -m    1000
-
-K-spar
-	-parm   1.4135805E+00              # fit the first parameter as log10 Surface Area
-        -m    1000
-
-Biotite
-	-parm   -3.9991195E+00              # fit the first parameter as log10 Surface Area
+	-parm    -1.9600086E+00             # fit the first parameter as log10 Surface Area
         -m    1000
  
+Anorthite
+	-parm    -1.7207203E+00             # fit the first parameter as log10 Surface Area
+        -m    1000
+ 
+K-spar
+	-parm   -2.0437584E+00                # fit the first parameter as log10 Surface Area
+        -m    1000
+ 
+#Biotite
+#	-parm   -3.3719900E+00              # fit the first parameter as log10 Surface Area
+#        -m    1000
+ 
 Hornblende
-	-parm   -1.0743338E+00              # fit the first parameter as log10 Surface Area
+	-parm   -2.0796535E+00              # fit the first parameter as log10 Surface Area
         -m    1000
-
-Kaolinite
-	-parm    -2.0E-01              # fit the first parameter as log10 Surface Area
-        -m    1000
-        
-Pyrite_O2
-    -formula  Pyrite 1
-    -m        1000
-    -m0       1000
-    -parms      -6.2060870E+00 0 0.5 -0.11
-    -tol      1e-008	
-
+ 
+#Kaolinite
+#	-parm    -8.6368390E-01        # fit the first parameter as log10 Surface Area
+#        -m    1000
+ 
+#Pyrite_O2
+#    -formula  Pyrite 1
+#    -m        1000
+#    -m0       1000
+#    -parms      -6.2216000E+00 0 0.5 -0.11
+#    -tol      1e-008	
+ 
 Nitrification
     -formula Amm -1 NH3 +1
     -m       1000
-    -parms     -7.7118695E+00
+    -parms     -9.4030571E+00
+ 
  
 -step 86400
  
 END
  
 EQUILIBRIUM_PHASES 0 Equilibrate precipitation and irrigation with atmospheric pO2 and pCO2 @ 686 meters above mean sea level, in log ppm
-	O2(g)         -0.713  100     # log(ppO2)  ~ ppO2 = 0.193 @ 686 m above sea level; = 0.21 at sea level
-	CO2(g)        -3.43   10      # log(ppCO2) ~ ppCO2 = 369 ppm @ 686 m above sea level; ppCO2 400ppm at sea level
+	O2(g)         -0.713  1000      # log(ppO2)  ~ ppO2 = 0.193 @ 686 m above sea level; = 0.21 at sea level
+	CO2(g)        -3.43   1000      # log(ppCO2) ~ ppCO2 = 369 ppm @ 686 m above sea level; ppCO2 400ppm at sea level
+ 
  
 EQUILIBRIUM_PHASES 2 Equilibrate stream pO2 and pCO2, in log ppm
 # CO2 should be greater than atmosphere. Stream O2 not sensitive in this model.
-	O2(g)         -7.1004392E-01 100      #
-	CO2(g)        -2.0887391E+00  10      # ~ PCO2
+	O2(g)         -7.1337600E-01 1000      #
+	CO2(g)        -2.4805674E+00 1000      # ~ PCO2
 END
 EQUILIBRIUM_PHASES 30 Unsaturated zone
 #	Kaolinite   0 0 #precipitate
 	Goethite    0 0 #precipitate
 	Gibbsite    0 0 #precipitate
-	Regolith_biotite -7.9600550E-02 0 #precipitate  # fit the first 0, equilibrium constant
-	O2(g)          -1.0683176E+00 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
-        CO2(g)         -2.8200740E+00  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
+#	Regolith_biotite -7.9792000E-02 0 #precipitate  # fit the first 0, equilibrium constant
+	O2(g)         -1.0851170E+00 1000      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
+       CO2(g)         -2.7979945E+00 1000      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
 END
 EQUILIBRIUM_PHASES 4 Saturated zone
 #	Kaolinite   0 1e-2 # precipitate
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
-	Regolith_biotite 1.9570196E-04 0 # precipitate  # fit the first 0, equilibrium constant
+#	Regolith_biotite -7.9792000E-02 0 #precipitate  # fit the first 0, equilibrium constant
 END
+#REACTION 1 Sea salt
+#C       2.180677103e-03
+#Ca      1.066093459e-02
+#Cl      5.665211193e-01
+#K       1.057772844e-02
+#Mg      5.506609125e-02
+#Na      4.854108848e-01
+#S       2.925759851e-02
+#Si      7.382312412e-05
+#H       2.255504347e-03
+#O       1.243079188e-01
+#     9.6599935E-05   # 1 mol makes a liter of seawater
+#END
+RATES
+Dryfall
+-start
+10 rate = parm(1) / 86400
+20 moles = rate * time
+30 save moles
+-end
+END
+KINETICS 10
+dryfall
+-m 1000
+-parm      9.6599935E-05
+-formula \
+C       2.180677103e-03 \
+Ca      1.066093459e-02 \
+Cl      5.665211193e-01 \
+K       1.057772844e-02 \
+Mg      5.506609125e-02 \
+Na      4.854108848e-01 \
+S       2.925759851e-02 \
+Si      7.382312412e-05 \
+H       2.255504347e-03 \
+O       1.243079188e-01
+END
+NAMED_EXPRESSIONS
+ 
 #USE SOLUTION 3
 #USE EQUILIBRIUM_PHASES 30
 #USE EXCHANGE 1

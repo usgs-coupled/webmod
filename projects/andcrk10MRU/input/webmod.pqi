@@ -401,32 +401,32 @@ END
 KINETICS 1 O-Horizon, UZ, and saturated zone (both matrix and preferential flow
  
 Oligoclase
-	-parm    4.7590645E-01                # fit the first parameter as log10 Surface Area
+	-parm    6.0254278E-01                # fit the first parameter as log10 Surface Area
         -m    1000
  
 Biotite
-	-parm   -3.2065303E-01              # fit the first parameter as log10 Surface Area
+	-parm   -1.5828030E-01              # fit the first parameter as log10 Surface Area
         -m    1000
  
 Chlorite
-	-parm    4.9217172E-01  # fit the first parameter as log10 Surface Area
+	-parm    6.2220987E-01  # fit the first parameter as log10 Surface Area
         -m    1000
  
 Calcite
-        -parm   -6.3946621E+00 # fit the first parameter as log10 Surface Area
+        -parm   -6.4415651E+00 # fit the first parameter as log10 Surface Area
         -m    1000
  
 Pyrite_O2
     -formula  Pyrite  1
     -m        1000
     -m0       1000
-    -parms      -2.5075281E+00 0 0.5 -0.11
+    -parms      -2.3334422E+00 0 0.5 -0.11
     -tol      1e-008	
  
 Nitrification
     -formula  Amm -1 NH3 +1
     -m        1000
-    -parms      -3.1943198E+00
+    -parms      -3.2517094E+00
  
 -step 86400
  
@@ -434,27 +434,29 @@ END
  
  
 EQUILIBRIUM_PHASES 0 Equilibrate precipitation and irrigation with atmospheric pO2 and pCO2 @ 3500 meters above mean sea level, in log ppm
-	O2(g)         -8.6551E-01 100      #
-	CO2(g)        -3.643659    10      # ~ PCO2
+	O2(g)         -8.6551E-01 100      # ~ PO2  @ 3500m with log(21percent)   = -0.678 at sea level
+	CO2(g)        -3.59        10      # ~ PCO2 @ 3500m with log(400ppm)= -3.40 at sea level
 END
  
 EQUILIBRIUM_PHASES 2 Equilibrate stream pO2 and pCO2, in log ppm
 # should be greater than atmosphere
 	O2(g)         -1.0001000E+00 100      #
-	CO2(g)        -3.3947248E+00  10      # ~ PCO2
+	CO2(g)        -3.3948350E+00  10      # ~ PCO2
 END
 EQUILIBRIUM_PHASES 3 O-Horizon and UZ matrix and preferential flow
 	Kaolinite   0 1e-2 # precipitate
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
+	Smectite-Illite    1.0000000E-04 0    # precipitate  # fit the first 0, equilibrium constant
 	O2(g)         -1.0001000E+00 100      # Less oxygen and more CO2 as a result of root respiration and pyrite oxidation
-        CO2(g)        -2.0399568E+00  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
+        CO2(g)        -2.0362432E+00  10      # UZ PCO2, greater than -3.65 which is atmospheric at 3500 m amsl
 END
  
 EQUILIBRIUM_PHASES 4 Saturated zone
 	Kaolinite   0 1e-2 # precipitate
 	Goethite    0 1e-2 # precipitate
 	Gibbsite    0 0 # precipitate
+	Smectite-Illite    1.0000000E-04 0    # precipitate  # fit the first 0, equilibrium constant
 END
 EXCHANGE 1
 X	.001
