@@ -4585,8 +4585,12 @@
          ENDIF
 
          if(xdebug_start.gt.0) then
-           write(debug%lun,'(A)')'row, chemrow, src, dest, '//&
-                     'chemvar?, src_init->'
+!           write(debug%lun,'(A)')'row, chemrow, src, dest, '//&
+!                     'chemvar?, src_init->'
+           write(debug%lun,'(A)')'       Row    c_chem       src reservoir'//&
+                       '  chemvar? init_soln  init_rxn init_exch init_surf'//&
+                       '  init_gas init_eqph init_ssln  init_kin'//&
+                       '  init_mix init_temp   init_NA'
            write(debug%lun,123)(i,isoln(dest(i),nchemdat,nmru,nac,&
                 clark_segs,ires,ichemdat,imru,inac,ihydro),&
                 src(i),dest(i),c_indx(i,2),(src_init(i,j),j=1,11)&
@@ -8037,7 +8041,7 @@
                fracs(1) = (vmix_uz(ia,is,1)+vmix_uz(ia,is,2))/totvol
                solns(2) = solnnum(0,0,0,0,0,0,0)    ! soln 1: ET is DI water
                fracs(2) = -vmix_uz(ia,is,6)/totvol
-! fill_ent to allow reactions in this 5 mix before export (uses 5 volume)
+! fill_ent to allow reactions in this final mix before export (uses 5 volume)
                iresult = fill_ent(n_user,mixture,nchemdat,nmru,&
                     nac,clark_segs,src_init)
                if(iresult.ne.0) then
