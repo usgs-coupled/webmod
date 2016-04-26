@@ -6,8 +6,10 @@
 # $Id$
 #
 
-MOWSDIR  = ../..
-MLIBDIR  = $(MOWSDIR)/lib
+MOWSDIR  = ./
+#MOWSDIR  = ../..
+#MLIBDIR  = $(MOWSDIR)/lib
+MLIBDIR  = ./
 CC       = gcc
 RM       = rm -f
 AR       = ar ruv
