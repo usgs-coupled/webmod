@@ -21,7 +21,7 @@
 #include "mms.h"
 
 static char *READ_param_head (PARAM **, int);
-static char *READ_param_values (long, long, char *, char *, char[]);
+static char *READ_param_values (long, long, char *, char *, char[], char *, char *, int);
 static char *rp (int, int);
 static int checkForValidDimensions (PARAM *);
 static int isDimensionIncompatable (char *, char *);
@@ -35,11 +35,10 @@ static void close_parameter_file ();
 static char *get_next_line ();
 static char *error_string (char *);
 static char *warning_string (char *);
+static void bad_param_value_l (long, int, char *, long, long);
+static void bad_param_value (double, int, char *, double, double);
 
-static char* dimNames[] = {"nhru", "nsegment",
-	"nrain", "ntemp", "nobs", "ngw",
-	"nssr"
-};
+static char* dimNames[] = {"nhru", "nsegment", "nrain", "ntemp", "nobs", "ngw", "nssr"};
 
 static char* mapParamNames[] = {"hru_subbasin", "segment_subbasin",
 	"rain_subbasin", "temp_subbasin", "obs_subbasin", "gw_subbasin",
@@ -62,8 +61,6 @@ static char file_name[256];
  | RESTRICTIONS :
 \*--------------------------------------------------------------------*/
 char *read_params (char *param_file_name, int index, int mapping_flag) {
-//  	static char *foo = NULL;
-//  	char old[256], *cptr;
   	char *cptr;
 
 // Get the static variables ready.
@@ -72,24 +69,7 @@ char *read_params (char *param_file_name, int index, int mapping_flag) {
 		key = (char *) umalloc(max_data_ln_len * sizeof(char));
 	}
 
-//	if (foo) {
-//		strncpy (old, foo, 256);
-//		free (foo);
-//		foo = strdup (param_file_name);
-//	} else {
-//		strncpy (old, param_file_name, 256);
-//		foo = strdup (param_file_name);
-//	}
-
 	cptr = rp (index, mapping_flag);
-
-//	if (cptr) {
-//		rp (old, index, 0);
-//
-//		free (foo);
-//		foo = strdup (old);
-//	}
-
 	return (cptr);
 }
 
@@ -124,10 +104,6 @@ char *read_dims (char *param_file_name) {
 		close_parameter_file();
 		return error_string ("problems reading info");
 	}
-
-	if (Mparaminfo) {
-		free (Mparaminfo);
-	}
 	Mparaminfo = strdup (line_p);
 
 /*
@@ -147,7 +123,6 @@ char *read_dims (char *param_file_name) {
  *  Read in comments -- everything between version line and
  *  "** Dimensions **" line is a comment
  */
-
 	Comments = (char **)malloc (1000 * sizeof (char *));
 	nComments = 0;
 
@@ -162,7 +137,6 @@ char *read_dims (char *param_file_name) {
 			Comments[nComments++] = strdup (line);
 		}
 	}
-	//}
 
 /*
 **	Check dimension label
@@ -181,7 +155,6 @@ char *read_dims (char *param_file_name) {
 * read in dimensions
 */
 	while (strncmp (line, "** Parameters **", 16)) {
-
 		if (strncmp (line, "####", 4)) {
 			close_parameter_file();
 			return error_string ("expecting '####'");
@@ -196,7 +169,6 @@ char *read_dims (char *param_file_name) {
 		}
 
 		line[strlen(line)-1] = '\0';
-
 		dim = dim_addr (line);
 		if (dim) {
 /*
@@ -295,7 +267,7 @@ char *read_dims (char *param_file_name) {
 
 	close_parameter_file();
 	return NULL;
-}
+} // read_dims
 
 /*--------------------------------------------------------------------*\
  | FUNCTION     : rp
@@ -355,7 +327,7 @@ static char *rp (int index, int map_flag) {
 			// values into a temporary array that is used to remap the
 			// values into the correct size and shape for param->value.
 			if (param->pf_size == param->size) {
-				buf_ptr = READ_param_values (param->size, param->type, param->name, param->value, line);
+				buf_ptr = READ_param_values (param->size, param->type, param->name, param->value, line, param->min_string, param->max_string, param->bound_status);
 
 			} else {
 
@@ -373,7 +345,7 @@ static char *rp (int index, int map_flag) {
 					pf_value = NULL;
 				}
 
-				buf_ptr = READ_param_values (param->pf_size, param->type, param->name, pf_value, line);
+				buf_ptr = READ_param_values (param->pf_size, param->type, param->name, pf_value, line, param->min_string, param->max_string, param->bound_status);
 
 				// The values read from the parameter file need to be resized to fit into the size
 				// of the module array for this parameter.
@@ -634,7 +606,7 @@ static char *rp (int index, int map_flag) {
 
 	close_parameter_file();
 	return (NULL);
-}
+} // rp
 
 /*--------------------------------------------------------------------*\
  | FUNCTION     : READ_param_head
@@ -850,7 +822,7 @@ static char *READ_param_head (PARAM **param_ptr, int map_flag) {
 	}
 
 	return (NULL);
-}
+} // READ_param_head
 
 /*--------------------------------------------------------------------*\
  | FUNCTION     : READ_param_values
@@ -859,7 +831,9 @@ static char *READ_param_head (PARAM **param_ptr, int map_flag) {
  | RETURN VALUE : 
  | RESTRICTIONS :
 \*--------------------------------------------------------------------*/
-static char *READ_param_values (long size, long type, char *name, char *value, char *line) {
+static char *READ_param_values (long size, long type, char *name,
+				char *value, char *line, char *min_string, char *max_string,
+				int bound_status) {
 	int i, j;
     int  done;
 	int	desc_count = 0;
@@ -870,9 +844,9 @@ static char *READ_param_values (long size, long type, char *name, char *value, c
 	static char *crap = NULL;
 	static char *crap2 = NULL;
 	float foo;
-	double d;
+	double d, min_d, max_d;
 	char *endp;
-	long l;
+	long l, min_l, max_l;
 	char *line_p;
 	
 	if (crap == NULL) {
@@ -882,6 +856,25 @@ static char *READ_param_values (long size, long type, char *name, char *value, c
 	if (crap2 == NULL) {
 		crap2 = (char *) umalloc(max_data_ln_len * sizeof(char));
 	}
+
+/*
+** Decode the min and max string based on data type
+*/
+	switch (type) {
+		case M_STRING:
+			break;
+
+		case M_DOUBLE:
+		case M_FLOAT:
+			min_d = strtod(min_string, &endp);
+			max_d = strtod(max_string, &endp);
+			break;
+
+		case M_LONG:
+			min_l = strtol(min_string, &endp, 0);
+			max_l = strtol(max_string, &endp, 0);
+			break;
+	} // switch
 
 /*
 **  Space for the values and value_desc are allocated in declparam
@@ -917,7 +910,6 @@ static char *READ_param_values (long size, long type, char *name, char *value, c
 				for (j = 0; j < repeat_count && !done; j++) {
 					if (i < size) {
 						switch (type) {
-
 							case M_STRING:
                                 comp_ptr[strlen(comp_ptr)-1] = '\0';
 								*((char **)value + i) = strdup (comp_ptr);
@@ -926,6 +918,11 @@ static char *READ_param_values (long size, long type, char *name, char *value, c
 
 							case M_DOUBLE:
 								d = strtod(comp_ptr, &endp);
+
+								if (d < min_d || d > max_d) {
+									bad_param_value (d, i, name, min_d, max_d);
+								}
+
 								if (comp_ptr != endp && *endp == '\n') {
 									((double *)value)[i++] = d;
 								} else {
@@ -935,6 +932,11 @@ static char *READ_param_values (long size, long type, char *name, char *value, c
 
 							case M_FLOAT:
 								d = strtod(comp_ptr, &endp);
+
+								if (d < min_d || d > max_d) {
+									bad_param_value (d, i, name, min_d, max_d);
+								}
+
 								if (comp_ptr != endp && *endp == '\n') {
 									((float *)value)[i++] = (float)d;
 								} else {
@@ -944,6 +946,13 @@ static char *READ_param_values (long size, long type, char *name, char *value, c
 
 							case M_LONG:
 								l = strtol(comp_ptr, &endp, 0);
+
+// Does not check parameter ranges if bounded
+								if ((l < min_l || l > max_l) &&
+										bound_status == M_UNBOUNDED) {
+									bad_param_value_l (l, i, name, min_l, max_l);
+								}
+
 								if (comp_ptr != endp && *endp == '\n') {
 									((int *)value)[i++] = (int)l;
 								} else {
@@ -968,10 +977,15 @@ static char *READ_param_values (long size, long type, char *name, char *value, c
 		return error_string("too many values read for paramter");
 	}
 	return NULL;
-}
+} // READ_param_values
 
-// returns
-// 0 = good;  1 = bad
+/*--------------------------------------------------------------------*\
+ | FUNCTION     : checkForValidDimensions
+ | COMMENT		: local
+ | PARAMETERS   :
+ | RETURN VALUE : 0 = good;  1 = bad
+ | RESTRICTIONS :
+\*--------------------------------------------------------------------*/
 static int checkForValidDimensions (PARAM *param_ptr) {
 	int i, badFlag;
 
@@ -1006,10 +1020,15 @@ static int checkForValidDimensions (PARAM *param_ptr) {
 
 	//param_ptr->ndimen
 	return 0;
-}
+} // checkForValidDimensions
 
-// returns
-// 0 = good;  1 = bad
+/*--------------------------------------------------------------------*\
+ | FUNCTION     : isDimensionIncompatable
+ | COMMENT		: local
+ | PARAMETERS   :
+ | RETURN VALUE : 0 = good;  1 = bad
+ | RESTRICTIONS :
+\*--------------------------------------------------------------------*/
 static int isDimensionIncompatable (char *pfDimName, char *modDimName) {
 //	char *dimNames[] ={"one",
 //		"ncascade",
@@ -1091,11 +1110,16 @@ static int isDimensionIncompatable (char *pfDimName, char *modDimName) {
 			return 0;
 		}
 	}
-	
-
 	return 1;
-}
+} // isDimensionIncompatable
 
+/*--------------------------------------------------------------------*\
+ | FUNCTION     : getParamFileParamSize
+ | COMMENT		: local
+ | PARAMETERS   :
+ | RETURN VALUE : 
+ | RESTRICTIONS :
+\*--------------------------------------------------------------------*/
 static int getParamFileParamSize (PARAM *param) {
 	int i, size;
 
@@ -1106,6 +1130,13 @@ static int getParamFileParamSize (PARAM *param) {
 	return size;
 }
 
+/*--------------------------------------------------------------------*\
+ | FUNCTION     : oneToAnySizedArray
+ | COMMENT		: local
+ | PARAMETERS   :
+ | RETURN VALUE : 
+ | RESTRICTIONS :
+\*--------------------------------------------------------------------*/
 static void oneToAnySizedArray(PARAM *param, char *pf_value) {
 	int i;
 
@@ -1128,6 +1159,13 @@ static void oneToAnySizedArray(PARAM *param, char *pf_value) {
 	}
 }
 
+/*--------------------------------------------------------------------*\
+ | FUNCTION     : getMapParamName
+ | COMMENT		: local
+ | PARAMETERS   :
+ | RETURN VALUE : 
+ | RESTRICTIONS :
+\*--------------------------------------------------------------------*/
 static char *getMapParamName(char *name) {
 	char *mapParamName;
 	int i;
@@ -1142,6 +1180,13 @@ static char *getMapParamName(char *name) {
     return mapParamName;
 }
 
+/*--------------------------------------------------------------------*\
+ | FUNCTION     : subbasinTo1DArray
+ | COMMENT		: local
+ | PARAMETERS   :
+ | RETURN VALUE : 
+ | RESTRICTIONS :
+\*--------------------------------------------------------------------*/
 static void subbasinTo1DArray (PARAM *param, PARAM *mapping_param, char *pf_value) {
 	int i, map;
 
@@ -1166,12 +1211,18 @@ static void subbasinTo1DArray (PARAM *param, PARAM *mapping_param, char *pf_valu
 	} else if (param->type == M_STRING) {
 		for (i = 0; i < param->size; i++) {
 			map = ((int *)(mapping_param->value))[i];
-//			*((char **)param->value + i) = strdup (*pf_value + map - 1);
 			*((char **)param->value + i) = strdup (pf_value + map - 1);
 		}
 	}
 }
 
+/*--------------------------------------------------------------------*\
+ | FUNCTION     : open_parameter_file
+ | COMMENT		: local
+ | PARAMETERS   :
+ | RETURN VALUE : error message otherwise NULL
+ | RESTRICTIONS :
+\*--------------------------------------------------------------------*/
 static char *open_parameter_file () {
     param_file = NULL;
 	if ((param_file = fopen (file_name, "r")) == NULL) {
@@ -1181,6 +1232,13 @@ static char *open_parameter_file () {
     return NULL;
 }
 
+/*--------------------------------------------------------------------*\
+ | FUNCTION     : close_parameter_file
+ | COMMENT		: local
+ | PARAMETERS   :
+ | RETURN VALUE : 
+ | RESTRICTIONS :
+\*--------------------------------------------------------------------*/
 static void close_parameter_file () {
 	if (param_file != NULL) {
 		fclose (param_file);
@@ -1189,6 +1247,13 @@ static void close_parameter_file () {
 	}
 }
 
+/*--------------------------------------------------------------------*\
+ | FUNCTION     : get_next_line
+ | COMMENT		: Use this only to read line from parameter file
+ | PARAMETERS   :
+ | RETURN VALUE : Pointer to "line" string if read was successful
+ | RESTRICTIONS :
+\*--------------------------------------------------------------------*/
 static char *get_next_line () {
 	char *line_p;
 
@@ -1202,14 +1267,60 @@ static char *get_next_line () {
 	return line_p;
 }
 
+/*--------------------------------------------------------------------*\
+ | FUNCTION     : error_string
+ | COMMENT		: Generates an error message
+ | PARAMETERS   :
+ | RETURN VALUE : 
+ | RESTRICTIONS :
+\*--------------------------------------------------------------------*/
 static char *error_string (char *message) {
 	static char buf[256];
 	sprintf (buf, "ERROR: %s; file is %s; line number %d", message, file_name, lineNumber);
 	return buf;
 }
 
+/*--------------------------------------------------------------------*\
+ | FUNCTION     : warning_string
+ | COMMENT		: Generates a warning message.
+ | PARAMETERS   :
+ | RETURN VALUE : 
+ | RESTRICTIONS :
+\*--------------------------------------------------------------------*/
 static char *warning_string (char *message) {
 	static char buf[256];
 	sprintf (buf, "WARNING: %s; file is %s; line number %d", message, file_name, lineNumber);
 	return buf;
+}
+
+/*--------------------------------------------------------------------*\
+ | FUNCTION     : bad_param_value_l
+ | COMMENT		: Generates the warning message when a long value is out of range.
+ | PARAMETERS   :
+ | RETURN VALUE : 
+ | RESTRICTIONS :
+\*--------------------------------------------------------------------*/
+static void bad_param_value_l (long l, int i, char *name, long min_l, long max_l) {
+	static char buf[256];
+
+	if (*control_lvar("parameter_check_flag") > 0) {
+		sprintf (buf, "%s[%d] = %d is out of range (%d to %d)", name, i, (int)l, (int)min_l, (int)max_l);
+		fprintf (stderr, "%s\n", warning_string(buf));
+	}
+}
+
+/*--------------------------------------------------------------------*\
+ | FUNCTION     : bad_param_value
+ | COMMENT		: Generates the warning message when a double or float value is out of range.
+ | PARAMETERS   :
+ | RETURN VALUE : 
+ | RESTRICTIONS :
+\*--------------------------------------------------------------------*/
+static void bad_param_value (double d, int i, char *name, double min_d, double max_d) {
+	static char buf[256];
+
+	if (*control_lvar("parameter_check_flag") > 0) {
+		sprintf (buf, "%s[%d] = %f is out of range (%f to %f)", name, i, d, min_d, max_d);
+		fprintf (stderr, "%s\n", warning_string(buf));
+	}
 }

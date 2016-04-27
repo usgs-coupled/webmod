@@ -124,7 +124,7 @@ static void write_parameters (FILE *param_file, int writeAllParams) {
 	float	*fvalptr;
 //	long	*lvalptr;
 	int	*lvalptr;
-    char *cvalptr;
+//    char *cvalptr;
 /*
 * Write out parameter values and description if any.
 */

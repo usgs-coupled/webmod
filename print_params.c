@@ -137,9 +137,9 @@ int print_params (void) {
 		   (void)fprintf (param_file, "Min       : %ld\n", *(long *)(param->min));
 		   (void)fprintf (param_file, "Default   : %ld\n", *(long *)(param->def));
 		   */
-			(void)fprintf(param_file, "Max       : %ld\n", *(int *)(param->max));
-			(void)fprintf(param_file, "Min       : %ld\n", *(int *)(param->min));
-			(void)fprintf(param_file, "Default   : %ld\n", *(int *)(param->def));
+			(void)fprintf(param_file, "Max       : %d\n", *(int *)(param->max));
+			(void)fprintf(param_file, "Min       : %d\n", *(int *)(param->min));
+			(void)fprintf(param_file, "Default   : %d\n", *(int *)(param->def));
 			break;
 
 		case M_FLOAT:

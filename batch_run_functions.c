@@ -383,7 +383,7 @@ char *single_run_post_run () {
 // markstro test
 //                           fprintf (ani_var_files[i], "\t%10ld",
 //                                    *((long *) var->value + j));
-                           fprintf (ani_var_files[i], "\t%10ld",
+                           fprintf (ani_var_files[i], "\t%10d",
                                     *((int *) var->value + j));
                            break;
                      }
