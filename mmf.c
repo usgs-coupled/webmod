@@ -148,7 +148,8 @@ int main (int argc, char *argv[]) {
     
     err = read_dims (*control_svar("param_file"));
     if (err) {
-		(void)fprintf (stderr,"\nERROR: reading dimensions from Parameter File\n");
+//		(void)fprintf (stderr,"\nERROR: reading dimensions from Parameter File\n");
+		fprintf (stderr,"\n%s\n", err);
         exit (1);
 	}
 
@@ -181,7 +182,7 @@ int main (int argc, char *argv[]) {
 	    
 		err = read_params (fname[i], i, 1);
 		if (err) {
-			(void)fprintf (stderr,"\nWARNING: %s\n", err);
+			(void)fprintf (stderr,"\n%s\n", err);
 		}
 	}
 
@@ -201,7 +202,7 @@ int main (int argc, char *argv[]) {
 	    
 		err = read_params (fname[i], i, 0);
 		if (err) {
-			(void)fprintf (stderr,"\nWARNING: %s\n", err);
+			(void)fprintf (stderr,"\n%s\n", err);
 		}
 	}
     

@@ -68,10 +68,6 @@ char *read_params (char *param_file_name, int index, int mapping_flag) {
 
 // Get the static variables ready.
 	strncpy (file_name, param_file_name, 256);
-	if (line == NULL) {
-		line = (char *) umalloc(max_data_ln_len * sizeof(char));
-	}
-
 	if (key == NULL) {
 		key = (char *) umalloc(max_data_ln_len * sizeof(char));
 	}
@@ -115,6 +111,7 @@ char *read_dims (char *param_file_name) {
 /*
 * get param name, open file
 */
+	strncpy (file_name, param_file_name, 256);
     param_file = NULL;
     bp = open_parameter_file (param_file_name);
 	if (bp != NULL) {
@@ -228,7 +225,7 @@ char *read_dims (char *param_file_name) {
 /*
 * check if there are index names below
 */
-			if (!(line_p = get_next_line ())) {
+			if ((line_p = get_next_line ())) {
 				if (strncmp (line, "** Parameters **", 16)) {
 					if (dim->names) {
 				//        free (dim->names);
@@ -341,10 +338,10 @@ static char *rp (int index, int map_flag) {
 		if (buf_ptr) {
 			if (buf_ptr == (char *)-1) {
 				close_parameter_file();
-			  return (NULL);
+			  return NULL;
 			} else {
 				close_parameter_file();
-			   return (buf_ptr);
+			   return buf_ptr;
 			}
 		}
 
@@ -777,7 +774,7 @@ static char *READ_param_head (PARAM **param_ptr, int map_flag) {
 				if (!(line_p = get_next_line ())) {
 					return error_string("number of dimensions is wrong");
 				}
-
+                strncpy (dimen, line, MAXDATALNLEN);
 				dimen[strlen(dimen) - 1] = '\0';
 				(*param_ptr)->pf_dimNames[i] = strdup(dimen);
 			}
@@ -1178,7 +1175,7 @@ static void subbasinTo1DArray (PARAM *param, PARAM *mapping_param, char *pf_valu
 static char *open_parameter_file () {
     param_file = NULL;
 	if ((param_file = fopen (file_name, "r")) == NULL) {
-		return error_string("cannot open");
+		return error_string("cannot open parameter file");
 	}
 	lineNumber = 0;
     return NULL;
@@ -1194,7 +1191,12 @@ static void close_parameter_file () {
 
 static char *get_next_line () {
 	char *line_p;
-	if ((line_p = get_next_line ())) {
+
+	if (line == NULL) {
+		line = (char *) umalloc(max_data_ln_len * sizeof(char));
+	}
+
+	if ((line_p = fgets (line, MAXDATALNLEN, param_file))) {
 		lineNumber++;
 	}
 	return line_p;
@@ -1202,12 +1204,12 @@ static char *get_next_line () {
 
 static char *error_string (char *message) {
 	static char buf[256];
-	sprintf (buf, "ERROR: %s in file %s at line number %d", message, file_name, lineNumber);
+	sprintf (buf, "ERROR: %s; file is %s; line number %d", message, file_name, lineNumber);
 	return buf;
 }
 
 static char *warning_string (char *message) {
 	static char buf[256];
-	sprintf (buf, "WARNING: %s in file %s at line number %d", message, file_name, lineNumber);
+	sprintf (buf, "WARNING: %s; file is %s; line number %d", message, file_name, lineNumber);
 	return buf;
 }

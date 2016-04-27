@@ -15,9 +15,9 @@ RM       = rm -f
 AR       = ar ruv
 RANLIB   = ranlib
 
-#CFLAGS   = -g -Wall -Werror-implicit-function-declaration
+CFLAGS   = -g -Wall -Werror-implicit-function-declaration
 #CFLAGS   = -O3 -Wall -Werror-implicit-function-declaration
-CFLAGS   = -O -Wall -Werror-implicit-function-declaration
+#CFLAGS   = -O -Wall -Werror-implicit-function-declaration
 
 SRCS = 	mmf.c parse_args.c alloc_space.c build_lists.c \
 	setup_cont.c decl_control.c control_addr.c \
