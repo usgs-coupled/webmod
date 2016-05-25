@@ -3249,10 +3249,9 @@
       allocate(qdffrac(nmru))
       if(declparam('topc', 'qdffrac', 'nmru', 'real',&
          '.3', '0', '1',&
-        'Proportion of unsaturated zone drainage that runs off'//&
-        ' as direct flow.','Fraction of unsaturated zone drainage'//&
-        ' that runs off as direct flow.'//&
-        'QDF=QDFFRAC*QUZ','Proportion')&
+        'Fraction of recharge that runs off as direct flow.',&
+        'Fraction of recharge that runs off as direct flow. '//&
+        'QDF=QDFFRAC*QUZ','Fraction')&
          .ne.0) return
 
 !         'Fraction of infiltration that becomes'//&
@@ -5802,7 +5801,7 @@
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_uzgen(i)%lun
-          write(ef_uzgen(i)%lun,217) (trim(ent_label(j)), j=3,ntally_cols)
+          write(ef_uzgen(i)%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
 ! composite riparian uz
           write(filename,240)i
           filelen=length(filename)

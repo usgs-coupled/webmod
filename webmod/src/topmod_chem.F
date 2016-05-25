@@ -1172,13 +1172,12 @@ c
      +   'Unsaturated zone time delay per unit of storage deficit'//
      +   'in QUZ=SUZ/(SD*TD).',' h/m').ne.0) return
 
-      ALLOCATE (qdffrac(Nmru))
+      allocate(qdffrac(nmru))
       if(declparam('topc', 'qdffrac', 'nmru', 'real',
-     +   '.3', '0', '1',
-     +   'Proportion of unsaturated zone drainage that runs off'//
-     +   ' as direct flow.','Fraction of unsaturated zone drainage'//
-     +   ' that runs off as direct flow.'//
-     +   'QDF=QDFFRAC*QUZ','Proportion')
+     +    '.3', '0', '1',
+     +   'Fraction of recharge that runs off as direct flow.',
+     +   'Fraction of recharge that runs off as direct flow. '//
+     +   'QDF=QDFFRAC*QUZ','Fraction')
      +    .ne.0) return
 
 c      if(decl*param('topc', 'qdffrac', 'nmru', 'real',
@@ -1257,9 +1256,9 @@ c
       allocate(riparian_thresh(nmru))
       if(declparam('topc', 'riparian_thresh', 'nmru',
      +   'real','10.0', '1.0', '40.0',
-     +   'UZ bins wetter than this are riparian',
-     +   'UZ bins wetter than this are riparian; '//
-     +   'UZ bins drier than this are upslope.',
+     +   'TTI bins wetter than this value are riparian',
+     +   'TTI bins wetter than this value are riparian; '//
+     +   'TTI bins drier than this value are upslope.',
      +   'lambda').ne.0) return
 
       ALLOCATE (AREA(Nmru)) ! local copy for mru_area_frac

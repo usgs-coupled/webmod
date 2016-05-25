@@ -152,12 +152,13 @@ for /l %%X in (1, 1, %NODES%) do (
 	copy %INPUT_DIR%\webmod.chem.dat        .\
 	copy %INPUT_DIR%\phreeq_lut             .\
 	copy %INPUT_DIR%\phreeqc_web_lite.dat   .\
-	copy %PROJECT_DIR%\pest_webmod.bat      .\
 	copy %PROJECT_DIR%\tsproc.sim.out.ins   .\
 	copy %PROJECT_DIR%\tsproc.dat           .\
 	START /B %PEST_BIN_DIR%\beopest64.exe %PROJECT_DIR%\%PST% /H %MASTER%:%PORT% & cd %PROJECT_DIR%\..
 	cd %PROJECT_DIR%\..
 )
+rem removed this bat file from slave directories as all can point to the bat in the run dir.
+rem 	copy %PROJECT_DIR%\pest_webmod.bat      .\
 
 REM /L requires a run in PROJECT_DIR
 cd %PROJECT_DIR%

@@ -1097,11 +1097,10 @@ c
 
       allocate(qdffrac(nmru))
       if(declparam('topc', 'qdffrac', 'nmru', 'real',
-     +   '.3', '0', '1',
-     +   'Proportion of unsaturated zone drainage that runs off'//
-     +   ' as direct flow.','Fraction of unsaturated zone drainage'//
-     +   ' that runs off as direct flow.'//
-     +   'QDF=QDFFRAC*QUZ','Proportion')
+     +    '.3', '0', '1',
+     +   'Fraction of recharge that runs off as direct flow.',
+     +   'Fraction of recharge that runs off as direct flow. '//
+     +   'QDF=QDFFRAC*QUZ','Fraction')
      +    .ne.0) return
 
 c     +   'Fraction of infiltration that becomes'//
