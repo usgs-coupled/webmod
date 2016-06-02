@@ -40,9 +40,10 @@ static void bad_param_value (double, int, char *, double, double);
 
 static char* dimNames[] = {"nhru", "nsegment", "nrain", "ntemp", "nobs", "ngw", "nssr"};
 
-static char* mapParamNames[] = {"hru_subbasin", "segment_subbasin",
-	"rain_subbasin", "temp_subbasin", "obs_subbasin", "gw_subbasin",
-	"ssr_subbasin"
+//static char* mapParamNames[] = {"hru_subbasin", "segment_subbasin",
+//	"rain_subbasin", "temp_subbasin", "obs_subbasin", "gw_subbasin",
+//	"ssr_subbasin"
+static char* mapParamNames[] = { "bad", "bad1",	"bad2", "bad3", "bad4", "bad5",	"bad6"
 };
 
 int nComments;
