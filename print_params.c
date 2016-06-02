@@ -153,6 +153,13 @@ int print_params (void) {
 			(void)fprintf(param_file, "Min       : %lf\n", *(double *)(param->min));
 			(void)fprintf(param_file, "Default   : %lf\n", *(double *)(param->def));
 			break;
+
+        // 2016-01-13 PAN: added case for writing out min/max/default values for string parameters
+        case M_STRING:
+			(void)fprintf(param_file, "Max       : %s\n", *(char **)(param->max));
+			(void)fprintf(param_file, "Min       : %s\n", *(char **)(param->min));
+			(void)fprintf(param_file, "Default   : %s\n", *(char **)(param->def));
+            break;
 		}
 
 		if (param->bound_status == M_BOUNDED) {

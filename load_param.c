@@ -15,6 +15,7 @@
 /**1************************ INCLUDE FILES ****************************/
 #define LOAD_PARAM_C
 #include <stdio.h>
+#include <string.h>
 #include "mms.h"
 
 /*--------------------------------------------------------------------*\
@@ -30,7 +31,7 @@ long load_param (PARAM *param) {
 	double *dval, *dmin, *dmax, *ddef;
 	float *fval, *fmin, *fmax, *fdef;
 	int *lval, *lmin, *lmax, *ldef;
-	char *sval, *sdef;
+	char **sval, **sdef;    // 2016-01-13 PAN: added string pointers
 
 	if (param->type == M_DOUBLE) {
 		param->value = (char *)umalloc (param->size * sizeof (double));
@@ -121,11 +122,13 @@ long load_param (PARAM *param) {
 				*lval++ = *ldef++;
 			break;
 
+        // 2016-01-13 PAN: Added case for string parameters
 		case M_STRING:
-			sval = (char *)param->value;
-			sdef = (char *)param->def;
-			for (i = 0; i < param->size; i++)
-				*sval++ = *sdef++;
+			sval = (char **) param->value;
+			sdef = (char **) param->def;
+			for (i = 0; i < param->size; i++) {
+                *(sval++) = strdup(*(sdef++));
+            }
 			break;
 	}
 
