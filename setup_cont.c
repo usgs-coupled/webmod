@@ -141,6 +141,10 @@ void setup_cont (void) {
 		lval[0] = 0;
 		decl_control_int_array ("dyn_transp_flag", 1, lval);
 
+		lval = (long *)umalloc(sizeof (long));
+		lval[0] = 0;
+		decl_control_int_array("dyn_transp_on_flag", 1, lval);
+
         lval = (long *)umalloc (sizeof (long));
 		lval[0] = 0;
 		decl_control_int_array ("dyn_fallfrost_flag", 1, lval);
@@ -305,6 +309,7 @@ void setup_cont (void) {
 		decl_control_string ("radtrncf_dynamic", "dynradtrncf");
 		decl_control_string ("sro2dprst_perv_dynamic", "dynsro2dprst_perv");
 		decl_control_string ("sro2dprst_imperv_dynamic", "dynsro2dprst_imperv");
+		decl_control_string ("transp_on_dynamic", "dyntranspon");
 		decl_control_string ("csv_output_file", "prms_summary.csv");
         decl_control_string ("nhruOutBaseFileName", "nhruout_path");
 /*
