@@ -381,7 +381,7 @@ c      real, save, allocatable :: irrig_ext_mru(:)
       real, save, allocatable :: uz_infil(:,:)
       real, save, allocatable :: uz2sat(:,:), qvpref(:)
 c      double precision, save, allocatable :: irrig_hyd_seg(:)
-      real, save, allocatable :: gw_in1(:), gw_in2(:)
+c      real, save, allocatable :: gw_in1(:), gw_in2(:)
       real, save, allocatable :: chan_loss(:)
       
 ! Construction of volume file names (v_*)    
@@ -1246,8 +1246,8 @@ c      allocate (irrig_ext_mru(nmru))
       allocate (uz2sat(nac,nmru))
       allocate (qvpref(nmru))
 c      allocate (irrig_hyd_seg(nhydro))
-      allocate (gw_in1(nmru))
-      allocate (gw_in2(nmru))
+c      allocate (gw_in1(nmru))
+c      allocate (gw_in2(nmru))
       allocate (chan_loss(nhydro))
 
       webrdecl = 0
@@ -2050,7 +2050,7 @@ c
       USE WEBMOD_IRRIG, ONLY: irrig_ext_mru,irrig_sat_mru,irrig_hyd_mru,
      $                        irrig_hyd_seg
       USE WEBMOD_TOPMOD, only: z_wt_local, srzwet, riparian,
-     $                         s_theta_0, s_root_depth, qobsta
+     $            s_theta_0, s_root_depth, qobsta, gw_in1, gw_in2
       IMPLICIT NONE
 
 c variables and parameters from other modules
@@ -2276,9 +2276,9 @@ c
 
       if(getvar('topc', 'rex', nmru, 'real', REX).ne.0) return
 
-      if(getvar('topc', 'gw_in1', nmru, 'real', gw_in1).ne.0) return
+c      if(getvar('topc', 'gw_in1', nmru, 'real', gw_in1).ne.0) return
 
-      if(getvar('topc', 'gw_in2', nmru, 'real', gw_in2).ne.0) return
+c     if(getvar('topc', 'gw_in2', nmru, 'real', gw_in2).ne.0) return
 
       if(getvar('topc', 'gw_loss', nmru, 'real', gw_loss).ne.0) return
 c

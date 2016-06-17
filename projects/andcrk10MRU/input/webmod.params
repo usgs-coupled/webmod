@@ -18,7 +18,7 @@ nchemvar
 10
 ####
 nirrig_ext
-1
+0
 ####
 nform
 0
@@ -63,7 +63,7 @@ nchemobs
 1
 ####
 nobs
-3
+0
 ####
 nhum
 1
@@ -78,10 +78,7 @@ one
 1
 ####
 ngw_ext
-1
-####
-nlapse
-3
+0
 ####
 nexlag
 2
@@ -105,7 +102,7 @@ ndays
 366
 ####
 nirrig_int
-1
+0
 ####
 nchan
 1
@@ -953,7 +950,7 @@ chem_sim 9
 one
 1
 1
-1
+0
 ####
 MFMAX 8
 1
@@ -1599,13 +1596,6 @@ nchem_ext
 1
 1
 ####
-qobsta 7
-1
-one
-1
-1
-1
-####
 irrig_int_max 14
 1
 nmru
@@ -1636,16 +1626,16 @@ riparian_thresh 6
 nmru
 10
 2
-65.0
-65.0
-65.0
-65.0
-65.0
-100.0
-65.0
-65.0
-65.0
-65.0
+500.0
+500.0
+500.0
+500.0
+500.0
+500.0
+500.0
+500.0
+500.0
+500.0
 ####
 irrig_int_init 15
 1

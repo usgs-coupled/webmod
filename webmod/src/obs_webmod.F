@@ -127,15 +127,19 @@ c
      +     'inches',
      +   precip).ne.0) return
 
-      ALLOCATE(gw_ext(ngw_ext))
-      if(declvar('obs', 'gw_ext', 'ngw_ext', ngw_ext, 'real',
+      if(ngw_ext.ne.0) then
+        ALLOCATE(gw_ext(ngw_ext))
+        if(declvar('obs', 'gw_ext', 'ngw_ext', ngw_ext, 'real',
      +  'Influx of groundwater from sources external to basin',
      $  'cfs/mile', gw_ext).ne.0) return
+      endif
 
-      ALLOCATE(irrig_ext(nirrig_ext))
-      if(declvar('obs', 'irrig_ext', 'nirrig_ext', nirrig_ext, 'real',
+      if(nirrig_ext.gt.0) then
+        ALLOCATE(irrig_ext(nirrig_ext))
+        if(declvar('obs', 'irrig_ext', 'nirrig_ext', nirrig_ext, 'real',
      +  'Depth of applied irrigation from an external source',
      $  'inches', irrig_ext).ne.0) return
+      endif
 
       if(nirrig_int.gt.0) then
         ALLOCATE(irrig_int_next(nirrig_int))

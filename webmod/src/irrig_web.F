@@ -47,12 +47,12 @@ C   Declared Private Variables
 C   Undeclared Static Variables gotten from from other modules
       integer, save :: clark_segs
 c      real, save, allocatable :: irrig_ext(:), irrig_sat_next(:)
-c      real, save, allocatable :: irrig_sat_next(:)
+      real, save, allocatable :: irrig_sat_next(:)
       real, save, allocatable :: mru_dep(:), mru_ppt(:), mru_rain(:)
       real, save, allocatable :: mru_snow(:),newsnow(:)
       integer, save, allocatable ::  prmx(:), pptmix(:)
       integer, save ::  form_data(1)
-c      double precision, save, allocatable :: irrig_hyd_next(:)
+      double precision, save, allocatable :: irrig_hyd_next(:)
       double precision, save, allocatable :: irrig_hyd_seg_next(:)
       real, save, allocatable :: tmax_c(:), tmin_c(:)
 
@@ -234,7 +234,7 @@ c      ALLOCATE(irrig_ext(nirrig_ext), irrig_sat_next(nmru))
       ALLOCATE(mru_dep(nmru), mru_ppt(nmru), mru_rain(nmru))
       ALLOCATE(mru_snow(nmru),newsnow(nmru))
       ALLOCATE(prmx(nmru), pptmix(nmru))
-c      ALLOCATE(irrig_hyd_next(nmru))
+      ALLOCATE(irrig_hyd_next(nmru),irrig_sat_next(nmru))
       ALLOCATE(irrig_hyd_seg_next(nhydro))
       ALLOCATE(tmax_c(nmru), tmin_c(nmru))
 
@@ -310,8 +310,8 @@ c
       USE WEBMOD_IO, ONLY: nowtime
       USE WEBMOD_OBSHYD, ONLY: nirrig_ext, nirrig_int, irrig_ext
       USE WEBMOD_IRRIG
-      USE WEBMOD_TOPMOD, ONLY: irrig_sat_next
-      USE WEBMOD_ROUTE, ONLY: irrig_hyd_next
+c      USE WEBMOD_TOPMOD, ONLY: irrig_sat_next
+c      USE WEBMOD_ROUTE, ONLY: irrig_hyd_next
       IMPLICIT NONE
 
       integer i, jday, mo

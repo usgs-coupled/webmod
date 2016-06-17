@@ -11,8 +11,8 @@ Mg           Mg+2           0       Mg              24.312
 Na           Na+            0       Na              22.9898
 K            K+             0       K               39.102
 Fe           Fe+2           0.0     Fe              55.847
-Fe(+2)       Fe+2           0.0     Fe
-Fe(+3)       Fe+3           -2.0    Fe
+Fe(2)        Fe+2           0.0     Fe
+Fe(3)        Fe+3           -2.0    Fe
 Al           Al+3           0.0     Al              26.9815
 Si           H4SiO4         0.0     SiO2            28.0843
 Cl           Cl-            0       Cl              35.453
@@ -24,10 +24,10 @@ S            SO4-2          0       SO4             32.064
 S(6)         SO4-2          0       SO4
 S(-2)        HS-            1       S
 N            NO3-           0       N               14.0067
-N(+5)        NO3-           0       N
-N(+3)        NO2-           0       N
+N(5)         NO3-           0       N
+N(3)         NO2-           0       N
 N(0)         N2             0       N
-#N(-3)        NH4+           0       N
+#N(-3)       NH4+           0       N
 P            PO4-3          2.0     P               30.9738
 F            F-             0.0     F               18.9984
 Br           Br-            0.0     Br              79.904

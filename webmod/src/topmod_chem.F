@@ -221,7 +221,7 @@ c     distribution of vertical conductivity (XK0)
 c      integer, save :: nsc, nmru, nac, nobs
       integer, save :: nsc, nmru, nac
 c      integer, save :: nxkbin, ngw_ext, nirrig_int
-      integer, save :: nxkbin, ngw_ext
+      integer, save :: nxkbin
 !   Declared Parameters
       integer, save :: INFEX, iout, qobsta  ! removed topout_file_unit
       integer, save :: irrsched,irrsrc,gwsched
@@ -347,7 +347,7 @@ c
       integer function topmdecl()
 
       USE WEBMOD_TOPMOD
-      USE WEBMOD_OBSHYD, ONLY: nirrig_ext, nirrig_int, nobs
+      USE WEBMOD_OBSHYD, ONLY: nirrig_ext, nirrig_int, nobs, ngw_ext
       IMPLICIT NONE
 
 
@@ -362,8 +362,8 @@ c
         if ( nxkbin.eq.-1 ) return
 c      nobs = getdim('nobs')
 c        if ( nobs.eq.-1 ) return
-      ngw_ext = getdim('ngw_ext')
-        if ( ngw_ext.eq.-1 ) return
+c      ngw_ext = getdim('ngw_ext')
+c        if ( ngw_ext.eq.-1 ) return
 c      nirrig_int = getdim('nirrig_int')
 c        if ( nirrig_int.eq.-1 ) return
 
@@ -1384,10 +1384,10 @@ c
 
       integer function topminit()
 
-      USE WEBMOD_TOPMOD
       USE WEBMOD_IO, ONLY : topout
-      USE WEBMOD_OBSHYD, ONLY: nobs,nirrig_int, nirrig_ext
+      USE WEBMOD_OBSHYD, ONLY: nobs,nirrig_int, nirrig_ext, ngw_ext
       USE WEBMOD_IRRIG, ONLY: irrig_int_src, irrig_int_init
+      USE WEBMOD_TOPMOD
       IMPLICIT NONE
       
       logical acflag
@@ -2042,7 +2042,7 @@ c
       USE WEBMOD_TOPMOD
       USE WEBMOD_IO, only: topout, debug, xdebug_start, xdebug_stop
       USE WEBMOD_OBSHYD, ONLY: datetime, nirrig_ext, 
-     * nirrig_int, irrig_int_next, runoff, nobs
+     * nirrig_int, irrig_int_next, runoff, nobs, ngw_ext
       USE WEBMOD_IRRIG, ONLY: irrig_int_src,irrig_sched_int
 c      USE WEBMOD_OBSHYD, ONLY: datetime 
       implicit none
@@ -2089,8 +2089,8 @@ c        if(getvar('obs', 'irrig_int_next', nirrig_int, 'real',
 c     $     irrig_int_next).ne.0) return
 c      endif
 
-      if(getvar('obs', 'gw_ext', Ngw_ext, 'real',
-     $     gw_ext).ne.0) return
+c      if(getvar('obs', 'gw_ext', Ngw_ext, 'real',
+c     $     gw_ext).ne.0) return
 
       if(getvar('precip', 'basin_ppt', 1, 'real', POBS)
      +   .ne.0) return

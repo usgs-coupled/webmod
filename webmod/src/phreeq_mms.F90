@@ -3340,7 +3340,8 @@
       USE WEBMOD_PHREEQ_MMS
       USE WEBMOD_OBSCHEM, ONLY :phq_lut,sol_id,sol_name,n_iso,iso_list
       USE WEBMOD_IO, only: phreeqout, chemout, print_vse, chemout,nf,vse_lun, nowtime, xdebug_start, xdebug_stop, debug
-      USE WEBMOD_IRRIG, ONLY: irrig_sched_ext, irrig_ext_mru, irrig_sat_mru, irrig_hyd_mru, irrig_sched_int,irrig_int_src,irrig_int_init      
+      USE WEBMOD_IRRIG, ONLY: irrig_sched_ext, irrig_ext_mru, irrig_sat_mru, &
+        irrig_hyd_mru, irrig_sched_int,irrig_int_src,irrig_int_init      
 
 ! Mixing variables from webmod_res
       USE WEBMOD_RESMOD, ONLY : vmix_can, vmix_snow, vmix_ohoriz, &
