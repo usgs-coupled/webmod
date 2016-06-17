@@ -2902,16 +2902,19 @@
          'The kinetics are defined in '//&
          'the phreeq input file, *.pqi.',&
          'none') .ne.0) return
-
-      allocate(init_soln_ext(nchem_ext))
-      if(declparam('phreeqmms','init_soln_ext', 'nchem_ext',&
-         'integer', '1', '1', '100',&
-         'Solution IDs to use for initializing the solute '//&
-         'composition for each unique external source',&
-         'Solution IDs to use for initializing the solute '//&
-         'composition for each unique external source. '//&
-         'The solution are described in the .pqi file.',&
-         'none') .ne.0) return
+      
+      if(nchem_ext.ne.0) then
+        allocate(init_soln_ext(nchem_ext))
+        if(declparam('phreeqmms','init_soln_ext', 'nchem_ext',&
+           'integer', '1', '1', '100',&
+           'Solution IDs to use for initializing the solute '//&
+           'composition for each unique external source',&
+           'Solution IDs to use for initializing the solute '//&
+           'composition for each unique external source. '//&
+           'The solution are described in the .pqi file.',&
+           'none') .ne.0) return
+      endif
+      
 
       if(declparam('phreeqmms','init_soln_ppt', 'one',&
          'integer', '1', '1', '100',&
@@ -3540,8 +3543,10 @@
       if(getparam('phreeqmms', 'atmos_eq_ph', 1, 'integer',&
            atmos_eq_ph) .ne.0) return
 
-      if(getparam('phreeqmms', 'init_soln_ext', nchem_ext,&
+      if(nchem_ext.ne.0) then
+        if(getparam('phreeqmms', 'init_soln_ext', nchem_ext,&
            'integer', init_soln_ext) .ne.0) return
+      endif
 
       if(getparam('phreeqmms', 'init_solnset_mru', nmru, 'integer',&
            init_solnset_mru) .ne.0) return
@@ -4482,6 +4487,7 @@
            src_init(i,1) = init_soln_ppt
         else if(ichemdat.gt.1.and.ichemdat.le.(nchemdat-nchemobs))then
 !                           Irrigation chemistry source. Ignore chemobs.
+            if(nchem_ext.ne.0) &
            src_init(i,ET_SOLUTION) = init_soln_ext(ichemdat-1)
         else if(ires.ge.1.and.ires.le.9) then ! hillslope reservoirs
            src_init(i,ET_SOLUTION) = &
@@ -4820,12 +4826,13 @@
 !
 ! Typical concentrations for each external source (irrigation and/or groundwater)
 !
-      do 182 ir = 1,nchem_ext
-         src(1) = init_soln_ext(ir)
+      if(nchem_ext.ne.0) then
+        do 182 ir = 1,nchem_ext
+           src(1) = init_soln_ext(ir)
 !     solnnum(time,reservoir ID,chemdat, mru,nac,hydro,stat)
-         dest(1) = solnnum(0,0,ir+1,0,0,0,0) 
-         fracs(1) = 1.0
-         totvol = 1D-3 ! in cubic meters
+           dest(1) = solnnum(0,0,ir+1,0,0,0,0) 
+           fracs(1) = 1.0
+           totvol = 1D-3 ! in cubic meters
 
 !         iresult = fill_ent(n_user,dest(1),nchemdat,nmru,
 !     $        nac,clark_segs,src_init)
@@ -4843,8 +4850,9 @@
             CALL OutputErrorString(id)
             STOP
          ENDIF
- 182  continue
- 
+ 182    continue
+      endif
+    
 ! ET as DI (soln 1) included to be complete. Let all initial volumes = 1 kilogram (liter)
 !
 ! Be careful not to assign anyting other than isotopic values for D and [18O] to solution 1

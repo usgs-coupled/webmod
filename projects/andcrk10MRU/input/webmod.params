@@ -51,7 +51,7 @@ ndepl
 2
 ####
 nchem_ext
-1
+0
 ####
 nmonths
 12
@@ -950,7 +950,7 @@ chem_sim 9
 one
 1
 1
-0
+1
 ####
 MFMAX 8
 1
@@ -1589,13 +1589,6 @@ nmru
 1.0010000E-02
 1.0010000E-02
 ####
-init_soln_ext 14
-1
-nchem_ext
-1
-1
-1
-####
 irrig_int_max 14
 1
 nmru
@@ -1785,7 +1778,7 @@ chem_ext 9
 one
 1
 1
-1
+0
 ####
 c_obs_indx 11
 1

@@ -247,25 +247,30 @@ c
      +     'double','pH of NADP precipitation',
      +     'pH units', c_precip_pH).ne.0) return
 
-      ALLOCATE (c_extT(Nchem_ext))
-      if(declvar('obs_chem', 'c_extT', 'nchem_ext', Nchem_ext,
+      if(nchem_ext.ne.0) then
+        ALLOCATE (c_extT(Nchem_ext))
+        if(declvar('obs_chem', 'c_extT', 'nchem_ext', Nchem_ext,
      +     'double','Temperature of external source',
      +     'deg celsius', c_extT).ne.0) return
 
-      ALLOCATE (c_ext_pH(Nchem_ext))
-      if(declvar('obs_chem', 'c_ext_pH', 'nchem_ext', Nchem_ext,
+        ALLOCATE (c_ext_pH(Nchem_ext))
+        if(declvar('obs_chem', 'c_ext_pH', 'nchem_ext', Nchem_ext,
      +     'double','pH of external source',
      +     'pH units', c_ext_pH).ne.0) return
+      endif
 
-      ALLOCATE (c_obsT(Nchemobs))
-      if(declvar('obs_chem', 'c_obsT', 'nchemobs', Nchemobs,
+      if(nchemobs.ne.0) then
+        ALLOCATE (c_obsT(Nchemobs))
+        if(declvar('obs_chem', 'c_obsT', 'nchemobs', Nchemobs,
      +     'double','Temperature of water sample',
      +     'deg celsius', c_obsT).ne.0) return
 
-      ALLOCATE (c_obs_pH(Nchemobs))
-      if(declvar('obs_chem', 'c_obs_pH', 'nchemobs', Nchemobs,
+        ALLOCATE (c_obs_pH(Nchemobs))
+        if(declvar('obs_chem', 'c_obs_pH', 'nchemobs', Nchemobs,
      +     'double','pH of water sample',
      +     'pH units', c_obs_pH).ne.0) return
+      endif
+      
 c
 c
 c  cconc_precipM is an nsolute dimensioned matrix of observed solute
@@ -283,21 +288,25 @@ c
 c  cconc_extM is an similar matrix with the additional dimension of
 c  nchem_ext, or the number of unique external sources.
 c
-      ALLOCATE (cconc_extM(nchem_ext,nsolute))
-      if(declvar('obs_chem', 'cconc_extM', 'nchem_ext,nsolute',
+      if(nchem_ext.ne.0) then
+        ALLOCATE (cconc_extM(nchem_ext,nsolute))
+        if(declvar('obs_chem', 'cconc_extM', 'nchem_ext,nsolute',
      $     nchem_ext*nsolute,'double','Solute concentrations '//
      $     'describing an external source',
      +     'moles/liter', cconc_extM).ne.0) return
+      endif
 c
 c  cconc_obsM is an similar matrix with the dimension of
 c  nobs, or the number of unique chemical sampling sites.
 c
-      ALLOCATE (cconc_obsM(nchemobs,nsolute))
-      if(declvar('obs_chem', 'cconc_obsM', 'nchemobs,nsolute',
+      if(nchemobs.ne.0) then
+        ALLOCATE (cconc_obsM(nchemobs,nsolute))
+        if(declvar('obs_chem', 'cconc_obsM', 'nchemobs,nsolute',
      $     nchemobs*nsolute,'double','Solute concentrations '//
      $     'for a water sample',
      +     'moles/liter', cconc_obsM).ne.0) return
 
+      endif
 c
 c  nsolobs is the number of solutes included in the input chemical
 c  deposition file (.chemdat).
@@ -685,7 +694,7 @@ c
 
       if(chemdat_flag.eq.1) then
 
-         nchem_ext = nchemdep_obs-ppt_chem
+c         nchem_ext = nchemdep_obs-ppt_chem
 c
 c Reset temperature and pH to standard values. temperature is in degrees C
 c
@@ -693,7 +702,7 @@ c
             c_precipT = 25.0
             c_precip_pH = 7.0
          end if
-         if(chem_ext.eq.1) then
+         if(nchem_ext.ne.0) then
             do 8 i=1,nchem_ext
                c_extT(i)=25.0
                c_ext_pH(i)=7.0
@@ -712,7 +721,7 @@ c with observations if present in the chemobs file
 c
       do 10 i=1,nsolute
          cconc_precipM(i)=0.0
-         if(chem_ext.gt.0) then
+         if(nchem_ext.ne.0) then
             do 11 j=1,nchem_ext
                cconc_extM(j,i)=0.0
  11         continue
@@ -769,7 +778,7 @@ c
          c_precipT = chemdat(1,1)
          c_precip_pH = chemdat(1,2)
       end if
-      if(chem_ext.eq.1) then
+      if(nchem_ext.ne.0) then
          do 80 i=1,nchem_ext
             c_extT(i)=chemdat(i+ppt_chem,1)
             c_ext_pH(i)=chemdat(i+ppt_chem,2)
