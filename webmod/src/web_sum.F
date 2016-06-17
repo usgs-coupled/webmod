@@ -37,7 +37,7 @@
 *
 c 17apr09 - Add Fortran90 Module: WEBMOD_SUM
 c
-c
+c Jan 2016 - Added chemical summaries
 c
 c***********************************************************************
 
@@ -239,11 +239,11 @@ c
      +   'Initial timestep for initialize function.',
      +   'hours').ne.0) return
 
-      if(declparam('sumb', 'qobsta', 'one', 'integer',
-     +   '1', 'bounded', 'nobs',
-     +   'Index of streamflow station for calculating '//
-     +   'objective function.','Index of streamflow station '//
-     +   'for calculating objective function.','none').ne.0) return
+c      if(declparam('sumb', 'qobsta', 'one', 'integer',
+c     +   '1', 'bounded', 'nobs',
+c     +   'Index of streamflow station for calculating '//
+c     +   'objective function.','Index of streamflow station '//
+c     +   'for calculating objective function.','none').ne.0) return
 
       if(declparam('precip', 'basin_area', 'one', 'real',
      +   '1.0', '0.01', '1e+09',

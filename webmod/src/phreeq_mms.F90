@@ -222,7 +222,8 @@
       integer, save, allocatable :: nacsc(:)
 
 !  Indices describing chemistry of irrigation and regional ground water inputs
-      integer, save, allocatable :: irrig_int_src(:), src_ext_irrig(:)
+!      integer, save, allocatable :: irrig_int_src(:), src_ext_irrig(:)
+      integer, save, allocatable :: src_ext_irrig(:)
       integer, save, allocatable ::  src_gw1(:), src_gw2(:)
       
 !  Initial solutions and reactants. Overwritten with solutions and reactants
@@ -2787,7 +2788,7 @@
 
 !
 ! parameters to describe water quality of irrigation and gw influx from outside
-! of basin boundary. A maximum of one irrigation source and gw sources can be 
+! of basin boundary. A maximum of one irrigation source and two gw sources can be 
 ! defined for each MRU. GW sources could be a leaky irrigation canal crossing 
 ! the MRU and/or regional groundwater influx.
 !
@@ -2818,15 +2819,18 @@
 ! then irrig_int_src indicates if the MRU has recieves irrigations from a
 ! well in the MRU (value=0), or a stream segment (value > 0).
 !
-      ALLOCATE (irrig_int_src(nmru))
-      if(declparam('irrig', 'irrig_int_src', 'nmru', 'integer',&
-         '0', '0', '100',&
-         ' 0 Irrigation from well in MRU; '//&
-         '>0 Drainage segment ID that will provide irrigation water',&
-         ' 0 Irrigation from well in MRU; '//&
-         '>0 Drainage segment ID that will provide irrigation water',&
-         'none')&
-         .ne.0) return 
+      !if(nirrig_int.ne.0) then
+      !  ALLOCATE (irrig_int_src(nmru))
+      !  if(declparam('irrig', 'irrig_int_src', 'nmru', 'integer',&
+      !     '0', '0', '100',&
+      !     ' 0 Irrigation from well in MRU; '//&
+      !     '>0 Drainage segment ID that will provide irrigation water',&
+      !     ' 0 Irrigation from well in MRU; '//&
+      !     '>0 Drainage segment ID that will provide irrigation water',&
+      !     'none')&
+      !     .ne.0) return 
+      !endif
+      
 
       if(declparam('phreeqmms', 'chem_sim', 'one', 'integer',&
          '1', '0', '1',&
@@ -3336,6 +3340,7 @@
       USE WEBMOD_PHREEQ_MMS
       USE WEBMOD_OBSCHEM, ONLY :phq_lut,sol_id,sol_name,n_iso,iso_list
       USE WEBMOD_IO, only: phreeqout, chemout, print_vse, chemout,nf,vse_lun, nowtime, xdebug_start, xdebug_stop, debug
+      USE WEBMOD_IRRIG, ONLY: irrig_sched_ext, irrig_ext_mru, irrig_sat_mru, irrig_hyd_mru, irrig_sched_int,irrig_int_src,irrig_int_init      
 
 ! Mixing variables from webmod_res
       USE WEBMOD_RESMOD, ONLY : vmix_can, vmix_snow, vmix_ohoriz, &
@@ -3486,8 +3491,8 @@
       if(getparam('precip', 'src_ext_irrig', nmru, 'integer',&
            src_ext_irrig).ne.0) return
 
-      if(getparam('precip', 'irrig_int_src', nmru, 'integer',&
-           irrig_int_src).ne.0) return
+!      if(getparam('precip', 'irrig_int_src', nmru, 'integer',&
+!           irrig_int_src).ne.0) return
 
       if(getparam('intcp', 'covden_sum', nmru, 'real', covden_sum)&
          .ne.0) return 
@@ -6172,7 +6177,7 @@
 !      USE WEBMOD_PRECIP, ONLY : mru_ppt
       USE WEBMOD_TEMP1STA, ONLY: tmax_c, temp_c, trxn_ohoriz_c, trxn_uz_c, trxn_sat_c,&
                                 it_oh_days, it_uz_days, it_sat_days
-      USE WEBMOD_IRRIG, ONLY : irrig_ext_mru, irrig_hyd_mru, &
+      USE WEBMOD_IRRIG, ONLY : irrig_ext_mru, irrig_hyd_mru, irrig_int_src, &
           irrig_frac_ext, irrig_frac_sat, irrig_frac_hyd, mru_ppt, mru_dep
       USE WEBMOD_TOPMOD, ONLY : gw_loss,qpref_max, st, quz, srzwet, riparian_thresh, uz_area, riparian
       USE WEBMOD_RESMOD, ONLY : vmix_can, vmix_snow, vmix_ohoriz, &
@@ -6577,7 +6582,7 @@
 ! by cconc_precipM(nsolute) and cconc_extM(nchem_ext,nsolute)
 ! if ppt_chem=1 or chem_ext=1 respectively.
 !
-! cconc_obsM(nchemobs,nsolute) is be manually populated
+! cconc_obsM(nchemobs,nsolute) is manually populated
 ! when nobs_chem>0 without acutually creating a PHREEQC solution
 ! as only a subset of major ions may be included in a given sample.
 !

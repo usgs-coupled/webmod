@@ -277,8 +277,9 @@ c***********************************************************************
       logical, save :: resstep1
       integer, save :: nmru, nac, nobs, nresinp, nsolute, nchemvar
       integer, save :: nchemobs, nchemdat, nchem_ext
-      integer, save :: clark_segs, nhydro, nchan,qobsta
-      integer, save :: nirrig_int, nirrig_ext
+c      integer, save :: clark_segs, nhydro, nchan,qobsta
+      integer, save :: clark_segs, nhydro, nchan
+c      integer, save :: nirrig_int, nirrig_ext
       integer, save, allocatable :: web_transp_on(:), transp_on(:)
       integer, save, allocatable :: nacsc(:), mru2chan(:)
       real, save :: c_can_depth, basin_area
@@ -358,9 +359,9 @@ c
       real, save, allocatable :: mru_ppt(:), mru_dep(:)
       real, save, allocatable :: net_dep(:)
       real, save, allocatable :: net_rain(:), net_snow(:)
-      real, save, allocatable :: irrig_sat_mru(:)
-      real, save, allocatable :: irrig_hyd_mru(:)
-      real, save, allocatable :: irrig_ext_mru(:)
+c      real, save, allocatable :: irrig_sat_mru(:)
+c      real, save, allocatable :: irrig_hyd_mru(:)
+c      real, save, allocatable :: irrig_ext_mru(:)
       real, save, allocatable :: intcp_stor(:), intcp_evap(:)
       real, save, allocatable :: pkwater_equiv(:), psoilmru(:)
       real, save, allocatable :: snowmelt(:), snow_evap(:)
@@ -379,7 +380,7 @@ c
       real, save, allocatable :: quz_local(:,:),qdf_local(:,:)
       real, save, allocatable :: uz_infil(:,:)
       real, save, allocatable :: uz2sat(:,:), qvpref(:)
-      double precision, save, allocatable :: irrig_hyd_seg(:)
+c      double precision, save, allocatable :: irrig_hyd_seg(:)
       real, save, allocatable :: gw_in1(:), gw_in2(:)
       real, save, allocatable :: chan_loss(:)
       
@@ -479,10 +480,10 @@ c
       nchemvar = getdim('nchemvar')
       if(nchemvar.eq.-1) return
 !      nmru_res = get*dim('nmru_res')
-      nirrig_ext = getdim('nirrig_ext')
-      if(nirrig_ext.eq.-1) return
-      nirrig_int = getdim('nirrig_int')
-      if(nirrig_int.eq.-1) return
+!      nirrig_ext = getdim('nirrig_ext')
+!      if(nirrig_ext.eq.-1) return
+!      nirrig_int = getdim('nirrig_int')
+!      if(nirrig_int.eq.-1) return
       nchem_ext = getdim('nchem_ext')
       if(nchem_ext.eq.-1) return
       nchemobs = getdim('nchemobs')
@@ -950,13 +951,15 @@ c
 c for clarity, use the nobs dimensioned runoff variable to
 c create a nobs dimensioned runoff_m3s and the derive a single
 c observed volume and equivalent depth of discharge to be passed
-c to the summary module
+c to the summary module. No variable declared of nobs=0
 c
-      allocate(runoff_m3s(nobs))
-      if(declvar('webr', 'runoff_m3s', 'nobs', nobs, 'real',
-     + 'Observed discharge at one of the nobs stations',
-     + 'm3s',
-     +  runoff_m3s).ne.0) return
+      if(nobs.ne.0) then
+        allocate(runoff_m3s(nobs))
+        if(declvar('webr', 'runoff_m3s', 'nobs', nobs, 'real',
+     +   'Observed discharge at one of the nobs stations',
+     +   'm3s',
+     +    runoff_m3s).ne.0) return
+      end if
 
       if(declvar('webr', 'basin_qobs_cm', 'one', 1, 'real',
      + 'Basin observed discharge (at station qobsta)',
@@ -987,11 +990,11 @@ c
      +   'Total basin area',
      +   'km2').ne.0) return
 
-      if(declparam('topc', 'qobsta', 'one', 'integer',
-     +   '1', 'bounded', 'nobs',
-     +   'Index of streamflow station for calculating '//
-     +   'objective function.','Index of streamflow station '//
-     +   'for calculating objective function.','none').ne.0) return
+c      if(declparam('topc', 'qobsta', 'one', 'integer',
+c     +   '1', 'bounded', 'nobs',
+c     +   'Index of streamflow station for calculating '//
+c     +   'objective function.','Index of streamflow station '//
+c     +   'for calculating objective function.','none').ne.0) return
 
       allocate(mru_area(nmru))
       if(declparam('basin', 'mru_area', 'nmru', 'real',
@@ -1209,9 +1212,9 @@ c$$$     + .ne.0) return
       allocate (net_dep(nmru))
       allocate (net_rain(nmru))
       allocate (net_snow(nmru))
-      allocate (irrig_sat_mru(nmru))
-      allocate (irrig_hyd_mru(nmru))
-      allocate (irrig_ext_mru(nmru))
+c      allocate (irrig_sat_mru(nmru))
+c      allocate (irrig_hyd_mru(nmru))
+c      allocate (irrig_ext_mru(nmru))
       allocate (intcp_stor(nmru))
       allocate (intcp_evap(nmru))
       allocate (pkwater_equiv(nmru))
@@ -1242,7 +1245,7 @@ c$$$     + .ne.0) return
       allocate (uz_infil(nac,nmru))
       allocate (uz2sat(nac,nmru))
       allocate (qvpref(nmru))
-      allocate (irrig_hyd_seg(nhydro))
+c      allocate (irrig_hyd_seg(nhydro))
       allocate (gw_in1(nmru))
       allocate (gw_in2(nmru))
       allocate (chan_loss(nhydro))
@@ -1381,8 +1384,8 @@ c$$$
       if(getparam('top2c', 'mru2chan', nmru , 'integer', mru2chan)
      +   .ne.0) return
 
-      if(getparam('basin', 'qobsta', 1, 'integer', qobsta)
-     +   .ne.0) return
+c      if(getparam('basin', 'qobsta', 1, 'integer', qobsta)
+c     +   .ne.0) return
 
       if(getvar('routec', 'clark_segs', 1, 'integer', clark_segs)
      +   .ne.0) return
@@ -2043,8 +2046,11 @@ c
 
       USE WEBMOD_RESMOD
       USE WEBMOD_IO, only: phreeqout, print_vse, debug
+      USE WEBMOD_OBSHYD, ONLY: runoff,nirrig_int,nirrig_ext
+      USE WEBMOD_IRRIG, ONLY: irrig_ext_mru,irrig_sat_mru,irrig_hyd_mru,
+     $                        irrig_hyd_seg
       USE WEBMOD_TOPMOD, only: z_wt_local, srzwet, riparian,
-     $                         s_theta_0, s_root_depth
+     $                         s_theta_0, s_root_depth, qobsta
       IMPLICIT NONE
 
 c variables and parameters from other modules
@@ -2149,14 +2155,14 @@ c
       if(getvar('precip', 'mru_ppt', nmru, 'real', mru_ppt)
      +   .ne.0) return
 
-      if(getvar('irrig', 'irrig_sat_mru', nmru, 'real',
-     $     irrig_sat_mru).ne.0) return
+c      if(getvar('irrig', 'irrig_sat_mru', nmru, 'real',
+c     $     irrig_sat_mru).ne.0) return
 
-      if(getvar('irrig', 'irrig_hyd_mru', nmru, 'real',
-     $     irrig_hyd_mru).ne.0) return
+c      if(getvar('irrig', 'irrig_hyd_mru', nmru, 'real',
+c     $     irrig_hyd_mru).ne.0) return
 
-      if(getvar('irrig', 'irrig_ext_mru', nmru, 'real',
-     $     irrig_ext_mru).ne.0) return
+c      if(getvar('irrig', 'irrig_ext_mru', nmru, 'real',
+c     $     irrig_ext_mru).ne.0) return
 
 c
 c Fluxes from impermeable areas
@@ -2286,32 +2292,32 @@ c in the init section.
       if(getvar('routec', 'chan_loss', nhydro, 'real', 
      +  chan_loss).ne.0) return
 
-      if(getvar('topc', 'irrig_hyd_seg', nhydro, 'double', 
-     +  irrig_hyd_seg).ne.0) return
+c      if(getvar('topc', 'irrig_hyd_seg', nhydro, 'double', 
+c    +  irrig_hyd_seg).ne.0) return
 
 c
 c observed discharge. Convert to equivalent depth, basin_qobs_cm, below
 c
-      if(getvar('obs', 'runoff', nobs, 'real', runoff_m3s)
-     +  .ne.0) return
-
+c        if(getvar('obs', 'runoff', nobs, 'real', runoff_m3s)
+c     +  .ne.0) return
 c
 c     Convert observed basin discharge from cfs to cubic meters per second
 c
-
-c      basin_qsim_m3s = basin_qsim_m3s * 0.028316847
       basinq_found = .false.
-      do 105 j=1,nobs
-         runoff_m3s(j) = runoff_m3s(j) * 0.028316847
-         if(j.eq.qobsta) then
-            basin_qobs_m3s = runoff_m3s(j)
-            basinq_found = .true.
-         end if
- 105  continue
+      if(nobs.gt.0) then
+        do 105 j=1,nobs
+           runoff_m3s(j) = runoff(j) * 0.028316847
+           if(j.eq.qobsta) then
+              basin_qobs_m3s = runoff_m3s(j)
+              basinq_found = .true.
+           end if
+ 105    continue
+      end if
       if (.not.basinq_found) then
          basin_qobs_m3s = 0.0
-         print*,'qobsta does not point to observed discharge data. '//
-     $        'basin_qobs_m3s and basin_qobs_cm set to zero.'
+c         print*,'nobs equals zero or qobsta does not '//
+c     $     'point to observed discharge data. basin_qobs_m3s '//
+c     $     'and basin_qobs_cm set to zero.'
       end if
 
       fac = timestep/24
@@ -2529,12 +2535,22 @@ c record minimum canopy volume for isotopic fractionation
         vmin_canopy(is) = c_can_depth*covden*mru_area(is)*a_million
 c
 c Compute volumes of precipitation and irrigation
-c
+c v_irrsat and v_irrhyd set to zero when nirrig_int=0
+c v_irrext set to zero when nirrig_ext=0
 c totals
         v_ppt = mru_ppt(is)*mru_area(is)*a_million*inch2m
-        v_irrsat = irrig_sat_mru(is)*mru_area(is)*a_million*inch2m
-        v_irrhyd = irrig_hyd_mru(is)*mru_area(is)*a_million*inch2m
-        v_irrext = irrig_ext_mru(is)*mru_area(is)*a_million*inch2m
+        if(nirrig_int.ne.0) then
+          v_irrsat = irrig_sat_mru(is)*mru_area(is)*a_million*inch2m
+          v_irrhyd = irrig_hyd_mru(is)*mru_area(is)*a_million*inch2m
+        else
+          v_irrsat = 0
+          v_irrhyd = 0
+        endif
+        if(nirrig_ext.ne.0) then
+          v_irrext = irrig_ext_mru(is)*mru_area(is)*a_million*inch2m
+        else
+          v_irrext = 0
+        endif
         v_dep = v_ppt + v_irrsat + v_irrhyd + v_irrext
 c
 c Track basin and mru inputs in their respective categories

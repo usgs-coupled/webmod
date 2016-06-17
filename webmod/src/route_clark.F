@@ -57,14 +57,17 @@ c                                        qlin2dep*dt(hr)*channel segment(m)/basi
 c                                        to compute area-normalized loss to deep aquifer,
 c                                        in meters
 C   Dimensions and index
-      integer, save :: nchan, nmru, nobs, nhydro
-      integer, save :: clark_segs, ntopchan, nirrig_int
+c      integer, save :: nchan, nmru, nobs, nhydro
+      integer, save :: nchan, nmru, nhydro
+c      integer, save :: clark_segs, ntopchan, nirrig_int
+      integer, save :: clark_segs, ntopchan
 C   Declared Parameters
-      integer, save :: qobsta  !, topout_file_unit
-      integer, save, allocatable :: irrig_int_src(:), irrig_sched_int(:)
+c      integer, save :: qobsta  !, topout_file_unit
+c      integer, save, allocatable :: irrig_int_src(:), irrig_sched_int(:)
+c      integer, save, allocatable :: irrig_int_src(:)
       integer, save, allocatable :: nchan_d(:), mru2chan(:)
       real, save :: basin_area, CHV, Q0, dtinit,chan_loss_rate
-      real, save, allocatable :: irrig_int_init(:), irrig_int_max(:)
+c      real, save, allocatable :: irrig_int_init(:), irrig_int_max(:)
       real, save, allocatable :: mru_area(:)
       real, save, allocatable :: mru_area_frac(:)
 C   Declared Variables
@@ -73,7 +76,7 @@ C   Declared Variables
       real, save, allocatable :: maxchanloss(:), chan_loss(:)
       real, save, allocatable :: sum_chan_loss(:)
       double precision, save, allocatable ::  irrig_hyd_next(:)
-      double precision, save, allocatable ::  irrig_hyd_seg_next(:)
+c      double precision, save, allocatable ::  irrig_hyd_seg_next(:)
 C   local variables
       logical, save :: div_exists
       integer, save :: div_warn
@@ -90,7 +93,8 @@ C   local variables
 C   Undeclared variables gotten from from other modules
       integer, save :: endper
       real, save, allocatable  :: chan_area(:), chan_area_frac(:)
-      real, save, allocatable :: qchanin(:), irrig_int_next(:)
+      real, save, allocatable :: qchanin(:)
+c      real, save, allocatable :: qchanin(:), irrig_int_next(:)
       real, save, allocatable :: qobs(:), irrig_hyd_mru(:)
 
       END MODULE WEBMOD_ROUTE
@@ -132,6 +136,7 @@ c
 
 
       USE WEBMOD_ROUTE
+      USE WEBMOD_OBSHYD, ONLY: nobs, nirrig_int, runoff
       IMPLICIT NONE
 
       Routecdecl = 1
@@ -146,10 +151,10 @@ c
         if ( nhydro.eq.-1 ) return
       ntopchan = getdim('ntopchan')
         if ( ntopchan.eq.-1 ) return
-      nirrig_int = getdim('nirrig_int')
-        if ( nirrig_int.eq.-1 ) return
-      nobs = getdim('nobs')
-        if ( nobs.eq.-1 ) return
+c      nirrig_int = getdim('nirrig_int')
+c        if ( nirrig_int.eq.-1 ) return
+c      nobs = getdim('nobs')
+c        if ( nobs.eq.-1 ) return
 
       ALLOCATE (q(nhydro,nchan))
       if(declvar('routec', 'q','nhydro,nchan', nhydro*nchan,
@@ -244,11 +249,11 @@ c
      + 'Predicted basin runoff, in cfs.',
      + 'cfs',qbasincfs).ne.0) return
 
-      if(declparam('topc', 'qobsta', 'one', 'integer',
-     +   '1', 'bounded', 'nobs',
-     +   'Index of streamflow station for calculating '//
-     +   'objective function.','Index of streamflow station '//
-     +   'for calculating objective function.','none').ne.0) return
+c      if(declparam('topc', 'qobsta', 'one', 'integer',
+c     +   '1', 'bounded', 'nobs',
+c     +   'Index of streamflow station for calculating '//
+c     +   'objective function.','Index of streamflow station '//
+c     +   'for calculating objective function.','none').ne.0) return
 
       ALLOCATE (mru2chan(nmru))
       if(declparam('top2c', 'mru2chan', 'nmru', 'integer',
@@ -304,8 +309,11 @@ c
      +   'hours').ne.0) return
 
 c
-c irrig_hyd_next will contain the depth of irrigation to be pumped from
-c a river segment on the next time step.
+c     begin conditional params dependent on nirrig_int > 0
+c      if (nirrig_int.ne.0) then
+c
+c irrig_hyd_next will contain the depth of irrigation to be pumped
+c from a river segment on the next time step.
 c
       ALLOCATE (irrig_hyd_next(nmru))
       if(declvar('routec', 'irrig_hyd_next', 'nmru', nmru, 'double', 
@@ -316,57 +324,60 @@ c irrig_hyd_seg_next will contain the total volume of water to be diverted
 c from a stream segment to be applied to one or more MRUs on the next
 c time step
 c
-      ALLOCATE (irrig_hyd_seg_next(nhydro))
-      if(declvar('routec', 'irrig_hyd_seg_next', 'nhydro', nhydro,
-     $ 'double', 
-     + 'Volume of water diverted from a stream segment to '//
-     $ 'be applied to one or more MRUs on the next time step.',
-     $ 'm3',irrig_hyd_seg_next).ne.0) return
+c      ALLOCATE (irrig_hyd_seg_next(nhydro))
+c      if(declvar('routec', 'irrig_hyd_seg_next', 'nhydro', nhydro,
+c     $ 'double', 
+c     + 'Volume of water diverted from a stream segment to '//
+c     $ 'be applied to one or more MRUs on the next time step.',
+c     $ 'm3',irrig_hyd_seg_next).ne.0) return
 c
 c irrig_int_max is the maximum discharge rate for a pump placed in
 c a well or stream providing irrigation to an MRU
 c
-      ALLOCATE (irrig_int_max(nmru))
-      if(declparam('topc', 'irrig_int_max', 'nmru', 'real',
-     +   '100','0.', '1000000',
-     +   'Maximum discharge rate for a pump placed in a well or '//
-     $   'stream to provide irrigation to an MRU',
-     +   'Maximum discharge rate for a pump placed in a well or '//
-     $   'stream to provide irrigation to an MRU',
-     +   'gallons per minute').ne.0) return 
+c      ALLOCATE (irrig_int_max(nmru))
+c      if(declparam('topc', 'irrig_int_max', 'nmru', 'real',
+c     +   '100','0.', '1000000',
+c     +   'Maximum discharge rate for a pump placed in a well or '//
+c     $   'stream to provide irrigation to an MRU',
+c     +   'Maximum discharge rate for a pump placed in a well or '//
+c     $   'stream to provide irrigation to an MRU',
+c     +   'gallons per minute').ne.0) return 
 c
 c If greater than zero, irrig_sched_int points to a schedule (irrig_int_next)
 c describing depths of irrigation to be applied from an internal source.
 c The composition of the irrigated water depends on the source, irrig_int_src.
 c
-      ALLOCATE (irrig_sched_int(nmru))
-      if(declparam('precip', 'irrig_sched_int', 'nmru', 'integer',
-     +   '0', '0', '100',
-     +   'Index of internal irrigation schedule for MRU; 0 if none',
-     +   'Index of internal irrigation schedule for MRU; 0 if none',
-     +   'none').ne.0) return
+c      ALLOCATE (irrig_sched_int(nmru))
+c      if(declparam('precip', 'irrig_sched_int', 'nmru', 'integer',
+c     +   '0', '0', '100',
+c     +   'Index of internal irrigation schedule for MRU; 0 if none',
+c     +   'Index of internal irrigation schedule for MRU; 0 if none',
+c     +   'none').ne.0) return
 
 c
 c If there is an internal irrigation schedule for an MRU (irrig_sched_int>0),
 c then irrig_int_src indicates if the MRU has recieves irrigations from a
 c well in the MRU (value=0), or a stream segment (value > 0).
 c
-      ALLOCATE (irrig_int_src(nmru))
-      if(declparam('precip', 'irrig_int_src', 'nmru', 'integer',
-     +   '0', '0', '100',
-     +   ' 0 Irrigation from well in MRU; '//
-     $   '>0 Drainage segment ID that will provide irrigation water',
-     +   ' 0 Irrigation from well in MRU; '//
-     $   '>0 Drainage segment ID that will provide irrigation water',
-     +   'none')
-     +   .ne.0) return 
+c      ALLOCATE (irrig_int_src(nmru))
+c      if(declparam('precip', 'irrig_int_src', 'nmru', 'integer',
+c     +   '0', '0', '100',
+c     +   ' 0 Irrigation from well in MRU; '//
+c     $   '>0 Drainage segment ID that will provide irrigation water',
+c     +   ' 0 Irrigation from well in MRU; '//
+c     $   '>0 Drainage segment ID that will provide irrigation water',
+c     +   'none')
+c     +   .ne.0) return 
 
-      ALLOCATE (irrig_int_init(nmru))
-      if(declparam('precip', 'irrig_int_init', 'nmru', 'real',
-     + '0', '0', '100',
-     + 'Irrigation from an internal source to be applied on first day',
-     + 'Irrigation from an internal source to be applied on first day',
-     + 'inches').ne.0) return
+c      ALLOCATE (irrig_int_init(nmru))
+c      if(declparam('precip', 'irrig_int_init', 'nmru', 'real',
+c     + '0', '0', '100',
+c     + 'Irrigation from an internal source to be applied on first day',
+c     + 'Irrigation from an internal source to be applied on first day',
+c     + 'inches').ne.0) return
+
+c      endif
+c     End of conditional params dependent on nirrig_int > 0
 
       ALLOCATE (mru_area(nmru))
       if(declparam('basin', 'mru_area', 'nmru', 'real',
@@ -400,8 +411,10 @@ c
       ALLOCATE (chan_area(nchan))
       ALLOCATE (chan_area_frac(nchan))
       ALLOCATE (qchanin(nchan))
-      ALLOCATE (irrig_int_next(nirrig_int))
-      ALLOCATE (qobs(nobs))
+c      ALLOCATE (irrig_int_next(nirrig_int))
+      if(nobs.ne.0) then
+        ALLOCATE (qobs(nobs))
+      end if
       ALLOCATE (irrig_hyd_mru(nmru))
       ALLOCATE (tch(ntopchan))
       ALLOCATE (tchmax(nchan))
@@ -421,6 +434,9 @@ c
 
       USE WEBMOD_ROUTE
       USE WEBMOD_IO, ONLY : topout
+      USE WEBMOD_OBSHYD, ONLY: nobs, nirrig_int
+      USE WEBMOD_IRRIG, ONLY: irrig_hyd_seg_next, irrig_int_init,
+     $                        irrig_sched_int, irrig_int_src
       IMPLICIT NONE
 C***  local variables
       integer is, NCH, i, j, IN, NR, IR, ND, TIME
@@ -447,17 +463,17 @@ c      open (unit=80,file=output_path,access='sequential',
 c     * form='formatted', status='old')
 
 
-      if(getparam('precip', 'irrig_int_src', nmru, 'integer',
-     $     irrig_int_src).ne.0) return
+c      if(getparam('precip', 'irrig_int_src', nmru, 'integer',
+c     $     irrig_int_src).ne.0) return
 
-      if(getparam('precip', 'irrig_sched_int', nmru, 'integer',
-     $     irrig_sched_int).ne.0) return
+c      if(getparam('precip', 'irrig_sched_int', nmru, 'integer',
+c     $     irrig_sched_int).ne.0) return
 
-      if(getparam('precip', 'irrig_int_init', nmru, 'real',
-     $     irrig_int_init).ne.0) return
+c      if(getparam('precip', 'irrig_int_init', nmru, 'real',
+c     $     irrig_int_init).ne.0) return
 
-      if(getparam('topc', 'irrig_int_max', nmru, 'real',
-     $     irrig_int_max).ne.0) return
+c      if(getparam('topc', 'irrig_int_max', nmru, 'real',
+c     $     irrig_int_max).ne.0) return
 
       if(getparam('topc', 'dtinit', 1 , 'real', dtinit)
      +   .ne.0) return
@@ -468,8 +484,8 @@ c     * form='formatted', status='old')
       if(getparam('routec', 'chv', 1, 'real', CHV)
      +   .ne.0) return
 
-      if(getparam('routec', 'qobsta', 1, 'integer', qobsta)
-     +   .ne.0) return
+c      if(getparam('routec', 'qobsta', 1, 'integer', qobsta)
+c     +   .ne.0) return
 
       if(getparam('routec', 'q0', 1, 'real', Q0)
      +   .ne.0) return
@@ -655,7 +671,8 @@ c
          return
       end if
 c
-c Check to see if Diversions for irrigation exist.
+c Check to see first, if internal irrigation exists, and then, if so
+c do Diversions from stream segments for irrigation exist.
 c If they do, then increase initial water in each segment
 c by the amount of the diversion to be applied on the first time
 c step. Also check that no segment indicated as a source for the
@@ -664,19 +681,21 @@ c
       div_exists = .false. ! flag to see if diversion exists
 c                           if not, the diversion calcs in the run
 c                           section can be skipped
-      do i = 1,nmru
+      if(nirrig_int.ne.0) then
+        do i = 1,nmru
          irrsched = irrig_sched_int(i)
          irrsrc = irrig_int_src(i)
          irrig_hyd_next(i) = 0.0
-         if(irrsched.gt.0 .and. irrsrc.gt.0) then
+          if(irrsched.gt.0 .and. irrsrc.gt.0) then
             div_exists = .true.
 c add initial extractions to channel volumes
             in = irrsrc
             is = mru2chan(i)
             Q(IN,is)=Q(IN,is)+irrig_int_init(i)*mru_area_frac(i)*
      $           inch2m
-         end if
-      end do
+          end if
+        end do
+      endif
 c
 c Set initial irrigation from stream to zero (to avoid NaN,
 c the value is ignored on the first time step in topmod anyway;
@@ -741,6 +760,10 @@ c
 
       USE WEBMOD_ROUTE
       USE WEBMOD_IO, ONLY : topout
+      USE WEBMOD_OBSHYD, ONLY: nirrig_int, irrig_int_next, nobs
+      USE WEBMOD_IRRIG, ONLY: irrig_hyd_seg_next, irrig_int_init,
+     $                        irrig_sched_int, irrig_int_src
+      USE WEBMOD_TOPMOD, ONLY: qobsta, irrig_int_max
       IMPLICIT NONE
 
 C***  local variables
@@ -756,11 +779,12 @@ C***  local variables
       if(getvar('top2c', 'qchanin', nchan, 'real',
      +   qchanin).ne.0) return
 
-      if(getvar('obsc', 'irrig_int_next', nirrig_int, 'real',
-     $     irrig_int_next).ne.0) return
-
-      if(getvar('obs', 'runoff', nobs, 'real',
-     +   qobs).ne.0) return
+c      if(getvar('obsc', 'irrig_int_next', nirrig_int, 'real',
+c     $     irrig_int_next).ne.0) return
+      if(nobs.ne.0) then
+        if(getvar('obs', 'runoff', nobs, 'real',
+     +     qobs).ne.0) return
+      end if
 
       if(getvar('io', 'endper', 1, 'integer', endper)
      +   .ne.0) return
@@ -1000,10 +1024,12 @@ c
 c
 c Accumulate standard TOPMODEL objective function expressions
 c
-      SUMQOBS =SUMQOBS + QOBS(qobsta)
-      SSQ = SSQ + (QOBS(qobsta))**2
-      F1=F1 + (qbasincfs - QOBS(qobsta))**2
-      F2=F2 + ABS(qbasincfs - QOBS(qobsta))
+      if(nobs.ne.0) then
+        SUMQOBS =SUMQOBS + QOBS(qobsta)
+        SSQ = SSQ + (QOBS(qobsta))**2
+        F1=F1 + (qbasincfs - QOBS(qobsta))**2
+        F2=F2 + ABS(qbasincfs - QOBS(qobsta))
+      end if
 
       NTSTEP = NTSTEP + 1
 c
@@ -1013,18 +1039,23 @@ c
 c
 c-- compute statistics
 c
-         QBAR = SUMQOBS / NTSTEP
-         VARQ = (SSQ/NTSTEP - QBAR*QBAR)
-         VARE = F1/NTSTEP
-         E=1-VARE/VARQ
+         if(nobs.ne.0) then
+           QBAR = SUMQOBS / NTSTEP
+           VARQ = (SSQ/NTSTEP - QBAR*QBAR)
+           VARE = F1/NTSTEP
+           E=1-VARE/VARQ
 c
-c  add objective function values to output file
-         write(topout%lun,621)f1,e,f2,qbar,varq,vare
+c  add objective function values to output file if there are runoff obs (nobs>0)
+           write(topout%lun,621)f1,e,f2,qbar,varq,vare
 c      write(10,621)f1,e,f2,qbar,varq,vare
  621     format(//1x,'Objective function values'/
      1        1x,'F1 ',e12.5,'   E ',f12.5,'   F2 ',e12.5//
      2        1x,'Mean Obs Q ',e12.5,'    Variance Obs Q ',e12.5/
      3        '     Error Variance',e12.5)
+         else
+           write(topout%lun,"(/A)")'No observed runoff so'//
+     1                 ' no objective funtion computed'
+         end if
 
       end if
       

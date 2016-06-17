@@ -218,8 +218,10 @@ c     distribution of vertical conductivity (XK0)
       integer, save :: irr_warn
       data irr_warn/0/
       !   Dimensions
-      integer, save :: nsc, nmru, nac, nobs
-      integer, save :: nxkbin, ngw_ext, nirrig_int
+c      integer, save :: nsc, nmru, nac, nobs
+      integer, save :: nsc, nmru, nac
+c      integer, save :: nxkbin, ngw_ext, nirrig_int
+      integer, save :: nxkbin, ngw_ext
 !   Declared Parameters
       integer, save :: INFEX, iout, qobsta  ! removed topout_file_unit
       integer, save :: irrsched,irrsrc,gwsched
@@ -239,7 +241,7 @@ c     distribution of vertical conductivity (XK0)
       real, save, allocatable ::  s_satpref_zmin(:)
       real, save, allocatable ::  s_satpref_zmax(:), s_satpref_k(:)
       real, save, allocatable ::  pmacro(:), pmac_sat(:)
-      integer, save, allocatable :: irrig_int_src(:), irrig_sched_int(:)
+c      integer, save, allocatable :: irrig_int_src(:), irrig_sched_int(:)
       integer, save, allocatable ::  sched_gw1(:),sched_gw2(:)
       real, save, allocatable ::   irrig_sat_next(:), sbar_max(:)
       real, save, allocatable ::   irrig_int_max(:), gw_loss_k(:)
@@ -281,13 +283,15 @@ C   Declared Variables
       real, save, allocatable :: gw_loss(:), sumgw_loss(:)
 C getvars from other modules
       real, save, allocatable :: QOBS(:), potet(:), gw_ext(:)
-      real, save, allocatable :: irrig_int_next(:), irrig_sat_mru(:)
+c      real, save, allocatable :: irrig_int_next(:), irrig_sat_mru(:)
+      real, save, allocatable :: irrig_sat_mru(:)
       real, save, allocatable :: snowmelt(:), psoilmru(:)
       real, save, allocatable :: intcp_evap(:), snow_evap(:)
       integer, save, allocatable :: transp_on(:)
 C   Local for init section
       integer, save, allocatable :: atag(:)
-      real, save, allocatable ::  irrig_int_init(:), sbar0(:)
+c      real, save, allocatable ::  irrig_int_init(:), sbar0(:)
+      real, save, allocatable ::  sbar0(:)
       logical, save, allocatable :: riparian(:,:)
 C   Local for run section
       real, save :: DT, XKAREA, sbar_norm, sat_head, rate
@@ -343,6 +347,7 @@ c
       integer function topmdecl()
 
       USE WEBMOD_TOPMOD
+      USE WEBMOD_OBSHYD, ONLY: nirrig_ext, nirrig_int, nobs
       IMPLICIT NONE
 
 
@@ -355,12 +360,12 @@ c
         if ( nac.eq.-1 ) return
       nxkbin = getdim('nxkbin')
         if ( nxkbin.eq.-1 ) return
-      nobs = getdim('nobs')
-        if ( nobs.eq.-1 ) return
+c      nobs = getdim('nobs')
+c        if ( nobs.eq.-1 ) return
       ngw_ext = getdim('ngw_ext')
         if ( ngw_ext.eq.-1 ) return
-      nirrig_int = getdim('nirrig_int')
-        if ( nirrig_int.eq.-1 ) return
+c      nirrig_int = getdim('nirrig_int')
+c        if ( nirrig_int.eq.-1 ) return
 
 
       Topmdecl = 1
@@ -687,8 +692,9 @@ c A maximum of 2 sources can be defined for each MRU. This could be
 c a leaky irrigation canal crossing the MRU and/or regional groundwater
 c influx.
 c
-      ALLOCATE (sched_gw1(Nmru))
-      if(declparam('topc', 'sched_gw1', 'nmru', 'integer',
+      if(ngw_ext.ne.0) then
+        ALLOCATE (sched_gw1(Nmru))
+        if(declparam('topc', 'sched_gw1', 'nmru', 'integer',
      +   '0','bounded', 'ngw_ext',
      +   'Index of time series describing ground water inputs into '//
      $   'the MRU from the 1st gw source outside the basin; 0 if none',
@@ -696,8 +702,8 @@ c
      $   'the MRU from the 1st gw source outside the basin; 0 if none',
      +   'none').ne.0) return 
 
-      ALLOCATE (sched_gw2(Nmru))
-      if(declparam('topc', 'sched_gw2', 'nmru', 'integer',
+        ALLOCATE (sched_gw2(Nmru))
+        if(declparam('topc', 'sched_gw2', 'nmru', 'integer',
      +   '0','bounded', 'ngw_ext',
      +   'Index of time series describing ground water inputs into '//
      $   'the MRU from the 2nd gw source outside the basin; 0 if none',
@@ -705,8 +711,8 @@ c
      $   'the MRU from the 2nd gw source outside the basin; 0 if none',
      +   'none').ne.0) return 
 
-      ALLOCATE (gwbnd_len1(Nmru))
-      if(declparam('topc', 'gwbnd_len1', 'nmru', 'real',
+        ALLOCATE (gwbnd_len1(Nmru))
+        if(declparam('topc', 'gwbnd_len1', 'nmru', 'real',
      +   '0','0', '1000000',
      +   'Length of MRU cross-section receiving ground water influx'//
      $   ' from 1st gw source outside the basin',
@@ -714,20 +720,23 @@ c
      $   ' from 1st gw source outside the basin',
      +   'meters').ne.0) return 
 
-      ALLOCATE (gwbnd_len2(Nmru))
-      if(declparam('topc', 'gwbnd_len2', 'nmru', 'real',
+        ALLOCATE (gwbnd_len2(Nmru))
+        if(declparam('topc', 'gwbnd_len2', 'nmru', 'real',
      +   '0','0', '1000000',
      +   'Length of MRU cross-section receiving ground water influx'//
      $   ' from 2nd gw source outside the basin',
      +   'Length of MRU cross-section receiving ground water influx'//
      $   ' from 2nd gw source outside the basin',
      +   'meters').ne.0) return 
+
+      endif
 c
 c irrig_int_max is the maximum discharge rate for a pump placed in
 c a well or stream providing irrigation to an MRU
 c
-      ALLOCATE (irrig_int_max(Nmru))
-      if(declparam('topc', 'irrig_int_max', 'nmru', 'real',
+      if(nirrig_int.ne.0) then
+        ALLOCATE (irrig_int_max(Nmru))
+        if(declparam('topc', 'irrig_int_max', 'nmru', 'real',
      +   '100','0.', '1000000',
      +   'Maximum discharge rate for a pump placed in a well or '//
      $   'stream to provide irrigation to an MRU',
@@ -741,30 +750,32 @@ c If irrigation is received from a well or stream internal
 c to the basin, then the irrigation schedule describing the depths to be
 c applied during the subsequent time period is recorded in irrig_sched_int.
 c
-      ALLOCATE (irrig_int_src(Nmru))
-      if(declparam('precip', 'irrig_int_src', 'nmru', 'integer',
-     +   '0', '0', '100',
-     +   ' 0 Irrigation from well in MRU; '//
-     $   '>0 Drainage segment ID that will provide irrigation water',
-     +   ' 0 Irrigation from well in MRU; '//
-     $   '>0 Drainage segment ID that will provide irrigation water',
-     +   'none')
-     +   .ne.0) return 
+c        ALLOCATE (irrig_int_src(Nmru))
+c        if(declparam('precip', 'irrig_int_src', 'nmru', 'integer',
+c     +   '0', '0', '100',
+c     +   ' 0 Irrigation from well in MRU; '//
+c     $   '>0 Drainage segment ID that will provide irrigation water',
+c     +   ' 0 Irrigation from well in MRU; '//
+c     $   '>0 Drainage segment ID that will provide irrigation water',
+c     +   'none')
+c     +   .ne.0) return 
 
-      ALLOCATE (irrig_sched_int(Nmru))
-      if(declparam('precip', 'irrig_sched_int', 'nmru', 'integer',
-     +   '0', '0', '100',
-     +   'Index of internal irrigation schedule for MRU; 0 if none',
-     +   'Index of internal irrigation schedule for MRU; 0 if none',
-     +   'none').ne.0) return
+c        ALLOCATE (irrig_sched_int(Nmru))
+c        if(declparam('precip', 'irrig_sched_int', 'nmru', 'integer',
+c     +   '0', '0', '100',
+c     +   'Index of internal irrigation schedule for MRU; 0 if none',
+c     +   'Index of internal irrigation schedule for MRU; 0 if none',
+c     +   'none').ne.0) return
 
-      ALLOCATE (irrig_int_init(Nmru))
-      if(declparam('precip', 'irrig_int_init', 'nmru', 'real',
-     + '0', '0', '100',
-     + 'Irrigation from an internal source to be applied on first day',
-     + 'Irrigation from an internal source to be applied on first day',
-     + 'inches').ne.0) return
+c        ALLOCATE (irrig_int_init(Nmru))
+c        if(declparam('precip', 'irrig_int_init', 'nmru', 'real',
+c     + '0', '0', '100',
+c     + 'Irrigation from an internal source to be applied on first day',
+c     + 'Irrigation from an internal source to be applied on first day',
+c     + 'inches').ne.0) return
 
+      endif
+      
       ALLOCATE (srzwet(nac,Nmru))
       if(declvar('topc', 'srzwet', 'nac,nmru', nac*nmru, 'real', 
      + 'depth of water transferred from the ground water to the '//
@@ -804,10 +815,12 @@ c
      + 'for input into the TOPMOD routines.',
      +  'meters',p).ne.0) return
 
-      if(declvar('topc', 'runoffm', 'one', 1, 'real', 
-     + 'Observed discharge in metric units'//
-     + ' for comparing with predicted flows',
-     +  'meters',runoffm).ne.0) return
+      if(nobs.ne.0) then
+        if(declvar('topc', 'runoffm', 'one', 1, 'real', 
+     +   'Observed discharge in metric units'//
+     +   ' for comparing with predicted flows',
+     +   'meters',runoffm).ne.0) return
+      end if
 
       if(declvar('topc', 'precipm', 'one', 1, 'real', 
      + 'Observed precipitation in metric units '//
@@ -1001,11 +1014,13 @@ c     +   'fraction') .ne.0) return
      +   'with the saturated zone',
      +   'fraction') .ne.0) return
 
-      if(declparam('topc', 'qobsta', 'one', 'integer',
+      if(nobs.ne.0) then
+        if(declparam('topc', 'qobsta', 'one', 'integer',
      +   '1', 'bounded', 'nobs',
      +   'Index of streamflow station for calculating '//
      +   'objective function.','Index of streamflow station '//
      +   'for calculating objective function.','none').ne.0) return
+      end if
 
 c
 c The following 10 parameters, enable volume calculations and soil moisture
@@ -1255,7 +1270,7 @@ c
 
       allocate(riparian_thresh(nmru))
       if(declparam('topc', 'riparian_thresh', 'nmru',
-     +   'real','10.0', '1.0', '40.0',
+     +   'real','10.0', '1.0', '1000.0',
      +   'TTI bins wetter than this value are riparian',
      +   'TTI bins wetter than this value are riparian; '//
      +   'TTI bins drier than this value are upslope.',
@@ -1350,7 +1365,7 @@ c
        ALLOCATE (psoilmru(Nmru))
        ALLOCATE (potet(Nmru))
        ALLOCATE (QOBS(Nobs))
-       ALLOCATE (irrig_int_next(nirrig_int))
+c       ALLOCATE (irrig_int_next(nirrig_int))
        ALLOCATE (gw_ext(Ngw_ext))
        ALLOCATE (irrig_sat_mru(Nmru))
        ALLOCATE (intcp_evap(Nmru))
@@ -1371,6 +1386,8 @@ c
 
       USE WEBMOD_TOPMOD
       USE WEBMOD_IO, ONLY : topout
+      USE WEBMOD_OBSHYD, ONLY: nobs,nirrig_int, nirrig_ext
+      USE WEBMOD_IRRIG, ONLY: irrig_int_src, irrig_int_init
       IMPLICIT NONE
       
       logical acflag
@@ -1406,18 +1423,19 @@ c     * form='formatted', status='new')
       if(getparam('topc', 'dtinit', 1 , 'real', dtinit)
      +   .ne.0) return
 
-      if(getparam('topc', 'sched_gw1', nmru , 'integer', sched_gw1)
+      if(ngw_ext.ne.0) then
+          if(getparam('topc', 'sched_gw1', nmru , 'integer', sched_gw1)
      +   .ne.0) return
            
-      if(getparam('topc', 'sched_gw2', nmru , 'integer', sched_gw2)
+          if(getparam('topc', 'sched_gw2', nmru , 'integer', sched_gw2)
      +   .ne.0) return
            
-      if(getparam('topc', 'gwbnd_len1', nmru , 'real', gwbnd_len1)
+          if(getparam('topc', 'gwbnd_len1', nmru , 'real', gwbnd_len1)
      +   .ne.0) return
            
-      if(getparam('topc', 'gwbnd_len2', nmru , 'real', gwbnd_len2)
+          if(getparam('topc', 'gwbnd_len2', nmru , 'real', gwbnd_len2)
      +   .ne.0) return
-           
+      endif     
       DT = dtinit
       
       if(getparam('intcp', 'cov_type', nmru, 'integer', cov_type)
@@ -1505,21 +1523,25 @@ c$$$
       if(getparam('topc', 'sbar0', nmru, 'real', SBAR0)
      +   .ne.0) return
 
-      if(getparam('topc', 'qobsta', 1, 'integer', qobsta)
+      if(nobs.ne.0) then
+        if(getparam('topc', 'qobsta', 1, 'integer', qobsta)
      +   .ne.0) return
+      end if
 
-      if(getparam('precip', 'irrig_int_src', nmru, 'integer',
-     $     irrig_int_src).ne.0) return
+c      if(getparam('precip', 'irrig_int_src', nmru, 'integer',
+c     $     irrig_int_src).ne.0) return
 
-      if(getparam('precip', 'irrig_int_init', nmru, 'real',
-     $     irrig_int_init).ne.0) return
+c      if(getparam('precip', 'irrig_int_init', nmru, 'real',
+c     $     irrig_int_init).ne.0) return
 
-      if(getparam('precip', 'irrig_sched_int', nmru, 'integer',
-     $     irrig_sched_int).ne.0) return
+c      if(getparam('precip', 'irrig_sched_int', nmru, 'integer',
+c     $     irrig_sched_int).ne.0) return
 
-      if(getparam('topc', 'irrig_int_max', nmru, 'real',
+      if(nirrig_int.ne.0) then
+        if(getparam('topc', 'irrig_int_max', nmru, 'real',
      $     irrig_int_max).ne.0) return
-
+      endif
+              
       if(getparam('topc', 'infex', 1, 'integer', INFEX)
      +   .ne.0) return
 
@@ -1898,10 +1920,12 @@ c If there is an amount of initial irrigation from a shallow well in this
 c MRU then increase the amount of available water (decrease SBAR) in the
 c saturated zone by that amount.
 c
+      if(nirrig_int.ne.0) then
          if(irrig_int_init(is).ne.0.0 .and.
      $        irrig_int_src(is).eq.0)
      $        sbar0(is) = sbar0(is) -
      $        (irrig_int_init(is)*inch2m)
+      end if 
 c
 c SBAR0 cannot be less that zero
 c
@@ -2017,7 +2041,10 @@ c
 
       USE WEBMOD_TOPMOD
       USE WEBMOD_IO, only: topout, debug, xdebug_start, xdebug_stop
-      USE WEBMOD_OBSHYD, ONLY: datetime 
+      USE WEBMOD_OBSHYD, ONLY: datetime, nirrig_ext, 
+     * nirrig_int, irrig_int_next, runoff, nobs
+      USE WEBMOD_IRRIG, ONLY: irrig_int_src,irrig_sched_int
+c      USE WEBMOD_OBSHYD, ONLY: datetime 
       implicit none
 
 C***  local variables
@@ -2054,11 +2081,13 @@ C***  local variables
       if(getvar('obs', 'potet', nmru, 'real', potet)
      +   .ne.0) return
 
-      if(getvar('obs', 'runoff', nobs, 'real', QOBS)
-     +   .ne.0) return
+c      if(getvar('obs', 'runoff', nobs, 'real', QOBS)
+c     +   .ne.0) return
 
-      if(getvar('obs', 'irrig_int_next', nirrig_int, 'real',
-     $     irrig_int_next).ne.0) return
+c      if(nirrig_int.gt.0) then
+c        if(getvar('obs', 'irrig_int_next', nirrig_int, 'real',
+c     $     irrig_int_next).ne.0) return
+c      endif
 
       if(getvar('obs', 'gw_ext', Ngw_ext, 'real',
      $     gw_ext).ne.0) return
@@ -2126,8 +2155,9 @@ c
 c     Calculate metric equivalents of runoff and precip to facilitate
 c     comparison with the predicted flow paths.
 c
-
-      runoffm = qobs(qobsta)*DT/basin_area/9809.63
+      if(nobs.ne.0) then
+        runoffm = qobs(qobsta)*DT/basin_area/9809.63
+      end if
       precipm = pobs * .0254
 
 
@@ -2624,44 +2654,51 @@ c decreased pumping capacity in depleted surface-water aquifers. Use
 c the readily drainable soil porosity for estimating the maximum
 c drawdown
 c
-      irrsched = irrig_sched_int(is)
-      if(irrsched.gt.0) then    ! internal irrigation source present
-         irrsrc = irrig_int_src(is)
-         if(irrsrc.eq.0) then   ! saturated zone is source of internal irrigation
-            pump_coeff = sqrt(1.-sbar_norm**2)
-            irrig_dep_max = pump_coeff*irrig_int_max(is)*
+      if(nirrig_int.ne.0) then
+          irrsched = irrig_sched_int(is)
+          if(irrsched.gt.0) then    ! internal irrigation source present
+             irrsrc = irrig_int_src(is)
+             if(irrsrc.eq.0) then   ! saturated zone is source of internal irrigation
+                pump_coeff = sqrt(1.-sbar_norm**2)
+                irrig_dep_max = pump_coeff*irrig_int_max(is)*
      $           gpm2m3ph/sc_area(is)/1e6/inch2m*dt ! max inches per time step
-            if(irrig_int_next(irrsched).le.irrig_dep_max) then
-               irrig_sat_next(is) = irrig_int_next(irrsched)
-            else
-               irrig_sat_next(is) = irrig_dep_max
-               if(irr_warn.eq.0) then
-                  print*,'Irrigation rate reduced because of limited'//
+                if(irrig_int_next(irrsched).le.irrig_dep_max) then
+                   irrig_sat_next(is) = irrig_int_next(irrsched)
+                else
+                   irrig_sat_next(is) = irrig_dep_max
+                 if(irr_warn.eq.0) then
+                   print*,'Irrigation rate reduced because of limited'//
      $                 ' pumping capacity on time step', nstep,
      $                 ' for MRU ',is
-                  print*,' This warning will not be repeated'
-                  irr_warn = 1
-               end if
-            end if
-         else
-            irrig_sat_next(is) = 0.0
-         end if
-      end if
+                      print*,' This warning will not be repeated'
+                      irr_warn = 1
+                 end if
+                end if
+             else
+                irrig_sat_next(is) = 0.0
+             end if
+          end if
+      else
+          irrig_sat_next(is) = 0.0
+      endif
+      
 c
 c Add groundwater influx from external sources
 c
       gw_in1(is)=0.0
       gw_in2(is)=0.0
-      gwsched=sched_gw1(is)
-      if(gwsched.ne.0) then
-         gw_in1(is) = gw_ext(gwsched)*qlin2dep*gwbnd_len1(is)*
+      if(ngw_ext.ne.0) then
+          gwsched=sched_gw1(is)
+          if(gwsched.ne.0) then
+             gw_in1(is) = gw_ext(gwsched)*qlin2dep*gwbnd_len1(is)*
      $        dt/sc_area(is)
-      end if
-      gwsched=sched_gw2(is)
-      if(gwsched.ne.0) then
-         gw_in2(is) = gw_ext(gwsched)*qlin2dep*gwbnd_len2(is)*
+          end if
+          gwsched=sched_gw2(is)
+          if(gwsched.ne.0) then
+             gw_in2(is) = gw_ext(gwsched)*qlin2dep*gwbnd_len2(is)*
      $        dt/sc_area(is)
-      end if
+          end if
+      endif
 
 C  CALCULATE SATURATED ZONE DRAINAGE
 c

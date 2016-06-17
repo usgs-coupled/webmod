@@ -28,10 +28,10 @@
       INTEGER, EXTERNAL :: basin_topg
       INTEGER, EXTERNAL :: obs_chem
       INTEGER, EXTERNAL :: obs_webmod
-      INTEGER, EXTERNAL :: obs_webx
+c      INTEGER, EXTERNAL :: obs_webx
       INTEGER, EXTERNAL :: temp_1sta_prms
       INTEGER, EXTERNAL :: precip_web
-      INTEGER, EXTERNAL :: xyz_dist_web
+c      INTEGER, EXTERNAL :: xyz_dist_web
       INTEGER, EXTERNAL :: irrig_web
       INTEGER, EXTERNAL :: ccsolrad_web
       INTEGER, EXTERNAL :: potet_hamon_prms
@@ -55,10 +55,9 @@
 
         PRINT *, 'The following modules are included in WEBMOD_1.0:'
         PRINT *, ' io.f, soltab_prms, basin_topg, obs_chem, obs_webmod,'
-        PRINT *, ' obs_webx, temp_1sta_prms, precip_web,xyz_dist_dist,'
-        PRINT *, ' irrig_web, ccsolrad_web, potet_hamon_prms'
-        PRINT *, ' intcp_prms, nwsmelt_topg, topmod_chem '
-        PRINT *, ' top2clark, route_clark, webmod_res, '
+        PRINT *, ' temp_1sta_prms, precip_web, irrig_web, ccsolrad_web,'
+        PRINT *, ' potet_hamon_prms, intcp_prms, nwsmelt_topg,'
+        PRINT *, ' topmod_chem, top2clark, route_clark, webmod_res,'
         PRINT *, ' phreeq_mms, web_sum.f'
 
         call_modules = declmodule(
@@ -120,8 +119,8 @@
         call_modules = obs_webmod(Arg)
         call_modules = temp_1sta_prms(Arg)
         call_modules = precip_web(Arg)
-        call_modules = obs_webx(Arg)
-        call_modules = xyz_dist_web(Arg)
+c        call_modules = obs_webx(Arg)
+c        call_modules = xyz_dist_web(Arg)
         call_modules = irrig_web(Arg)
         call_modules = ccsolrad_web(Arg)
         call_modules = potet_hamon_prms(Arg)
@@ -163,36 +162,22 @@
         RETURN
       ENDIF
 
-      IF(Climate_dist.EQ.1) THEN
-            call_modules = obs_webmod(Arg)
-            IF ( call_modules.NE.0 ) THEN
-             PRINT 9001, 'obs_webmod', Arg, call_modules
-             RETURN
-            ENDIF
-            call_modules = temp_1sta_prms(Arg)
-            IF ( call_modules.NE.0 ) THEN
-             PRINT 9001, 'temp_1sta_prms', Arg, call_modules
-             RETURN
-            ENDIF
-            call_modules = precip_web(Arg)
-            IF ( call_modules.NE.0 ) THEN
-             PRINT 9001, 'precip_web', Arg, call_modules
-             RETURN
-            ENDIF
-      ELSEIF(Climate_dist.EQ.2) THEN
-            call_modules = obs_webx(Arg)
-            IF ( call_modules.NE.0 ) THEN
-             PRINT 9001, 'obs_webx', Arg, call_modules
-             RETURN
-            ENDIF
-            call_modules = xyz_dist_web(Arg)
-            IF ( call_modules.NE.0 ) THEN
-             PRINT 9001, 'xyz_dist_web', Arg, call_modules
-             RETURN
-            ENDIF
-      ELSE
-            PRINT 9004, Climate_dist
-            RETURN
+      call_modules = obs_webmod(Arg)
+      IF ( call_modules.NE.0 ) THEN
+       PRINT 9001, 'obs_webmod', Arg, call_modules
+       RETURN
+      ENDIF
+      
+      call_modules = temp_1sta_prms(Arg)
+      IF ( call_modules.NE.0 ) THEN
+       PRINT 9001, 'temp_1sta_prms', Arg, call_modules
+       RETURN
+      ENDIF
+      
+      call_modules = precip_web(Arg)
+      IF ( call_modules.NE.0 ) THEN
+       PRINT 9001, 'precip_web', Arg, call_modules
+       RETURN
       ENDIF
 
       call_modules = irrig_web(Arg)
@@ -424,9 +409,9 @@ c
      +   'Number of bins to calculate infiltration excess.').ne.0)
      +    return
 
-      if(declfix('nlapse', 3, MAXLAPSE,
-     +   'Number of lapse rates in X, Y, and Z directions.')
-     +    .ne.0) return
+c      if(declfix('nlapse', 3, MAXLAPSE,
+c     +   'Number of lapse rates in X, Y, and Z directions.')
+c     +    .ne.0) return
 
 
       setdims = 0

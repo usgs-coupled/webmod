@@ -33,7 +33,7 @@ c **********************************************************************
       real, save, allocatable :: solrad(:)
       real, save, allocatable :: swe(:), relhum(:)
       real, save, allocatable :: pan_evap(:)
-      
+            
       END MODULE WEBMOD_OBSHYD
 
 c **********************************************************************
@@ -80,21 +80,32 @@ c
       IMPLICIT NONE
 
       obsdecl = 1
-
+      
 !
 ! Get dimensions
 !
       nform = getdim('nform')
+        if ( nform.eq.-1 ) return
       nobs = getdim('nobs')
+        if ( nobs.eq.-1 ) return
       nsol = getdim('nsol')
+        if ( nsol.eq.-1 ) return
       nevap = getdim('nevap')
+        if ( nevap.eq.-1 ) return
       nrain = getdim('nrain')
+        if ( nrain.eq.-1 ) return
       nsnow = getdim('nsnow')
+        if ( nsnow.eq.-1 ) return
       ntemp = getdim('ntemp')
+        if ( ntemp.eq.-1 ) return
       ngw_ext = getdim('ngw_ext')
+        if ( ngw_ext.eq.-1 ) return
       nirrig_int = getdim('nirrig_int')
+        if ( nirrig_int.eq.-1 ) return
       nirrig_ext = getdim('nirrig_ext')
+        if ( nirrig_ext.eq.-1 ) return
       nhum = getdim('nhum')
+        if ( nhum.eq.-1 ) return
 
       if(declparam('obs', 'temp_units', 'one', 'integer',
      +   '1', '0', '1',
@@ -102,12 +113,14 @@ c
      +   'Units for observed temperature, 0=F, 1=C',
      +   'none').ne.0) return
 
-      ALLOCATE(runoff(nobs))
-      if(declvar('obs', 'runoff', 'nobs', nobs, 'real',
+      if(nobs.ne.0) then
+        ALLOCATE(runoff(nobs))
+        if(declvar('obs', 'runoff', 'nobs', nobs, 'real',
      +     'Observed runoff for each gage',
      +     'cfs',
      +   runoff).ne.0) return
-
+      end if
+      
       ALLOCATE(precip(nrain))
       if(declvar('obs', 'precip', 'nrain', nrain, 'real',
      +     'Observed precip at each rain gage',
@@ -124,11 +137,13 @@ c
      +  'Depth of applied irrigation from an external source',
      $  'inches', irrig_ext).ne.0) return
 
-      ALLOCATE(irrig_int_next(nirrig_int))
-      if(declvar('obs', 'irrig_int_next', 'nirrig_int', nirrig_int,
+      if(nirrig_int.gt.0) then
+        ALLOCATE(irrig_int_next(nirrig_int))
+        if(declvar('obs', 'irrig_int_next', 'nirrig_int', nirrig_int,
      $     'real', 'Depth of irrigation from an internal source '//
      $     'to apply the next day',
      $     'inches', irrig_int_next).ne.0) return
+      end if
 
       ALLOCATE(tsta_min_c(ntemp))
       if(declvar('obs', 'tsta_min_c', 'ntemp', ntemp, 'real',
@@ -255,8 +270,9 @@ c      integer nstep, datetime(6)
 
       dt = deltim()
       call dattim('now', datetime)
-
-      if(readvar('obs','runoff').ne.0) return
+      if(nobs.ne.0) then
+        if(readvar('obs','runoff').ne.0) return
+      endif
       if(readvar('obs','precip').ne.0) return
       if(nirrig_ext.gt.0) then
         if(readvar('obs','irrig_ext').ne.0) return

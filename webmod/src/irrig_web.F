@@ -20,8 +20,9 @@ c
 #include "fmodules.inc"
 
 C   Dimensions
-      integer, save :: nmru, nirrig_ext, nirrig_int
-      integer, save :: nhydro, nmonths, nform
+c      integer, save :: nmru, nirrig_ext, nirrig_int
+c      integer, save :: nhydro, nmonths, nform
+      integer, save :: nmru, nhydro, nmonths, nform
       
 C   Declared Variables
       real, save :: basin_irr_ext,basin_irr_sat, basin_irr_hyd
@@ -45,12 +46,13 @@ C   Declared Private Variables
 
 C   Undeclared Static Variables gotten from from other modules
       integer, save :: clark_segs
-      real, save, allocatable :: irrig_ext(:), irrig_sat_next(:)
+c      real, save, allocatable :: irrig_ext(:), irrig_sat_next(:)
+c      real, save, allocatable :: irrig_sat_next(:)
       real, save, allocatable :: mru_dep(:), mru_ppt(:), mru_rain(:)
       real, save, allocatable :: mru_snow(:),newsnow(:)
       integer, save, allocatable ::  prmx(:), pptmix(:)
       integer, save ::  form_data(1)
-      double precision, save, allocatable :: irrig_hyd_next(:)
+c      double precision, save, allocatable :: irrig_hyd_next(:)
       double precision, save, allocatable :: irrig_hyd_seg_next(:)
       real, save, allocatable :: tmax_c(:), tmin_c(:)
 
@@ -65,6 +67,7 @@ c
       integer function irrdecl()
 
       USE WEBMOD_IRRIG
+      USE WEBMOD_OBSHYD, ONLY: nirrig_ext, nirrig_int
       IMPLICIT NONE
 
       irrdecl = 1
@@ -77,10 +80,10 @@ c
         if ( nform.eq.-1 ) return
       nmonths = getdim('nmonths')
         if ( nmonths.eq.-1 ) return
-      nirrig_ext = getdim('nirrig_ext')
-        if ( nirrig_ext.eq.-1 ) return
-      nirrig_int = getdim('nirrig_int')
-        if ( nirrig_int.eq.-1 ) return
+c      nirrig_ext = getdim('nirrig_ext')
+c        if ( nirrig_ext.eq.-1 ) return
+c      nirrig_int = getdim('nirrig_int')
+c        if ( nirrig_int.eq.-1 ) return
 
        if(declpri('irrig_step1', 1, 'integer', step1) .ne. 0) return
 
@@ -164,16 +167,24 @@ c
      +   'Monthly factor to adjust rain proportion in a mixed '//
      +   'rain/snow event',
      +   'none').ne.0) return
-
-      ALLOCATE (irrig_sched_ext(Nmru))
-      if(declparam('irrig', 'irrig_sched_ext', 'nmru', 'integer',
+c
+c  Hide if nirrig_ext = 0
+c
+      if(nirrig_ext.ne.0) then
+        ALLOCATE (irrig_sched_ext(Nmru))
+        if(declparam('irrig', 'irrig_sched_ext', 'nmru', 'integer',
      +   '0',  '0', '100',
      +   'Index of external irrigation schedule for MRU; 0 if none',
      +   'Index of external irrigation schedule for MRU; 0 if none',
      +   'none').ne.0) return
-
-      ALLOCATE (irrig_sched_int(Nmru))
-      if(declparam('irrig', 'irrig_sched_int', 'nmru', 'integer',
+      endif
+     
+c
+c Begin hide if nirrig_int=0
+c
+      if(nirrig_int.ne.0) then
+        ALLOCATE (irrig_sched_int(Nmru))
+        if(declparam('irrig', 'irrig_sched_int', 'nmru', 'integer',
      +   '0', '0', '100',
      +   'Index of internal irrigation schedule for MRU; 0 if none',
      +   'Index of internal irrigation schedule for MRU; 0 if none',
@@ -183,8 +194,8 @@ c If there is an internal irrigation schedule for an MRU (irrig_sched_int>0),
 c then irrig_int_src indicates if the MRU has recieves irrigations from a
 c well in the MRU (value=0), or a stream segment (value > 0).
 c
-      ALLOCATE (irrig_int_src(Nmru))
-      if(declparam('irrig', 'irrig_int_src', 'nmru', 'integer',
+        ALLOCATE (irrig_int_src(Nmru))
+        if(declparam('irrig', 'irrig_int_src', 'nmru', 'integer',
      +   '0', '0', '100',
      +   ' 0 Irrigation from well in MRU; '//
      $   '>0 Drainage segment ID that will provide irrigation water',
@@ -193,13 +204,17 @@ c
      +   'none')
      +   .ne.0) return 
 
-      ALLOCATE (irrig_int_init(Nmru))
-      if(declparam('irrig', 'irrig_int_init', 'nmru', 'real',
-     + '0', '0', '100',
-     + 'Irrigation from an internal source to be applied on first day',
-     + 'Irrigation from an internal source to be applied on first day',
-     + 'inches').ne.0) return
+          ALLOCATE (irrig_int_init(Nmru))
+          if(declparam('irrig', 'irrig_int_init', 'nmru', 'real',
+     +   '0', '0', '100',
+     +  'Irrigation from an internal source to be applied on first day',
+     +  'Irrigation from an internal source to be applied on first day',
+     +   'inches').ne.0) return
 
+      endif
+c
+c End hide if nirrig_int=0
+c
       ALLOCATE (mru_area(Nmru))
       if(declparam('basin', 'mru_area', 'nmru', 'real',
      +   '1.0', '0.01', '1e+09',
@@ -215,11 +230,11 @@ c
      +   'none').ne.0) return
 
 
-      ALLOCATE(irrig_ext(nirrig_ext), irrig_sat_next(nmru)) 
+c      ALLOCATE(irrig_ext(nirrig_ext), irrig_sat_next(nmru)) 
       ALLOCATE(mru_dep(nmru), mru_ppt(nmru), mru_rain(nmru))
       ALLOCATE(mru_snow(nmru),newsnow(nmru))
       ALLOCATE(prmx(nmru), pptmix(nmru))
-      ALLOCATE(irrig_hyd_next(nmru))
+c      ALLOCATE(irrig_hyd_next(nmru))
       ALLOCATE(irrig_hyd_seg_next(nhydro))
       ALLOCATE(tmax_c(nmru), tmin_c(nmru))
 
@@ -236,6 +251,7 @@ c
       integer function irrinit()
 
       USE WEBMOD_IRRIG
+      USE WEBMOD_OBSHYD, ONLY: nirrig_ext, nirrig_int
       IMPLICIT NONE
 
       irrinit = 1
@@ -251,18 +267,24 @@ c
 
       if(getparam('precip', 'adjmix_rain', nmonths, 'real',
      +   adjmix_rain).ne.0) return
-
-      if(getparam('precip', 'irrig_sched_ext', nmru, 'integer',
+c
+c Hide params if external or internal irrigation is not present
+c
+      if(nirrig_ext.ne.0) then
+        if(getparam('precip', 'irrig_sched_ext', nmru, 'integer',
      $     irrig_sched_ext).ne.0) return
+      endif
 
-      if(getparam('precip', 'irrig_sched_int', nmru, 'integer',
+      if(nirrig_int.ne.0) then
+        if(getparam('precip', 'irrig_sched_int', nmru, 'integer',
      $     irrig_sched_int).ne.0) return
 
-      if(getparam('precip', 'irrig_int_src', nmru, 'integer',
+        if(getparam('precip', 'irrig_int_src', nmru, 'integer',
      $     irrig_int_src).ne.0) return
 
-      if(getparam('precip', 'irrig_int_init', nmru, 'integer',
+        if(getparam('precip', 'irrig_int_init', nmru, 'integer',
      $     irrig_int_init).ne.0) return
+      endif
 
       if(getparam('basin', 'mru_area', nmru, 'real',
      $     mru_area) .ne.0) return
@@ -285,8 +307,11 @@ c
 
       integer function irrrun()
 
-      USE WEBMOD_IRRIG
       USE WEBMOD_IO, ONLY: nowtime
+      USE WEBMOD_OBSHYD, ONLY: nirrig_ext, nirrig_int, irrig_ext
+      USE WEBMOD_IRRIG
+      USE WEBMOD_TOPMOD, ONLY: irrig_sat_next
+      USE WEBMOD_ROUTE, ONLY: irrig_hyd_next
       IMPLICIT NONE
 
       integer i, jday, mo
@@ -325,22 +350,22 @@ c
 c
 c Get irrigation amounts
 c
-      if (nirrig_ext.gt.0) then
-         if(getvar('obs', 'irrig_ext', nirrig_ext, 'real', irrig_ext)
-     +        .ne.0) return
-      end if
+c      if (nirrig_ext.gt.0) then
+c         if(getvar('obs', 'irrig_ext', nirrig_ext, 'real', irrig_ext)
+c     +        .ne.0) return
+c      end if
 
-      if(getvar('topc', 'irrig_sat_next', nmru, 'real',
-     +    irrig_sat_next).ne.0) return
+c      if(getvar('topc', 'irrig_sat_next', nmru, 'real',
+c     +    irrig_sat_next).ne.0) return
 
-      if(getvar('routec', 'irrig_hyd_next', nmru, 'real',
-     +    irrig_hyd_next).ne.0) return
+c      if(getvar('routec', 'irrig_hyd_next', nmru, 'real',
+c     +    irrig_hyd_next).ne.0) return
 
       if(getvar('routec', 'clark_segs', 1, 'integer',
      +    clark_segs).ne.0) return
 
-      if(getvar('routec', 'irrig_hyd_seg_next', nhydro, 'double',
-     +    irrig_hyd_seg_next).ne.0) return
+c      if(getvar('routec', 'irrig_hyd_seg_next', nhydro, 'double',
+c     +    irrig_hyd_seg_next).ne.0) return
 
       if(nform.gt.0) then
         if(getvar('obs', 'form_data', nform, 'integer', form_data)
@@ -378,6 +403,7 @@ c Initialize internal irrigation (from wells or streams internal to the watershe
       if(step1.eq.1) then
          
          do i=1,nmru
+           if(nirrig_int.ne.0) then
             iint = irrig_sched_int(i)
             isrc = irrig_int_src(i)
             if(iint.ge.1) then
@@ -392,57 +418,66 @@ c Initialize internal irrigation (from wells or streams internal to the watershe
                   irrig_sat_next(i) = 0.0
                end if
             end if
+           else
+            irrig_sat_next(i)=0.0
+            irrig_hyd_next(i)=0.0
+           endif
          end do
          step1 = 0
       end if
-
 
       do 1000 i = 1,nmru
 
         irrig_frac_ext(i) = -0.1
         irrig_frac_sat(i) = -0.1
         irrig_frac_hyd(i) = -0.1
-        
-        iext = irrig_sched_ext(i)
 
-        if(iext.eq.0) then
-           irrig_ext_mru(i) = 0
-        else if (iext.gt.0) then
-           irrig_ext_mru(i) = irrig_ext(iext)
-        else
-           print*,'Irrig_sched_ext must be equal to  or '//
+        if(nirrig_ext.ne.0)then
+            iext = irrig_sched_ext(i)
+
+            if(iext.eq.0) then
+               irrig_ext_mru(i) = 0
+            else if (iext.gt.0) then
+               irrig_ext_mru(i) = irrig_ext(iext)
+            else
+               print*,'Irrig_sched_ext must be equal to  or '//
      $          'greater than zero. The value for MRU',i,' is ',iext
-           return
-        end if
-
+               return
+            end if
+        else
+          irrig_ext_mru(i) = 0
+        endif
+        if(nirrig_int.ne.0) then
         iint = irrig_sched_int(i)
         isrc = irrig_int_src(i)
 
-        if(iint.eq.0) then
-           irrig_sat_mru(i) = 0
-           irrig_hyd_mru(i) = 0
-        else if(iint.gt.0) then
-           if(isrc.eq.0) then
-              irrig_sat_mru(i) = irrig_sat_next(i)
-              irrig_hyd_mru(i) = 0
-           else if(isrc.gt.0) then
-              irrig_hyd_mru(i) = irrig_hyd_next(i)
-              irrig_hyd_seg(isrc) = irrig_hyd_seg(isrc) +
+            if(iint.eq.0) then
+               irrig_sat_mru(i) = 0
+               irrig_hyd_mru(i) = 0
+            else if(iint.gt.0) then
+               if(isrc.eq.0) then
+                  irrig_sat_mru(i) = irrig_sat_next(i)
+                  irrig_hyd_mru(i) = 0
+               else if(isrc.gt.0) then
+                  irrig_hyd_mru(i) = irrig_hyd_next(i)
+                  irrig_hyd_seg(isrc) = irrig_hyd_seg(isrc) +
      $             (irrig_hyd_mru(i)*inch2m*mru_area(i)*
      $             a_million)
-              irrig_sat_mru(i) = 0
-           else
-              print*,'Irrig_int_src for MRU ',i ,'must be '//
+                  irrig_sat_mru(i) = 0
+               else
+                  print*,'Irrig_int_src for MRU ',i ,'must be '//
      $             'greater than or equal to zero. '//
      $             'The value for MRU ',i,' is ',irrig_int_src(i)
-           print*,'Run terminated '
-              return
-           end if
+               print*,'Run terminated '
+                  return
+               end if
+            else
+               print*,'Irrig_sched_int must be equal to or '//
+     $        'greater than zero. The value for MRU',i,' is ',iint
+               print*,'Run terminated '
+               return
+            end if
         else
-           print*,'Irrig_sched_int must be equal to or '//
-     $          'greater than zero. The value for MRU',i,' is ',iint
-           print*,'Run terminated '
-           return
         end if
 
         dep = mru_ppt(i) + irrig_ext_mru(i)+irrig_sat_mru(i)+
