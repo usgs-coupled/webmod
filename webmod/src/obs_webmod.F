@@ -148,7 +148,7 @@ c
 
       if(nirrig_ext.gt.0) then
         ALLOCATE(irrig_ext(nirrig_ext))
-        if(declvar('obs', 'irrig_ext', 'nirrig_ext', nirrig_ext, 'real',
+        if(declvar('obs','irrig_ext','nirrig_ext',nirrig_ext,'real',
      +  'Depth of applied irrigation from an external source',
      $  'inches', irrig_ext).ne.0) return
       endif
