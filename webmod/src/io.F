@@ -27,7 +27,7 @@ c***********************************************************************
 !      integer, SAVE:: topout_file_unit, chemout_file_unit, phreeqout ! standard output, in addition to MMS files *.out, *.statvar, etc
       integer, save:: endper, yrdays, modays(12),nowtime(6)
       data nowtime/6*0/
-      integer, save:: xdebug_start, xdebug_stop
+      integer, save:: xdebug_start, xdebug_stop, chem_sim
       integer, save, allocatable :: vse_lun(:) ! LUNs for volume, solute, and entitity files
       integer, save:: print_vse, nf  ! In addition to the four standard files, additional detailed files
                                       ! may be output: nf files include volume files output in webmod_res and 
@@ -164,7 +164,8 @@ c
       IMPLICIT NONE
 !!      INTEGER, EXTERNAL :: getoutname
       INTEGER, EXTERNAL ::open_res_files
-      integer ret, chem_sim, nmru, nac, nhydro
+      integer ret, nmru, nac, nhydro
+c      integer ret, chem_sim, nmru, nac, nhydro
       logical filflg
 
 c End-period variables

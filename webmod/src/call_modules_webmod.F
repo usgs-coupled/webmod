@@ -359,7 +359,7 @@ c
 !     +   'Number of wind velocity stations').ne.0) return
 
       if(decldim('nhum', 1, MAXHUM,
-     +   'Number of relative humidity stations').ne.0) return
+     +   'Number of relative humidity stations. ').ne.0) return
 !
 !      if(decldim('npres', 1, MAXPRES,
 !     +   'Number of atmospheric pressure stations').ne.0) return

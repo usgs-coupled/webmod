@@ -221,10 +221,9 @@
       integer, save ::  clark_segs, nxkbin, nhydro
       integer, save, allocatable :: nacsc(:)
 
-!  Indices describing chemistry of irrigation and regional ground water inputs
+!  Indices describing relative humidity soure and chemistry of irrigation and regional ground water inputs
 !      integer, save, allocatable :: irrig_int_src(:), src_ext_irrig(:)
-      integer, save, allocatable :: src_ext_irrig(:)
-      integer, save, allocatable ::  src_gw1(:), src_gw2(:)
+      integer, save, allocatable :: src_ext_irrig(:), src_gw1(:), src_gw2(:)
       
 !  Initial solutions and reactants. Overwritten with solutions and reactants
 !  to be tracked for each reservoir.
@@ -638,6 +637,12 @@
 !
       integer, save, allocatable :: snow_ion_pulse(:)  ! flag to alert user of ionic pulse
       real :: percent_melt, max_factor, ion_factor   ! variables to compute pulse concentrations
+!
+! Relative humidity to assign wet-bulb tempaerature and amount of fractionation
+!
+      integer, save, allocatable :: mru_rhsta(:)  ! Point MRU to this relhum station
+      real, save, allocatable :: relhum_avg(:)   ! Average relative humidity to distribute to each MRU if no relhum obs available
+      real, save, allocatable :: relhum_mru(:)   ! Distributed relarive humidity
 ! snow_ion_factor, and snow_iso_depl are parameters to simulate the concentration of solutes and
 ! depletion of heavy isotopes in snowmelt. snowpack_D and snowpack_18O are temporary variables describing
 ! the snowpack after sublimation. That value is used to assign delta_D and delta_18O to the DI used to
@@ -745,6 +750,7 @@
       integer function phreeqmms_decl()
 
       USE WEBMOD_PHREEQ_MMS
+      USE WEBMOD_OBSHYD, ONLY : nhum
       USE WEBMOD_OBSCHEM, ONLY : n_iso
       IMPLICIT NONE
 
@@ -2786,6 +2792,29 @@
            'the chem.dat file for every time step.',&
            'none') .ne.0) return
 
+      if(nhum.gt.0) then
+        ALLOCATE (mru_rhsta(nmru))
+        if(declparam('phreeqmms', 'mru_rhsta', 'nmru', 'integer', &
+          '1', 'bounded', 'nhum',&
+          'Index of relative humidity station for MRU',&
+          'Index of relative humidity station used to compute '//&
+          'wetbulb temperature and isotopic fractionation for MRU.',&
+          'none').ne.0) return
+      else
+        ALLOCATE (relhum_avg(nmru))
+        if(declparam('phreeqmms', 'relhum_avg', 'nmru', 'real', &  ! Average rh to assign if no relhum(nhum) available
+          '.5', '0.0', '1.0',&
+          'Average observed relative humidity station for MRU',&
+          'Average observed relative humidity station used to compute '//&
+          'wetbulb temperature and isotopic fractionation for MRU.',&
+          'fraction').ne.0) return        
+      endif
+      ALLOCATE (relhum_mru(nmru))  ! distributed relative humidity
+      if(declvar('phreeqmms', 'relhum_mru', 'nmru', nmru,'real',&
+          'Average relative humidity assigned to MRU',&
+          'Average relative humidity assigned to MRU '//&
+          'to compute wetbulb temperature and isotopic fractionation for MRU.',&
+          'fraction', relhum_mru).ne.0) return
 !
 ! parameters to describe water quality of irrigation and gw influx from outside
 ! of basin boundary. A maximum of one irrigation source and two gw sources can be 
@@ -3341,6 +3370,7 @@
 !       USE IFPORT
 ! #endif
       USE WEBMOD_PHREEQ_MMS
+      USE WEBMOD_OBSHYD, ONLY : nhum
       USE WEBMOD_OBSCHEM, ONLY :phq_lut,sol_id,sol_name,n_iso,iso_list
       USE WEBMOD_IO, only: phreeqout, chemout, print_vse, chemout,nf,vse_lun, nowtime, xdebug_start, xdebug_stop, debug
       USE WEBMOD_IRRIG, ONLY: irrig_sched_ext, irrig_ext_mru, irrig_sat_mru, &
@@ -3452,6 +3482,7 @@
       dt = deltim()
       indx_rxn = 98 ! placekeeper for concentration of mixture after reactions
 
+
 !
 ! Get user defined conversion factors
 !
@@ -3542,7 +3573,17 @@
 
       if(getparam('phreeqmms', 'atmos_eq_ph', 1, 'integer',&
            atmos_eq_ph) .ne.0) return
-
+!
+! Get relative humidity values or indices
+!
+      if(nhum.eq.0) then
+        if(getparam('phreeqmms', 'relhum_avg', nmru, 'real',&
+           relhum_avg) .ne.0) return
+      else
+        if(getparam('phreeqmms', 'mru_rhsta', nmru, 'integer',&
+           mru_rhsta) .ne.0) return
+      endif          
+      
       if(nchem_ext.ne.0) then
         if(getparam('phreeqmms', 'init_soln_ext', nchem_ext,&
            'integer', init_soln_ext) .ne.0) return
@@ -6176,7 +6217,7 @@
       USE WEBMOD_PHREEQ_MMS
 !      USE WEBMOD_INTCP, ONLY : covden_win
       USE WEBMOD_IO, ONLY : phreeqout, chemout, print_vse, debug, xdebug_start, xdebug_stop
-      USE WEBMOD_OBSHYD, ONLY : relhum
+      USE WEBMOD_OBSHYD, ONLY : nhum, relhum
       USE WEBMOD_OBSCHEM, ONLY : phq_lut, sol_id, sol_name,unit_lut,&
           n_iso, iso_list,c_precip_pH,c_precipT,cconc_precipM, &
           cconc_extM,cconc_obsM,c_ext_pH,c_extT,c_obs_pH,c_obsT
@@ -6668,6 +6709,15 @@
 ! Begin MRU loop *********************************************
 
       do 10 is = 1, nmru
+!
+!
+! Distribute relative humidity
+         if(nhum.ne.0) then
+             relhum_mru(is)=relhum(mru_rhsta(is))
+         else
+             relhum_mru(is)=relhum_avg(is)
+         endif
+         
 ! Get the solution indices for tracking MRU and UZfluxes
 !
          iphrq_mru = is
@@ -6717,7 +6767,7 @@
                if(c_precipT.eq.-999.or.ppt_chem.eq.0) then
                    WRITE (line,100) 'SOLUTION_MODIFY ', src(1)
                    iresult = AccumulateLine(id, line)
-                   tempc=wetbulb(kPa(is),tmax_c(is), relhum(1)*100)
+                   tempc=wetbulb(kPa(is),tmax_c(is), relhum_mru(is)*100.)
                    if(tempc.lt.0.) tempc=0.
                    WRITE (line,120) '-temp ', tempc
                    iresult = AccumulateLine(id, line)
@@ -7174,7 +7224,7 @@
                  ison=iso_n(is)
                  isoth=iso_theta(is)
                  isofac=iso_fac(is)
-                 rh=relhum(1)
+                 rh=relhum_mru(is)
                  totvol_can = totvol - vmin_canopy(is)
 ! Rayleigh fractionation of evaporated water. Reduce volume 
                  iresult=fractionate(water,indx,evap,totvol_can,ison,isoth,isofac,rh,tempc)
@@ -7397,7 +7447,7 @@
                  ison=iso_n(is)
                  isoth=iso_theta(is)
                  isofac=iso_fac(is)
-                 rh=relhum(1)
+                 rh=relhum_mru(is)
                  iresult=fractionate(snow,indx,evap,totvol,ison,isoth,isofac,rh,tempc)  ! Rayleigh fractionation of evaporated (or sublimated) water
                  IF (iresult.NE.0) THEN
                   PRINT *, 'Errors during sublimation fractionation'
@@ -8030,7 +8080,7 @@
                  ison=iso_n(is)
                  isoth=iso_theta(is)
                  isofac=iso_fac(is)
-                 rh=relhum(1)
+                 rh=relhum_mru(is)
 !                   iresult=fractionate(water, indx,evap,totvol,ison,rh,tempc)  ! Rayleigh fractionation of evapaporated (or sublimated) water
 !                 if(srzwet(ia,is).gt.0) then ! water table is close to surface so permit fractionation
                  !if(riparian(ia,is)) then ! water table is close to surface so permit fractionation
@@ -8244,7 +8294,7 @@
                  ison=iso_n(is)
                  isoth=iso_theta(is)
                  isofac=iso_fac(is)
-                 rh=relhum(1)
+                 rh=relhum_mru(is)
                  totvol_can = totvol - vmin_canopy(is)
                  iresult=fractionate(water,indx,evap,totvol_can,ison,isoth,isofac,rh,tempc)  ! Rayleigh fractionation of evaporated water
                  IF (iresult.NE.0) THEN

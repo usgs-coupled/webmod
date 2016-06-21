@@ -106,6 +106,18 @@ c
         if ( nirrig_ext.eq.-1 ) return
       nhum = getdim('nhum')
         if ( nhum.eq.-1 ) return
+c
+c Relative humidity is required for computations of wetbulb temperature and isotopic 
+c fractionation in phreeq_mms (chem_sim=1). The value is either fixed at relhum_avg 
+c or allowed to vary daily by including relhum(nhum) in webmod.hyd.dat
+c
+      if (nhum.gt.0) then
+        ALLOCATE(relhum(nhum))
+        if(declvar('obs', 'relhum', 'nhum', nhum, 'real',
+     +   'Observed relative humidity',
+     +   'decimal fraction',
+     +   relhum).ne.0) return
+      endif
 
       if(declparam('obs', 'temp_units', 'one', 'integer',
      +   '1', '0', '1',
@@ -203,12 +215,6 @@ c
      +     'inches',
      +   swe).ne.0) return
 
-      ALLOCATE(relhum(nhum))
-      if(declvar('obs', 'relhum', 'nhum', nhum, 'real',
-     +     'Observed relative humidity',
-     +     'decimal fraction',
-     +   relhum).ne.0) return
-
       if(declvar('obs', 'form_data', 'one', 1, 'integer',
      +     'Form of precip - 0=not known, 1=snow, 2=rain',
      +     'none',
@@ -296,8 +302,9 @@ c      integer nstep, datetime(6)
       if(nsnow.gt.0) then
         if(readvar('obs','swe').ne.0) return
       endif
-
-      if(readvar('obs','relhum').ne.0) return
+      if(nhum.ne.0) then
+        if(readvar('obs','relhum').ne.0) return
+      endif
 
 c kludge to get ICRW paper out      
 c      relhum(1) = 0.34
