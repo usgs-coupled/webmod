@@ -120,12 +120,12 @@ C   Declared Variables
       real, save ::  obj_func(5),obj_func_sum(5,5)
       real, save ::  tot_basin_qsim_m3s(5),tot_basin_qobs_m3s(5)
       real, save :: last_basin_stor,last_chan_stor
-!      character(len=:), save, allocatable :: bufferclabels ! chemout buffer for labels
-!      character(len=:), save, allocatable :: buffercspan   ! chemout buffer for header and span lines
-!      character(len=:), save, allocatable :: buffercdat    ! chemout buffer for data lines
-      character(len=40000), save :: bufferclabels ! chemout buffer for labels
-      character(len=40000), save :: buffercspan   ! chemout buffer for header and span lines
-      character(len=40000), save :: buffercdat    ! chemout buffer for data lines
+      character(len=:), save, allocatable :: bufferclabels ! chemout buffer for labels
+      character(len=:), save, allocatable :: buffercspan   ! chemout buffer for header and span lines
+      character(len=:), save, allocatable :: buffercdat    ! chemout buffer for data lines
+      !character(len=40000), save :: bufferclabels ! chemout buffer for labels
+      !character(len=40000), save :: buffercspan   ! chemout buffer for header and span lines
+      !character(len=40000), save :: buffercdat    ! chemout buffer for data lines
 
       character (len=100) :: span1, spansol
 
@@ -847,15 +847,15 @@ c      integer today(3), now(3)
  
       sumbinit = 1
       
-!      if (.not. allocated(bufferclabels)) then
-!          allocate(character(len=40000) :: bufferclabels)
-!      endif      
-!      if (.not. allocated(buffercspan)) then
-!          allocate(character(len=40000) :: buffercspan)
-!      endif      
-!      if (.not. allocated(buffercdat)) then
-!          allocate(character(len=40000) :: buffercdat)
-!      endif    
+      if (.not. allocated(bufferclabels)) then
+          allocate(character(len=40000) :: bufferclabels)
+      endif      
+      if (.not. allocated(buffercspan)) then
+          allocate(character(len=40000) :: buffercspan)
+      endif      
+      if (.not. allocated(buffercdat)) then
+          allocate(character(len=40000) :: buffercdat)
+      endif    
       
       nmru = getdim('nmru')
       if(nmru.eq.-1) return
