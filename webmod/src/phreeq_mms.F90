@@ -2810,7 +2810,7 @@
           'fraction').ne.0) return        
       endif
       ALLOCATE (relhum_mru(nmru))  ! distributed relative humidity
-      if(declvar('phreeqmms', 'relhum_mru', 'nmru', nmru,'real',&
+      if(declvar('phreeqmms', 'relhum_mru', 'nmru', 'nmru','real',&
           'Average relative humidity assigned to MRU',&
           'Average relative humidity assigned to MRU '//&
           'to compute wetbulb temperature and isotopic fractionation for MRU.',&
