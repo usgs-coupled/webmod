@@ -120,9 +120,11 @@ C   Declared Variables
       real, save ::  obj_func(5),obj_func_sum(5,5)
       real, save ::  tot_basin_qsim_m3s(5),tot_basin_qobs_m3s(5)
       real, save :: last_basin_stor,last_chan_stor
+      !if Fortran 2003
       character(len=:), save, allocatable :: bufferclabels ! chemout buffer for labels
       character(len=:), save, allocatable :: buffercspan   ! chemout buffer for header and span lines
       character(len=:), save, allocatable :: buffercdat    ! chemout buffer for data lines
+      ! if not Fortran 2003. May cause stack overflow on Windows
       !character(len=40000), save :: bufferclabels ! chemout buffer for labels
       !character(len=40000), save :: buffercspan   ! chemout buffer for header and span lines
       !character(len=40000), save :: buffercdat    ! chemout buffer for data lines
@@ -846,7 +848,7 @@ c      integer today(3), now(3)
 
  
       sumbinit = 1
-      
+      ! if Fortran 2003
       if (.not. allocated(bufferclabels)) then
           allocate(character(len=40000) :: bufferclabels)
       endif      
