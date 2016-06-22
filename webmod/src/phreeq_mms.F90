@@ -2809,12 +2809,13 @@
           'wetbulb temperature and isotopic fractionation for MRU.',&
           'fraction').ne.0) return        
       endif
+
       ALLOCATE (relhum_mru(nmru))  ! distributed relative humidity
       if(declvar('phreeqmms', 'relhum_mru', 'nmru', nmru,'real',&
-          'Average relative humidity assigned to MRU',&
           'Average relative humidity assigned to MRU '//&
           'to compute wetbulb temperature and isotopic fractionation for MRU.',&
           'fraction', relhum_mru).ne.0) return
+
 !
 ! parameters to describe water quality of irrigation and gw influx from outside
 ! of basin boundary. A maximum of one irrigation source and two gw sources can be 
