@@ -20,6 +20,7 @@ c **********************************************************************
       integer, save :: temp_units, nobs, nsol
       integer, save :: ntemp, nrain, nsnow, nform, ngw_ext, nevap
       integer, save :: nirrig_ext, nirrig_int, nhum
+      logical, save :: rh_tf, sh
       integer, save :: form_data(1), datetime(6)
 
       real, save, allocatable :: runoff(:)
@@ -31,7 +32,7 @@ c **********************************************************************
       real, save, allocatable :: tsta_min_f(:), tsta_max_f(:)
       real, save, allocatable :: tsta_temp_c(:), tsta_temp_f(:)
       real, save, allocatable :: solrad(:)
-      real, save, allocatable :: swe(:), relhum(:)
+      real, save, allocatable :: swe(:), relhum(:), spechum(:)
       real, save, allocatable :: pan_evap(:)
             
       END MODULE WEBMOD_OBSHYD
@@ -108,15 +109,21 @@ c
         if ( nhum.eq.-1 ) return
 c
 c Relative humidity is required for computations of wetbulb temperature and isotopic 
-c fractionation in phreeq_mms (chem_sim=1). The value is either fixed at relhum_avg 
-c or allowed to vary daily by including relhum(nhum) in webmod.hyd.dat
+c fractionation in phreeq_mms (chem_sim=1, nsolute.ne.0). The value is derived from
+c either observations at mru_rhsta (should point to same mru_tsta) or specific
+c humidity available in grids from climate models including the Idaho data set.
 c
       if (nhum.gt.0) then
         ALLOCATE(relhum(nhum))
         if(declvar('obs', 'relhum', 'nhum', nhum, 'real',
      +   'Observed relative humidity',
-     +   'decimal fraction',
+     +   'fraction',
      +   relhum).ne.0) return
+        ALLOCATE(spechum(nhum))
+        if(declvar('obs', 'spechum', 'nhum', nhum, 'real',
+     +   'Specific humidity',
+     +   'ratio',
+     +   spechum).ne.0) return
       endif
 
       if(declparam('obs', 'temp_units', 'one', 'integer',
@@ -303,7 +310,32 @@ c      integer nstep, datetime(6)
         if(readvar('obs','swe').ne.0) return
       endif
       if(nhum.ne.0) then
-        if(readvar('obs','relhum').ne.0) return
+         rh_tf=.true.
+         sh=.true.
+         if(readvar('obs','relhum').ne.0) rh_tf=.false.
+         if(readvar('obs','spechum').ne.0) sh=.false.
+         if(rh_tf.and.sh) then
+             print*,'Both relhum and spechum found ',
+     +       'in webmod.hydro.dat. Only one allowed'
+             return
+         elseif(rh_tf.or.sh) then  ! all good, use the rh_tf flag to distribute relative humidity,
+                                !assign -99 to other variable to ensure fail if used.
+           do i=1,nhum
+               if(rh_tf) then
+                   spechum(i) = -99
+               else
+                   relhum(i) = -99
+                   if(nhum.gt.1) then
+                     print*,'Only one specific humidity field allowed'
+                     return                     
+                   endif
+               endif
+           enddo
+         else
+             print*,'Either relhum and spechum needed ',
+     +       'in webmod.hydro.dat. Neither found'
+             return
+         endif
       endif
 
 c kludge to get ICRW paper out      

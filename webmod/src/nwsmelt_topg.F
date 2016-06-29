@@ -34,7 +34,7 @@ c 06may10 - Port to Fortran 90 with module and dynamic memory
 c
 c 01mar12 - Change LIQW, SBI, SBWSI, SBAESCI, and LAGROI to internal variables to simplify initialization
 c         - Add AESCI for initial aerial extent, AESC, derived from WEI, ACUMX, SI, and ADC
-c
+c 28jun16 - Made atmospheric pressure in millibars a public static variable
 c***********************************************************************
 c 
       MODULE WEBMOD_SNOW
@@ -51,7 +51,7 @@ C   Declared Variables
       real, save, allocatable :: SNOW_EVAP(:),CHNGPCKMRU(:)
       real, save, allocatable :: SNOWMELT(:), PSOILMRU(:)
       real, save, allocatable :: TINDXI(:),PKWATER_EQUIV(:)
-      real, save, allocatable :: SNOWCOV_AREA(:)
+      real, save, allocatable :: SNOWCOV_AREA(:), PA_mb(:)
       
 C   Declared Parameters
       real, save :: BASAREA, perAREA, ALAT, tmax_allsnow_c
@@ -66,6 +66,7 @@ c      real, save, allocatable :: SBI(:),    SBAESCI(:)
       real, save, allocatable :: PLWHC(:), TIPM(:), SI(:)
       real, save, allocatable :: ADC(:)
       real, save, allocatable :: ELEV(:), MRUAREA(:)
+      real :: ELEV100M
 C
 C    Internal variables that were previously parameters but
 C    assigned here based on WEI, ACUMX, and SI to simplify initial conditions
@@ -191,7 +192,14 @@ c
      &    'Basin area-weighted average of sublimation of the snowpack',
      &    'inches',
      &   BASIN_SNOWEVAP).ne.0) return
-!
+      
+! new public static variable for atmospheric pressure
+      ALLOCATE (PA_mb(Nmru))
+      if(declvar('snow', 'PA_mb',   'nmru', nmru, 'real',
+     &    'Standard atmospheric pressure for each MRU',
+     &    'millibars',
+     &   PA_mb).ne.0) return
+
       ALLOCATE (PKWATER_EQUIV(Nmru))
       if(declvar('snow', 'pkwater_equiv','nmru', nmru, 'real',
      &    'snow-water-equivalent of snowpack for this day for each MRU',
@@ -589,6 +597,11 @@ c     &   .ne.0) return
       LIQWI(N) = 0.0
       STOREI(N) = 0.0
 !
+! Compute standard atmospheric pressure for all MRUs - RMTW
+!
+      ELEV100M = ELEV(N)*0.01  
+      PA_mb(N) = 1012.4-11.34*ELEV100M+0.00745*(ELEV100M ** 2.4) ! ATMOSPHERIC PRESSURE, in millibars
+!
 ! Establish initial point on curve using WEI, ACCMX, SI, and ADC. Assume no liquid water or storage - RMTW
 !
       AI = ACUMX(N)
@@ -676,7 +689,7 @@ c      real SCFACT
       real MFMAXT, MFMINT,  NMFT,    BASEM,   MF,     RATIO
       real NMINDEX,NMRATE,  TINDEX,  TSPM
       real RMIN,   SNEW,    RFMIN,   SFNEW
-      real UADJT,  ELEV100m, PA,     SBC,     SBCI
+      real UADJT,  PA,     SBC,     SBCI
       real WE,     NEGHS,   LIQW,    STORAGE
       real SFALL,  PXSOIL,  PACKRO,  EVAP,    DELT
       real DSFALL, DRAIN,   DQNET,   BEGINPACK
@@ -849,12 +862,12 @@ c                                            so no conversion to celsius needed
 
 !--CALCULATE the meltfactor for this day
       call MELTFACT(JDAY,ALAT,MFMAXT,MFMINT,MF,RATIO)
-!--CALCULATE atmospheric pressure, 1st elevation in 100's of meters
+!--CALCULATE atmospheric pressure, 1st elevation in 100's of meters  ! moved to init section - RMTW
 c$$$      ELEV100m = ELEV(I1)*0.01*0.3048  
 c modified to match mru elevation in meters
-      ELEV100m = ELEV(I1)*0.01  
-      PA = 1012.4 - 11.34 * ELEV100M + 0.00745 * (ELEV100M ** 2.4)  ! ATMOSPHERIC PRESSURE
-
+!      ELEV100m = ELEV(I1)*0.01  
+!      PA = 1012.4 - 11.34 * ELEV100M + 0.00745 * (ELEV100M ** 2.4)  ! ATMOSPHERIC PRESSURE, in millibars
+      PA=PA_mb(I1)  ! moved pressure computation to init section
 ! End initial values
 ! --GET TIME STEP, IN HOURS, USING MMS LIBRARY FUNCTION
       DELT=deltim()

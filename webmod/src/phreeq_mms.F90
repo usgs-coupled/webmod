@@ -105,6 +105,14 @@
          END FUNCTION wetbulb
        END INTERFACE
 
+      INTERFACE 
+         FUNCTION satvp(ta)
+           IMPLICIT NONE
+           REAL, INTENT(IN) :: ta
+           REAL :: satvp
+         END FUNCTION satvp
+       END INTERFACE
+
       INTERFACE
          FUNCTION checkfracs(count,solns,fracs,mixture)
            IMPLICIT NONE
@@ -641,7 +649,6 @@
 ! Relative humidity to assign wet-bulb tempaerature and amount of fractionation
 !
       integer, save, allocatable :: mru_rhsta(:)  ! Point MRU to this relhum station
-      real, save, allocatable :: relhum_avg(:)   ! Average relative humidity to distribute to each MRU if no relhum obs available
       real, save, allocatable :: relhum_mru(:)   ! Distributed relarive humidity
 ! snow_ion_factor, and snow_iso_depl are parameters to simulate the concentration of solutes and
 ! depletion of heavy isotopes in snowmelt. snowpack_D and snowpack_18O are temporary variables describing
@@ -2800,14 +2807,6 @@
           'Index of relative humidity station used to compute '//&
           'wetbulb temperature and isotopic fractionation for MRU.',&
           'none').ne.0) return
-      else
-        ALLOCATE (relhum_avg(nmru))
-        if(declparam('phreeqmms', 'relhum_avg', 'nmru', 'real', &  ! Average rh to assign if no relhum(nhum) available
-          '.5', '0.0', '1.0',&
-          'Average observed relative humidity station for MRU',&
-          'Average observed relative humidity station used to compute '//&
-          'wetbulb temperature and isotopic fractionation for MRU.',&
-          'fraction').ne.0) return        
       endif
 
       ALLOCATE (relhum_mru(nmru))  ! distributed relative humidity
@@ -3354,7 +3353,7 @@
       ALLOCATE (mru_out_vol(nmru))
       ALLOCATE (uz_spread(nentity))
       ALLOCATE (uzindxinit(nmru,nac,nentity))
-      
+     
       phreeqmms_decl = 0
 
       return
@@ -3373,9 +3372,10 @@
       USE WEBMOD_PHREEQ_MMS
       USE WEBMOD_OBSHYD, ONLY : nhum
       USE WEBMOD_OBSCHEM, ONLY :phq_lut,sol_id,sol_name,n_iso,iso_list
-      USE WEBMOD_IO, only: phreeqout, chemout, print_vse, chemout,nf,vse_lun, nowtime, xdebug_start, xdebug_stop, debug
+      USE WEBMOD_IO, only: phreeqout, chemout, print_vse, chemout,nf,vse_lun, xdebug_start, xdebug_stop, debug
       USE WEBMOD_IRRIG, ONLY: irrig_sched_ext, irrig_ext_mru, irrig_sat_mru, &
-        irrig_hyd_mru, irrig_sched_int,irrig_int_src,irrig_int_init      
+        irrig_hyd_mru, irrig_sched_int,irrig_int_src,irrig_int_init
+      USE WEBMOD_SNOW, ONLY: PA_mb
 
 ! Mixing variables from webmod_res
       USE WEBMOD_RESMOD, ONLY : vmix_can, vmix_snow, vmix_ohoriz, &
@@ -3413,7 +3413,7 @@
 #endif
 
       logical filflg, s_alloc, e_alloc
-      real dt
+      real dt, elev100
 
       !integer k, l, ir, it, path_len, file_len, filelen ! made is, ia, and ih global (in module) for mru, nac, and hyd query in update_chem
       integer k, l, ir, path_len, file_len, filelen
@@ -3577,10 +3577,7 @@
 !
 ! Get relative humidity values or indices
 !
-      if(nhum.eq.0) then
-        if(getparam('phreeqmms', 'relhum_avg', nmru, 'real',&
-           relhum_avg) .ne.0) return
-      else
+      if(nhum.gt.0) then
         if(getparam('phreeqmms', 'mru_rhsta', nmru, 'integer',&
            mru_rhsta) .ne.0) return
       endif          
@@ -3670,6 +3667,13 @@
 
       if(getparam('phreeqmms', 'snowmelt_18O_depl', nmru, 'real',&
            snowmelt_18O_depl) .ne.0) return
+!
+! Convert air pressure in millibars to kilopascals
+!
+      do i = 1, nmru
+          kPa(i)=PA_mb(i)/10.0
+      enddo
+      
 !
 ! Populate the chvar_lut table according to the parameters
 ! dimensioned by nchemvar
@@ -4940,8 +4944,6 @@
 ! Initialize individual hillslope reservoirs
 !
       do 33 is = 1, nmru
-! Establish MRU airpressure in kilopascals to derive wetbulb temperature for precipitation.
-          kPa(is) = 101.325 * (1 - 2.25577e-5*mru_elev(is))**5.25588
 !
 ! assign mru ID for PHREEQ callback funtion
 !
@@ -6218,18 +6220,18 @@
       USE WEBMOD_PHREEQ_MMS
 !      USE WEBMOD_INTCP, ONLY : covden_win
       USE WEBMOD_IO, ONLY : phreeqout, chemout, print_vse, debug, xdebug_start, xdebug_stop
-      USE WEBMOD_OBSHYD, ONLY : nhum, relhum
+      USE WEBMOD_OBSHYD, ONLY : nhum, relhum, spechum, rh_tf, tsta_temp_c
       USE WEBMOD_OBSCHEM, ONLY : phq_lut, sol_id, sol_name,unit_lut,&
           n_iso, iso_list,c_precip_pH,c_precipT,cconc_precipM, &
           cconc_extM,cconc_obsM,c_ext_pH,c_extT,c_obs_pH,c_obsT
-
       USE WEBMOD_POTET, ONLY : transp_on
       ! Mixing variables from webmod_res
 !      USE WEBMOD_PRECIP, ONLY : mru_ppt
       USE WEBMOD_TEMP1STA, ONLY: tmax_c, temp_c, trxn_ohoriz_c, trxn_uz_c, trxn_sat_c,&
-                                it_oh_days, it_uz_days, it_sat_days
+                                it_oh_days, it_uz_days, it_sat_days, mru_tsta
       USE WEBMOD_IRRIG, ONLY : irrig_ext_mru, irrig_hyd_mru, irrig_int_src, &
           irrig_frac_ext, irrig_frac_sat, irrig_frac_hyd, mru_ppt, mru_dep
+      USE WEBMOD_SNOW, ONLY: PA_mb
       USE WEBMOD_TOPMOD, ONLY : gw_loss,qpref_max, st, quz, srzwet, riparian_thresh, uz_area, riparian
       USE WEBMOD_RESMOD, ONLY : vmix_can, vmix_snow, vmix_ohoriz, &
           vmix_uz, vmix_uz2can, vmix_uz2qdf, vmix_uz2sat, vmix_sat2uz, vmix_uzgen,&
@@ -6256,7 +6258,7 @@
       integer chem2var
 
       real depvol, irrig_frac
-      real dt
+      real dt, vp, svp
       
       !double precision str_vol, vol_in, vol_out, M_Elem_Sum
       double precision str_vol, M_Elem_Sum
@@ -6712,11 +6714,16 @@
       do 10 is = 1, nmru
 !
 !
-! Distribute relative humidity
-         if(nhum.ne.0) then
-             relhum_mru(is)=relhum(mru_rhsta(is))
-         else
-             relhum_mru(is)=relhum_avg(is)
+! Distribute relative humidity (vp/svp@temp) by assuming that relative humidity read from mru_rhsta(nmru)
+! is measured at the same met station as mru_tsta(nmru) and that actual vapor pressure, vp, is the
+! same for the met station and the MRU with temperature lapse adjustments
+!
+         if(rh_tf) then  ! relative humidity read from webmod.hyd.dat
+             svp=satvp(tsta_temp_c(mru_tsta(is))) ! saturated vapor pressure at met station
+             vp=relhum(mru_rhsta(is))*svp  ! actual vapor pressure
+             relhum_mru(is)=vp/satvp(temp_c(is))
+         else ! specific humidity read from webmod.hyd.dat
+             relhum_mru(is)=(kPa(is)*spechum(is))/(0.622+0.378*spechum(is))/satvp(temp_c(is))
          endif
          
 ! Get the solution indices for tracking MRU and UZfluxes
@@ -11268,9 +11275,10 @@
       RETURN
     END FUNCTION reset_DI
     
-!     program to converge on wet-bulb temp, given dry-bulb
-!     and relative humidity - ported by RW on 23 May 2013 from tw.f 
-!     written by Dave Stannard
+!     programs to (1) converge on wet-bulb temp, given dry-bulb
+!     and relative humidity and (2) compute saturated vapor pressure
+!     for a given temperature- webulb ported by RW on 23 May 2013 and
+!     satvp on 22 June 2016 from tw.f written by Dave Stannard
  
       real function wetbulb (pres, ta, rh)
       !implicit double precision (a-h,o-z)
@@ -11374,6 +11382,46 @@
 !999   stop
 !2000  format(6f12.6)
     end function wetbulb 
+
+    
+      real function satvp(ta)
+      !implicit double precision (a-h,o-z)
+      implicit none
+      double precision a0, a1, a2, a3, a4, a5, a6
+      double precision a0i, a1i, a2i, a3i, a4i, a5i, a6i
+      double precision es
+      
+      real ta
+!     Coefficients for the lowe (1976) equations for saturation 
+!     vapor pressure
+
+!     sat. vap. press. curve
+      a0=6.107799961
+      a1=4.436518521e-1
+      a2=1.428945805e-2
+      a3=2.650648471e-4
+      a4=3.031240396e-6
+      a5=2.034080948e-8
+      a6=6.136820929e-11
+
+!     sat. vap. press. over ice
+      a0i=6.109177956
+      a1i=5.03469897e-1
+      a2i=1.886013408e-2
+      a3i=4.176223716e-4
+      a4i=5.824720280e-6
+      a5i=4.838803174e-8
+      a6i=1.838826904e-10
+!     Compute es (saturated vapor pressure) at dry bulb temperature (tavg_c)
+      if (ta .gt. 0.)then
+       es=(a0+ta*(a1+ta*(a2+ta*(a3+ta*(a4+ta*(a5+ta*a6))))))/10.
+      else
+       es=(a0i+ta*(a1i+ta*(a2i+ta*(a3i+ta*(a4i+ta*(a5i+ta*a6i))))))/10.
+      endif
+      satvp=es
+      return
+      end function satvp 
+
 #ifdef IPHREEQC_NO_FORTRAN_MODULE
 double precision function webmod_callback(x1, x2, str)
     use WEBMOD_POTET, ONLY : transp_on
