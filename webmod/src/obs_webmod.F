@@ -19,7 +19,7 @@ c **********************************************************************
 
       integer, save :: temp_units, nobs, nsol
       integer, save :: ntemp, nrain, nsnow, nform, ngw_ext, nevap
-      integer, save :: nirrig_ext, nirrig_int, nhum
+      integer, save :: nirrig_ext, nirrig_int, nhum, nsolute
       logical, save :: rh_tf, sh
       integer, save :: form_data(1), datetime(6)
 
@@ -105,6 +105,8 @@ c
         if ( nirrig_int.eq.-1 ) return
       nirrig_ext = getdim('nirrig_ext')
         if ( nirrig_ext.eq.-1 ) return
+      nsolute = getdim('nsolute')
+        if ( nsolute.eq.-1 ) return
       nhum = getdim('nhum')
         if ( nhum.eq.-1 ) return
 c
@@ -113,7 +115,7 @@ c fractionation in phreeq_mms (chem_sim=1, nsolute.ne.0). The value is derived f
 c either observations at mru_rhsta (should point to same mru_tsta) or specific
 c humidity available in grids from climate models including the Idaho data set.
 c
-      if (nhum.gt.0) then
+      if (nsolute.gt.0) then
         ALLOCATE(relhum(nhum))
         if(declvar('obs', 'relhum', 'nhum', nhum, 'real',
      +   'Observed relative humidity',
@@ -253,6 +255,10 @@ c      integer datetime(6)
 
       if(getparam('obs', 'temp_units', 1,
      $     'integer',temp_units) .ne.0) return
+c expect both relative humidity and specific humidity. Only one allowed if geochem. Establish which
+c in the run section
+      rh_tf=.true.
+      sh=.true.
 c
 c     print out start and end times
 c
@@ -309,16 +315,18 @@ c      integer nstep, datetime(6)
       if(nsnow.gt.0) then
         if(readvar('obs','swe').ne.0) return
       endif
-      if(nhum.ne.0) then
-         rh_tf=.true.
-         sh=.true.
-         if(readvar('obs','relhum').ne.0) rh_tf=.false.
-         if(readvar('obs','spechum').ne.0) sh=.false.
-         if(rh_tf.and.sh) then
+      if(nsolute.ne.0) then
+        if(sh) then
+          if(readvar('obs','spechum').ne.0) sh=.false.
+        endif
+        if(rh_tf.and.nhum.ne.0) then
+          if(readvar('obs','relhum').ne.0) rh_tf=.false.
+        endif   
+        if(rh_tf.and.sh) then
              print*,'Both relhum and spechum found ',
      +       'in webmod.hydro.dat. Only one allowed'
              return
-         elseif(rh_tf.or.sh) then  ! all good, use the rh_tf flag to distribute relative humidity,
+        elseif(rh_tf.or.sh) then  ! all good, use the rh_tf flag to distribute relative humidity,
                                 !assign -99 to other variable to ensure fail if used.
            do i=1,nhum
                if(rh_tf) then
@@ -331,7 +339,7 @@ c      integer nstep, datetime(6)
                    endif
                endif
            enddo
-         else
+         else ! both false
              print*,'Either relhum and spechum needed ',
      +       'in webmod.hydro.dat. Neither found'
              return

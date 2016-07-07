@@ -256,6 +256,9 @@ c     +   'for calculating objective function.','none').ne.0) return
      +   'Total basin area',
      +   'km2').ne.0) return
 
+c Declare geochem variables if nsolute.ne.0
+
+       if(nsolute.ne.0) then
 c total discharge of water and solutes at basin outlet
 
       if(declvar('phreeqmms', 'ch_outlet_m3_sum', 'five', 5,
@@ -381,6 +384,8 @@ c in, out, ET or rxn, final for water and solutes
      $     'for time step of (1) unit, (2) day, (3) month, '//
      $     '(4) year, or (5) entire run.',
      +     'Moles', ch_basin_M_rxn_sum).ne.0) return
+
+       endif ! nsolute.ne.0
 c
 c computed incoming shortwave radiation in Watts per square meters
 c
@@ -1049,7 +1054,7 @@ c
             enddo           
             write(chemout%lun,'(A)')trim(buffercdat)
          endif
-      else
+      elseif(nsolute.ne.0) then
          write (chemout%lun, *)'The parameter chem_sim(one)=0 '//
      $                  ' so no geochemisty has been simulated'
       end if
@@ -1448,6 +1453,7 @@ c     First step zeros all since lastper was set to all 1s in init
 c
 c Accumulators for geochemistry
 c
+            if(nsolute.ne.0) then
             ch_outlet_m3_sum(i) = 0
             ch_outlet_tempC_avg(i) = 0
             ch_outlet_pH_avg(i) = 0
@@ -1467,7 +1473,8 @@ c
               ch_basin_M_in_sum(j,i) = 0
               ch_basin_M_out_sum(j,i) = 0
               ch_basin_M_rxn_sum(j,i) = 0
- 4          continue            
+ 4          continue
+            endif ! nsolute.be.0
             lastper(i) = 0
          end if
  5    continue
@@ -1660,7 +1667,8 @@ c  Hydrology
             obj_func_sum(jj,i) = obj_func_sum(jj,i) + obj_func(jj)
  125  end do
 c  Geochemisty
-      if(chem_sim.eq.1) then
+      if(nsolute.ne.0) then
+       if(chem_sim.eq.1) then
          ch_outlet_m3_sum(i) = ch_outlet_m3_sum(i)+ch_outlet_m3 
          ch_outlet_tempC_avg(i) = ch_outlet_tempC_avg(i)
      +     +ch_outlet_tempC*ch_outlet_m3
@@ -1695,7 +1703,8 @@ c  Geochemisty
           ch_basin_M_rxn_sum(jj,i) = ch_basin_M_rxn_sum(jj,i)+ 
      +           ch_basin_M_rxn(jj)
  129    end do    
-       end if ! chem_sim.eq.1
+       endif ! chem_sim.eq.1
+      endif ! nsolute.net.0
  130  end do
 
      
@@ -1776,6 +1785,7 @@ c Begin unit value reporting
           call opstr(trim(bufferd))
         end if
 c Geochem          
+        if(nsolute.ne.0) then
         if(chem_sim.eq.1) then
           if(print_type.lt.2) then ! print outlet chem
             write(buffercdat,5012)year,mo,day,ch_outlet_m3,
@@ -1824,6 +1834,7 @@ c Geochem
             write(chemout%lun,'(A)')trim(buffercdat)
           end if
         end if ! chem_sim
+        end if ! nsolute.ne.0
       end if
       NoInputs=.FALSE.
 
@@ -1996,6 +2007,7 @@ c
 c
 c Geochem
 c
+          if(nsolute.ne.0) then
           if(chem_sim.eq.1) then
           write(chemout%lun,'(A)')trim(buffercspan)
               if(print_type.lt.2) then ! print outlet chem
@@ -2058,7 +2070,8 @@ c
      $           trim(bufferclabels)
                 write(chemout%lun,'(A)')trim(buffercspan)
               endif
-            end if  ! chem_sim
+          end if  ! chem_sim
+          end if  ! nsolute.ne.0
            end if
       end if
       NoInputs=.FALSE.
@@ -2143,6 +2156,7 @@ c****** Begin yearly summaries
 c
 c Geochem
 c
+           if(nsolute.ne.0) then
            if(chem_sim.eq.1) then
 c             write(chemout%lun,'(A)')trim(buffercspan)
                if(print_type.lt.2) then ! print outlet chem
@@ -2206,6 +2220,7 @@ c             write(chemout%lun,'(A)')trim(buffercspan)
                 write(chemout%lun,'(A)')trim(buffercspan)
               endif
             end if  ! chem_sim
+            end if ! nsolute.ne.0
         end if
       end if
 
@@ -2319,7 +2334,8 @@ c
 c
 c Geochem
 c
-           if(chem_sim.eq.1) then
+            if(nsolute.ne.0) then
+            if(chem_sim.eq.1) then
 c             write(chemout%lun,'(A)')trim(buffercspan)
                if(print_type.lt.2) then ! print outlet chem
                  write(buffercdat,5018)ch_outlet_m3_sum(5),
@@ -2375,6 +2391,7 @@ c             write(chemout%lun,'(A)')trim(buffercspan)
                write(chemout%lun,'(A)')trim(buffercdat)
               end if
             end if  ! chem_sim
+            end if  ! nsolute.ne.0
          end if
       end if
       end if

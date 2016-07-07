@@ -757,7 +757,7 @@
       integer function phreeqmms_decl()
 
       USE WEBMOD_PHREEQ_MMS
-      USE WEBMOD_OBSHYD, ONLY : nhum
+      USE WEBMOD_OBSHYD, ONLY : nhum, nirrig_ext, ngw_ext
       USE WEBMOD_OBSCHEM, ONLY : n_iso
       IMPLICIT NONE
 
@@ -792,6 +792,8 @@
         if ( nmru_res.eq.-1 ) return
       nhcs = getdim('nhcs')
         if ( nhcs.eq.-1 ) return
+        
+      if(nsolute.ne.0) then
 ! nchemdat is equal to the number of deposition sources
 ! (nchemdep = one precip + nchem_ext), plus the number of unique
 ! water quality sampling sites, nchemobs.
@@ -2821,14 +2823,16 @@
 ! defined for each MRU. GW sources could be a leaky irrigation canal crossing 
 ! the MRU and/or regional groundwater influx.
 !
-
+      if(nirrig_ext.ne.0) then
       allocate(src_ext_irrig(nmru))
       if(declparam('phreeqmms', 'src_ext_irrig', 'nmru',&
          'integer','0', 'bounded', 'nchem_ext',&
          'Chemical source for external irrigation',&
          'Chemical source for external irrigation',&
          'none').ne.0) return
+      endif ! nirrig_ext > 0
 
+      if(ngw_ext.ne.0) then
       allocate(src_gw1(nmru))
       if(declparam('phreeqmms', 'src_gw1', 'nmru',&
          'integer','0', 'bounded', 'nchem_ext',&
@@ -2842,7 +2846,7 @@
          'Chemical source for 2nd groundwater influx',&
          'Chemical source for 2nd groundwater influx',&
          'none').ne.0) return
-
+      endif ! ngw_ext>0
 !
 ! If there is an internal irrigation schedule for an MRU (irrig_sched_int>0),
 ! then irrig_int_src indicates if the MRU has recieves irrigations from a
@@ -3353,7 +3357,8 @@
       ALLOCATE (mru_out_vol(nmru))
       ALLOCATE (uz_spread(nentity))
       ALLOCATE (uzindxinit(nmru,nac,nentity))
-     
+
+      endif ! nsolute.ne.0
       phreeqmms_decl = 0
 
       return
@@ -3370,7 +3375,7 @@
 !       USE IFPORT
 ! #endif
       USE WEBMOD_PHREEQ_MMS
-      USE WEBMOD_OBSHYD, ONLY : nhum
+      USE WEBMOD_OBSHYD, ONLY : nhum, nirrig_ext, ngw_ext
       USE WEBMOD_OBSCHEM, ONLY :phq_lut,sol_id,sol_name,n_iso,iso_list
       USE WEBMOD_IO, only: phreeqout, chemout, print_vse, chemout,nf,vse_lun, xdebug_start, xdebug_stop, debug
       USE WEBMOD_IRRIG, ONLY: irrig_sched_ext, irrig_ext_mru, irrig_sat_mru, &
@@ -3428,6 +3433,8 @@
       
       phreeqmms_init = 1
 
+      if(nsolute.ne.0) then
+      
       if(getparam('phreeqmms', 'chem_sim', 1,&
            'integer',chem_sim) .ne.0) return
 
@@ -3524,9 +3531,10 @@
       if(getparam('obs_chem', 'chem_ext', 1, 'integer',&
            chem_ext) .ne.0) return
 
-      if(getparam('precip', 'src_ext_irrig', nmru, 'integer',&
+      if(nirrig_ext.ne.0) then
+        if(getparam('precip', 'src_ext_irrig', nmru, 'integer',&
            src_ext_irrig).ne.0) return
-
+      endif ! nirrig_ext>0
 !      if(getparam('precip', 'irrig_int_src', nmru, 'integer',&
 !           irrig_int_src).ne.0) return
 
@@ -3539,11 +3547,13 @@
       if(getparam('topc', 'ac', nac*nmru, 'real', AC)&
          .ne.0) return
 
-      if(getparam('topc', 'src_gw1', nmru, 'integer', src_gw1)&
+      if(ngw_ext.ne.0) then
+        if(getparam('topc', 'src_gw1', nmru, 'integer', src_gw1)&
          .ne.0) return 
 
-      if(getparam('topc', 'src_gw2', nmru, 'integer', src_gw2)&
+        if(getparam('topc', 'src_gw2', nmru, 'integer', src_gw2)&
          .ne.0) return 
+      endif ! ngw_ext>0
 
       if(getparam('topc', 'qdffrac', nmru, 'real', qdffrac)&
          .ne.0) return
@@ -4567,9 +4577,9 @@
            src_init(i,ET_SURFACE) = init_surf_hydro(ihydro)
            src_init(i,ET_PURE_PHASE) = init_eq_ph_hydro(ihydro)
            src_init(i,ET_KINETICS) = init_kin_hydro(ihydro)
-         else
-            print*,'Reservoir ',c_indx(i,1),' row ',i,&
-                   ' was not initialized.'
+!         else
+!            print*,'Reservoir ',c_indx(i,1),' row ',i,&
+!                   ' was not initialized.'
          end if
 40050 continue      
 !$$$ *                 n_user/n_ent index
@@ -6204,8 +6214,11 @@
  350  format('e_mru',I3.3,'_hill')
  360  format('e_mru',I3.3,'_uz2sat')
  370  format('e_hyd',I3.3)
-
-
+      else! nsolute.ne.0
+         print*,'The dimension nsolute equals zero so chemical ',&
+           'parameters and variables are unavailable'
+         write(chemout%lun,*)'No geochemistry simulated (nsolute=0)'
+      endif ! nsolute.ne.0
       phreeqmms_init = 0
       return
       end
@@ -6220,7 +6233,8 @@
       USE WEBMOD_PHREEQ_MMS
 !      USE WEBMOD_INTCP, ONLY : covden_win
       USE WEBMOD_IO, ONLY : phreeqout, chemout, print_vse, debug, xdebug_start, xdebug_stop
-      USE WEBMOD_OBSHYD, ONLY : nhum, relhum, spechum, rh_tf, tsta_temp_c
+      USE WEBMOD_OBSHYD, ONLY : nhum, relhum, spechum, rh_tf, tsta_temp_c, ngw_ext,&
+          nirrig_int, nirrig_ext
       USE WEBMOD_OBSCHEM, ONLY : phq_lut, sol_id, sol_name,unit_lut,&
           n_iso, iso_list,c_precip_pH,c_precipT,cconc_precipM, &
           cconc_extM,cconc_obsM,c_ext_pH,c_extT,c_obs_pH,c_obsT
@@ -6269,6 +6283,8 @@
 !      double precision cconc_obsM(nchemobs,nsolute)
 
       phreeqmms_run = 1
+
+      if(nsolute.ne.0) then
 
 !/*
 ! For reactions
@@ -6745,7 +6761,7 @@
 ! time step. Note that mru_dep is a combination of atmospheric precip,
 ! and internal and external irrigation sources.
 !
-         if(mru_dep(is).gt.0.0) then
+         if(mru_dep(is).gt.0.0) then  ! rain, irrigation, or both
             nmix = 1
 ! post input chemistry to c_chem matrix
 ! need to mix to same to retrieve concentration
@@ -6754,7 +6770,7 @@
 !
 ! Atmospheric precipitation inputs **************************
 !
-            if(irrig_frac.lt.1.0) then !atmospheric dep > 0
+            if(vmix_mru(is,5).gt.0.0) then !atmospheric dep > 0
                ndep = ndep + 1
                src(1) = solnnum(0,0,1,0,0,0,0)
                srcdep(ndep)=src(1)
@@ -6811,6 +6827,7 @@
 !
 ! external irrigation inputs ***********************************
 !
+            if(nirrig_ext.ne.0) then
             if(irrig_ext_mru(is).gt.0) then
                ndep = ndep + 1
                ib = src_ext_irrig(is)+1 ! first index (ib=1) is average basin precip concentration
@@ -6860,9 +6877,11 @@
                   STOP
                ENDIF
             end if
+            endif ! nirrig_ext.ne.0
 !
 ! irrigation from a well in the MRU ************************
 !
+            if(nirrig_int.ne.0) then
             if(irrig_frac_sat(is).gt.0) then
                ndep = ndep + 1
                src(1)  = solnnum(0,8,0,is,0,0,0)
@@ -6982,6 +7001,7 @@
                   STOP
                ENDIF
             end if
+            endif ! nirrig_int.ne.0
 !
 ! Mix precip and irrigation to obtain hillslope inputs
 !
@@ -8592,14 +8612,20 @@
                solns(4) = solnnum(1,13,0,is,0,0,0) ! recharge from uz
                fracs(4) = vmix_sat(is,11)/totvol
 
-               ib = src_gw1(is)+1
-               solns(5) = solnnum(0,0,ib,0,0,0,0) ! gw input from 1st source (channel leakage?)
-               fracs(5) = vmix_sat(is,20)/totvol
+               if(ngw_ext.ne.0) then
+                 ib = src_gw1(is)+1
+                 solns(5) = solnnum(0,0,ib,0,0,0,0) ! gw input from 1st source (channel leakage?)
+                 fracs(5) = vmix_sat(is,20)/totvol
 
-               ib = src_gw2(is)+1
-               solns(6) = solnnum(0,0,ib,0,0,0,0) ! gw input from 2nd source (upgradient?)
-               fracs(6) = vmix_sat(is,21)/totvol
-
+                 ib = src_gw2(is)+1
+                 solns(6) = solnnum(0,0,ib,0,0,0,0) ! gw input from 2nd source (upgradient?)
+                 fracs(6) = vmix_sat(is,21)/totvol
+               else ! no inflow from groundwater. Set to pure water with zero volume
+                 solns(5) = 1 ! pure water
+                 fracs(5) = 0.0
+                 solns(6) = 1 ! pure water
+                 fracs(6) = 0.0
+               endif ! ngw_ext.ne.0
 !               iresult = fill_ent(n_user,mixture,nchemdat,nmru,
 !     $              nac,clark_segs,src_init)
 !               if(iresult.ne.0) then
@@ -10102,6 +10128,8 @@
       !   c_chem(i_sat(1))%vol(fin), vmix_sat(1,4), (c_chem(i_hyd(is))%vol(fin), vmix_stream(is), is=1,4),c_chem_basin%vol(fin), vmix_basin(4),&
       !   c_chem_mru(1)%vol(fin), vmix_mru(1,4), c_chem_hyd%vol(fin)
 ! (c_chem(i_uz(ia,1))%vol(fin), vmix_uz(ia,4), ia = 1,11)
+      endif ! nsolute.ne.0
+
       phreeqmms_run = 0
 
       return

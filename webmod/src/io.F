@@ -27,7 +27,7 @@ c***********************************************************************
 !      integer, SAVE:: topout_file_unit, chemout_file_unit, phreeqout ! standard output, in addition to MMS files *.out, *.statvar, etc
       integer, save:: endper, yrdays, modays(12),nowtime(6)
       data nowtime/6*0/
-      integer, save:: xdebug_start, xdebug_stop, chem_sim
+      integer, save:: xdebug_start, xdebug_stop, chem_sim, nsolute
       integer, save, allocatable :: vse_lun(:) ! LUNs for volume, solute, and entitity files
       integer, save:: print_vse, nf  ! In addition to the four standard files, additional detailed files
                                       ! may be output: nf files include volume files output in webmod_res and 
@@ -111,15 +111,6 @@ c upon a restart(init file). Data section is only read on first
 c run so reset to true in the init section. Can be conditioned
 c on savevar condition later.
 c
-
-      if(declparam('sumb', 'print_vse', 'one', 'integer', 
-     +   '1', '0', '2',
-     +   'Scope of geochemical output files (vse)',
-     +   'Scope of geochemical output files (vse): 0 = none;'//
-     +   '                  1 = basin and MRUs;            '//
-     +   '                  2 = all reservoirs.                ',
-     +   'none').ne.0)return
-
       if(declvar('io', 'endper', 'one', 1, 'integer', 
      $     'Composite flag indicating the end of a given period: '//
      $     'Run(16)+Year(8)+Month(4)+Day(2)+storm(1)',
@@ -137,7 +128,21 @@ c
      +    'End debugging on this step',
      +    'integer').ne.0) return
 
-!
+      nsolute = getdim('nsolute')
+      IF (nsolute.EQ.-1) RETURN
+
+      if(nsolute.ne.0) then  ! do not declare geochemical paramters and variables if no solutes.
+
+      if(declparam('sumb', 'print_vse', 'one', 'integer', 
+     +   '1', '0', '2',
+     +   'Scope of geochemical output files (vse)',
+     +   'Scope of geochemical output files (vse): 0 = none;'//
+     +   '                  1 = basin and MRUs;            '//
+     +   '                  2 = all reservoirs.                ',
+     +   'none').ne.0)return
+
+      endif ! nsolute.eq.0
+      !
       if(declpri('io_modays', 12, 'integer', modays)
      + .ne. 0) return
 
@@ -181,19 +186,20 @@ c      nowtime = 0  ! use nowtime as flag for init looops to print Initial Mixes
       IF (nac.EQ.-1) RETURN
       nhydro = getdim('nhydro')
       IF (nhydro.EQ.-1) RETURN
-
-
-      if(getparam('sumb', 'print_vse', 1, 'integer', print_vse)
-     +   .ne.0) return
-
-      if(getparam('phreeqmms', 'chem_sim', 1,
-     +     'integer',chem_sim) .ne.0) return
      
       if(getparam('io', 'xdebug_start', 1,
      +     'integer',xdebug_start) .ne.0) return
 
       if(getparam('io', 'xdebug_stop', 1,
      +     'integer',xdebug_stop) .ne.0) return
+
+      if(nsolute.ne.0) then      
+        if(getparam('sumb', 'print_vse', 1, 'integer', print_vse)
+     +   .ne.0) return
+
+        if(getparam('phreeqmms', 'chem_sim', 1,
+     +     'integer',chem_sim) .ne.0) return
+      endif ! nsolute.ne.0
 
 c
 c Open topmodel output file
@@ -261,21 +267,20 @@ c
 ! Debug file
 !
       !Debug%file='./output/Debug'
-C        if(xdebug_start.gt.0) then
-      Debug%file='./Debug'
-      inquire(file=Debug%file,exist=filflg)
-      if (filflg) then
+        Debug%file='./Debug'
+        inquire(file=Debug%file,exist=filflg)
+        if (filflg) then
+          debug%lun = my_newunit()
+          open(unit=debug%lun,file=debug%file,status='old')
+          close(unit=debug%lun,status='delete')
+        endif
+!----open the file if xdebug_start > 0
+      if(xdebug_start.gt.0) then
         debug%lun = my_newunit()
-        open(unit=debug%lun,file=debug%file,status='old')
-        close(unit=debug%lun,status='delete')
-      endif
-!----open the file.
-      debug%lun = my_newunit()
-      open (unit=debug%lun,file=debug%file,access='sequential',
+        open (unit=debug%lun,file=debug%file,access='sequential',
      *  form='formatted', status='new')
-
-C     end if
-! Detailed output in addition to the four above.
+      end if
+! Detailed output in addition to the four above when nsolute>0 (geochem simulated)
 ! When print_vse equals 1 or 2, calculate the number of volume files written in webmod_res and
 ! the number of solute and entity files written in phr3eeq_mms. 'nf' is the the total number of
 ! files to be open, written, and  
@@ -284,19 +289,22 @@ C     end if
 ! the initial prefixes are for volume (v_), solutes (s_), and entities (e_).
 ! If chemistry in not being simulated (chem_sim=0), no solute or entity files will be written.
 !
-      if(print_vse.eq.1) then
+      if(nsolute.ne.0) then
+        if(print_vse.eq.1) then
           nf = nmru+1
           if(chem_sim.eq.1) then
               nf = 3*(nmru+1)
           endif
-      elseif(print_vse.eq.2) then
+        elseif(print_vse.eq.2) then
           nf=1+nmru*(13+nac)+nhydro+1 ! first is basin, last is stream volumes, others are hillslope reservoirs
           if(chem_sim.eq.1) then
               nf =3*(1+nmru*(13+nac)+nhydro+1)
           endif
-      endif
-      if(nf.gt.0) allocate(vse_lun(nf))
-      nf=0 ! reset to allow incremental assignments in webmod_res and phreeq_mms
+        endif
+        if(nf.gt.0) allocate(vse_lun(nf))
+        nf=0 ! reset to allow incremental assignments in webmod_res and phreeq_mms
+      endif ! nsolute.ne.0
+      
       ioinit = 0
 
       return

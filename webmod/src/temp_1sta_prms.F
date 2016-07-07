@@ -102,6 +102,8 @@ c
 
 
       USE WEBMOD_TEMP1STA
+      USE WEBMOD_IO, ONLY: nsolute
+
       IMPLICIT NONE
 
       t1decl = 1
@@ -239,6 +241,7 @@ c
 !
 ! parameters controlling moving averages of temperature to use for reactions in the hillslope
 !
+      if(nsolute.ne.0) then  ! do not declare geochemical paramters and variables if no solutes.
       ALLOCATE (trxn_ohoriz_stat(nmru))
       if(declparam('temp', 'trxn_ohoriz_stat', 'nmru', 'integer',
      +   '2', '1', '3', 
@@ -319,6 +322,7 @@ c
       if(declvar('temp', 'trxn_sat_c', 'nmru', nmru, 'real', 
      +   'Reaction temperature for saturated zone','degrees C',
      +   trxn_sat_c).ne.0) return
+      endif ! nsolute.ne.0
 !
 ! Parameters from other modules
 !
@@ -369,6 +373,8 @@ c
       integer function t1init()
 
       USE WEBMOD_TEMP1STA
+      USE WEBMOD_IO, ONLY : nsolute
+
       IMPLICIT NONE
       
       integer j, k
@@ -402,6 +408,8 @@ c
       if(getparam('basin', 'basin_area', 1, 'real', basin_area)
      +   .ne.0) return
 
+      if(nsolute.ne.0) then  ! do not retrieve if nsolutes.eq.0
+      
       if(getparam('temp', 'trxn_ohoriz_days', 1, 'real',
      +   trxn_ohoriz_days).ne.0) return
 
@@ -439,6 +447,7 @@ c
       trxn_c_array_oh = 0.0
       trxn_c_array_uz = 0.0
       trxn_c_array_sat = 0.0
+      endif ! nsolute.ne.0
 
       do 10 j=1,nmru
         k = mru_tsta(j)
@@ -461,7 +470,7 @@ c             saturated zone.
       integer function t1run()
  
       USE WEBMOD_TEMP1STA
-      USE WEBMOD_IO, ONLY: nowtime
+      USE WEBMOD_IO, ONLY: nowtime, nsolute
       IMPLICIT NONE
       
       integer j,mo,k,yr
@@ -502,7 +511,9 @@ c      call dattim('now',nowtime)
         tmax_c(j) = tsta_max_c(k)-tcrx(j)
         tmin_c(j) = tsta_min_c(k)-tcrn(j)
         temp_c(j) = tsta_temp_c(k) -tcr(j)
-! ohorizon reaction temperatures
+!  reaction temperatures
+      if(nsolute.ne.0) then  ! do not declare geochemical paramters and variables if no solutes.
+
         select case (trxn_ohoriz_stat(j))
         case (1)
           trxn_c_array_oh(j,1) = tmin_c(j)
@@ -577,6 +588,8 @@ c      call dattim('now',nowtime)
         endif
         trxn_sat_c(j) =trxn_sat_c(j)/trxn_sat_days+
      +                    trxn_sat_c_adj(j)
+
+      endif ! nsolute.ne.0        
 !
         basin_tmax_c = basin_tmax_c + (tmax_c(j) * mru_area(j))
         basin_tmin_c = basin_tmin_c + (tmin_c(j) * mru_area(j))
@@ -586,9 +599,12 @@ c      call dattim('now',nowtime)
         temp_f(j) = temp_c(j)*1.8+32.
    20       continue
             
-      trxn_c_array_oh=cshift(trxn_c_array_oh,-1,2)
-      trxn_c_array_uz=cshift(trxn_c_array_uz,-1,2)
-      trxn_c_array_sat=cshift(trxn_c_array_sat,-1,2)
+      if(nsolute.ne.0) then  ! do not declare geochemical paramters and variables if no solutes.
+
+        trxn_c_array_oh=cshift(trxn_c_array_oh,-1,2)
+        trxn_c_array_uz=cshift(trxn_c_array_uz,-1,2)
+        trxn_c_array_sat=cshift(trxn_c_array_sat,-1,2)
+      endif ! nsolute.ne.0
       basin_tmax_c = basin_tmax_c / basin_area
       basin_tmin_c = basin_tmin_c / basin_area
       basin_temp_c = basin_temp_c / basin_area

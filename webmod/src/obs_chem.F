@@ -222,6 +222,7 @@ c
       nchemobs = getdim('nchemobs')
       nconvert = getdim('nconvert')
 
+      if(nsolute.ne.0) then
 c
 c chemdat_flag indicates whether a chemdat file could be found.
 c If so then concentration values for precip, external sources,
@@ -377,6 +378,7 @@ c
       allocate (sol_id(nsolute))
       allocate (phq_lut(nphq_lut))
 
+      endif ! nsolute.ne.0
       obsc_decl = 0
 
       return
@@ -412,7 +414,8 @@ c  internal or private variables
 
       obsc_init = 1
 
-
+      if(nsolute.ne.0) then
+          
       if(getparam('phreeqmms', 'chem_sim', 1,
      $     'integer',chem_sim) .ne.0) return
 
@@ -660,6 +663,10 @@ c
          print*,'Chem_sim parameter equals zero so no chemical '//
      $        'inputs read or processed'
       end if
+      else ! nsolute.ne.0
+         print*,'Dimension nsolute equals zero so no chemical '//
+     $        'inputs read or processed'
+      endif  ! nsolute.ne.0
 
       obsc_init = 0
  
@@ -681,6 +688,9 @@ c
       integer i, j, k, iv,iobs, io
 
       obsc_run = 1
+
+      
+      if(nsolute.ne.0) then      
 c
 c If no chemical simulation (chem_dep=0) do nothing
 c
@@ -840,7 +850,9 @@ c
 c
 c  Landing point if no chemical simualtions desired
 c
-       end if
+      end if
+      
+      endif  ! nsolute.ne.0
        obsc_run = 0
  
        return

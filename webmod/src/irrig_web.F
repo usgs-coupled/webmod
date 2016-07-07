@@ -126,21 +126,21 @@ c        if ( nirrig_int.eq.-1 ) return
       ALLOCATE (irrig_frac_ext(Nmru))
       if(declvar('irrig', 'irrig_frac_ext', 'nmru', nmru, 'real',
      +     'Fraction of deposition that was irrigation from an '//
-     $     'external source; equal to -0.1 on days '//
+     $     'external source; equal to 0.0 on days '//
      $     'with no rain or irrig','decimal percent',
      +   irrig_frac_ext).ne.0) return
 
       ALLOCATE (irrig_frac_sat(Nmru))
       if(declvar('irrig', 'irrig_frac_sat', 'nmru', nmru, 'real',
      +     'Fraction of deposition that was irrigation from a well; '//
-     $     'equal to -0.1 on days with no rain or irrig',
+     $     'equal to 0.0 on days with no rain or irrig',
      $     'decimal percent',
      +   irrig_frac_sat).ne.0) return
 
       ALLOCATE (irrig_frac_hyd(Nmru))
       if(declvar('irrig', 'irrig_frac_hyd', 'nmru', nmru, 'real',
      +     'Fraction of deposition that was irrigation from a '//
-     $     'stream; equal to -0.1 on days '//
+     $     'stream; equal to 0.0 on days '//
      $     'with no rain or irrig','decimal percent',
      +   irrig_frac_hyd).ne.0) return
 
@@ -428,9 +428,9 @@ c Initialize internal irrigation (from wells or streams internal to the watershe
 
       do 1000 i = 1,nmru
 
-        irrig_frac_ext(i) = -0.1
-        irrig_frac_sat(i) = -0.1
-        irrig_frac_hyd(i) = -0.1
+        irrig_frac_ext(i) = 0.0
+        irrig_frac_sat(i) = 0.0
+        irrig_frac_hyd(i) = 0.0
 
         if(nirrig_ext.ne.0)then
             iext = irrig_sched_ext(i)
@@ -577,10 +577,11 @@ c record fractions (may be eliminated later)
 c
        
        mru_dep(i) = mru_rain(i) + mru_snow(i)
-       irrig_frac_ext(i)=irrig_ext_mru(i)/dep
-       irrig_frac_sat(i)=irrig_sat_mru(i)/dep
-       irrig_frac_hyd(i)=irrig_hyd_mru(i)/dep
-
+       if(nirrig_ext.ne.0) irrig_frac_ext(i)=irrig_ext_mru(i)/dep
+       if(nirrig_int.ne.0) then
+           irrig_frac_sat(i)=irrig_sat_mru(i)/dep
+           irrig_frac_hyd(i)=irrig_hyd_mru(i)/dep
+       endif ! nirrig_int.ne.0
        basin_dep = basin_dep + mru_dep(i) * mru_area_frac(i)
        basin_irr_ext = basin_irr_ext + 
      $      irrig_ext_mru(i) * mru_area_frac(i)
