@@ -259,7 +259,9 @@ char *read_dims (char *param_file_name) {
 				return NULL;
 			}
 		} else {
-			sprintf (buf,"dimension '%s' is not required", key);
+			key = (char *)strtok(line_p, " ");
+			key[strlen(key)] = '\0';
+			sprintf(buf, "dimension '%s' is not required", key);
 			fprintf (stderr,"\n%s\n", warning_string (buf));
 			line_p = get_next_line ();
 			line_p = get_next_line ();
