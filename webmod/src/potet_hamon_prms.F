@@ -25,8 +25,9 @@ C   Declared Variables
 C   Declared Parameters
       real, save :: basin_area
       integer, save, allocatable:: transp_beg(:), transp_end(:)
+      integer, save, allocatable:: mru_pansta(:)
       real, save, allocatable :: mru_area(:), hamon_coef(:) 
-      real, save, allocatable :: transp_tmax_c(:)
+      real, save, allocatable :: transp_tmax_c(:), epan_coef(:)
 
 C   Private Variables
       integer, save :: lday
@@ -82,6 +83,7 @@ c
 
      
       USE WEBMOD_POTET
+      USE WEBMOD_OBSHYD, ONLY: nevap
       IMPLICIT NONE
 
       petdecl = 1
@@ -152,7 +154,17 @@ c     +   'none').ne.0) return
      +   'Last month for transpiration computations; '//
      +   'Transpiration is computed through end of month',
      +   'month').ne.0) return
- 
+
+      if(nevap.gt.0) then
+        ALLOCATE (mru_pansta(nmru))
+        if(declparam('phreeqmms', 'mru_pansta', 'nmru', 'integer', 
+     +    '1', 'bounded', 'nevap',
+     +    'Index of pan evaporation station for MRU',
+     +    'Index of pan evaporation station used to assign '//
+     +    'potential evapotranspiration to MRU.',
+     +    'none').ne.0) return
+      endif
+      
       ALLOCATE (transp_tmax_c(Nmru))
       if(declparam('potet', 'transp_tmax_c', 'nmru', 'real',
      +   '500.', '0.', '1000.',
@@ -173,6 +185,14 @@ c     +   'none').ne.0) return
      +   'PRMS manual ',
      +   '????').ne.0) return
 
+      ALLOCATE (epan_coef(Nmonths))
+      if(declparam('intcp', 'epan_coef', 'nmonths', 'real',
+     +   '1.0', '0.2', '3.0',
+     +   'Evaporation pan coefficient to correct Hamon PET',
+     +   'Evaporation pan coefficient to correct Hamon PET',
+     +   'none').ne.0) return
+
+      
       ALLOCATE(transp_check(nmru))
       ALLOCATE(tmax_sum(nmru))
 ! getvars      
@@ -209,6 +229,9 @@ c
 
       if(getparam('potet', 'transp_tmax_c', nmru,
      $     'real', transp_tmax_c) .ne.0) return
+
+      if(getparam('intcp', 'epan_coef', nmonths, 'real', epan_coef)
+     +   .ne.0) return
 
       if(getparam('potet', 'hamon_coef', nmonths, 'real', hamon_coef)
      +   .ne.0) return
@@ -268,6 +291,7 @@ c
 
       USE WEBMOD_POTET
       USE WEBMOD_IO, ONLY: nowtime
+      USE WEBMOD_OBSHYD, ONLY: nevap, pan_evap
       IMPLICIT NONE
 
       integer mo, i, jday, day
@@ -340,12 +364,20 @@ C******Compute potential et for each mru using Hamon formulation
 
 
         do 20 i=1,nmru
-c          ir = mru_radpl(i)
-          dyl = mru_sunhrs(i)
-          vpsat = 6.108*EXP(17.26939*tavgc(i)/(tavgc(i)+237.3))
-          vdsat = 216.7*vpsat/(tavgc(i)+273.2)
-          daily_potet(i) = hamon_coef(mo)*dyl*dyl*vdsat
 
+          if(nevap.eq.0) then
+           dyl = mru_sunhrs(i)
+           vpsat = 6.108*EXP(17.26939*tavgc(i)/(tavgc(i)+237.3))
+           vdsat = 216.7*vpsat/(tavgc(i)+273.2)
+           daily_potet(i)=(hamon_coef(mo)*dyl*dyl*vdsat)/epan_coef(mo)
+          elseif(pan_evap(mru_pansta(i)).ne.-999) then
+           daily_potet(i)=pan_evap(mru_pansta(i))
+          else
+           dyl = mru_sunhrs(i)
+           vpsat = 6.108*EXP(17.26939*tavgc(i)/(tavgc(i)+237.3))
+           vdsat = 216.7*vpsat/(tavgc(i)+273.2)
+           daily_potet(i)=(hamon_coef(mo)*dyl*dyl*vdsat)/epan_coef(mo)
+          end if ! nevap.eq.0
 c          write(87,8020) mo,day, i, vpsat, vdsat, dyl,daily_potet(i)
 c 8020     format(3i4, 5f8.4)
 

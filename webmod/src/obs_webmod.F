@@ -12,16 +12,21 @@ c                        and relative humidity (for isotopes) - 24feb11
 c
 c                        added RCS version control,
 c    27 apr  2010 - Port to Fortran 90 with module and dynamic memory
+c
+c        08jul16 - Removed nform, form_data, and strain as no storms and 
+c                  no observed form for each MRU
 c **********************************************************************
       MODULE WEBMOD_OBSHYD
       IMPLICIT NONE
 #include "fmodules.inc"
 
       integer, save :: temp_units, nobs, nsol
-      integer, save :: ntemp, nrain, nsnow, nform, ngw_ext, nevap
+c      integer, save :: ntemp, nrain, nsnow, nform, ngw_ext, nevap
+      integer, save :: ntemp, nrain, nsnow, ngw_ext, nevap
       integer, save :: nirrig_ext, nirrig_int, nhum, nsolute
       logical, save :: rh_tf, sh
-      integer, save :: form_data(1), datetime(6)
+c      integer, save :: form_data(1), datetime(6)
+      integer, save :: datetime(6)
 
       real, save, allocatable :: runoff(:)
       real, save, allocatable :: precip(:)
@@ -85,8 +90,8 @@ c
 !
 ! Get dimensions
 !
-      nform = getdim('nform')
-        if ( nform.eq.-1 ) return
+c      nform = getdim('nform')
+c        if ( nform.eq.-1 ) return
       nobs = getdim('nobs')
         if ( nobs.eq.-1 ) return
       nsol = getdim('nsol')
@@ -206,28 +211,34 @@ c
      +     'degrees fahrenheit',
      +   tsta_temp_f).ne.0) return
 
+      if(nsol.ne.0) then
       ALLOCATE(solrad(nsol))
       if(declvar('obs', 'solrad', 'nsol', nsol, 'real',
      +     'Observed solar radiation',
      +     'langleys',
      +   solrad).ne.0) return
+      endif ! nsol.ne.0
 
-      ALLOCATE(pan_evap(nevap))
-      if(declvar('obs', 'pan_evap', 'nevap', nevap, 'real',
+      if(nevap.ne.0) then
+       ALLOCATE(pan_evap(nevap))
+       if(declvar('obs', 'pan_evap', 'nevap', nevap, 'real',
      +     'Observed pan evaporation',
      +     'inches',
-     +   pan_evap).ne.0) return
+     +    pan_evap).ne.0) return
+      endif ! nevap.ne.0
 
-      ALLOCATE(swe(nsnow))
-      if(declvar('obs', 'swe', 'nsnow', nsnow, 'real',
+      if(nsnow.ne.0) then
+       ALLOCATE(swe(nsnow))
+       if(declvar('obs', 'swe', 'nsnow', nsnow, 'real',
      +     'Observed snow water equivalent of snowpack',
      +     'inches',
-     +   swe).ne.0) return
+     +    swe).ne.0) return
+      endif ! nsnow.ne.0
 
-      if(declvar('obs', 'form_data', 'one', 1, 'integer',
-     +     'Form of precip - 0=not known, 1=snow, 2=rain',
-     +     'none',
-     +   form_data).ne.0) return
+c      if(declvar('obs', 'form_data', 'one', 1, 'integer',
+c     +     'Form of precip - 0=not known, 1=snow, 2=rain',
+c     +     'none',
+c     +   form_data).ne.0) return
 
 c      if(declvar('obs', 'route_on', 'one', 1, 'integer',
 c     +     'Kinematic routing switch - 1=storm period',
@@ -307,6 +318,11 @@ c      integer nstep, datetime(6)
         if(readvar('obs','gw_ext').ne.0) return
       endif
       if(nsol.gt.0) then
+        if(nsol.ne.1) then
+            print*,'Dimension nsol set to ',nsol,' which is '//
+     +         'greater than the maximum of one. Fix and restart.'
+            return
+        endif
         if(readvar('obs','solrad').ne.0) return
       endif
       if(nevap.gt.0) then
@@ -324,7 +340,7 @@ c      integer nstep, datetime(6)
         endif   
         if(rh_tf.and.sh) then
              print*,'Both relhum and spechum found ',
-     +       'in webmod.hydro.dat. Only one allowed'
+     +       'in webmod.hydro.dat. Only one allowed. Fix and restart.'
              return
         elseif(rh_tf.or.sh) then  ! all good, use the rh_tf flag to distribute relative humidity,
                                 !assign -99 to other variable to ensure fail if used.
@@ -349,10 +365,10 @@ c      integer nstep, datetime(6)
 c kludge to get ICRW paper out      
 c      relhum(1) = 0.34
 c end kludge
-      form_data(1) = 0
-      if(nform.gt.0) then
-        if(readvar('obs','form_data').ne.0) return
-      endif
+c      form_data(1) = 0
+c      if(nform.gt.0) then
+c        if(readvar('obs','form_data').ne.0) return
+c      endif
 c      route_on = 0
 
       if(temp_units.eq.1) then

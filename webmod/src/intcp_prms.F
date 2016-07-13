@@ -26,7 +26,8 @@ C   Declared Parameters
       integer, save, allocatable:: cov_type(:)
       real, save, allocatable :: snow_intcp(:), srain_intcp(:)
       real, save, allocatable :: covden_sum(:), covden_win(:)
-      real, save, allocatable :: epan_coef(:),mru_area(:),wrain_intcp(:)
+!      real, save, allocatable :: epan_coef(:),mru_area(:),wrain_intcp(:)
+      real, save, allocatable :: mru_area(:),wrain_intcp(:)
 
 C   Private Variables
       integer, save,  allocatable:: intcp_transp_on(:)
@@ -34,7 +35,8 @@ C   Undeclared Static Variables gotten from from other modules
       integer, save :: basin_dep
       integer, save, allocatable:: transp_on(:)
       real, save, allocatable :: mru_dep(:), mru_perv(:), mru_rain(:)
-      real, save, allocatable :: mru_snow(:), pan_evap(:)
+!      real, save, allocatable :: mru_snow(:), pan_evap(:)
+      real, save, allocatable :: mru_snow(:)
       real, save, allocatable :: pkwater_equiv(:), potet(:), swrad(:)
       real, save, allocatable :: temp_c(:)
     
@@ -158,12 +160,12 @@ c
      +   int_snow).ne.0) return
 
 
-      ALLOCATE (epan_coef(Nmonths))
-      if(declparam('intcp', 'epan_coef', 'nmonths', 'real',
-     +   '1.0', '0.2', '3.0',
-     +   'Evaporation pan coefficient',
-     +   'Evaporation pan coefficient',
-     +   'none').ne.0) return
+c      ALLOCATE (epan_coef(Nmonths))
+c      if(declparam('intcp', 'epan_coef', 'nmonths', 'real',
+c     +   '1.0', '0.2', '3.0',
+c     +   'Evaporation pan coefficient',
+c     +   'Evaporation pan coefficient',
+c     +   'none').ne.0) return
 
       ALLOCATE (mru_area(Nmru))
       if(declparam('intcp', 'mru_area', 'nmru', 'real',
@@ -242,7 +244,9 @@ c
       ALLOCATE (temp_c(Nmru))
       ALLOCATE (swrad(Nmru))
       ALLOCATE (mru_perv(Nmru))
-      ALLOCATE (pan_evap(Nevap))
+      !if(nevap.ne.0) then
+      !  ALLOCATE (pan_evap(Nevap))
+      !endif ! nevap.ne.0
       ALLOCATE (potet(Nmru))
       ALLOCATE (pkwater_equiv(Nmru))
 !
@@ -287,8 +291,8 @@ c
       if(getparam('intcp', 'covden_win', nmru, 'real', covden_win)
      +   .ne.0) return 
 
-      if(getparam('intcp', 'epan_coef', nmonths, 'real', epan_coef)
-     +   .ne.0) return
+!      if(getparam('intcp', 'epan_coef', nmonths, 'real', epan_coef)
+!     +   .ne.0) return
 
       if(getparam('basin', 'mru_area', nmru, 'real', mru_area)
      +   .ne.0) return
@@ -347,10 +351,12 @@ c
 
       if(getvar('basin', 'mru_perv', nmru, 'real', mru_perv)
      +   .ne.0) return
-     
-      if(getvar('obs', 'pan_evap', nevap, 'real', pan_evap)
-     +   .ne.0) return
-
+!     
+!      if(nevap.ne.0) then
+!        if(getvar('obs', 'pan_evap', nevap, 'real', pan_evap)
+!     +   .ne.0) return
+!      endif ! nevap.ne.0
+      
       if(getvar('potet', 'potet', nmru, 'real', potet)
      +   .ne.0) return
 
@@ -459,12 +465,15 @@ C******compute evaporation or sublimation of interception
         if(intcp_on(i).eq.1) then
 
           intcp_evap(i) = 0.
-          if(dt.lt.24.. and . mru_dep(i).gt.0.) go to 900
+c   apparently no canopy evap during storm simulation. Not applicable to webmod that runs at daily time step.
+          if(dt.lt.24.. and . mru_dep(i).gt.0.) go to 900 
 
-          evcan = potet(i) / epan_coef(mo)
-          if(nevap.gt.0) then
-            if(pan_evap(1).ne.-999) evcan = pan_evap(1)
-         end if
+          evcan = potet(i)
+c     !     evcan = potet(i) / epan_coef(mo)
+c     !     if(nevap.gt.0) then
+c     !       if(pan_evap(mru_pansta(i)).ne.
+c     !$            -999)evcan=pan_evap(mru_pansta(i))
+c     !      end if
             
 c******Compute snow interception loss
 

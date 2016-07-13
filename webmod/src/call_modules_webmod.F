@@ -396,10 +396,10 @@ c
      +   'Number of TTI bins').ne.0)
      +    return
 
-      if(decldim('nform', 1, MAXFORM,
-     +   'Number of form_data input values. This has a max of 1 but '//
-     +   'is an array to satisy a readvar requirement. Set to 0 if'//
-     +   'no form_data are included in the input file.').ne.0) return
+c      if(decldim('nform', 1, MAXFORM,
+c     +   'Number of form_data input values. This has a max of 1 but '//
+c     +   'is an array to satisy a readvar requirement. Set to 0 if'//
+c     +   'no form_data are included in the input file.').ne.0) return
 
       if(decldim('nexlag', 1, MAXLAG,
      +   'Number of excess liquid lag increments').ne.0)

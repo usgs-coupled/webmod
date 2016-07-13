@@ -13,6 +13,9 @@ c        7-6-06  - Made mru_dep = rain + snow for all cases.
 c
 c        06may10 - Port to Fortran 90 with module and dynamic memory
 c
+c        08jul16 - Removed nform, form_data, and strain as no storms and 
+c                  no observed form for each MRU
+c
 c***********************************************************************
 c 
       MODULE WEBMOD_IRRIG
@@ -22,7 +25,7 @@ c
 C   Dimensions
 c      integer, save :: nmru, nirrig_ext, nirrig_int
 c      integer, save :: nhydro, nmonths, nform
-      integer, save :: nmru, nhydro, nmonths, nform
+      integer, save :: nmru, nhydro, nmonths
       
 C   Declared Variables
       real, save :: basin_irr_ext,basin_irr_sat, basin_irr_hyd
@@ -51,7 +54,7 @@ c      real, save, allocatable :: irrig_ext(:), irrig_sat_next(:)
       real, save, allocatable :: mru_dep(:), mru_ppt(:), mru_rain(:)
       real, save, allocatable :: mru_snow(:),newsnow(:)
       integer, save, allocatable ::  prmx(:), pptmix(:)
-      integer, save ::  form_data(1)
+c      integer, save ::  form_data(1)
       double precision, save, allocatable :: irrig_hyd_next(:)
       double precision, save, allocatable :: irrig_hyd_seg_next(:)
       real, save, allocatable :: tmax_c(:), tmin_c(:)
@@ -76,8 +79,8 @@ c
         if ( nmru.eq.-1 ) return
       nhydro = getdim('nhydro')
         if ( nhydro.eq.-1 ) return
-      nform = getdim('nform')
-        if ( nform.eq.-1 ) return
+c      nform = getdim('nform')
+c        if ( nform.eq.-1 ) return
       nmonths = getdim('nmonths')
         if ( nmonths.eq.-1 ) return
 c      nirrig_ext = getdim('nirrig_ext')
@@ -292,7 +295,7 @@ c
       if(getparam('basin', 'mru_area_frac', nmru, 'real',
      $     mru_area_frac) .ne.0) return
 
-      form_data(1) = 0
+c      form_data(1) = 0
 
       irrinit = 0
 
@@ -367,10 +370,10 @@ c     +    irrig_hyd_next).ne.0) return
 c      if(getvar('routec', 'irrig_hyd_seg_next', nhydro, 'double',
 c     +    irrig_hyd_seg_next).ne.0) return
 
-      if(nform.gt.0) then
-        if(getvar('obs', 'form_data', nform, 'integer', form_data)
-     +   .ne.0) return
-      endif
+c      if(nform.gt.0) then
+c        if(getvar('obs', 'form_data', nform, 'integer', form_data)
+c     +   .ne.0) return
+c      endif
 
       if(getvar('temp', 'tmax_c', nmru, 'real', tmax_c)
      +     .ne.0) return
@@ -509,17 +512,11 @@ C******If observed temperature data are not available or if observed
 C******form data are available and rain is explicitly specified then
 C******precipitation is all rain.
 
-       if(form_data(1).eq.2) then
-          pptmix(i) = 0
-          prmx(i)=1
-          mru_rain(i) = dep
-          mru_snow(i) = 0.
-
 C******If form data are available and snow is explicitly specified or if
-C******maximum temperature is below or equal to the base temperature for
+C******If maximum temperature is below or equal to the base temperature for
 C******snow then precipitation is all snow
 
-        else if(form_data(1).eq.1.or.tmax_c(i).le.tmax_allsnow_c) then
+        if(tmax_c(i).le.tmax_allsnow_c) then
           pptmix(i) = 0
           mru_rain(i) = 0
           mru_snow(i) = dep

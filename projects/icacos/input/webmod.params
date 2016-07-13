@@ -80,9 +80,6 @@ one
 ngw_ext
 1
 ####
-nlapse
-3
-####
 nexlag
 2
 ####
@@ -1913,6 +1910,13 @@ one
 0
 ####
 mru_tsta 9
+1
+nmru
+1
+1
+1
+####
+mru_rhsta 9
 1
 nmru
 1

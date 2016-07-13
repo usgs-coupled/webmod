@@ -22,7 +22,8 @@ c
 #include "fmodules.inc"
 
 C   Dimensions
-      integer, save :: nmru, nmonths, nrain, nform
+C      integer, save :: nmru, nmonths, nrain, nform
+      integer, save :: nmru, nmonths, nrain
       
 C   Declared Variables
       real, save :: basin_dep, basin_ppt
@@ -43,7 +44,7 @@ C   Declared Private Variables
 
 C   Undeclared Static Variables gotten from from other modules - soltab
 c      integer, save :: route_on   ! from obs
-      integer, save ::  form_data(1)  ! from obs
+c      integer, save ::  form_data(1)  ! from obs
       real, save, allocatable :: precip(:), tmax_c(:), tmin_c(:) ! from obs and temp
       
       END MODULE WEBMOD_PRECIP
@@ -98,8 +99,8 @@ c
         if ( nmru.eq.-1 ) return
       nrain = getdim('nrain')
         if ( nrain.eq.-1 ) return
-      nform = getdim('nform')
-        if ( nform.eq.-1 ) return
+c      nform = getdim('nform')
+c        if ( nform.eq.-1 ) return
       nmonths = getdim('nmonths')
         if ( nmonths.eq.-1 ) return
         
@@ -271,7 +272,7 @@ c     +   strain_adj).ne.0) return
       if(getparam('basin', 'mru_area_frac', nmru, 'real',
      $     mru_area_frac) .ne.0) return
 
-      form_data(1) = 0
+c      form_data(1) = 0
 
       pptinit = 0
 
@@ -304,10 +305,10 @@ c      integer nowtime(6)
       if(getvar('obs', 'precip', nrain, 'real', precip)
      +   .ne.0) return
 
-      if(nform.eq.1) then
-        if(getvar('obs', 'form_data', 1, 'integer', form_data)
-     +   .ne.0) return
-      endif
+c      if(nform.eq.1) then
+c        if(getvar('obs', 'form_data', 1, 'integer', form_data)
+c     +   .ne.0) return
+c      endif
       
 c      if(getvar('obs', 'route_on', 1, 'integer', route_on)
 c     +   .ne.0) return
@@ -365,19 +366,19 @@ C******If observed temperature data are not available or if observed
 C******form data are available and rain is explicitly specified then
 C******precipitation is all rain.
 
-        if(form_data(1).eq.2) then
-          pcor = rain_adj(i,mo)
-          pptmix(i) = 0
-          prmx(i)=1
-          mru_ppt(i) = ppt * pcor
-          mru_rain(i) = mru_ppt(i)
-          mru_snow(i) = 0.
+c        if(form_data(1).eq.2) then
+c          pcor = rain_adj(i,mo)
+c          pptmix(i) = 0
+c          prmx(i)=1
+c          mru_ppt(i) = ppt * pcor
+c          mru_rain(i) = mru_ppt(i)
+c          mru_snow(i) = 0.
 
 C******If form data are available and snow is explicitly specified or if
 C******maximum temperature is below or equal to the base temperature for
 C******snow then precipitation is all snow
 
-        else if(form_data(1).eq.1.or.tmax_c(i).le.tmax_allsnow_c) then
+        if(tmax_c(i).le.tmax_allsnow_c) then
           pcor = snow_adj(i,mo)
           pptmix(i) = 0
           mru_ppt(i) = ppt * pcor
