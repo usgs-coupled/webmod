@@ -28,6 +28,7 @@ MMFOBJS = ${SRCS:.c=.o}
 #
 # Standard Targets for Users
 #
+all: $(MMFLIB)
 
 $(MMFLIB): $(MMFOBJS)
 # Create lib directory, if necessary
