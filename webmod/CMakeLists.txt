@@ -22,7 +22,6 @@ src/my_newunit.F
 src/nwsmelt_topg.F
 src/obs_chem.F
 src/obs_webmod.F
-src/obs_webx.F
 src/phreeq_mms.F90
 src/potet_hamon_prms.F
 src/precip_web.F
@@ -33,7 +32,6 @@ src/top2clark.F
 src/topmod_chem.F
 src/web_sum.F
 src/webmod_res.F
-src/xyz_dist_web.F
 )
 
 # define CMAKE_FC
@@ -53,10 +51,10 @@ source_group("Header Files" FILES "src/fmodules.f90.inc")
 source_group("Source Files" FILES "src/intcp_prms.F")
 source_group("Source Files" FILES "src/io.F")
 source_group("Source Files" FILES "src/irrig_web.F")
+source_group("Source Files" FILES "src/my_newunit.F")
 source_group("Source Files" FILES "src/nwsmelt_topg.F")
 source_group("Source Files" FILES "src/obs_chem.F")
 source_group("Source Files" FILES "src/obs_webmod.F")
-source_group("Source Files" FILES "src/obs_webx.F")
 source_group("Source Files" FILES "src/phreeq_mms.F90")
 source_group("Source Files" FILES "src/potet_hamon_prms.F")
 source_group("Source Files" FILES "src/precip_web.F")
@@ -67,7 +65,6 @@ source_group("Source Files" FILES "src/top2clark.F")
 source_group("Source Files" FILES "src/topmod_chem.F")
 source_group("Source Files" FILES "src/web_sum.F")
 source_group("Source Files" FILES "src/webmod_res.F")
-source_group("Source Files" FILES "src/xyz_dist_web.F")
 
 # setup include directories
 include_directories("${PROJECT_SOURCE_DIR}/src")
