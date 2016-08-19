@@ -1,5 +1,5 @@
 set ARCHIVE=C:\Programs\webmod-trunk\webmod1.0
-set EXPORTED=C:\Programs\webmod-trunk\webmod11641export
+set EXPORTED=C:\Programs\webmod-trunk\webmodexport
 DEL C:\Programs\webmod-trunk\webmod1.0 /Q /F
 mkdir C:\Programs\webmod-trunk\webmod1.0
 xcopy %EXPORTED% %ARCHIVE% /S /Y
@@ -25,4 +25,6 @@ RMDIR memory_leak_f  /s /q
 RMDIR examples  /s /q
 RMDIR build  /s /q
 RMDIR all /s /q
+cd src\phreeqcpp
+del Makefile*
 cd %ARCHIVE%\..
