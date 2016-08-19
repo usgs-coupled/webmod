@@ -55,7 +55,7 @@ c
       save SVN_ID
 
       SVN_ID = 
-     $     '$Id$ '
+     $ '$Id$ '
     
       potet_hamon_prms = 0
 
