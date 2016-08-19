@@ -721,7 +721,7 @@
                            phreeqmms_run, phreeqmms_clean
       
       SVN_ID = &
-           '$Id: phreeq_mms.f 36 2007-06-08 17:38:24Z rmwebb $ '
+           '$Id$ '
      
       phreeq_mms = 0
 

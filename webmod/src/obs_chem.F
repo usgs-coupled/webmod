@@ -184,7 +184,7 @@ c
       character(len=12), external :: parse
 c
       SVN_ID = 
-     $     '$Id: obs_chem.f 35 2010-03-30 17:34:40Z rmwebb $ '
+     $     '$Id$ '
 
       obs_chem = 0
 

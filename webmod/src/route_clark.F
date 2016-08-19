@@ -112,7 +112,7 @@ c
       integer routecdecl,routecinit, routecrun
 
       SVN_ID = 
-     $     '$Id: route_clark.f 37 2007-06-08 17:57:19Z rmwebb $ '
+     $     '$Id$ '
       
       route_clark = 0
 

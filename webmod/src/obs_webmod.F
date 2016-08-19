@@ -56,7 +56,7 @@ c
       save SVN_ID
 
       SVN_ID = 
-     $     '$Id: obs_webmod.f 29 2006-07-06 23:03:45Z rmwebb $ '
+     $     '$Id$ '
 
       obs_webmod = 0
 

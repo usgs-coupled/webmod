@@ -424,7 +424,7 @@ c
       integer, external :: webrdecl,webrinit, webrrun
 
       SVN_ID =
-     $     '$Id: webmod_res.f 40 2009-04-24 rmwebb $ '
+     $     '$Id$ '
       
       webmod_res = 0
 

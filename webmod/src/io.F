@@ -64,7 +64,7 @@ c     Main basin_sum routine c
       save SVN_ID
 
       SVN_ID = 
-     $     '$Id: io.f 32 2007-06-08 17:24:28Z rmwebb $ '
+     $     '$Id$ '
       io = 0
       if(arg.eq.'declare') then
         io = iodecl()

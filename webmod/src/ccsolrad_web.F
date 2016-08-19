@@ -58,7 +58,7 @@ C Functions
       save SVN_ID
 
       SVN_ID = 
-     $     '$Id: ccsolrad_web.f 29 2006-07-06 23:03:45Z rmwebb $ '
+     $     '$Id$ '
 
 c***********************************************************************
       ccsolrad_web = 0

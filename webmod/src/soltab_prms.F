@@ -50,7 +50,7 @@ c
       save SVN_ID
 
       SVN_ID = 
-     $     '$Id: soltab_prms.f 29 2006-07-06 23:03:45Z rmwebb $ '
+     $     '$Id$ '
 
       soltab_prms = 0
 

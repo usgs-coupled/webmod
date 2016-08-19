@@ -650,7 +650,7 @@ c
       save SVN_ID
 
       SVN_ID = 
-     $     '$Id: irrig_web.f 33 2007-06-08 17:26:29Z rmwebb $ '
+     $     '$Id$ '
 
       irrig_web = 0
 

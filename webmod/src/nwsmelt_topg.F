@@ -101,7 +101,7 @@ c
       save SVN_ID
 
       SVN_ID = 
-     $     '$Id: nwsmelt_topg.f 41 2008-07-24 16:23:18Z rmwebb $ '
+     $     '$Id$ '
 
       if(arg.eq.'declare') then
         nwsmelt_topg = nwsmdecl()

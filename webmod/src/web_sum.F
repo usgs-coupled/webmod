@@ -171,7 +171,7 @@ c
       save SVN_ID
 
       SVN_ID = 
-     $     '$Id: web_sum.f 39 2007-06-08 18:01:49Z rmwebb $ '
+     $     '$Id$ '
 
       web_sum = 0
 

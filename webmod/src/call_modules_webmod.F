@@ -61,7 +61,7 @@ c      INTEGER, EXTERNAL :: xyz_dist_web
         PRINT *, ' phreeq_mms, web_sum.f'
 
         call_modules = declmodule(
-     +'$Id: call_modules_webmod.f 494 2013-07-15 18:00:00Z rmwebb $')
+     +'$Id$')
 
         IF ( control_string(Model_mode, 'model_mode').NE.0 ) RETURN
 

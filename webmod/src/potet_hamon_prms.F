@@ -55,7 +55,7 @@ c
       save SVN_ID
 
       SVN_ID = 
-     $     '$Id: potet_hamon_prms.f 29 2006-07-06 23:03:45Z rmwebb $ '
+     $     '$Id$ '
     
       potet_hamon_prms = 0
 

@@ -38,7 +38,7 @@ c
       save SVN_ID
 
       SVN_ID = 
-     $     '$Id: basin_topg.f 31 2007-06-08 17:22:15Z rmwebb $ '
+     $     '$Id$ '
 
       basin_topg = 0
 

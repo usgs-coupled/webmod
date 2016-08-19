@@ -56,7 +56,7 @@ c
       integer intdecl, intinit, intrun
 
       SVN_ID = 
-     $     '$Id: intcp_prms.f 29 2006-07-06 23:03:45Z rmwebb $ '
+     $     '$Id$ '
     
       intcp_prms = 0
 

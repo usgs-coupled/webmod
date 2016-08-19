@@ -2,7 +2,7 @@
 ***********************************************************************
 c   topmod_chem.f
 c
-c   last modified by Rick Webb $Date: 2007-06-08 11:58:32 -0600 (Fri, 08 Jun 2007) $
+c   last modified by Rick Webb $Date$
 c   - corrected routing routine (eliminated nrtdelay as dimension)
 c   - corrected max infiltration check for infiltration excess
 c   - added cumulative variables for different flow paths
@@ -326,7 +326,7 @@ c
       topmod_chem = 0
 
       SVN_ID = 
-     $     '$Id: topmod_chem.f 38 2007-06-08 17:58:32Z rmwebb $ '
+     $     '$Id$ '
       
       if(arg.eq.'declare') then
         topmod_chem = topmdecl()

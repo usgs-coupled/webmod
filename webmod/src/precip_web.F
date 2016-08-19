@@ -65,7 +65,7 @@ c
       save SVN_ID
 
       SVN_ID = 
-     $     '$Id: precip_web.f 29 2006-07-06 23:03:45Z rmwebb $ '
+     $     '$Id$ '
 
       precip_web = 0
 
