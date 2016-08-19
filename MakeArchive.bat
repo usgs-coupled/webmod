@@ -1,7 +1,12 @@
+REM Define ARCHIVE to be a directory for the WEBMOD Archive
+REM Defined EXPORTED to be the directory of a WEBMOD trunk SVN export
+REM EXPORTED is copied to ARCHIVE and unused files are deleted
+REM
 set ARCHIVE=C:\Programs\webmod-trunk\webmod1.0
-set EXPORTED=C:\Programs\webmod-trunk\webmodexport
-DEL C:\Programs\webmod-trunk\webmod1.0 /Q /F
-mkdir C:\Programs\webmod-trunk\webmod1.0
+set EXPORTED=C:\Programs\webmod-trunk\WebmodExport
+REM
+DEL %ARCHIVE% /Q /F
+mkdir %ARCHIVE%
 xcopy %EXPORTED% %ARCHIVE% /S /Y
 cd %ARCHIVE%
 DEL MakeArchive.bat
