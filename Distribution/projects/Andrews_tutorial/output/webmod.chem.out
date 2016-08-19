@@ -1,0 +1,2 @@
+ Even though the dimension nsolute is not equal to zero
+ no geochemistry is simulated since chem_sim=0

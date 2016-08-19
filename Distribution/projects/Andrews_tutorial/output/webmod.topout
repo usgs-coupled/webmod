@@ -1,0 +1,123 @@
+TOPMODEL output file
+
+Infiltration excess parameters
+Proportional areas: 
+     0.23300E-03  0.59780E-02  0.60597E-01  0.24173E+00  0.38292E+00  0.24173E+00  0.60597E-01  0.59780E-02  0.23300E-03
+MRU Vertical Hydraulic Conductivities, XK
+=== ============ ============ ============ ============ ============ ============ ============ ============ ============ 
+  1  0.17324E-05  0.19410E-04  0.21747E-03  0.24366E-02  0.27300E-01  0.30588E+00  0.34271E+01  0.38398E+02  0.43022E+03
+  2  0.17324E-05  0.19410E-04  0.21747E-03  0.24366E-02  0.27300E-01  0.30588E+00  0.34271E+01  0.38398E+02  0.43022E+03
+  3  0.17324E-05  0.19410E-04  0.21747E-03  0.24366E-02  0.27300E-01  0.30588E+00  0.34271E+01  0.38398E+02  0.43022E+03
+  4  0.17324E-05  0.19410E-04  0.21747E-03  0.24366E-02  0.27300E-01  0.30588E+00  0.34271E+01  0.38398E+02  0.43022E+03
+  5  0.17324E-05  0.19410E-04  0.21747E-03  0.24366E-02  0.27300E-01  0.30588E+00  0.34271E+01  0.38398E+02  0.43022E+03
+  6  0.17324E-05  0.19410E-04  0.21747E-03  0.24366E-02  0.27300E-01  0.30588E+00  0.34271E+01  0.38398E+02  0.43022E+03
+  7  0.17324E-05  0.19410E-04  0.21747E-03  0.24366E-02  0.27300E-01  0.30588E+00  0.34271E+01  0.38398E+02  0.43022E+03
+  8  0.17324E-05  0.19410E-04  0.21747E-03  0.24366E-02  0.27300E-01  0.30588E+00  0.34271E+01  0.38398E+02  0.43022E+03
+  9  0.17324E-05  0.19410E-04  0.21747E-03  0.24366E-02  0.27300E-01  0.30588E+00  0.34271E+01  0.38398E+02  0.43022E+03
+ 10  0.17324E-05  0.19410E-04  0.21747E-03  0.24366E-02  0.27300E-01  0.30588E+00  0.34271E+01  0.38398E+02  0.43022E+03
+
+
+Characteristics of subcatchments
+MRU: Subcatchment ID
+TL: Mean Topographic Index
+SZM: Shape factor for exponential transmissivity
+T0: Transmissivity at saturation
+SZQ: Baseflow discharge when average soil moisture 
+  deficit=0, in m/DT
+PMACRO: Fraction of infiltration that bypasses root zone
+PMAC_SAT: Fraction of PMACRO that bypasses
+  the root zone and the unsaturated zone (0-1.0)
+QDFFRAC: Fraction of recharge diverted to stream
+S_TH_WP: Soil moisture at wilting point(cm3/cm3)
+S_TH_0: Initial soil moisture(cm3/cm3)
+S_TH_FC: Soil moisture at field capacity(cm3/cm3)
+S_POROSITY: Soil porosity(cm3/cm3)
+S_ROOT_DEP: Rooting Depth (m)
+S_ROCK_DEP: Depth to bedrock (m)
+GW_LOSS_K: Conductivity of bedrock or 
+  aquitard (-log(cm/s))
+S_SATP_ZMN: Minimum water table elevation, 
+  in meters, at which the deep preferential flow 
+  paths (i.e. tile drains) become active.
+S_SATP_ZMX: Water table elevation, in meters, 
+  at which the discharge from preferential flow in 
+  the saturated zone will be at its maximum discharge.
+S_SATP_K: Conductivity, in cm/s, of preferential 
+  flow in the saturated zone.
+QPREF_MAX: Maximum discharge from preferential flow 
+  in the saturated zone (m/hr).
+SRMAX: Storage between field capacity and wilting point
+  Derived as (s_th_fc - s_th_wp)* s_root_dep.
+SR0: Initial root zone deficit
+  Derived as (s_th_fc - s_th_0) * s_root_dep.
+SBAR0: Initial soil moisture deficit, in meters.
+  [adjusted to include 1st day well pumping]
+Z_0: Initial average water level above bedrock.
+  Derived as (s_rock_dep - (sbar0/s_porosity)
+BAL: Inital water balance, in meters =
+  (S_ROCK_DEP * S_POROSITY) -(SR0+SBAR0)
+
+MRU  TL        SZM        T0         SZQ        PMACRO     PMAC_SAT   QDFFRAC    S_TH_WP    S_TH_0     S_TH_FC    S_POROSITY S_ROOT_DEP S_ROCK_DEP GW_LOSS_K  S_SATP_ZMN S_SATP_ZMX S_SATP_K   QPREF_MAX  SRMAX      SR0        SBAR0      Z_0        INIT STORE
+==== ========= ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== ========== ==========
+   1  0.78E+02  0.350E+00  0.959E+01  0.378E-01  0.278E+00  0.800E+00  0.910E+00  0.523E-01  0.210E+00  0.210E+00  0.500E+00  0.634E+00  0.160E+01  0.110E+02 -0.200E+01 -0.200E+01  0.000E+00  0.000E+00  0.100E+00  0.000E+00  0.000E+00  0.000E+00  0.800E+00
+   2  0.11E+03  0.350E+00  0.197E+02  0.378E-01  0.278E+00  0.800E+00  0.910E+00  0.523E-01  0.210E+00  0.210E+00  0.500E+00  0.634E+00  0.160E+01  0.110E+02 -0.200E+01 -0.200E+01  0.000E+00  0.000E+00  0.100E+00  0.000E+00  0.000E+00  0.000E+00  0.800E+00
+   3  0.36E+02  0.350E+00  0.210E+01  0.378E-01  0.278E+00  0.800E+00  0.910E+00  0.523E-01  0.210E+00  0.210E+00  0.500E+00  0.634E+00  0.160E+01  0.110E+02 -0.200E+01 -0.200E+01  0.000E+00  0.000E+00  0.100E+00  0.000E+00  0.000E+00  0.000E+00  0.800E+00
+   4  0.13E+03  0.350E+00  0.250E+02  0.378E-01  0.278E+00  0.800E+00  0.910E+00  0.523E-01  0.210E+00  0.210E+00  0.500E+00  0.634E+00  0.160E+01  0.110E+02 -0.200E+01 -0.200E+01  0.000E+00  0.000E+00  0.100E+00  0.000E+00  0.000E+00  0.000E+00  0.800E+00
+   5  0.66E+02  0.350E+00  0.682E+01  0.378E-01  0.278E+00  0.800E+00  0.910E+00  0.523E-01  0.210E+00  0.210E+00  0.500E+00  0.634E+00  0.160E+01  0.110E+02 -0.200E+01 -0.200E+01  0.000E+00  0.000E+00  0.100E+00  0.000E+00  0.000E+00  0.000E+00  0.800E+00
+   6  0.84E+02  0.350E+00  0.111E+02  0.378E-01  0.278E+00  0.800E+00  0.910E+00  0.523E-01  0.210E+00  0.210E+00  0.500E+00  0.634E+00  0.160E+01  0.110E+02 -0.200E+01 -0.200E+01  0.000E+00  0.000E+00  0.100E+00  0.000E+00  0.000E+00  0.000E+00  0.800E+00
+   7  0.90E+02  0.350E+00  0.129E+02  0.378E-01  0.278E+00  0.800E+00  0.910E+00  0.523E-01  0.210E+00  0.210E+00  0.500E+00  0.634E+00  0.160E+01  0.110E+02 -0.200E+01 -0.200E+01  0.000E+00  0.000E+00  0.100E+00  0.000E+00  0.000E+00  0.000E+00  0.800E+00
+   8  0.10E+03  0.350E+00  0.166E+02  0.378E-01  0.278E+00  0.800E+00  0.910E+00  0.523E-01  0.210E+00  0.210E+00  0.500E+00  0.634E+00  0.160E+01  0.110E+02 -0.200E+01 -0.200E+01  0.000E+00  0.000E+00  0.100E+00  0.000E+00  0.000E+00  0.000E+00  0.800E+00
+   9  0.44E+02  0.350E+00  0.300E+01  0.378E-01  0.278E+00  0.800E+00  0.910E+00  0.523E-01  0.210E+00  0.210E+00  0.500E+00  0.634E+00  0.160E+01  0.110E+02 -0.200E+01 -0.200E+01  0.000E+00  0.000E+00  0.100E+00  0.000E+00  0.000E+00  0.000E+00  0.800E+00
+  10  0.54E+02  0.350E+00  0.465E+01  0.378E-01  0.278E+00  0.800E+00  0.910E+00  0.523E-01  0.210E+00  0.210E+00  0.500E+00  0.634E+00  0.160E+01  0.110E+02 -0.200E+01 -0.200E+01  0.000E+00  0.000E+00  0.100E+00  0.000E+00  0.000E+00  0.000E+00  0.800E+00
+
+
+HILLSLOPE TO CHANNEL ASSIGNMENTS
+Hillslope(MRU)  Area(km2)  Channel
+==============  =========  =======
+     1              0.27        1
+     2              0.13        1
+     3              0.18        1
+     4              0.07        1
+     5              0.20        1
+     6              0.30        1
+     7              0.05        1
+     8              0.09        1
+     9              0.28        1
+    10              0.17        1
+
+     Basin Area     1.74 sq.km
+
+
+CHANNEL ROUTING DATA
+ (Time step, DT = 24.0000 hours)
+ (Channel velocity, CHV =400.0000 meters per hour)
+ Chan  Area(km^2)  MaxDel(DTs) Histogram Ordinates
+ ==== ===========  =========== ======================>
+    1 0.17400E+01  0.62500E-01 0.10000E+01
+
+
+Sum of areas drained to channels      1.740 sq.km. (should equal basin area)
+Sum of histogram ordinates for all channels      1.0000 (should equal 1.0000)
+Channel loss to deep aquifer     0.0000 cfs/mile over a total length of     0.3728 miles
+
+Water Balance for Subcatchments : 
+
+  MRU       SUMP    SUMGWIN     SUMAE      SUMQ     SUMGW_LOSS   SUMRZ      SUMUZ       SBAR      BALANCE   ACMAX AFXMAX
+  ===   ========== ========== ========== ========== ========== ========== ========== ========== ==========  ===== ======
+   1     0.245E+02  0.000E+00  0.838E+01  0.164E+02  0.000E+00  0.225E-02  0.181E-01  0.315E+00  0.161E-02   0.15   0.07
+   2     0.244E+02  0.000E+00  0.104E+02  0.143E+02  0.000E+00  0.209E-02  0.307E-02  0.314E+00  0.209E-02   0.05   0.07
+   3     0.245E+02  0.000E+00  0.821E+01  0.166E+02  0.000E+00  0.206E-02  0.181E-01  0.315E+00  0.149E-02   0.25   0.07
+   4     0.246E+02  0.000E+00  0.880E+01  0.161E+02  0.000E+00  0.207E-02  0.448E-02  0.311E+00  0.218E-02   0.15   0.07
+   5     0.244E+02  0.000E+00  0.899E+01  0.157E+02  0.000E+00  0.225E-02  0.163E-01  0.316E+00  0.199E-02   0.15   0.07
+   6     0.244E+02  0.000E+00  0.955E+01  0.152E+02  0.000E+00  0.120E-02  0.365E-02  0.313E+00  0.194E-02   0.25   0.07
+   7     0.244E+02  0.000E+00  0.906E+01  0.157E+02  0.000E+00  0.141E-02  0.842E-02  0.312E+00  0.170E-02   0.15   0.07
+   8     0.243E+02  0.000E+00  0.949E+01  0.152E+02  0.000E+00  0.130E-02  0.418E-02  0.312E+00  0.153E-02   0.05   0.07
+   9     0.242E+02  0.000E+00  0.552E+01  0.190E+02  0.000E+00  0.113E-02  0.315E-02  0.310E+00  0.740E-03   0.25   0.07
+  10     0.240E+02  0.000E+00  0.821E+01  0.161E+02  0.000E+00  0.105E-02  0.316E-02  0.308E+00  0.117E-02   0.25   0.07
+
+
+ Objective function values
+ F1  0.36164E+05   E      0.41336   F2  0.10757E+05
+
+ Mean Obs Q  0.13624E+01    Variance Obs Q  0.58195E+01
+     Error Variance 0.34140E+01
