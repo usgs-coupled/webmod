@@ -5811,7 +5811,7 @@
           form='formatted', status='new')
         nf=nf+1
         vse_lun(nf)=ef_bas%lun
-        write(ef_bas%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
+        write(ef_bas%lun,200)
 !
 !open mru entity files (only compsite mru if print_vse = 1)
 !
@@ -5833,7 +5833,7 @@
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_mru(i)%lun
-          write(ef_mru(i)%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
+          write(ef_mru(i)%lun,200)
 ! additional reservoir files
           if(print_vse.eq.2) then
             if(e_alloc) then
@@ -5869,7 +5869,7 @@
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_uzgen(i)%lun
-          write(ef_uzgen(i)%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
+          write(ef_uzgen(i)%lun,200)
 ! composite riparian uz
           write(filename,240)i
           filelen=length(filename)
@@ -5886,7 +5886,7 @@
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_uzrip(i)%lun
-          write(ef_uzrip(i)%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
+          write(ef_uzrip(i)%lun,200)
 ! composite upland uz
           write(filename,250)i
           filelen=length(filename)
@@ -5903,7 +5903,7 @@
             access='sequential',form='formatted', status='new')
           nf=nf+1
           vse_lun(nf)=ef_uzup(i)%lun
-          write(ef_uzup(i)%lun,210) (trim(ent_label(j)), j=3,ntally_cols)
+          write(ef_uzup(i)%lun,200)
 ! canopy
           write(filename,260)i
           filelen=length(filename)
@@ -6133,7 +6133,7 @@
             access='sequential',form='formatted', status='new')
         nf=nf+1
         vse_lun(nf)=ef_hyd%lun
-        write(ef_hyd%lun,211)
+        write(ef_hyd%lun,200)
         endif ! print_vse=2, hydro section
        endif ! print_vse=1 !
       endif ! if chem_sim.eq
@@ -6178,6 +6178,8 @@
  155  format('s_mru',I3.3,'_hill')
  160  format('s_mru',I3.3,'_uz2sat')
  170  format('s_hyd',I3.3)
+
+200 format('Reactive entities are not tracked for composite volumes')      
 
 210 format('Volume of water, in cubic meters,',&
        ' difference and remaining moles of Entity, per kilogram of water at end of day.',&
@@ -6313,7 +6315,11 @@
         if(nstep.eq.1) then
          print*,'Chem_sim parameter equals zero so all chemical ',&
            ' variables are uninitialized'
-         write(chemout%lun,*)'No geochemistry simulated (chem_sim=0)'
+           if(nsolute.eq.0) then
+            write(chemout%lun,*)'No geochemistry is simulated (chem_sim=0)'
+           else
+            write(chemout%lun,*)'no geochemistry is simulated since chem_sim=0'
+           endif
         endif  
       else ! chem_sim =1. Geochemistry is being simulated.
 !
@@ -10073,7 +10079,7 @@
               c_chem(i_hyd(is))%ElemFrac(j),(c_chem(i_hyd(is))%Rxn(j,i), i=3,ntally_cols)
           end do
          end do ! nsolute
-! entities - entities not tracked for uz composites, only individual reservoirs
+! entities - entities not tracked for composites or transients, only individual reservoirs
          do is=1,nmru
            write(ef_can(is)%lun,127) nstep,(datetime(i),i=1,3),&
             (c_chem(i_can(is))%vol(5)), (c_chem(i_can(is))%MassDiff(i), i=3,ntally_cols),&
@@ -10084,9 +10090,9 @@
            !write(ef_imperv(is)%lun,127) nstep,(datetime(i),i=1,3),
            ! (c_chem(i_imp(is))%vol(5)), sol_name(j), (c_chem(i_imp(is))%MassDiff(i), i=3,ntally_cols),&
            !  (c_chem(i_can(is))%Mass(i), i=3,ntally_cols)
-           write(ef_transp(is)%lun,127) nstep,(datetime(i),i=1,3),&
-            (c_chem(i_transp(is))%vol(5)),(c_chem(i_transp(is))%MassDiff(i), i=3,ntally_cols),&
-             (c_chem(i_transp(is))%Mass(i), i=3,ntally_cols)
+           !write(ef_transp(is)%lun,127) nstep,(datetime(i),i=1,3),&
+           ! (c_chem(i_transp(is))%vol(5)),(c_chem(i_transp(is))%MassDiff(i), i=3,ntally_cols),&
+           !  (c_chem(i_transp(is))%Mass(i), i=3,ntally_cols)
            write(ef_ohoriz(is)%lun,127) nstep,(datetime(i),i=1,3),&
             (c_chem(i_ohoriz(is))%vol(5)), (c_chem(i_ohoriz(is))%MassDiff(i), i=3,ntally_cols),&
              (c_chem(i_ohoriz(is))%Mass(i), i=3,ntally_cols)
@@ -10099,12 +10105,12 @@
            write(ef_satpref(is)%lun,127) nstep,(datetime(i),i=1,3),&
             (c_chem(i_satpref(is))%vol(5)), (c_chem(i_satpref(is))%MassDiff(i), i=3,ntally_cols),&
              (c_chem(i_satpref(is))%Mass(i), i=3,ntally_cols)
-           write(ef_hill(is)%lun,127) nstep,(datetime(i),i=1,3),&
-            (c_chem(i_hillout(is))%vol(5)), (c_chem(i_hillout(is))%MassDiff(i), i=3,ntally_cols),&
-             (c_chem(i_hillout(is))%Mass(i), i=3,ntally_cols)
-           write(ef_uz2sat(is)%lun,127) nstep,(datetime(i),i=1,3),&
-            (c_chem(i_recharge(is))%vol(5)), (c_chem(i_recharge(is))%MassDiff(i), i=3,ntally_cols),&
-             (c_chem(i_recharge(is))%Mass(i), i=3,ntally_cols)
+           !write(ef_hill(is)%lun,127) nstep,(datetime(i),i=1,3),&
+           ! (c_chem(i_hillout(is))%vol(5)), (c_chem(i_hillout(is))%MassDiff(i), i=3,ntally_cols),&
+           !  (c_chem(i_hillout(is))%Mass(i), i=3,ntally_cols)
+           !write(ef_uz2sat(is)%lun,127) nstep,(datetime(i),i=1,3),&
+           ! (c_chem(i_recharge(is))%vol(5)), (c_chem(i_recharge(is))%MassDiff(i), i=3,ntally_cols),&
+           !  (c_chem(i_recharge(is))%Mass(i), i=3,ntally_cols)
            do ia=1,nac
             write(ef_uz(is,ia)%lun,127) nstep,(datetime(i),i=1,3),&
              (c_chem(i_uz(ia,is))%vol(5)), (c_chem(i_uz(ia,is))%MassDiff(i), i=3,ntally_cols),&
@@ -10473,9 +10479,11 @@
             if(solns(i).eq.concDI.or.snowmelt.eq.melt) SNOW=.true.
 !  Ignore correction if ET since ET fraction is always negative. Snowmelt also can be negative if ionic pulse simuilated
             if(.not.ET.and..not.SNOW) then
-               print*,'Negative fraction encountered while ',&
+               if(abs(fracs(i)).gt.1e-5) then
+                  print*,'Negative fraction encountered while ',&
                     'mixing solution ',mixture
-               print*,'Value of ',fracs(i),' set to zero.'
+                 print*,'Value of ',fracs(i),' set to zero.'
+               endif
                fracs(i)=0
             end if
          end if

@@ -2972,8 +2972,8 @@ c
          Write(topout%lun,650)
  650     FORMAT(/'Water Balance for Subcatchments : '//
      1        '  MRU       SUMP    SUMGWIN     SUMAE    ',
-     $        '  SUMQ     SUMGW_LOSS   SUMRZ      SUMUZ  ',
-     $        '   SBAR      BAL       ACMAX AFXMAX'/
+     $        '  SUMQ     SUMGW_LOSS   SUMRZ      SUMUZ    ',
+     $        '   SBAR      BALANCE   ACMAX AFXMAX'/
      $        '  ===   ========== ========== ========== ',
      $        '========== ========== ========== ========== ',
      $        '========== ==========  ===== ======')

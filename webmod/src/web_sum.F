@@ -1055,8 +1055,8 @@ c
             write(chemout%lun,'(A)')trim(buffercdat)
          endif
       elseif(nsolute.ne.0) then
-         write (chemout%lun, *)'The parameter chem_sim(one)=0 '//
-     $                  ' so no geochemisty has been simulated'
+         write (chemout%lun, *)'Even though the dimension nsolute '//
+     $       'is not equal to zero'
       end if
 c
 c Print header for hydrology output files. Describe fields if print_explanation = 1.
@@ -1290,10 +1290,8 @@ c
      $ ' _rxn, (+) added to or (-) removed from solution; _fin,',
      $ ' volume or mass in watershed at end of time step',A,
      $ 'Vol         total volume, in cubic meters',A,
-     $ 'Temp        volume-weighted average of stream temperature at ',
-     $              'the outlet, in degrees celsius',A,
-     $ 'pH          volume-weighted average of stream pH at the ',
-     $              'outlet, in standard units',A,
+     $ 'Temp        volume-weighted average, in degrees celsius',A,
+     $ 'pH          volume-weighted average, in standard units',A,
      $ 'Solute      total, in moles, or ',A,
      $ 'D or [18O]  volume-weighted average, in permil. _ET ',
      $              'reflects average delta of evaporated water.',A

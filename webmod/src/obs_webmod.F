@@ -24,7 +24,7 @@ c **********************************************************************
 c      integer, save :: ntemp, nrain, nsnow, nform, ngw_ext, nevap
       integer, save :: ntemp, nrain, nsnow, ngw_ext, nevap
       integer, save :: nirrig_ext, nirrig_int, nhum, nsolute
-      logical, save :: rh_tf, sh
+      logical, save :: rh_tf, sh, warned_rh
 c      integer, save :: form_data(1), datetime(6)
       integer, save :: datetime(6)
 
@@ -270,6 +270,7 @@ c expect both relative humidity and specific humidity. Only one allowed if geoch
 c in the run section
       rh_tf=.true.
       sh=.true.
+      warned_rh=.false.
 c
 c     print out start and end times
 c
@@ -344,9 +345,19 @@ c      integer nstep, datetime(6)
              return
         elseif(rh_tf.or.sh) then  ! all good, use the rh_tf flag to distribute relative humidity,
                                 !assign -99 to other variable to ensure fail if used.
+           if(.not.warned_rh) then
+              if(rh_tf) then
+                print*,'Humidity values to be read from variable ',
+     +       'relhum in webmod.hydro.dat instead.'
+              else
+                print*,'Humidity values to be distributed using ',
+     +       'spechum in webmod.hydro.dat instead.'
+              endif ! rh_tf
+              warned_rh=.true.
+           endif   ! not warned_rh
            do i=1,nhum
                if(rh_tf) then
-                   spechum(i) = -99
+                   spechum(i) = -99       
                else
                    relhum(i) = -99
                    if(nhum.gt.1) then

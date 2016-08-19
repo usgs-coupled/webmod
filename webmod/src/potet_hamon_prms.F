@@ -215,6 +215,7 @@ c
 
 
       USE WEBMOD_POTET
+      USE WEBMOD_OBSHYD, ONLY: nevap
       IMPLICIT NONE
 
       integer starttime(6), mo, day, i
@@ -245,7 +246,10 @@ c     +   .ne.0) return
       if(getparam('basin', 'mru_area', nmru, 'real', mru_area)
      +   .ne.0) return
 
-
+      if(nevap.gt.0) then
+        if(getparam('basin', 'mru_pansta', nmru, 'real', mru_pansta)
+     +   .ne.0) return
+      endif
       
       call dattim('start',starttime)
       mo = starttime(2)

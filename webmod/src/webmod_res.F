@@ -1996,12 +1996,13 @@ c composite basin volumes
 ! headers in files
 !
  10   format('Volumes, in cubic meters, Specific inputs, ',
-     $ '(except for ET) listed after "Final" column'/'nstep Year Mo Dy',
+     $ 'and ET, listed after "Final" column'/'Impervious ',
+     $ 'and Exfiltration are always zero'/'nstep Year Mo Dy',
      $ '          Init         Inputs        Outputs',
      $ '          Final         Precip             ET',
      $ '     Impervious    Throughfall           Melt',
      $ '      O-horizon             UZ        UZ_Pref',
-     $ '       Sat_zone       Sat_Pref',
+     $ '       Sat_zone   Exfiltration       Sat_Pref',
      $ '      Hillslope           Well      Diversion',
      $ ' Outside_Source           GW_1           GW_2')
 
