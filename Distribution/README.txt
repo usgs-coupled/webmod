@@ -17,11 +17,12 @@ WEBMOD Directory Structure
 /lib (All JARS)
 /bin (webmod.exe - This version was compiled for a PC, let us know if you need a Unix version)
 /doc (PDFs of manuals and documentation)
-/projects (Directories for each example or application)
+/projects (Directories for each watershed model)
   /Andrews (Example for Andrews Creek model described in Example Problems in the WEBMOD User's manual)
     /Input (Data and parameter files)
     /Output (Model output)
     /Control (Control files and name files created here) 
+    Andrews.xlsm (Excel workbook with inputs, outputs, and source data
     webmod.bat (Runs WEBMOD for Andrews Creek model in batch mode)
     webmod_gui.bat (Runs WEBMOD using MMS Tool GUI for Andrews Creek in MMS GUI)
     webmod_paramtool.bat (Open Paramtool GUI populated with Andrews Creek dimensions and parameters)
@@ -29,5 +30,5 @@ WEBMOD Directory Structure
   /Andrews_tutorial (Interactive project included in WEBMOD User's Manual)
     same structure as /Andrews
   /DR2 (Example for DR2 watershed described in Example Problems in the WEBMOD User's manual)
-    same structure as /Andrews
+    same structure as /Andrews but Excel workbook is named DR2.xlsm
   
