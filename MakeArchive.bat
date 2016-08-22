@@ -2,10 +2,12 @@ REM Define ARCHIVE to be a directory for the WEBMOD Archive
 REM Defined EXPORTED to be the directory of a WEBMOD trunk SVN export
 REM EXPORTED is copied to ARCHIVE and unused files are deleted
 REM
-set ARCHIVE=C:\Programs\webmod-trunk\webmod1.0
-set EXPORTED=C:\Programs\webmod-trunk\WebmodExport
+set ARCHIVE=D:\System\Users\rmwebb\Desktop\WEBMOD_1.0
+set EXPORTED=D:\System\Users\rmwebb\Desktop\WebmodExport
 REM
-DEL %ARCHIVE% /Q /F
+RMDIR /S /Q %EXPORTED%
+svn export http://internalbrr.cr.usgs.gov/svn_GW/webmod/trunk %EXPORTED%
+RMDIR /S /Q %ARCHIVE%
 mkdir %ARCHIVE%
 xcopy %EXPORTED% %ARCHIVE% /S /Y
 cd %ARCHIVE%
@@ -32,4 +34,12 @@ RMDIR build  /s /q
 RMDIR all /s /q
 cd src\phreeqcpp
 del Makefile*
+cd %ARCHIVE%
+mkdir               SourceCodeAndExecutables
+move CMakeLists.txt SourceCodeAndExecutables\.
+move IPhreeqcMMS    SourceCodeAndExecutables\.
+move mmf_c          SourceCodeAndExecutables\.
+move Tests          SourceCodeAndExecutables\.
+move webmod         SourceCodeAndExecutables\.
 cd %ARCHIVE%\..
+PAUSE
