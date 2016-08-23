@@ -35,11 +35,11 @@ RMDIR all /s /q
 cd src\phreeqcpp
 del Makefile*
 cd %ARCHIVE%
-mkdir               SourceCodeAndExecutables
-move CMakeLists.txt SourceCodeAndExecutables\.
-move IPhreeqcMMS    SourceCodeAndExecutables\.
-move mmf_c          SourceCodeAndExecutables\.
-move Tests          SourceCodeAndExecutables\.
-move webmod         SourceCodeAndExecutables\.
+mkdir               SourceCode
+move CMakeLists.txt SourceCode\.
+move IPhreeqcMMS    SourceCode\.
+move mmf_c          SourceCode\.
+move Tests          SourceCode\.
+move webmod         SourceCode\.
 cd %ARCHIVE%\..
 PAUSE
