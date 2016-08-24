@@ -10,7 +10,8 @@ by configure. For Linux, there is no version with an executable, and compilation
 required.
 
 No graphical user interface exists for Linux. (For Windows, the graphical user
-interface is the MMS Tool which has a feature called the Parameter Tool as described in
+interface is the MMS Tool which has a feature called the Parameter Tool as described
+in the following:
 
 Markstrom, S.L., and Koczot, K.M., 2008, User’s manual for the object user 
   interface (OUI)—An environmental resource modeling framework: U.S. Geological 
@@ -51,17 +52,22 @@ webmod-@VERSION@-@REVISION@.tar.gz      For compilation on Linux
 B. Documentation
 -----------------------------------------------------------------------------------
 
-*The following user's guides are available in electronic format. Portable
- Document Format (PDF) files are included in the doc subdirectory of the
- WEBMOD program distribution.
+*The following user's guide will have a citation similat to the following:
    
 Webb, R.M.T., and Parkhurst, D.L., 2016, Water, Energy, and Biogeochemical Model (WEBMOD),
    User’s Manual, Version 1: : U.S. Geological Survey Techniques and Methods 6-BXX,
    XX p, http://dx.doi.org/10.3133/XXXXX.
+   
+The document will be located in .\Distribution\doc\ As a placeholder the following
+drafts are provided pending approval of the Branch Approving official.
+  Webb_WEBMOD_Body_2016Aug19.docx
+  Webb_WEBMOD_Tables_2016August19.docm
+  WEBMOD_figs_1_12_2016August19.pdf
+  WEBMOD_figs_13_52_2016August19.pdf
 
 The geochemical input file for WEBMOD is a PHREEQC input file and must execute without
 errors in PHREEQC before attempting to couple with the hydrology simulated in WEBMOD.
-Therefore the following documentation of PHREEQC is also included:
+Therefore the following citations of PHREEQC will aid the uninitiated:
 
 Parkhurst, D.L., and Appelo, C.A.J., 2013, Description of input and examples
    for PHREEQC version 3--A computer program for speciation, batch-reaction,

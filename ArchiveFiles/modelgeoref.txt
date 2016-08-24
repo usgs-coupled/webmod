@@ -1,0 +1,17 @@
+modelgeoref.txt file
+
+There are two models (projects) in this archive, the Andrews Creek Watershed in Colorado and the 
+DR2 watershed in Washington. There is also an Andrews_tutorial project is a deliberately miscalibrated
+version of the Andrews Creek project.
+
+A shapefile with a polygon for both the Andrews Creek and DR2 watersheds is provided in \GIS_Data
+
+The Geographic Coordinate System is GCS North American 1983 and the Projected Coordinate System is NAD_1983_Albers
+
+Bounding box for DR2 watershed, in degrees, minutes, seconds
+SW corner: 46°20'15"N, 120°08'03"W
+NE corner: 46°22'09"N, 120°05'33"W
+
+Bounding box for Andrews watershed, in degrees, minutes, seconds
+SW corner: 40°16'44"N, 105°41'13"W
+NE corner: 40°17'42"N, 105°39'55"W

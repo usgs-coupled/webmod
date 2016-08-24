@@ -6,11 +6,14 @@ would show 1.8.0_91. If you need to install or update your java go to
 
 http://java.sun.com/javase/downloads/index.jsp and download Java Runtime Environment (JRE) for Java SE 8u102
 
-To run WEBMOD on the example problem for Andrews Creek, go to .\projects\Andrews\ and double click on
-webmod.bat or webmod_gui.bat. Before you can run the GUI version, you will need File descriptors in the 
-control directory. These are produced whenever the non-gui version (webmod.bat) is run or by running 
-webmod_print.bat.
+The WEBMOD Users manual is located in the .\doc\ directory
 
+To run WEBMOD on the example problem for Andrews Creek, first test a hydrology only run. Change the 
+directory to .\projects\Andrews_tutorial\, then double click on webmod.bat. The .\output directory should have
+new output files after a short time.
+
+The use can then run the GUI version by double clicking on .\projects\Andrews_tutorial\webmod_gui.bat and then
+following the instructions in the User's manual “Quick Start Guide > Andrews Creek simulation and calibration”,
 
 WEBMOD Directory Structure
 
@@ -28,7 +31,8 @@ WEBMOD Directory Structure
     webmod_paramtool.bat (Open Paramtool GUI populated with Andrews Creek dimensions and parameters)
     webmod_print.bat (Writes the name files to the /control directory that provide self documentation)
   /Andrews_tutorial (Interactive project included in WEBMOD User's Manual)
-    same structure as /Andrews
+    same structure as /Andrews but lacking the Excel workbook.
   /DR2 (Example for DR2 watershed described in Example Problems in the WEBMOD User's manual)
     same structure as /Andrews but Excel workbook is named DR2.xlsm
+    
   
