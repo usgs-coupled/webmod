@@ -44,5 +44,4 @@ move Tests             SourceCode\.
 move webmod            SourceCode\.
 xcopy ArchiveFiles . /S /Y
 RMDIR ArchiveFiles /s /q
-xcopy %ARCHIVE%\..
 PAUSE
