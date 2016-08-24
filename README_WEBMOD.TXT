@@ -32,7 +32,7 @@ Notepad++ is available at http://www.hydrochemistry.eu/downl.html.
     D. Compiling and installing the Windows batch version of WEBMOD without executable
     E. Compiling and installing the Linux batch version of WEBMOD 
     F. Running WEBMOD
-    G. Description of test cases
+    G. Description of three projects
     H. Contacts
 
 -----------------------------------------------------------------------------------
@@ -228,11 +228,11 @@ E.1. Extracting the files
 
    Follow the steps below to extract the files from a distribution tar file.
 
-   Steps in extracting files                  Explanation
-   ----------------------------------------   -----------------------------------
-   gunzip webmod-@VERSION@-@REVISION@.source.tar.gz           Uncompress the tar.gz file.
+   Steps in extracting files                           Explanation
+   ----------------------------------------            -----------------------------------
+   gunzip webmod-@VERSION@-@REVISION@.source.tar.gz    Uncompress the tar.gz file.
  
-   tar -xvpof webmod-@VERSION@-@REVISION@.source.tar          Extract files from the tar file.
+   tar -xvpof webmod-@VERSION@-@REVISION@.source.tar   Extract files from the tar file.
 
    The directory webmod-@VERSION@-@REVISION@ is created when the files are
    extracted; if this directory already exists, you may want to delete or rename it
@@ -326,16 +326,17 @@ E.8. Install the program.
 F. Running WEBMOD
 -----------------------------------------------------------------------------------
 
-The WEBMOD executable is installed in the .\bin\ directory. if .\bin\ is in the PATH, then
-WEBMOD can be executed from a selected .\projects directory such as .\projects\Andrews\
-with the command
+The WEBMOD executable is installed in the .\bin\ directory. if .\bin\ is in the PATH,
+then WEBMOD can be executed in a command window from a selected .\projects directory
+such as .\projects\Andrews\ with the following command
 
 webmod -C.\control\webmod.control
 
-to execute the simulation specified in the projects\Andrews\control\webmod.control
+The WEBMOD simulation will then be run using inputs and outputs specified in the control
+file .\projects\Andrews\control\webmod.control
 
 Alternatively, WEBMOD can be run by a script on Linux or a batch file on Windows.
-The scripts and batch files are run in the selected \projects\ directory. ie. projects\Andrews.
+The scripts and batch files are run in the selected \projects\ directory. ie. .\projects\Andrews.
 
   command                        explanation
   -----------------------------  -----------------------------------------
