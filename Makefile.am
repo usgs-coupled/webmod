@@ -1,4 +1,4 @@
-EXTRA_DIST = CMakeLists.txt
+EXTRA_DIST = CMakeLists.txt README_WEBMOD.TXT
 
 AM_CPPFLAGS=-I$(srcdir)/IPhreeqcMMS/src -I$(srcdir)/IPhreeqcMMS/IPhreeqc/src -I$(srcdir)/IPhreeqcMMS/IPhreeqc/src/phreeqcpp -I$(srcdir)/IPhreeqcMMS/IPhreeqc/src/phreeqcpp/common -I$(srcdir)/IPhreeqcMMS/IPhreeqc/src/phreeqcpp/PhreeqcKeywords
 
