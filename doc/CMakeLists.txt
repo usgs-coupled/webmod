@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.8.11)
 
 SET(webmod_ROOT
 ${CMAKE_SOURCE_DIR}/README_WEBMOD.TXT
-${CMAKE_SOURCE_DIR}/Distribution/README.TXT
+${CMAKE_SOURCE_DIR}/Distribution/README.txt
 )
 
 SET(webmod_DOC
