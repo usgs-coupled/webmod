@@ -11,7 +11,7 @@ set(WEBMOD_REVISION "9000")
 # set default windows installation path
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND WIN32)
   GetDefaultWindowsPrefixBase(CMAKE_GENERIC_PROGRAM_FILES)  
-  SET(CMAKE_INSTALL_PREFIX "${CMAKE_GENERIC_PROGRAM_FILES}/USGS/${PROJECT_NAME}-${WEBMOD_VERSION_MAJOR}.${WEBMOD_VERSION_MINOR}.${WEBMOD_VERSION_PATCH}}" CACHE PATH "Install path prefix, prepeneded onto install directories." FORCE)   
+  SET(CMAKE_INSTALL_PREFIX "${CMAKE_GENERIC_PROGRAM_FILES}/USGS/${PROJECT_NAME}-${WEBMOD_VERSION_MAJOR}.${WEBMOD_VERSION_MINOR}.${WEBMOD_VERSION_PATCH}" CACHE PATH "Install path prefix, prepeneded onto install directories." FORCE)   
 endif()
 
 # overide docdir on windows
@@ -38,6 +38,9 @@ endif()
 if (BUILD_SHARED_LIBS)
   set(LIB_TYPE SHARED)
 endif()
+
+# IPHREEQC_ENABLE_MODULE (must be enabled for webmod)
+set(IPHREEQC_ENABLE_MODULE ON CACHE INTERNAL "doc" FORCE)
 
 # Disable deprecation warnings for standard C and STL functions in VS2005
 # and later
