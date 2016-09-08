@@ -10876,7 +10876,9 @@
           end if
 ! composite reservoirs
           c_chem_basin%M(n,rxn) = c_chem_basin%M(n,rxn) +  M_diff
-          c_chem_basin%M(n,fin) = c_chem_basin%M(n,fin) +  M_rxn
+          if(ih.ne.1) then ! ih=1 is the outlet reservoir so do not count those moles in the Basin total at the end of the day
+            c_chem_basin%M(n,fin) = c_chem_basin%M(n,fin) +  M_rxn
+          endif
           if(mru) then ! Mru reservoir
             c_chem_mru(is)%M(n,rxn) = c_chem_mru(is)%M(n,rxn) + M_diff
             c_chem_mru(is)%M(n,fin) = c_chem_mru(is)%M(n,fin) + M_rxn
