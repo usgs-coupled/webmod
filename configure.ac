@@ -87,6 +87,7 @@ AC_CHECK_FUNCS([isnan],    , AC_CHECK_LIB(m, isnan))
 
 AC_CONFIG_FILES([
   Makefile
+  lib/Makefile
 ])
 
 AC_OUTPUT

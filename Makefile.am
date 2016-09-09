@@ -1,4 +1,23 @@
-EXTRA_DIST = CMakeLists.txt README_WEBMOD.TXT
+EXTRA_DIST=\
+	CMakeLists.txt\
+	README_WEBMOD.TXT\
+	doc/CMakeLists.txt\
+	mmf_c/CMakeLists.txt\
+	IPhreeqcMMS/CMakeLists.txt\
+	IPhreeqcMMS/IPhreeqc/CMakeLists.txt\
+	lib/CMakeLists.txt\
+	Tests/CMakeLists.txt\
+	Tests/Andrews/CMakeLists.txt\
+	Tests/Andrews/control/andcrk.control.in\
+	Tests/Andrews/input/andcrk.params\
+	Tests/Andrews/input/andcrk.dat\
+	Tests/Andrews/input/phreeq_lut\
+	Tests/Andrews/input/andcrk.dat.chemdat\
+	Tests/Andrews/input/webmod.pqi\
+	Tests/Andrews/input/webmod.chem.dat\
+	Tests/Andrews/input/phreeqc_web_lite.dat\
+	webmod.d/CMakeLists.txt
+SUBDIRS = lib
 
 AM_CPPFLAGS=-I$(srcdir)/IPhreeqcMMS/src -I$(srcdir)/IPhreeqcMMS/IPhreeqc/src -I$(srcdir)/IPhreeqcMMS/IPhreeqc/src/phreeqcpp -I$(srcdir)/IPhreeqcMMS/IPhreeqc/src/phreeqcpp/common -I$(srcdir)/IPhreeqcMMS/IPhreeqc/src/phreeqcpp/PhreeqcKeywords
 
