@@ -16,11 +16,22 @@ EXTRA_DIST=\
 	Tests/Andrews/input/webmod.pqi\
 	Tests/Andrews/input/webmod.chem.dat\
 	Tests/Andrews/input/phreeqc_web_lite.dat\
-	webmod.d/CMakeLists.txt\
-	$(ANDREWS)\
-	$(ANDREWS_CONTROL)\
-	$(ANDREWS_INPUT)\
-	$(ANDREWS_OUTPUT)
+	webmod.d/CMakeLists.txt
+
+
+# $(ANDREWS)\
+# $(ANDREWS_CONTROL)\
+# $(ANDREWS_INPUT)\
+# $(ANDREWS_OUTPUT)\
+# $(ANDREWS_TUTORIAL)\
+# $(ANDREWS_TUTORIAL_CONTROL)\
+# $(ANDREWS_TUTORIAL_INPUT)\
+# $(ANDREWS_TUTORIAL_OUTPUT)\
+# $(DR2)\
+# $(DR2_CONTROL)\
+# $(DR2_INPUT)\
+# $(DR2_OUTPUT)
+
 
 SUBDIRS = lib
 
@@ -82,6 +93,95 @@ ANDREWS_OUTPUT=\
 	Distribution/projects/Andrews/output/webmod.hydro.out\
 	Distribution/projects/Andrews/output/webmod.statvar\
 	Distribution/projects/Andrews/output/webmod.topout
+
+
+# Andrews_tutorial
+doc_projects_Andrews_tutorialdir = $(docdir)/projects/Andrews_tutorial
+
+dist_doc_projects_Andrews_tutorial_DATA = $(ANDREWS_TUTORIAL)
+
+ANDREWS_TUTORIAL=\
+	Distribution/projects/Andrews_tutorial/webmod.bat\
+	Distribution/projects/Andrews_tutorial/webmod_gui.bat\
+	Distribution/projects/Andrews_tutorial/webmod_paramtool.bat\
+	Distribution/projects/Andrews_tutorial/webmod_print.bat
+
+# Andrews_tutorial/control
+doc_projects_Andrews_tutorial_controldir = $(docdir)/projects/Andrews_tutorial/control
+
+dist_doc_projects_Andrews_tutorial_control_DATA = $(ANDREWS_TUTORIAL_CONTROL)
+
+ANDREWS_TUTORIAL_CONTROL=\
+	Distribution/projects/Andrews_tutorial/control/webmod.control
+
+# Andrews_tutorial/input
+doc_projects_Andrews_tutorial_inputdir = $(docdir)/projects/Andrews_tutorial/input
+
+dist_doc_projects_Andrews_tutorial_input_DATA = $(ANDREWS_TUTORIAL_INPUT)
+
+ANDREWS_TUTORIAL_INPUT=\
+	Distribution/projects/Andrews_tutorial/input/phreeqc_web_lite.dat\
+	Distribution/projects/Andrews_tutorial/input/phreeq_lut\
+	Distribution/projects/Andrews_tutorial/input/webmod.chem.dat\
+	Distribution/projects/Andrews_tutorial/input/webmod.hydro.dat\
+	Distribution/projects/Andrews_tutorial/input/webmod.params\
+	Distribution/projects/Andrews_tutorial/input/webmod.pqi
+
+# Andrews_tutorial/output
+doc_projects_Andrews_tutorial_outputdir = $(docdir)/projects/Andrews_tutorial/output
+
+dist_doc_projects_Andrews_tutorial_output_DATA = $(ANDREWS_TUTORIAL_OUTPUT)
+
+ANDREWS_TUTORIAL_OUTPUT=\
+	Distribution/projects/Andrews_tutorial/output/webmod.chem.out\
+	Distribution/projects/Andrews_tutorial/output/webmod.hydro.out\
+	Distribution/projects/Andrews_tutorial/output/webmod.statvar\
+	Distribution/projects/Andrews_tutorial/output/webmod.topout
+
+
+# dr2
+doc_projects_dr2dir = $(docdir)/projects/dr2
+
+dist_doc_projects_dr2_DATA = $(DR2)
+
+DR2=\
+	Distribution/projects/dr2/dr2.xlsm\
+	Distribution/projects/dr2/webmod.bat\
+	Distribution/projects/dr2/webmod_gui.bat\
+	Distribution/projects/dr2/webmod_paramtool.bat\
+	Distribution/projects/dr2/webmod_print.bat
+
+
+# dr2/control
+doc_projects_dr2_controldir = $(docdir)/projects/dr2/control
+
+dist_doc_projects_dr2_control_DATA = $(DR2_CONTROL)
+
+DR2_CONTROL=\
+	Distribution/projects/dr2/control/webmod.control
+
+# dr2/input
+doc_projects_dr2_inputdir = $(docdir)/projects/dr2/input
+
+dist_doc_projects_dr2_input_DATA = $(DR2_INPUT)
+
+DR2_INPUT=\
+	Distribution/projects/dr2/input/phreeqc_web_lite.dat\
+	Distribution/projects/dr2/input/phreeq_lut\
+	Distribution/projects/dr2/input/webmod.hydro.dat\
+	Distribution/projects/dr2/input/webmod.params\
+	Distribution/projects/dr2/input/webmod.pqi
+
+# dr2/output
+doc_projects_dr2_outputdir = $(docdir)/projects/dr2/output
+
+dist_doc_projects_dr2_output_DATA = $(DR2_OUTPUT)
+
+DR2_OUTPUT=\
+	Distribution/projects/dr2/output/webmod.chem.out\
+	Distribution/projects/dr2/output/webmod.hydro.out\
+	Distribution/projects/dr2/output/webmod.statvar\
+	Distribution/projects/dr2/output/webmod.topout
 
 # bin
 bin_PROGRAMS = webmod
