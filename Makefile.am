@@ -1,37 +1,23 @@
 EXTRA_DIST=\
 	CMakeLists.txt\
-	README_WEBMOD.TXT\
-	doc/CMakeLists.txt\
-	mmf_c/CMakeLists.txt\
+	Distribution/README.txt\
 	IPhreeqcMMS/CMakeLists.txt\
 	IPhreeqcMMS/IPhreeqc/CMakeLists.txt\
-	lib/CMakeLists.txt\
-	Tests/CMakeLists.txt\
+	README_WEBMOD.TXT\
 	Tests/Andrews/CMakeLists.txt\
 	Tests/Andrews/control/andcrk.control.in\
-	Tests/Andrews/input/andcrk.params\
-	Tests/Andrews/input/andcrk.dat\
-	Tests/Andrews/input/phreeq_lut\
 	Tests/Andrews/input/andcrk.dat.chemdat\
-	Tests/Andrews/input/webmod.pqi\
-	Tests/Andrews/input/webmod.chem.dat\
+	Tests/Andrews/input/andcrk.dat\
+	Tests/Andrews/input/andcrk.params\
+	Tests/Andrews/input/phreeq_lut\
 	Tests/Andrews/input/phreeqc_web_lite.dat\
+	Tests/Andrews/input/webmod.chem.dat\
+	Tests/Andrews/input/webmod.pqi\
+	Tests/CMakeLists.txt\
+	doc/CMakeLists.txt\
+	lib/CMakeLists.txt\
+	mmf_c/CMakeLists.txt\
 	webmod.d/CMakeLists.txt
-
-
-# $(ANDREWS)\
-# $(ANDREWS_CONTROL)\
-# $(ANDREWS_INPUT)\
-# $(ANDREWS_OUTPUT)\
-# $(ANDREWS_TUTORIAL)\
-# $(ANDREWS_TUTORIAL_CONTROL)\
-# $(ANDREWS_TUTORIAL_INPUT)\
-# $(ANDREWS_TUTORIAL_OUTPUT)\
-# $(DR2)\
-# $(DR2_CONTROL)\
-# $(DR2_INPUT)\
-# $(DR2_OUTPUT)
-
 
 SUBDIRS = lib
 
