@@ -16,7 +16,12 @@ EXTRA_DIST=\
 	Tests/Andrews/input/webmod.pqi\
 	Tests/Andrews/input/webmod.chem.dat\
 	Tests/Andrews/input/phreeqc_web_lite.dat\
-	webmod.d/CMakeLists.txt
+	webmod.d/CMakeLists.txt\
+	$(ANDREWS)\
+	$(ANDREWS_CONTROL)\
+	$(ANDREWS_INPUT)\
+	$(ANDREWS_OUTPUT)
+
 SUBDIRS = lib
 
 AM_CPPFLAGS=-I$(srcdir)/IPhreeqcMMS/src -I$(srcdir)/IPhreeqcMMS/IPhreeqc/src -I$(srcdir)/IPhreeqcMMS/IPhreeqc/src/phreeqcpp -I$(srcdir)/IPhreeqcMMS/IPhreeqc/src/phreeqcpp/common -I$(srcdir)/IPhreeqcMMS/IPhreeqc/src/phreeqcpp/PhreeqcKeywords
@@ -25,6 +30,60 @@ AM_FCFLAGS=-I$(srcdir)/IPhreeqcMMS/include
 
 FCDEFS=
 
+# doc
+dist_doc_DATA = $(DOCS)
+
+DOCS=\
+	Distribution/doc/Webb_WEBMOD_Body_2016Aug19.docx\
+	Distribution/doc/Webb_WEBMOD_Tables_2016August19.docm\
+	Distribution/doc/WEBMOD_figs_1_12_2016August19.pdf\
+	Distribution/doc/WEBMOD_figs_13_52_2016August19.pdf
+
+# Andrews
+doc_projects_Andrewsdir = $(docdir)/projects/Andrews
+
+dist_doc_projects_Andrews_DATA = $(ANDREWS)
+
+ANDREWS=\
+	Distribution/projects/Andrews/Andrews.xlsm\
+	Distribution/projects/Andrews/webmod.bat\
+	Distribution/projects/Andrews/webmod_gui.bat\
+	Distribution/projects/Andrews/webmod_paramtool.bat\
+	Distribution/projects/Andrews/webmod_print.bat
+
+# Andrews/control
+doc_projects_Andrews_controldir = $(docdir)/projects/Andrews/control
+
+dist_doc_projects_Andrews_control_DATA = $(ANDREWS_CONTROL)
+
+ANDREWS_CONTROL=\
+	Distribution/projects/Andrews/control/webmod.control
+
+# Andrews/input
+doc_projects_Andrews_inputdir = $(docdir)/projects/Andrews/input
+
+dist_doc_projects_Andrews_input_DATA = $(ANDREWS_INPUT)
+
+ANDREWS_INPUT=\
+	Distribution/projects/Andrews/input/phreeqc_web_lite.dat\
+	Distribution/projects/Andrews/input/phreeq_lut\
+	Distribution/projects/Andrews/input/webmod.chem.dat\
+	Distribution/projects/Andrews/input/webmod.hydro.dat\
+	Distribution/projects/Andrews/input/webmod.params\
+	Distribution/projects/Andrews/input/webmod.pqi
+
+# Andrews/output
+doc_projects_Andrews_outputdir = $(docdir)/projects/Andrews/output
+
+dist_doc_projects_Andrews_output_DATA = $(ANDREWS_OUTPUT)
+
+ANDREWS_OUTPUT=\
+	Distribution/projects/Andrews/output/webmod.chem.out\
+	Distribution/projects/Andrews/output/webmod.hydro.out\
+	Distribution/projects/Andrews/output/webmod.statvar\
+	Distribution/projects/Andrews/output/webmod.topout
+
+# bin
 bin_PROGRAMS = webmod
 
 webmod_SOURCES=\
