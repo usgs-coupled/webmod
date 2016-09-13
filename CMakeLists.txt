@@ -1,6 +1,18 @@
 cmake_minimum_required (VERSION 2.8.11)
 
-project(web_win C CXX Fortran)
+project(webmod C CXX Fortran)
+
+# set version numbers
+set(WEBMOD_VERSION_MAJOR "1")
+set(WEBMOD_VERSION_MINOR "0")
+set(WEBMOD_VERSION_PATCH "0")
+set(WEBMOD_REVISION "9000")
+
+# set default windows installation path
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND WIN32)
+  GetDefaultWindowsPrefixBase(CMAKE_GENERIC_PROGRAM_FILES)  
+  SET(CMAKE_INSTALL_PREFIX "${CMAKE_GENERIC_PROGRAM_FILES}/USGS/${PROJECT_NAME}-${WEBMOD_VERSION_MAJOR}.${WEBMOD_VERSION_MINOR}.${WEBMOD_VERSION_PATCH}" CACHE PATH "Install path prefix, prepeneded onto install directories." FORCE)   
+endif()
 
 # overide docdir on windows
 if(WIN32 AND NOT CMAKE_INSTALL_DOCDIR)
@@ -27,6 +39,9 @@ if (BUILD_SHARED_LIBS)
   set(LIB_TYPE SHARED)
 endif()
 
+# IPHREEQC_ENABLE_MODULE (must be enabled for webmod)
+set(IPHREEQC_ENABLE_MODULE ON CACHE INTERNAL "doc" FORCE)
+
 # Disable deprecation warnings for standard C and STL functions in VS2005
 # and later
 if(MSVC_VERSION EQUAL 1400 OR MSVC_VERSION GREATER 1400)
@@ -40,5 +55,7 @@ enable_testing()
 # subdirs
 add_subdirectory(IPhreeqcMMS)
 add_subdirectory(mmf_c)
-add_subdirectory(webmod)
+add_subdirectory(webmod.d)
 add_subdirectory(Tests)
+add_subdirectory(doc)
+add_subdirectory(lib)

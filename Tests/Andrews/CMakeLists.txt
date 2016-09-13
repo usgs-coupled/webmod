@@ -99,7 +99,7 @@ configure_file(
 
 # test andrews creek
 add_test(NAME Andrews
-         COMMAND webmod_f
+         COMMAND webmod
          "-C${PROJECT_BINARY_DIR}/Tests/Andrews/control/andcrk.control"
          )
-set_tests_properties(Andrews PROPERTIES PASS_REGULAR_EXPRESSION "Finished")         
+set_tests_properties(Andrews PROPERTIES PASS_REGULAR_EXPRESSION "Finished")

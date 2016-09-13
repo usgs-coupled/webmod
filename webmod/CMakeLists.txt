@@ -1,8 +1,8 @@
 cmake_minimum_required (VERSION 2.8.11)
 
-project(webmod_f Fortran C CXX)
+project(webmod Fortran C CXX)
 
-SET(webmod_f_SOURCES
+SET(webmod_SOURCES
 ../IPhreeqcMMS/include/mms_phreeqc.f90.inc
 ../IPhreeqcMMS/IPhreeqc/src/IPhreeqc_interface.F90
 ../IPhreeqcMMS/src/phr_mix.F90
@@ -75,9 +75,9 @@ include_directories("${PROJECT_SOURCE_DIR}/../IPhreeqcMMS/IPhreeqc/src")
 if(WIN32 AND ${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
   set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} /MP")
 endif()
-add_executable(webmod_f ${webmod_f_SOURCES})
-set_target_properties(webmod_f PROPERTIES DEBUG_POSTFIX "d")
-set_target_properties(webmod_f PROPERTIES LINKER_LANGUAGE "CXX")
+add_executable(webmod ${webmod_SOURCES})
+set_target_properties(webmod PROPERTIES DEBUG_POSTFIX "d")
+set_target_properties(webmod PROPERTIES LINKER_LANGUAGE "CXX")
 
 # library dependencies
 set(EXTRA_LIBS ${EXTRA_LIBS} IPhreeqcMMS)
@@ -85,8 +85,8 @@ set(EXTRA_LIBS ${EXTRA_LIBS} IPhreeqc)
 set(EXTRA_LIBS ${EXTRA_LIBS} mmf_c)
 
 # link 
-target_link_libraries(webmod_f ${EXTRA_LIBS})
+target_link_libraries(webmod ${EXTRA_LIBS})
 
 # install
-install(TARGETS webmod_f DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS webmod DESTINATION ${CMAKE_INSTALL_BINDIR})
 
