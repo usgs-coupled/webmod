@@ -2596,8 +2596,9 @@ c zone first.
         if(transp_on(is).eq.0.and.web_transp_on(is).eq.1) then !leaves off
            web_transp_on(is) = 0
            transp_rate = 0.0
-           vmix_can(is,3) = vmix_can(is,1) -                ! move canopy water
-     $          (covden_win(is)/covden_sum(is))* vmix_can(is,1) ! to throughfall
+!           vmix_can(is,3) = vmix_can(is,1) -                ! move canopy water
+!     $          (covden_win(is)/covden_sum(is))* vmix_can(is,1) ! to throughfall
+           vmix_can(is,3) = can_ohoriz_vol(is)  ! translocation of canopy moisture
            vmix_ohoriz(is,8) = can_ohoriz_vol(is)  ! recharge o-horizon
 
 c On the first day of transpiration, the area of new summer leaves will

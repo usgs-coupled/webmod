@@ -664,17 +664,18 @@ c
 
       ALLOCATE (gw_loss(Nmru))
       if(declvar('topc', 'gw_loss', 'nmru', nmru, 'real', 
-     + 'Loss of water from saturated to deep aquifer '//
+     + 'Loss of groundwater into bedrock '//
      $ 'for each subcatchment', 'meters', gw_loss).ne.0) return
 
       ALLOCATE (sumgw_loss(Nmru))
       if(declvar('topc', 'sumgw_loss', 'nmru', nmru, 'real', 
-     + 'Sum of water lost from saturated zone to deep aquifer '//
-     $ 'for each subcatchment', 'meters',sumgw_loss).ne.0) return
+     + 'Sum of groundwater lost into bedrock '//
+     $ 'for each subcatchment', 'meters',
+     $  sumgw_loss).ne.0) return
 
       if(declvar('topc', 'gwl_basin', 'one', 1, 'real', 
-     + 'Area-weighted loss of water from saturated zone to '//
-     $ 'the deep aquifer for the basin',
+     + 'Area-weighted loss of groundwater into '//
+     $ 'bedrock for the basin',
      $ 'meters',gwl_basin).ne.0) return
 
 c
