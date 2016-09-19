@@ -10855,6 +10855,7 @@
             ! Distinct from %M, the %delta for the composite reservoirs are volume weighted
             nis=nis+1
             vwdelta=conc1(nsolute+nis)*vol
+            c_chem(indx)%delta(n,fin)= vwdelta ! Delta of isotope in final volume
             c_chem_basin%delta(n,fin) = c_chem_basin%delta(n,fin) + vwdelta
             if(stream) c_chem_hyd%delta(n,fin) = c_chem_hyd%delta(n,fin) + vwdelta
             if(mru) then ! Mru reservoir
