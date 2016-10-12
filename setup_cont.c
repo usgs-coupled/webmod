@@ -185,6 +185,10 @@ void setup_cont (void) {
 		lval[0] = 0;
 		decl_control_int_array ("stream_temp_flag", 1, lval);
 
+		lval = (long *)umalloc(sizeof (long));
+		lval[0] = 0;
+		decl_control_int_array("stream_temp_shade_flag", 1, lval);
+
 		lval = (long *)umalloc (sizeof (long));
 		lval[0] = 0;
 		decl_control_int_array ("segment_transferON_OFF", 1, lval);
