@@ -94,24 +94,20 @@ ${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/output/webmod.statvar
 ${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/output/webmod.topout
 )
 
-install(FILES ${webmod_ROOT}     DESTINATION ${CMAKE_INSTALL_PREFIX})
+install(FILES ${webmod_ROOT} DESTINATION .)
+install(FILES ${webmod_DOC}  DESTINATION ${CMAKE_INSTALL_DOCDIR})
 
-install(FILES ${webmod_DOC}      DESTINATION ${CMAKE_INSTALL_DOCDIR})
+install(FILES ${webmod_PROJECTS_ANDREWS}         DESTINATION projects/Andrews)
+install(FILES ${webmod_PROJECTS_ANDREWS_CONTROL} DESTINATION projects/Andrews/control)
+install(FILES ${webmod_PROJECTS_ANDREWS_INPUT}   DESTINATION projects/Andrews/input)
+install(FILES ${webmod_PROJECTS_ANDREWS_OUTPUT}  DESTINATION projects/Andrews/output)
 
-install(FILES ${webmod_PROJECTS} DESTINATION ${CMAKE_INSTALL_PREFIX}/projects)
+install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL}         DESTINATION projects/Andrews_tutorial)
+install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL_CONTROL} DESTINATION projects/Andrews_tutorial/control)
+install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL_INPUT}   DESTINATION projects/Andrews_tutorial/input)
+install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL_OUTPUT}  DESTINATION projects/Andrews_tutorial/output)
 
-
-install(FILES ${webmod_PROJECTS_ANDREWS}         DESTINATION ${CMAKE_INSTALL_PREFIX}/projects/Andrews)
-install(FILES ${webmod_PROJECTS_ANDREWS_CONTROL} DESTINATION ${CMAKE_INSTALL_PREFIX}/projects/Andrews/control)
-install(FILES ${webmod_PROJECTS_ANDREWS_INPUT}   DESTINATION ${CMAKE_INSTALL_PREFIX}/projects/Andrews/input)
-install(FILES ${webmod_PROJECTS_ANDREWS_OUTPUT}  DESTINATION ${CMAKE_INSTALL_PREFIX}/projects/Andrews/output)
-
-install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL}         DESTINATION ${CMAKE_INSTALL_PREFIX}/projects/Andrews_tutorial)
-install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL_CONTROL} DESTINATION ${CMAKE_INSTALL_PREFIX}/projects/Andrews_tutorial/control)
-install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL_INPUT}   DESTINATION ${CMAKE_INSTALL_PREFIX}/projects/Andrews_tutorial/input)
-install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL_OUTPUT}  DESTINATION ${CMAKE_INSTALL_PREFIX}/projects/Andrews_tutorial/output)
-
-install(FILES ${webmod_PROJECTS_DR2}         DESTINATION ${CMAKE_INSTALL_PREFIX}/projects/dr2)
-install(FILES ${webmod_PROJECTS_DR2_CONTROL} DESTINATION ${CMAKE_INSTALL_PREFIX}/projects/dr2/control)
-install(FILES ${webmod_PROJECTS_DR2_INPUT}   DESTINATION ${CMAKE_INSTALL_PREFIX}/projects/dr2/input)
-install(FILES ${webmod_PROJECTS_DR2_OUTPUT}  DESTINATION ${CMAKE_INSTALL_PREFIX}/projects/dr2/output)
+install(FILES ${webmod_PROJECTS_DR2}         DESTINATION projects/dr2)
+install(FILES ${webmod_PROJECTS_DR2_CONTROL} DESTINATION projects/dr2/control)
+install(FILES ${webmod_PROJECTS_DR2_INPUT}   DESTINATION projects/dr2/input)
+install(FILES ${webmod_PROJECTS_DR2_OUTPUT}  DESTINATION projects/dr2/output)
