@@ -101,14 +101,13 @@ if (MSVC)
     )
   
     # Set Fortran Runtime Library to Multithreaded
-    foreach(FortranCompilerFlags ${FortranCompilerFlags})
-      if(${FortranCompilerFlags} MATCHES "/libs:dll")
-        string(REGEX REPLACE "/libs:dll" "/libs:static" ${FortranCompilerFlags} "${${FortranCompilerFlags}}")
+    foreach(FortranCompilerFlag ${FortranCompilerFlags})
+      if(${FortranCompilerFlag} MATCHES "/libs:dll")
+        string(REGEX REPLACE "/libs:dll" "/libs:static" ${FortranCompilerFlag} "${${FortranCompilerFlag}}")
       endif()  
     endforeach()
   endif()
 endif()
-##}}
 
 # executable
 add_executable(webmod ${webmod_SOURCES})
