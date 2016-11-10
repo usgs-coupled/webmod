@@ -5,7 +5,7 @@ NAME=Andrews
 CONTROL=control/andcrk.control
 
 : ${WEBMOD=webmod}
-${WEBMOD} -C${CONTROL}
+${WEBMOD} -C${CONTROL} | ${GREP} Finished
 result=$?
 
 exit $result
