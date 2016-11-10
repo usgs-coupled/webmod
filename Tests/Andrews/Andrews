@@ -1,0 +1,11 @@
+#! /bin/sh
+# Test webmod
+
+NAME=Andrews
+CONTROL=control/andcrk.control
+
+: ${WEBMOD=webmod}
+${WEBMOD} -C${CONTROL}
+result=$?
+
+exit $result

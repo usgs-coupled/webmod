@@ -19,7 +19,7 @@ EXTRA_DIST=\
 	mmf_c/CMakeLists.txt\
 	webmod.d/CMakeLists.txt
 
-SUBDIRS = lib
+SUBDIRS = lib Tests
 
 AM_CPPFLAGS=-I$(srcdir)/IPhreeqcMMS/src -I$(srcdir)/IPhreeqcMMS/IPhreeqc/src -I$(srcdir)/IPhreeqcMMS/IPhreeqc/src/phreeqcpp -I$(srcdir)/IPhreeqcMMS/IPhreeqc/src/phreeqcpp/common -I$(srcdir)/IPhreeqcMMS/IPhreeqc/src/phreeqcpp/PhreeqcKeywords
 

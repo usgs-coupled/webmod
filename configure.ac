@@ -85,9 +85,40 @@ AC_LANG_POP(C++)
 # isnan
 AC_CHECK_FUNCS([isnan],    , AC_CHECK_LIB(m, isnan))
 
+# set end time
+AC_SUBST([WEBMOD_END_YEAR],                  ["1983"])
+AC_SUBST([WEBMOD_END_MONTH],                 ["10"])
+AC_SUBST([WEBMOD_END_DAY],                   ["6"])
+
+# set paths
+AC_SUBST([WEBMOD_INPUT_ANDCRK_PARAMS],         ["./input/andcrk.params"])
+AC_SUBST([WEBMOD_INPUT_ANDCRK_DAT],            ["./input/andcrk.dat"])
+AC_SUBST([WEBMOD_INPUT_PHREEQC_WEB_LITE_DAT],  ["./input/phreeqc_web_lite.dat"])
+AC_SUBST([WEBMOD_INPUT_CHEMDAT_FILE],          ["./input/webmod.chem.dat"])
+AC_SUBST([WEBMOD_INPUT_PHREEQ_FILE],           ["./input/webmod.pqi"])
+AC_SUBST([WEBMOD_OUTPUT_ANDCRK_OUT],           ["./output/andcrk.out"])
+AC_SUBST([WEBMOD_INPUT_DIR],                   ["./input/"])
+AC_SUBST([WEBMOD_OUTPUT_DIR],                  ["./output/"])
+AC_SUBST([WEBMOD_ANI_OUTPUT],                  ["./output/webmod.aniout"])
+AC_SUBST([WEBMOD_STAT_VAR],                    ["./output/andcrk.statvar"])
+AC_SUBST([WEBMOD_VAR_INIT],                    ["./input/prms_ic.in"])
+AC_SUBST([WEBMOD_SAVE],                        ["./output/andcrk.ics"])  
+AC_SUBST([WEBMOD_OPT_OUTPUT],                  ["./output/andcrk.opt"])
+AC_SUBST([WEBMOD_PARAM_PRINT],                 ["./output/andcrk.pars"])
+AC_SUBST([WEBMOD_SENS_OUTPUT],                 ["./output/andcrk.sens"])
+AC_SUBST([WEBMOD_VAR_PRINT],                   ["./output/andcrk.vars"])
+AC_SUBST([WEBMOD_GIS_OUTPUT],                  ["./output/andcrk.gis"])
+AC_SUBST([WEBMOD_STATS_OUTPUT],                ["./output/andcrk.stats"])
+AC_SUBST([WEBMOD_MODEL_CHEMOUT_FILE],          ["./output/webmod.chem.out"])
+AC_SUBST([WEBMOD_MODEL_TOPOUT_FILE],           ["./output/webmod.topout"])
+AC_SUBST([WEBMOD_EXE_MODEL],                   ["../../bin/webmod_1.0"])
+
 AC_CONFIG_FILES([
   Makefile
   lib/Makefile
+  Tests/Makefile
+  Tests/Andrews/Makefile
+  Tests/Andrews/control/andcrk.control
 ])
 
 AC_OUTPUT
