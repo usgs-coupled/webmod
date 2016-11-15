@@ -68,7 +68,7 @@ configure_file(
   
 # input/phreeq_lut
 configure_file(
-  "input/phreeq_lut"
+  "input/phreeq_lut.in"
   "input/phreeq_lut"
   )
   
