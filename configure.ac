@@ -119,6 +119,7 @@ AC_CONFIG_FILES([
   Tests/Makefile
   Tests/Andrews/Makefile
   Tests/Andrews/control/andcrk.control
+  Tests/Andrews/input/phreeq_lut
 ])
 
 AC_OUTPUT
