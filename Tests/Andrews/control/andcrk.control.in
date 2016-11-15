@@ -102,7 +102,7 @@ initial_deltat
 input_dir
 1
 4
-@abs_top_srcdir@@WEBMOD_INPUT_DIR@
+@abs_top_builddir@@WEBMOD_INPUT_DIR@
 ####
 output_dir
 1
