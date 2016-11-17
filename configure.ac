@@ -6,7 +6,7 @@ AC_INIT([webmod], [1.0.0-11667], [rmwebb@usgs.gov])
 AC_CONFIG_AUX_DIR([config])
 AC_CONFIG_MACRO_DIR([m4])
 
-AM_INIT_AUTOMAKE([-Wall -Werror foreign no-define subdir-objects tar-ustar])
+AM_INIT_AUTOMAKE([-Wall -Werror foreign no-define subdir-objects])
 AC_CONFIG_SRCDIR([webmod.d/src/defines.h])
 
 # enable silent rules when available (automake 1.11 or later).
