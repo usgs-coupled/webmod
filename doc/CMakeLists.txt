@@ -45,6 +45,10 @@ ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod.bat
 ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_gui.bat
 ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_paramtool.bat
 ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_print.bat
+${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod.sh
+${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_gui.sh
+${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_paramtool.sh
+${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_print.sh
 )
 
 SET(webmod_PROJECTS_ANDREWS_TUTORIAL_CONTROL
