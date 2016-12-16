@@ -87,6 +87,10 @@ doc_projects_Andrews_tutorialdir = $(docdir)/projects/Andrews_tutorial
 dist_doc_projects_Andrews_tutorial_DATA = $(ANDREWS_TUTORIAL)
 
 ANDREWS_TUTORIAL=\
+	Distribution/projects/Andrews_tutorial/webmod.sh\
+	Distribution/projects/Andrews_tutorial/webmod_gui.sh\
+	Distribution/projects/Andrews_tutorial/webmod_paramtool.sh\
+	Distribution/projects/Andrews_tutorial/webmod_print.sh\
 	Distribution/projects/Andrews_tutorial/webmod.bat\
 	Distribution/projects/Andrews_tutorial/webmod_gui.bat\
 	Distribution/projects/Andrews_tutorial/webmod_paramtool.bat\
