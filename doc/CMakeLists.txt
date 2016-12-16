@@ -40,16 +40,21 @@ ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/output/webmod.statvar
 ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/output/webmod.topout
 )
 
-SET(webmod_PROJECTS_ANDREWS_TUTORIAL
-${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod.bat
-${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_gui.bat
-${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_paramtool.bat
-${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_print.bat
-${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod.sh
-${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_gui.sh
-${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_paramtool.sh
-${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_print.sh
-)
+if (WIN32)
+  SET(webmod_PROJECTS_ANDREWS_TUTORIAL
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod.bat
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_gui.bat
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_paramtool.bat
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_print.bat
+  )
+else()
+  SET(webmod_PROJECTS_ANDREWS_TUTORIAL
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod.sh
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_gui.sh
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_paramtool.sh
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_print.sh
+  )
+endif()
 
 SET(webmod_PROJECTS_ANDREWS_TUTORIAL_CONTROL
 ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/control/webmod.control
@@ -106,7 +111,11 @@ install(FILES ${webmod_PROJECTS_ANDREWS_CONTROL} DESTINATION projects/Andrews/co
 install(FILES ${webmod_PROJECTS_ANDREWS_INPUT}   DESTINATION projects/Andrews/input)
 install(FILES ${webmod_PROJECTS_ANDREWS_OUTPUT}  DESTINATION projects/Andrews/output)
 
-install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL}         DESTINATION projects/Andrews_tutorial)
+if (WIN32)
+  install(FILES    ${webmod_PROJECTS_ANDREWS_TUTORIAL} DESTINATION projects/Andrews_tutorial)
+else()
+  install(PROGRAMS ${webmod_PROJECTS_ANDREWS_TUTORIAL} DESTINATION projects/Andrews_tutorial)
+endif()
 install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL_CONTROL} DESTINATION projects/Andrews_tutorial/control)
 install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL_INPUT}   DESTINATION projects/Andrews_tutorial/input)
 install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL_OUTPUT}  DESTINATION projects/Andrews_tutorial/output)
