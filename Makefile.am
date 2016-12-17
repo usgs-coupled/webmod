@@ -43,6 +43,10 @@ dist_doc_projects_Andrews_DATA = $(ANDREWS)
 
 ANDREWS=\
 	Distribution/projects/Andrews/Andrews.xlsm\
+	Distribution/projects/Andrews/webmod.sh\
+	Distribution/projects/Andrews/webmod_gui.sh\
+	Distribution/projects/Andrews/webmod_paramtool.sh\
+	Distribution/projects/Andrews/webmod_print.sh\
 	Distribution/projects/Andrews/webmod.bat\
 	Distribution/projects/Andrews/webmod_gui.bat\
 	Distribution/projects/Andrews/webmod_paramtool.bat\
@@ -136,6 +140,10 @@ dist_doc_projects_dr2_DATA = $(DR2)
 
 DR2=\
 	Distribution/projects/dr2/dr2.xlsm\
+	Distribution/projects/dr2/webmod.sh\
+	Distribution/projects/dr2/webmod_gui.sh\
+	Distribution/projects/dr2/webmod_paramtool.sh\
+	Distribution/projects/dr2/webmod_print.sh\
 	Distribution/projects/dr2/webmod.bat\
 	Distribution/projects/dr2/webmod_gui.bat\
 	Distribution/projects/dr2/webmod_paramtool.bat\
