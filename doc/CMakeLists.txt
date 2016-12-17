@@ -12,13 +12,23 @@ ${CMAKE_SOURCE_DIR}/Distribution/doc/WEBMOD_figs_1_12_2016August19.pdf
 ${CMAKE_SOURCE_DIR}/Distribution/doc/WEBMOD_figs_13_52_2016August19.pdf
 )
 
-SET(webmod_PROJECTS_ANDREWS
-${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/Andrews.xlsm
-${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/webmod.bat
-${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/webmod_gui.bat
-${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/webmod_paramtool.bat
-${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/webmod_print.bat
-)
+if (WIN32)
+  SET(webmod_PROJECTS_ANDREWS
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/Andrews.xlsm
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/webmod.bat
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/webmod_gui.bat
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/webmod_paramtool.bat
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/webmod_print.bat
+  )
+else()
+  SET(webmod_PROJECTS_ANDREWS
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/Andrews.xlsm
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/webmod.sh
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/webmod_gui.sh
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/webmod_paramtool.sh
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/webmod_print.sh
+  )
+endif()
 
 SET(webmod_PROJECTS_ANDREWS_CONTROL
 ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/control/webmod.control
@@ -76,13 +86,23 @@ ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/output/webmod.statvar
 ${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/output/webmod.topout
 )
 
-SET(webmod_PROJECTS_DR2
-${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/dr2.xlsm
-${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/webmod.bat
-${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/webmod_gui.bat
-${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/webmod_paramtool.bat
-${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/webmod_print.bat
-)
+if (WIN32)
+  SET(webmod_PROJECTS_DR2
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/dr2.xlsm
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/webmod.bat
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/webmod_gui.bat
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/webmod_paramtool.bat
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/webmod_print.bat
+  )
+else()
+  SET(webmod_PROJECTS_DR2
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/dr2.xlsm
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/webmod.sh
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/webmod_gui.sh
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/webmod_paramtool.sh
+  ${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/webmod_print.sh
+  )
+endif()
 
 SET(webmod_PROJECTS_DR2_CONTROL
 ${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/control/webmod.control
@@ -106,7 +126,11 @@ ${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/output/webmod.topout
 install(FILES ${webmod_ROOT} DESTINATION .)
 install(FILES ${webmod_DOC}  DESTINATION ${CMAKE_INSTALL_DOCDIR})
 
-install(FILES ${webmod_PROJECTS_ANDREWS}         DESTINATION projects/Andrews)
+if (WIN32)
+  install(FILES    ${webmod_PROJECTS_ANDREWS} DESTINATION projects/Andrews)
+else()
+  install(PROGRAMS ${webmod_PROJECTS_ANDREWS} DESTINATION projects/Andrews)
+endif()
 install(FILES ${webmod_PROJECTS_ANDREWS_CONTROL} DESTINATION projects/Andrews/control)
 install(FILES ${webmod_PROJECTS_ANDREWS_INPUT}   DESTINATION projects/Andrews/input)
 install(FILES ${webmod_PROJECTS_ANDREWS_OUTPUT}  DESTINATION projects/Andrews/output)
@@ -120,7 +144,11 @@ install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL_CONTROL} DESTINATION projects/A
 install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL_INPUT}   DESTINATION projects/Andrews_tutorial/input)
 install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL_OUTPUT}  DESTINATION projects/Andrews_tutorial/output)
 
-install(FILES ${webmod_PROJECTS_DR2}         DESTINATION projects/dr2)
+if (WIN32)
+  install(FILES    ${webmod_PROJECTS_DR2} DESTINATION projects/dr2)
+else()
+  install(PROGRAMS ${webmod_PROJECTS_DR2} DESTINATION projects/dr2)
+endif()
 install(FILES ${webmod_PROJECTS_DR2_CONTROL} DESTINATION projects/dr2/control)
 install(FILES ${webmod_PROJECTS_DR2_INPUT}   DESTINATION projects/dr2/input)
 install(FILES ${webmod_PROJECTS_DR2_OUTPUT}  DESTINATION projects/dr2/output)
