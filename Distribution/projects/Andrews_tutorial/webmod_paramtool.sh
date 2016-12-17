@@ -1,2 +1,3 @@
 #!/bin/sh
-java -cp ../../lib64/oui4.jar oui.paramtool.ParamTool ./input/webmod.params
+JARDIR=../../lib
+java -cp $JARDIR/oui4.jar oui.paramtool.ParamTool ./input/webmod.params
