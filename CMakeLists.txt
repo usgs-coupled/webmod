@@ -35,6 +35,15 @@ if(WIN32 AND NOT CMAKE_INSTALL_DOCDIR)
   set(CMAKE_INSTALL_DOCDIR "doc")
 endif()
 
+# projdir
+if(NOT CMAKE_INSTALL_PROJDIR)
+  set(CMAKE_INSTALL_PROJDIR "" CACHE PATH "projects root (DATAROOTDIR/doc/PROJECT_NAME/projects)")
+  set(CMAKE_INSTALL_PROJDIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/${PROJECT_NAME}/projects")
+endif()
+mark_as_advanced(
+  CMAKE_INSTALL_PROJDIR
+  )
+
 # retrieve default install locations
 include(GNUInstallDirs)
 
