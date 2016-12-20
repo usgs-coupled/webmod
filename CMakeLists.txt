@@ -41,6 +41,9 @@ if(WIN32 AND NOT CMAKE_INSTALL_PROJDIR)
   set(CMAKE_INSTALL_PROJDIR "projects")
 endif()
 
+# retrieve default install locations
+include(GNUInstallDirs)
+
 # projdir
 if(NOT CMAKE_INSTALL_PROJDIR)
   set(CMAKE_INSTALL_PROJDIR "" CACHE PATH "projects root (DATAROOTDIR/doc/PROJECT_NAME/projects)")
@@ -49,9 +52,6 @@ endif()
 mark_as_advanced(
   CMAKE_INSTALL_PROJDIR
   )
-
-# retrieve default install locations
-include(GNUInstallDirs)
 
 # Disable shared libraries on windows
 # see https://support2.microsoft.com/default.aspx?scid=KB;EN-US;168958
