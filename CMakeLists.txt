@@ -35,6 +35,12 @@ if(WIN32 AND NOT CMAKE_INSTALL_DOCDIR)
   set(CMAKE_INSTALL_DOCDIR "doc")
 endif()
 
+# overide projdir on windows
+if(WIN32 AND NOT CMAKE_INSTALL_PROJDIR)
+  set(CMAKE_INSTALL_PROJDIR "" CACHE PATH "projects root (projects)")
+  set(CMAKE_INSTALL_PROJDIR "projects")
+endif()
+
 # projdir
 if(NOT CMAKE_INSTALL_PROJDIR)
   set(CMAKE_INSTALL_PROJDIR "" CACHE PATH "projects root (DATAROOTDIR/doc/PROJECT_NAME/projects)")
