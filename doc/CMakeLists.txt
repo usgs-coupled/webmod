@@ -1,10 +1,19 @@
 cmake_minimum_required (VERSION 2.8.11)
 
-# set jar dir
-file(RELATIVE_PATH JARDIR "${CMAKE_INSTALL_FULL_PROJDIR}/Andrews_tutorial" "${CMAKE_INSTALL_FULL_LIBDIR}")
+# use full path on default prefix
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  # set jar dir
+  set(JARDIR "${CMAKE_INSTALL_FULL_LIBDIR}")
 
-# set webmod
-file(RELATIVE_PATH WEBMOD "${CMAKE_INSTALL_FULL_PROJDIR}/Andrews_tutorial" "${CMAKE_INSTALL_FULL_BINDIR}/webmod")
+  # set webmod
+  set(WEBMOD "${CMAKE_INSTALL_FULL_BINDIR}/webmod")
+else()
+  # set jar dir
+  file(RELATIVE_PATH JARDIR "${CMAKE_INSTALL_FULL_PROJDIR}/Andrews_tutorial" "${CMAKE_INSTALL_FULL_LIBDIR}")
+
+  # set webmod
+  file(RELATIVE_PATH WEBMOD "${CMAKE_INSTALL_FULL_PROJDIR}/Andrews_tutorial" "${CMAKE_INSTALL_FULL_BINDIR}/webmod")
+endif()
 
 configure_file(
   "${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/webmod_gui.sh.in"
