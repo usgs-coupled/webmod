@@ -41,10 +41,15 @@ if(WIN32 AND NOT CMAKE_INSTALL_PROJDIR)
   set(CMAKE_INSTALL_PROJDIR "projects")
 endif()
 
+# make prefix absolute
+if (NOT IS_ABSOLUTE ${CMAKE_INSTALL_PREFIX})
+  get_filename_component(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_INSTALL_PREFIX}" ABSOLUTE)
+endif()
+
 # retrieve default install locations
 include(GNUInstallDirs)
 
-# projdir
+# CMAKE_INSTALL_PROJDIR (based on GNUInstallDirs.cmake)
 if(NOT CMAKE_INSTALL_PROJDIR)
   set(CMAKE_INSTALL_PROJDIR "" CACHE PATH "projects root (DATAROOTDIR/doc/PROJECT_NAME/projects)")
   set(CMAKE_INSTALL_PROJDIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/${PROJECT_NAME}/projects")
@@ -52,6 +57,14 @@ endif()
 mark_as_advanced(
   CMAKE_INSTALL_PROJDIR
   )
+
+# CMAKE_INSTALL_FULL_PROJDIR (based on GNUInstallDirs.cmake)
+if (NOT IS_ABSOLUTE ${CMAKE_INSTALL_PROJDIR})
+  get_filename_component(absProjDir "${CMAKE_INSTALL_PREFIX}" ABSOLUTE)
+  set(CMAKE_INSTALL_FULL_PROJDIR "${absProjDir}/${CMAKE_INSTALL_PROJDIR}")
+else()
+  set(CMAKE_INSTALL_FULL_PROJDIR "${CMAKE_INSTALL_PROJDIR}")
+endif()
 
 # Disable shared libraries on windows
 # see https://support2.microsoft.com/default.aspx?scid=KB;EN-US;168958
