@@ -44,18 +44,19 @@ foreach(dir
   configure_file(
     "${CMAKE_SOURCE_DIR}/Distribution/projects/${dir}/control/webmod.control.in"
     "${CMAKE_BINARY_DIR}/Distribution/projects/${dir}/control/webmod.control"
+    )
 endforeach()
 
 SET(webmod_ROOT
-  "${CMAKE_SOURCE_DIR}/README_WEBMOD.TXT"
-  "${CMAKE_SOURCE_DIR}/Distribution/README.txt"
+  ${CMAKE_SOURCE_DIR}/README_WEBMOD.TXT
+  ${CMAKE_SOURCE_DIR}/Distribution/README.txt
   )
 
 SET(webmod_DOC
-  "${CMAKE_SOURCE_DIR}/Distribution/doc/Webb_WEBMOD_Body_2016Aug19.docx"
-  "${CMAKE_SOURCE_DIR}/Distribution/doc/Webb_WEBMOD_Tables_2016August19.docm"
-  "${CMAKE_SOURCE_DIR}/Distribution/doc/WEBMOD_figs_1_12_2016August19.pdf"
-  "${CMAKE_SOURCE_DIR}/Distribution/doc/WEBMOD_figs_13_52_2016August19.pdf"
+  ${CMAKE_SOURCE_DIR}/Distribution/doc/Webb_WEBMOD_Body_2016Aug19.docx
+  ${CMAKE_SOURCE_DIR}/Distribution/doc/Webb_WEBMOD_Tables_2016August19.docm
+  ${CMAKE_SOURCE_DIR}/Distribution/doc/WEBMOD_figs_1_12_2016August19.pdf
+  ${CMAKE_SOURCE_DIR}/Distribution/doc/WEBMOD_figs_13_52_2016August19.pdf
   )
 
 if (WIN32)
@@ -167,34 +168,38 @@ SET(webmod_PROJECTS_DR2_OUTPUT
   "${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/output/webmod.topout"
 )
 
-install(FILES "${webmod_ROOT}" DESTINATION .)
-install(FILES "${webmod_DOC}"  DESTINATION "${CMAKE_INSTALL_DOCDIR}")
+if (NOT CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT OR WIN32)
+  install(FILES ${webmod_ROOT} DESTINATION "${CMAKE_INSTALL_PREFIX}")
+else()
+  install(FILES ${webmod_ROOT} DESTINATION "${CMAKE_INSTALL_DOCDIR}")
+endif()
+install(FILES ${webmod_DOC} DESTINATION "${CMAKE_INSTALL_DOCDIR}")
 
 if (WIN32)
-  install(FILES "${webmod_PROJECTS_ANDREWS}" DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews")
+  install(FILES ${webmod_PROJECTS_ANDREWS} DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews")
 else()
-  install(PROGRAMS "${webmod_PROJECTS_ANDREWS}" DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews")
+  install(PROGRAMS ${webmod_PROJECTS_ANDREWS} DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews")
   install(FILES "${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/Andrews.xlsm" DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews")
 endif()
-install(FILES "${webmod_PROJECTS_ANDREWS_CONTROL}" DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews/control")
-install(FILES "${webmod_PROJECTS_ANDREWS_INPUT}"   DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews/input")
-install(FILES "${webmod_PROJECTS_ANDREWS_OUTPUT}"  DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews/output")
+install(FILES ${webmod_PROJECTS_ANDREWS_CONTROL} DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews/control")
+install(FILES ${webmod_PROJECTS_ANDREWS_INPUT}   DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews/input")
+install(FILES ${webmod_PROJECTS_ANDREWS_OUTPUT}  DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews/output")
 
 if (WIN32)
-  install(FILES "${webmod_PROJECTS_ANDREWS_TUTORIAL}" DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews_tutorial")
+  install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL} DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews_tutorial")
 else()
-  install(PROGRAMS "${webmod_PROJECTS_ANDREWS_TUTORIAL}" DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews_tutorial")
+  install(PROGRAMS ${webmod_PROJECTS_ANDREWS_TUTORIAL} DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews_tutorial")
 endif()
-install(FILES "${webmod_PROJECTS_ANDREWS_TUTORIAL_CONTROL}" DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews_tutorial/control")
-install(FILES "${webmod_PROJECTS_ANDREWS_TUTORIAL_INPUT}"   DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews_tutorial/input")
-install(FILES "${webmod_PROJECTS_ANDREWS_TUTORIAL_OUTPUT}"  DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews_tutorial/output")
+install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL_CONTROL} DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews_tutorial/control")
+install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL_INPUT}   DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews_tutorial/input")
+install(FILES ${webmod_PROJECTS_ANDREWS_TUTORIAL_OUTPUT}  DESTINATION "${CMAKE_INSTALL_PROJDIR}/Andrews_tutorial/output")
 
 if (WIN32)
-  install(FILES "${webmod_PROJECTS_DR2}" DESTINATION "${CMAKE_INSTALL_PROJDIR}/dr2")
+  install(FILES ${webmod_PROJECTS_DR2} DESTINATION "${CMAKE_INSTALL_PROJDIR}/dr2")
 else()
-  install(PROGRAMS "${webmod_PROJECTS_DR2}" DESTINATION "${CMAKE_INSTALL_PROJDIR}/dr2")
+  install(PROGRAMS ${webmod_PROJECTS_DR2} DESTINATION "${CMAKE_INSTALL_PROJDIR}/dr2")
   install(FILES "${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/dr2.xlsm" DESTINATION "${CMAKE_INSTALL_PROJDIR}/dr2")
 endif()
-install(FILES "${webmod_PROJECTS_DR2_CONTROL}" DESTINATION "${CMAKE_INSTALL_PROJDIR}/dr2/control")
-install(FILES "${webmod_PROJECTS_DR2_INPUT}"   DESTINATION "${CMAKE_INSTALL_PROJDIR}/dr2/input")
-install(FILES "${webmod_PROJECTS_DR2_OUTPUT}"  DESTINATION "${CMAKE_INSTALL_PROJDIR}/dr2/output")
+install(FILES ${webmod_PROJECTS_DR2_CONTROL} DESTINATION "${CMAKE_INSTALL_PROJDIR}/dr2/control")
+install(FILES ${webmod_PROJECTS_DR2_INPUT}   DESTINATION "${CMAKE_INSTALL_PROJDIR}/dr2/input")
+install(FILES ${webmod_PROJECTS_DR2_OUTPUT}  DESTINATION "${CMAKE_INSTALL_PROJDIR}/dr2/output")
