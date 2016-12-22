@@ -1,0 +1,2 @@
+#!/bin/sh
+@WEBMOD@ -C./control/webmod.control -print
