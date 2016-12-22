@@ -24,14 +24,14 @@ endif()
 INCLUDE(CPack)
 
 # use absolute paths
-if(NOT DEFINED WEBMOD_USE_ABS_PATHS)
+if(NOT DEFINED WEBMOD_USE_ABSOLUTE_PATHS)
   if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    set(WEBMOD_USE_ABS_PATHS TRUE CACHE BOOL "substitute absolute paths in scripts")
+    set(WEBMOD_USE_ABSOLUTE_PATHS TRUE CACHE BOOL "substitute absolute paths in scripts")
   else()
-    set(WEBMOD_USE_ABS_PATHS FALSE CACHE BOOL "substitute absolute paths in scripts")
+    set(WEBMOD_USE_ABSOLUTE_PATHS FALSE CACHE BOOL "substitute absolute paths in scripts")
   endif()
 endif()
-mark_as_advanced(WEBMOD_USE_ABS_PATHS)
+mark_as_advanced(WEBMOD_USE_ABSOLUTE_PATHS)
 
 # set default windows installation path
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND WIN32)

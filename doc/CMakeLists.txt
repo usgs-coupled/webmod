@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 2.8.11)
 
 # use full path on default prefix
-if(WEBMOD_USE_ABS_PATHS)
+if(WEBMOD_USE_ABSOLUTE_PATHS)
   # set jar dir
   set(JARDIR "${CMAKE_INSTALL_FULL_LIBDIR}")
 
@@ -168,7 +168,7 @@ SET(webmod_PROJECTS_DR2_OUTPUT
   "${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/output/webmod.topout"
 )
 
-if (WEBMOD_USE_ABS_PATHS OR WIN32)
+if (WEBMOD_USE_ABSOLUTE_PATHS OR WIN32)
   install(FILES ${webmod_ROOT} DESTINATION "${CMAKE_INSTALL_PREFIX}")
 else()
   install(FILES ${webmod_ROOT} DESTINATION "${CMAKE_INSTALL_DOCDIR}")
