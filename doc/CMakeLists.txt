@@ -15,11 +15,42 @@ else()
   file(RELATIVE_PATH WEBMOD "${CMAKE_INSTALL_FULL_PROJDIR}/Andrews_tutorial" "${CMAKE_INSTALL_FULL_BINDIR}/webmod")
 endif()
 
+if(WIN32)
+  file(TO_NATIVE_PATH ${JARDIR} JARDIR)
+  file(TO_NATIVE_PATH ${WEBMOD} WEBMOD)
+  if(WEBMOD_USE_ABSOLUTE_PATHS)
+    set(JARDIR "\"${JARDIR}\"")
+    set(WEBMOD "\"${WEBMOD}\"")
+  endif()
+endif()
+
 foreach(dir
     Andrews
     Andrews_tutorial
     dr2
     )
+  # webmod.bat
+  configure_file(
+    "${CMAKE_SOURCE_DIR}/Distribution/projects/${dir}/webmod.bat.in"
+    "${CMAKE_BINARY_DIR}/Distribution/projects/${dir}/webmod.bat"
+    )
+  # webmod_gui.bat
+  configure_file(
+    "${CMAKE_SOURCE_DIR}/Distribution/projects/${dir}/webmod_gui.bat.in"
+    "${CMAKE_BINARY_DIR}/Distribution/projects/${dir}/webmod_gui.bat"
+    )
+  # webmod_paramtool.bat
+  configure_file(
+    "${CMAKE_SOURCE_DIR}/Distribution/projects/${dir}/webmod_paramtool.bat.in"
+    "${CMAKE_BINARY_DIR}/Distribution/projects/${dir}/webmod_paramtool.bat"
+    )
+  # webmod_print.bat
+  configure_file(
+    "${CMAKE_SOURCE_DIR}/Distribution/projects/${dir}/webmod_print.bat.in"
+    "${CMAKE_BINARY_DIR}/Distribution/projects/${dir}/webmod_print.bat"
+    )
+
+    
   # webmod.sh
   configure_file(
     "${CMAKE_SOURCE_DIR}/Distribution/projects/${dir}/webmod.sh.in"
@@ -40,6 +71,8 @@ foreach(dir
     "${CMAKE_SOURCE_DIR}/Distribution/projects/${dir}/webmod_print.sh.in"
     "${CMAKE_BINARY_DIR}/Distribution/projects/${dir}/webmod_print.sh"
     )
+
+
   # webmod.control
   configure_file(
     "${CMAKE_SOURCE_DIR}/Distribution/projects/${dir}/control/webmod.control.in"
@@ -62,10 +95,10 @@ SET(webmod_DOC
 if (WIN32)
   SET(webmod_PROJECTS_ANDREWS
     "${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/Andrews.xlsm"
-    "${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/webmod.bat"
-    "${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/webmod_gui.bat"
-    "${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/webmod_paramtool.bat"
-    "${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews/webmod_print.bat"
+    "${CMAKE_BINARY_DIR}/Distribution/projects/Andrews/webmod.bat"
+    "${CMAKE_BINARY_DIR}/Distribution/projects/Andrews/webmod_gui.bat"
+    "${CMAKE_BINARY_DIR}/Distribution/projects/Andrews/webmod_paramtool.bat"
+    "${CMAKE_BINARY_DIR}/Distribution/projects/Andrews/webmod_print.bat"
     )
 else()
   SET(webmod_PROJECTS_ANDREWS
@@ -98,10 +131,10 @@ SET(webmod_PROJECTS_ANDREWS_OUTPUT
 
 if (WIN32)
   SET(webmod_PROJECTS_ANDREWS_TUTORIAL
-    "${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod.bat"
-    "${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_gui.bat"
-    "${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_paramtool.bat"
-    "${CMAKE_SOURCE_DIR}/Distribution/projects/Andrews_tutorial/webmod_print.bat"
+    "${CMAKE_BINARY_DIR}/Distribution/projects/Andrews_tutorial/webmod.bat"
+    "${CMAKE_BINARY_DIR}/Distribution/projects/Andrews_tutorial/webmod_gui.bat"
+    "${CMAKE_BINARY_DIR}/Distribution/projects/Andrews_tutorial/webmod_paramtool.bat"
+    "${CMAKE_BINARY_DIR}/Distribution/projects/Andrews_tutorial/webmod_print.bat"
   )
 else()
   SET(webmod_PROJECTS_ANDREWS_TUTORIAL
@@ -135,10 +168,10 @@ SET(webmod_PROJECTS_ANDREWS_TUTORIAL_OUTPUT
 if (WIN32)
   SET(webmod_PROJECTS_DR2
     "${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/dr2.xlsm"
-    "${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/webmod.bat"
-    "${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/webmod_gui.bat"
-    "${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/webmod_paramtool.bat"
-    "${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/webmod_print.bat"
+    "${CMAKE_BINARY_DIR}/Distribution/projects/dr2/webmod.bat"
+    "${CMAKE_BINARY_DIR}/Distribution/projects/dr2/webmod_gui.bat"
+    "${CMAKE_BINARY_DIR}/Distribution/projects/dr2/webmod_paramtool.bat"
+    "${CMAKE_BINARY_DIR}/Distribution/projects/dr2/webmod_print.bat"
     )
 else()
   SET(webmod_PROJECTS_DR2
