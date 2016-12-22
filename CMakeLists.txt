@@ -23,6 +23,16 @@ else()
 endif()
 INCLUDE(CPack)
 
+# use absolute paths
+if(NOT DEFINED WEBMOD_USE_ABS_PATHS)
+  if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(WEBMOD_USE_ABS_PATHS TRUE CACHE BOOL "substitute absolute paths in scripts")
+  else()
+    set(WEBMOD_USE_ABS_PATHS FALSE CACHE BOOL "substitute absolute paths in scripts")
+  endif()
+endif()
+mark_as_advanced(WEBMOD_USE_ABS_PATHS)
+
 # set default windows installation path
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND WIN32)
   GetDefaultWindowsPrefixBase(CMAKE_GENERIC_PROGRAM_FILES)  
@@ -54,9 +64,7 @@ if(NOT CMAKE_INSTALL_PROJDIR)
   set(CMAKE_INSTALL_PROJDIR "" CACHE PATH "projects root (DATAROOTDIR/doc/PROJECT_NAME/projects)")
   set(CMAKE_INSTALL_PROJDIR "${CMAKE_INSTALL_DATAROOTDIR}/doc/${PROJECT_NAME}/projects")
 endif()
-mark_as_advanced(
-  CMAKE_INSTALL_PROJDIR
-  )
+mark_as_advanced(CMAKE_INSTALL_PROJDIR)
 
 # CMAKE_INSTALL_FULL_PROJDIR (based on GNUInstallDirs.cmake)
 if (NOT IS_ABSOLUTE ${CMAKE_INSTALL_PROJDIR})
