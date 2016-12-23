@@ -1,6 +1,32 @@
 EXTRA_DIST=\
 	CMakeLists.txt\
 	Distribution/README.txt\
+	Distribution/projects/dr2/webmod.bat.in\
+	Distribution/projects/dr2/webmod_gui.bat.in\
+	Distribution/projects/dr2/webmod_print.bat.in\
+	Distribution/projects/dr2/webmod.sh.in\
+	Distribution/projects/dr2/control/webmod.control.in\
+	Distribution/projects/dr2/webmod_paramtool.sh.in\
+	Distribution/projects/dr2/webmod_print.sh.in\
+	Distribution/projects/dr2/webmod_gui.sh.in\
+	Distribution/projects/dr2/webmod_paramtool.bat.in\
+	Distribution/projects/Andrews/webmod.bat.in\
+	Distribution/projects/Andrews/webmod_gui.bat.in\
+	Distribution/projects/Andrews/webmod_print.bat.in\
+	Distribution/projects/Andrews/webmod.sh.in\
+	Distribution/projects/Andrews/control/webmod.control.in\
+	Distribution/projects/Andrews/webmod_paramtool.sh.in\
+	Distribution/projects/Andrews/webmod_print.sh.in\
+	Distribution/projects/Andrews/webmod_gui.sh.in\
+	Distribution/projects/Andrews/webmod_paramtool.bat.in\
+	Distribution/projects/Andrews_tutorial/webmod.bat.in\
+	Distribution/projects/Andrews_tutorial/webmod_gui.bat.in\
+	Distribution/projects/Andrews_tutorial/webmod_print.bat.in\
+	Distribution/projects/Andrews_tutorial/webmod.sh.in\
+	Distribution/projects/Andrews_tutorial/control/webmod.control.in\
+	Distribution/projects/Andrews_tutorial/webmod_paramtool.sh.in\
+	Distribution/projects/Andrews_tutorial/webmod_print.sh.in\
+	Distribution/projects/Andrews_tutorial/webmod_paramtool.bat.in\
 	IPhreeqcMMS/CMakeLists.txt\
 	IPhreeqcMMS/IPhreeqc/CMakeLists.txt\
 	README_WEBMOD.TXT\
