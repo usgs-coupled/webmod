@@ -201,8 +201,8 @@ SET(webmod_PROJECTS_DR2_OUTPUT
   "${CMAKE_SOURCE_DIR}/Distribution/projects/dr2/output/webmod.topout"
 )
 
-if (WEBMOD_USE_ABSOLUTE_PATHS OR WIN32)
-  install(FILES ${webmod_ROOT} DESTINATION "${CMAKE_INSTALL_PREFIX}")
+if (NOT WEBMOD_USE_ABSOLUTE_PATHS OR WIN32)
+  install(FILES ${webmod_ROOT} DESTINATION ".")
 else()
   install(FILES ${webmod_ROOT} DESTINATION "${CMAKE_INSTALL_DOCDIR}")
 endif()
