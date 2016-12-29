@@ -1,0 +1,8 @@
+echo %time%
+@ECHO OFF
+@WEBMOD@ -C.\control\webmod.control -print
+@WEBMOD@ -C.\control\webmod.control
+ECHO.
+echo %time%
+ECHO Run complete. Please press enter to continue.
+PAUSE>NUL

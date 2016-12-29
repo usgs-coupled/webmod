@@ -1,6 +1,33 @@
 EXTRA_DIST=\
 	CMakeLists.txt\
 	Distribution/README.txt\
+	Distribution/projects/dr2/webmod.bat.in\
+	Distribution/projects/dr2/webmod_gui.bat.in\
+	Distribution/projects/dr2/webmod_gui.sh.in\
+	Distribution/projects/dr2/webmod_paramtool.bat.in\
+	Distribution/projects/dr2/webmod_paramtool.sh.in\
+	Distribution/projects/dr2/webmod_print.bat.in\
+	Distribution/projects/dr2/webmod_print.sh.in\
+	Distribution/projects/dr2/webmod.sh.in\
+	Distribution/projects/dr2/control/webmod.control.in\
+	Distribution/projects/Andrews/webmod.bat.in\
+	Distribution/projects/Andrews/webmod_gui.bat.in\
+	Distribution/projects/Andrews/webmod_gui.sh.in\
+	Distribution/projects/Andrews/webmod_paramtool.bat.in\
+	Distribution/projects/Andrews/webmod_paramtool.sh.in\
+	Distribution/projects/Andrews/webmod_print.bat.in\
+	Distribution/projects/Andrews/webmod_print.sh.in\
+	Distribution/projects/Andrews/webmod.sh.in\
+	Distribution/projects/Andrews/control/webmod.control.in\
+	Distribution/projects/Andrews_tutorial/webmod.bat.in\
+	Distribution/projects/Andrews_tutorial/webmod_gui.bat.in\
+	Distribution/projects/Andrews_tutorial/webmod_gui.sh.in\
+	Distribution/projects/Andrews_tutorial/webmod_paramtool.bat.in\
+	Distribution/projects/Andrews_tutorial/webmod_paramtool.sh.in\
+	Distribution/projects/Andrews_tutorial/webmod_print.bat.in\
+	Distribution/projects/Andrews_tutorial/webmod_print.sh.in\
+	Distribution/projects/Andrews_tutorial/webmod.sh.in\
+	Distribution/projects/Andrews_tutorial/control/webmod.control.in\
 	IPhreeqcMMS/CMakeLists.txt\
 	IPhreeqcMMS/IPhreeqc/CMakeLists.txt\
 	README_WEBMOD.TXT\
@@ -27,6 +54,93 @@ AM_FCFLAGS=-I$(srcdir)/IPhreeqcMMS/include
 
 FCDEFS=
 
+do_subst = sed \
+	-e 's,[@]JARDIR[@],$(pkglibdir),g' \
+	-e 's,[@]WEBMOD[@],$(bindir)/webmod,g'
+
+#
+# Andrews
+#
+$(top_builddir)/Distribution/projects/Andrews/webmod.sh: $(srcdir)/Distribution/projects/Andrews/webmod.sh.in Makefile
+	$(MKDIR_P) $(top_builddir)/Distribution/projects/Andrews
+	$(do_subst) < $< > $@
+	chmod +x $@
+
+$(top_builddir)/Distribution/projects/Andrews/webmod_gui.sh: $(srcdir)/Distribution/projects/Andrews/webmod_gui.sh.in Makefile
+	$(MKDIR_P) $(top_builddir)/Distribution/projects/Andrews
+	$(do_subst) < $< > $@
+	chmod +x $@
+
+$(top_builddir)/Distribution/projects/Andrews/webmod_paramtool.sh: $(srcdir)/Distribution/projects/Andrews/webmod_paramtool.sh.in Makefile
+	$(MKDIR_P) $(top_builddir)/Distribution/projects/Andrews
+	$(do_subst) < $< > $@
+	chmod +x $@
+
+$(top_builddir)/Distribution/projects/Andrews/webmod_print.sh: $(srcdir)/Distribution/projects/Andrews/webmod_print.sh.in Makefile
+	$(MKDIR_P) $(top_builddir)/Distribution/projects/Andrews
+	$(do_subst) < $< > $@
+	chmod +x $@
+
+$(top_builddir)/Distribution/projects/Andrews/control/webmod.control: $(srcdir)/Distribution/projects/Andrews/control/webmod.control.in Makefile
+	$(MKDIR_P) $(top_builddir)/Distribution/projects/Andrews/control
+	$(do_subst) < $< > $@
+
+
+#
+# Andrews_tutorial
+#
+$(top_builddir)/Distribution/projects/Andrews_tutorial/webmod.sh: $(srcdir)/Distribution/projects/Andrews_tutorial/webmod.sh.in Makefile
+	$(MKDIR_P) $(top_builddir)/Distribution/projects/Andrews_tutorial
+	$(do_subst) < $< > $@
+	chmod +x $@
+
+$(top_builddir)/Distribution/projects/Andrews_tutorial/webmod_gui.sh: $(srcdir)/Distribution/projects/Andrews_tutorial/webmod_gui.sh.in Makefile
+	$(MKDIR_P) $(top_builddir)/Distribution/projects/Andrews_tutorial
+	$(do_subst) < $< > $@
+	chmod +x $@
+
+$(top_builddir)/Distribution/projects/Andrews_tutorial/webmod_paramtool.sh: $(srcdir)/Distribution/projects/Andrews_tutorial/webmod_paramtool.sh.in Makefile
+	$(MKDIR_P) $(top_builddir)/Distribution/projects/Andrews_tutorial
+	$(do_subst) < $< > $@
+	chmod +x $@
+
+$(top_builddir)/Distribution/projects/Andrews_tutorial/webmod_print.sh: $(srcdir)/Distribution/projects/Andrews_tutorial/webmod_print.sh.in Makefile
+	$(MKDIR_P) $(top_builddir)/Distribution/projects/Andrews_tutorial
+	$(do_subst) < $< > $@
+	chmod +x $@
+
+$(top_builddir)/Distribution/projects/Andrews_tutorial/control/webmod.control: $(srcdir)/Distribution/projects/Andrews_tutorial/control/webmod.control.in Makefile
+	$(MKDIR_P) $(top_builddir)/Distribution/projects/Andrews_tutorial/control
+	$(do_subst) < $< > $@
+
+#
+# dr2
+#
+$(top_builddir)/Distribution/projects/dr2/webmod.sh: $(srcdir)/Distribution/projects/dr2/webmod.sh.in Makefile
+	$(MKDIR_P) $(top_builddir)/Distribution/projects/dr2
+	$(do_subst) < $< > $@
+	chmod +x $@
+
+$(top_builddir)/Distribution/projects/dr2/webmod_gui.sh: $(srcdir)/Distribution/projects/dr2/webmod_gui.sh.in Makefile
+	$(MKDIR_P) $(top_builddir)/Distribution/projects/dr2
+	$(do_subst) < $< > $@
+	chmod +x $@
+
+$(top_builddir)/Distribution/projects/dr2/webmod_paramtool.sh: $(srcdir)/Distribution/projects/dr2/webmod_paramtool.sh.in Makefile
+	$(MKDIR_P) $(top_builddir)/Distribution/projects/dr2
+	$(do_subst) < $< > $@
+	chmod +x $@
+
+$(top_builddir)/Distribution/projects/dr2/webmod_print.sh: $(srcdir)/Distribution/projects/dr2/webmod_print.sh.in Makefile
+	$(MKDIR_P) $(top_builddir)/Distribution/projects/dr2
+	$(do_subst) < $< > $@
+	chmod +x $@
+
+$(top_builddir)/Distribution/projects/dr2/control/webmod.control: $(srcdir)/Distribution/projects/dr2/control/webmod.control.in Makefile
+	$(MKDIR_P) $(top_builddir)/Distribution/projects/dr2/control
+	$(do_subst) < $< > $@
+
+
 # doc
 dist_doc_DATA = $(DOCS)
 
@@ -36,31 +150,35 @@ DOCS=\
 	Distribution/doc/WEBMOD_figs_1_12_2016August19.pdf\
 	Distribution/doc/WEBMOD_figs_13_52_2016August19.pdf
 
+#
 # Andrews
+#
 doc_projects_Andrewsdir = $(docdir)/projects/Andrews
 
-dist_doc_projects_Andrews_DATA = $(ANDREWS)
+dist_doc_projects_Andrews_SCRIPTS=$(ANDREWS)
 
 ANDREWS=\
-	Distribution/projects/Andrews/Andrews.xlsm\
-	Distribution/projects/Andrews/webmod.sh\
-	Distribution/projects/Andrews/webmod_gui.sh\
-	Distribution/projects/Andrews/webmod_paramtool.sh\
-	Distribution/projects/Andrews/webmod_print.sh\
-	Distribution/projects/Andrews/webmod.bat\
-	Distribution/projects/Andrews/webmod_gui.bat\
-	Distribution/projects/Andrews/webmod_paramtool.bat\
-	Distribution/projects/Andrews/webmod_print.bat
+	$(top_builddir)/Distribution/projects/Andrews/webmod.sh\
+	$(top_builddir)/Distribution/projects/Andrews/webmod_gui.sh\
+	$(top_builddir)/Distribution/projects/Andrews/webmod_paramtool.sh\
+	$(top_builddir)/Distribution/projects/Andrews/webmod_print.sh
+
+dist_doc_projects_Andrews_DATA = $(ANDREWS_XLSM)
+
+ANDREWS_XLSM=\
+	Distribution/projects/Andrews/Andrews.xlsm
 
 # Andrews/control
+#
 doc_projects_Andrews_controldir = $(docdir)/projects/Andrews/control
 
 dist_doc_projects_Andrews_control_DATA = $(ANDREWS_CONTROL)
 
 ANDREWS_CONTROL=\
-	Distribution/projects/Andrews/control/webmod.control
+	$(top_builddir)/Distribution/projects/Andrews/control/webmod.control
 
 # Andrews/input
+#
 doc_projects_Andrews_inputdir = $(docdir)/projects/Andrews/input
 
 dist_doc_projects_Andrews_input_DATA = $(ANDREWS_INPUT)
@@ -74,6 +192,7 @@ ANDREWS_INPUT=\
 	Distribution/projects/Andrews/input/webmod.pqi
 
 # Andrews/output
+#
 doc_projects_Andrews_outputdir = $(docdir)/projects/Andrews/output
 
 dist_doc_projects_Andrews_output_DATA = $(ANDREWS_OUTPUT)
@@ -84,31 +203,30 @@ ANDREWS_OUTPUT=\
 	Distribution/projects/Andrews/output/webmod.statvar\
 	Distribution/projects/Andrews/output/webmod.topout
 
-
+#
 # Andrews_tutorial
+#
 doc_projects_Andrews_tutorialdir = $(docdir)/projects/Andrews_tutorial
 
-dist_doc_projects_Andrews_tutorial_DATA = $(ANDREWS_TUTORIAL)
+dist_doc_projects_Andrews_tutorial_SCRIPTS=$(ANDREWS_TUTORIAL)
 
 ANDREWS_TUTORIAL=\
-	Distribution/projects/Andrews_tutorial/webmod.sh\
-	Distribution/projects/Andrews_tutorial/webmod_gui.sh\
-	Distribution/projects/Andrews_tutorial/webmod_paramtool.sh\
-	Distribution/projects/Andrews_tutorial/webmod_print.sh\
-	Distribution/projects/Andrews_tutorial/webmod.bat\
-	Distribution/projects/Andrews_tutorial/webmod_gui.bat\
-	Distribution/projects/Andrews_tutorial/webmod_paramtool.bat\
-	Distribution/projects/Andrews_tutorial/webmod_print.bat
+	$(top_builddir)/Distribution/projects/Andrews_tutorial/webmod.sh\
+	$(top_builddir)/Distribution/projects/Andrews_tutorial/webmod_gui.sh\
+	$(top_builddir)/Distribution/projects/Andrews_tutorial/webmod_paramtool.sh\
+	$(top_builddir)/Distribution/projects/Andrews_tutorial/webmod_print.sh
 
 # Andrews_tutorial/control
+#
 doc_projects_Andrews_tutorial_controldir = $(docdir)/projects/Andrews_tutorial/control
 
 dist_doc_projects_Andrews_tutorial_control_DATA = $(ANDREWS_TUTORIAL_CONTROL)
 
 ANDREWS_TUTORIAL_CONTROL=\
-	Distribution/projects/Andrews_tutorial/control/webmod.control
+	$(top_builddir)/Distribution/projects/Andrews_tutorial/control/webmod.control
 
 # Andrews_tutorial/input
+#
 doc_projects_Andrews_tutorial_inputdir = $(docdir)/projects/Andrews_tutorial/input
 
 dist_doc_projects_Andrews_tutorial_input_DATA = $(ANDREWS_TUTORIAL_INPUT)
@@ -122,6 +240,7 @@ ANDREWS_TUTORIAL_INPUT=\
 	Distribution/projects/Andrews_tutorial/input/webmod.pqi
 
 # Andrews_tutorial/output
+#
 doc_projects_Andrews_tutorial_outputdir = $(docdir)/projects/Andrews_tutorial/output
 
 dist_doc_projects_Andrews_tutorial_output_DATA = $(ANDREWS_TUTORIAL_OUTPUT)
@@ -132,25 +251,27 @@ ANDREWS_TUTORIAL_OUTPUT=\
 	Distribution/projects/Andrews_tutorial/output/webmod.statvar\
 	Distribution/projects/Andrews_tutorial/output/webmod.topout
 
-
+#
 # dr2
+#
 doc_projects_dr2dir = $(docdir)/projects/dr2
 
-dist_doc_projects_dr2_DATA = $(DR2)
+dist_doc_projects_dr2_SCRIPTS=$(DR2)
 
 DR2=\
-	Distribution/projects/dr2/dr2.xlsm\
-	Distribution/projects/dr2/webmod.sh\
-	Distribution/projects/dr2/webmod_gui.sh\
-	Distribution/projects/dr2/webmod_paramtool.sh\
-	Distribution/projects/dr2/webmod_print.sh\
-	Distribution/projects/dr2/webmod.bat\
-	Distribution/projects/dr2/webmod_gui.bat\
-	Distribution/projects/dr2/webmod_paramtool.bat\
-	Distribution/projects/dr2/webmod_print.bat
+	$(top_builddir)/Distribution/projects/dr2/webmod.sh\
+	$(top_builddir)/Distribution/projects/dr2/webmod_gui.sh\
+	$(top_builddir)/Distribution/projects/dr2/webmod_paramtool.sh\
+	$(top_builddir)/Distribution/projects/dr2/webmod_print.sh
+
+dist_doc_projects_dr2_DATA = $(DR2_XLSM)
+
+DR2_XLSM=\
+	Distribution/projects/dr2/dr2.xlsm
 
 
 # dr2/control
+#
 doc_projects_dr2_controldir = $(docdir)/projects/dr2/control
 
 dist_doc_projects_dr2_control_DATA = $(DR2_CONTROL)
@@ -159,6 +280,7 @@ DR2_CONTROL=\
 	Distribution/projects/dr2/control/webmod.control
 
 # dr2/input
+#
 doc_projects_dr2_inputdir = $(docdir)/projects/dr2/input
 
 dist_doc_projects_dr2_input_DATA = $(DR2_INPUT)
@@ -171,6 +293,7 @@ DR2_INPUT=\
 	Distribution/projects/dr2/input/webmod.pqi
 
 # dr2/output
+#
 doc_projects_dr2_outputdir = $(docdir)/projects/dr2/output
 
 dist_doc_projects_dr2_output_DATA = $(DR2_OUTPUT)
@@ -457,6 +580,12 @@ PPF77COMPILE = $(FC) $(FCDEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_FCFLAGS) $(FCFLAGS)
 
 CLEANFILES=\
+	$(ANDREWS)\
+	$(ANDREWS_CONTROL)\
+	$(ANDREWS_TUTORIAL)\
+	$(ANDREWS_TUTORIAL_CONTROL)\
+	$(DR2)\
+	$(DR2_CONTROL)\
 	iphreeqc.$(F90_MODEXT)\
 	web_module.$(F90_MODEXT)\
 	webmod_basin.$(F90_MODEXT)\
