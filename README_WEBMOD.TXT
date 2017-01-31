@@ -43,8 +43,6 @@ A. Distribution files
    The following distribution packages of the batch version of WEBMOD are available
    for Windows and Linux:
     
-webmod-@VERSION@-@REVISION@.msi         64-bit batch version with executable
-				compiled by using Microsoft Visual Studio 2012
 webmod-@VERSION@-@REVISION@.zip         For compilation on Windows					 
 webmod-@VERSION@-@REVISION@.tar.gz      For compilation on Linux
 
@@ -52,18 +50,14 @@ webmod-@VERSION@-@REVISION@.tar.gz      For compilation on Linux
 B. Documentation
 -----------------------------------------------------------------------------------
 
-*The following user's guide will have a citation similat to the following:
+Citation for the WEBMOD User's Manual:
    
 Webb, R.M.T., and Parkhurst, D.L., 2016, Water, Energy, and Biogeochemical Model (WEBMOD),
-   User’s Manual, Version 1: : U.S. Geological Survey Techniques and Methods 6-BXX,
-   XX p, http://dx.doi.org/10.3133/XXXXX.
+   user’s manual, version 1: U.S. Geological Survey Techniques and Methods, book 6, chap. B35,
+   171 p., https://doi.org/10.3133/tm6B35.
    
-The document will be located in .\Distribution\doc\ As a placeholder the following
-drafts are provided pending approval of the Branch Approving official.
-  Webb_WEBMOD_Body_2016Aug19.docx
-  Webb_WEBMOD_Tables_2016August19.docm
-  WEBMOD_figs_1_12_2016August19.pdf
-  WEBMOD_figs_13_52_2016August19.pdf
+The Users Manual will be located in .\Distribution\doc\ 
+  tm6b35.pdf
 
 The geochemical input file for WEBMOD is a PHREEQC input file and must execute without
 errors in PHREEQC before attempting to couple with the hydrology simulated in WEBMOD.

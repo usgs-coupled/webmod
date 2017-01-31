@@ -10822,22 +10822,22 @@
           c_chem_basin%Temp(fin) = c_chem_basin%Temp(fin) + vwtempc
           c_chem_basin%pH(fin) = c_chem_basin%pH(fin) + vwpH
           c_chem_mru(is)%vol(fin) = c_chem_mru(is)%vol(fin) + vol
-          c_chem_mru%vol(ET) = c_chem_mru%vol(ET) + c_chem(indx)%vol(ET)
+          c_chem_mru(is)%vol(ET) = c_chem_mru(is)%vol(ET) + c_chem(indx)%vol(ET)
           c_chem_mru(is)%Temp(fin) = c_chem_mru(is)%Temp(fin) + vwtempc
           c_chem_mru(is)%pH(fin) = c_chem_mru(is)%pH(fin) + vwpH
           if(unsat) then
             c_chem_uzgen(is)%vol(fin) = c_chem_uzgen(is)%vol(fin) + vol
-            c_chem_uzgen%vol(ET) = c_chem_uzgen%vol(ET) + c_chem(indx)%vol(ET)
+            c_chem_uzgen(is)%vol(ET) = c_chem_uzgen(is)%vol(ET) + c_chem(indx)%vol(ET)
             c_chem_uzgen(is)%Temp(fin) = c_chem_uzgen(is)%Temp(fin) + vwtempc
             c_chem_uzgen(is)%pH(fin) = c_chem_uzgen(is)%pH(fin) + vwpH
             if(riparian(ia,is))then
               c_chem_uzrip(is)%vol(fin) = c_chem_uzrip(is)%vol(fin) + vol
-              c_chem_uzrip%vol(ET) = c_chem_uzrip%vol(ET) + c_chem(indx)%vol(ET)
+              c_chem_uzrip(is)%vol(ET) = c_chem_uzrip(is)%vol(ET) + c_chem(indx)%vol(ET)
               c_chem_uzrip(is)%Temp(fin) = c_chem_uzrip(is)%Temp(fin) + vwtempc
               c_chem_uzrip(is)%pH(fin) = c_chem_uzrip(is)%pH(fin) + vwpH
             else
               c_chem_uzup(is)%vol(fin) = c_chem_uzup(is)%vol(fin) + vol
-              c_chem_uzup%vol(ET) = c_chem_uzup%vol(ET) + c_chem(indx)%vol(ET)
+              c_chem_uzup(is)%vol(ET) = c_chem_uzup(is)%vol(ET) + c_chem(indx)%vol(ET)
               c_chem_uzup(is)%Temp(fin) = c_chem_uzup(is)%Temp(fin) + vwtempc
               c_chem_uzup(is)%pH(fin) = c_chem_uzup(is)%pH(fin) + vwpH
             endif
