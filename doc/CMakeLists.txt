@@ -81,15 +81,12 @@ foreach(dir
 endforeach()
 
 SET(webmod_ROOT
-  ${CMAKE_SOURCE_DIR}/README_WEBMOD.TXT
+  ${CMAKE_SOURCE_DIR}/README.TXT
   ${CMAKE_SOURCE_DIR}/Distribution/README.txt
   )
 
 SET(webmod_DOC
-  ${CMAKE_SOURCE_DIR}/Distribution/doc/Webb_WEBMOD_Body_2016Aug19.docx
-  ${CMAKE_SOURCE_DIR}/Distribution/doc/Webb_WEBMOD_Tables_2016August19.docm
-  ${CMAKE_SOURCE_DIR}/Distribution/doc/WEBMOD_figs_1_12_2016August19.pdf
-  ${CMAKE_SOURCE_DIR}/Distribution/doc/WEBMOD_figs_13_52_2016August19.pdf
+  ${CMAKE_SOURCE_DIR}/Distribution/doc/tm6b35.pdf
   )
 
 if (WIN32)

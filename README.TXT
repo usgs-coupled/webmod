@@ -1,4 +1,4 @@
-README_WEBMOD.TXT
+README.TXT
 Current versions of this file and the software are available at
 https://doi.org/10.5066/F7P26W9K
 
@@ -205,7 +205,7 @@ D.4. Compile and install WEBMOD
       descriptions).
       
    Install:
-      README_WEBMOD.txt                     this readme file
+      README.txt                            this readme file
       NOTICE.txt                            User rights notice
  
    Install\bin directory:
@@ -324,7 +324,7 @@ E.8. Install the program.
         
       install/share/doc/webmod
          tm6b35.pdf                        Manual for WEBMOD version 1.0
-         README_WEBMOD.TXT                 this readme file
+         README.TXT                        this readme file
     
     Three project directories:
     

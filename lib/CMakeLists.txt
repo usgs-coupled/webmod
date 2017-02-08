@@ -16,7 +16,7 @@ SET(webmod_LIB_LIB
   lib/jhall.jar
   lib/swing-layout-1.0.4.jar
   lib/AbsoluteLayout.jar
-  lib/csvutils_old.jar
+  lib/csvutils.jar
   lib/jcommon-1.0.16.jar
   )
 

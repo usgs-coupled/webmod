@@ -1,4 +1,4 @@
-Installing and running WEBMOD (version 1.0.0 - August 18, 2016):
+Installing and running WEBMOD (version 1.0.0 - February 8, 2017):
 
 Ensure first that you have a java runtime environment (JRE) current through version 8.
 To check if you have java installed, enter 'java -version' at the Command Prompt. A recent version
@@ -12,7 +12,7 @@ To run WEBMOD on the example problem for Andrews Creek, first test a hydrology o
 directory to .\projects\Andrews_tutorial\, then double click on webmod.bat. The .\output directory should have
 new output files after a short time.
 
-The use can then run the GUI version by double clicking on .\projects\Andrews_tutorial\webmod_gui.bat and then
+The user can then run the GUI version by double clicking on .\projects\Andrews_tutorial\webmod_gui.bat and then
 following the instructions in the User's manual “Quick Start Guide > Andrews Creek simulation and calibration”,
 
 WEBMOD Directory Structure
