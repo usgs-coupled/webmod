@@ -145,10 +145,7 @@ $(top_builddir)/Distribution/projects/dr2/control/webmod.control: $(srcdir)/Dist
 dist_doc_DATA = $(DOCS)
 
 DOCS=\
-	Distribution/doc/Webb_WEBMOD_Body_2016Aug19.docx\
-	Distribution/doc/Webb_WEBMOD_Tables_2016August19.docm\
-	Distribution/doc/WEBMOD_figs_1_12_2016August19.pdf\
-	Distribution/doc/WEBMOD_figs_13_52_2016August19.pdf
+	Distribution/doc/tm6b35.pdf
 
 #
 # Andrews
