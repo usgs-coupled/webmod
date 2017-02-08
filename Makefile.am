@@ -30,7 +30,7 @@ EXTRA_DIST=\
 	Distribution/projects/Andrews_tutorial/control/webmod.control.in\
 	IPhreeqcMMS/CMakeLists.txt\
 	IPhreeqcMMS/IPhreeqc/CMakeLists.txt\
-	README_WEBMOD.TXT\
+	README.TXT\
 	Tests/Andrews/CMakeLists.txt\
 	Tests/Andrews/control/andcrk.control.in\
 	Tests/Andrews/input/andcrk.dat.chemdat\
