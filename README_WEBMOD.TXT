@@ -1,4 +1,6 @@
 README_WEBMOD.TXT
+Current versions of this file and the software are available at
+https://doi.org/10.5066/F7P26W9K
 
                 Water, Energy, and Biogeochemical Model (WEBMOD)
 
@@ -18,10 +20,13 @@ Markstrom, S.L., and Koczot, K.M., 2008, User’s manual for the object user
   [Also available at http://pubs.usgs.gov/of/2008/1120/.]
 
 Input files are all ASCII files that can be edited with a text editor such as
-Notepad or Notepad++.
-The Notepad++ interface has the additional advantage of syntax highlighting
-for PHREEQC input files such as webmod.pqi.
+Notepad or Notepad++. The Notepad++ interface has the additional advantage of 
+syntax highlighting for PHREEQC input files such as webmod.pqi.
 Notepad++ is available at http://www.hydrochemistry.eu/downl.html.
+Alternatively, input for two projects, Andrews Creek and DR2 Drain, are
+included in the project directories as macro-enabled Microsoft workbooks, 
+Andrews.xlsm and dr2.xlsm, and can be written to ASCII using the included 
+macro ExportText.
 
 
     TABLE OF CONTENTS
@@ -61,16 +66,17 @@ B. Documentation
 
 Citation for the WEBMOD User's Manual:
    
-Webb, R.M.T., and Parkhurst, D.L., 2016, Water, Energy, and Biogeochemical Model (WEBMOD),
-   user’s manual, version 1: U.S. Geological Survey Techniques and Methods, book 6, chap. B35,
-   171 p., https://doi.org/10.3133/tm6B35.
+Webb, R.M.T., and Parkhurst, D.L., 2017, Water, Energy, and Biogeochemical 
+  Model (WEBMOD), user’s manual, version 1: U.S. Geological Survey Techniques
+  and Methods, book 6, chap. B35, 171 p., https://doi.org/10.3133/tm6B35.
    
 The Users Manual will be located in .\Distribution\doc\ 
   tm6b35.pdf
 
-The geochemical input file for WEBMOD is a PHREEQC input file and must execute without
-errors in PHREEQC before attempting to couple with the hydrology simulated in WEBMOD.
-Therefore the following citations of PHREEQC will aid the uninitiated:
+Before attempting to simulate chemical reactions in WEBMOD, the chemistry
+input file webmod.pqi must run successfully in PHREEQC using the database
+phreeqc_web_lite.dat. Therefore the following citations of PHREEQC will 
+aid the uninitiated:
 
 Parkhurst, D.L., and Appelo, C.A.J., 2013, Description of input and examples
    for PHREEQC version 3--A computer program for speciation, batch-reaction,
@@ -212,7 +218,7 @@ D.4. Compile and install WEBMOD
       Manual for WEBMOD version 1
 
    Install\projects directory:
-      Example input files from the user guide
+      Example input files from the user's manual
   
 -----------------------------------------------------------------------------------   
 E. Compiling and installing the Linux batch version of WEBMOD 
@@ -317,7 +323,7 @@ E.8. Install the program.
    Documentation:
         
       install/share/doc/webmod
-         WEBMOD_manual.pdf                 Manual for WEBMOD version 1.0
+         tm6b35.pdf                        Manual for WEBMOD version 1.0
          README_WEBMOD.TXT                 this readme file
     
     Three project directories:
@@ -338,23 +344,23 @@ webmod -C.\control\webmod.control
 The WEBMOD simulation will then be run using inputs and outputs specified in the control
 file .\projects\Andrews\control\webmod.control
 
-Alternatively, WEBMOD can be run by a script on Linux or a batch file on Windows.
+Alternatively, WEBMOD can be run by a script on Linux (*.sh) or a batch file on Windows (*.bat).
 The scripts and batch files are run in the selected \projects\ directory. ie. .\projects\Andrews.
 
   command                        explanation
   -----------------------------  -----------------------------------------
-  webmod.bat                     Batch file that prints model self-documentation
-                                 to \control\ directory then runs WEBMOD simulation
-                                 as instructed in \control\webmod.control.
-  webmod_gui.bat                 Batch file that prints model self-documentation 
-                                 to \control\ directory then begins an interactive 
-                                 session of WEBMOD simulation using the MMS Tool GUI.
-  webmod.paramtool.bat           Batch file that prints model self-documentation 
-                                 to \control\ directory then begins an interactive 
-                                 session to review and modify WEBMOD parameters 
-                                 using the Param Tool GUI.
-  webmod_print.bat               Batch file that prints self-documentation files
-                                 in \control\ directory
+  webmod.bat or                  Prints model self-documentation to \control\ 
+  webmod.sh                      directory then runs WEBMOD simulation as
+                                 instructed in \control\webmod.control.
+  webmod_gui.bat or              Prints model self-documentation to \control\ 
+  webmod_gui.sh                  directory then begins an interactive session
+                                 of WEBMOD simulation using the MMS Tool GUI.
+  webmod.paramtool.bat or        Prints model self-documentation to \control\ 
+  webmod.paramtool.sh            directory then begins an interactive session
+                                 to review and modify WEBMOD parameters using 
+                                 the Param Tool GUI.
+  webmod_print.bat or            Prints self-documentation files in \control\
+  webmod_print.sh                directory
 
 ----------------------------------------------------------------------------------- 
 G. Description of .\projects\
@@ -373,12 +379,13 @@ DR2\ simulates hydrology and specific conductivity using chloride as a proxy for
 
 Andrews_tutorial\ The project Andrews_tutorial is a deliberately miscalibrated version of 
      Andrews. As detailed in the User’s Manual in the section “Quick Start Guide > Andrews 
-     Creek simulation and calibration”, the user is instructed to turn on geochemical 
-     simulations(chem_sim=1), modifiy two hydrologic parameters, rain_adj and snow_adj, 
-     in Andrews_tutorial\input\webmod.params and modify the surface to volume ratio that 
-     determines the weathering rate of of oligoclase in Andrews_tutorial\input\webmod.pqi. 
-     Upon completion of the 45 steps, the output files in Andrews_tutorial\output\ will be 
-     identical to those in Andrew\output\.
+     Creek simulation and calibration”, the user is instructed to modify two hydrologic 
+     parameters in Andrews_tutorial\input\webmod.params, rain_adj and snow_adj, to better
+     match observed streamflow, turn on geochemical simulations(chem_sim=1), then modify 
+     the surface to volume ratios in Andrews_tutorial\input\webmod.pqi that determines the
+     weathering rate of of oligoclase. Upon completion of the 45 steps, the output files in
+     Andrews_tutorial\output\ will be identical to those in Andrew\output\ after execution
+     of the WEBMOD simulation in that project directory.
 
 -----------------------------------------------------------------------------------
 H. Contacts
