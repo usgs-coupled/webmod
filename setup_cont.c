@@ -317,6 +317,7 @@ void setup_cont (void) {
 		decl_control_string ("csv_output_file", "prms_summary.csv");
         decl_control_string ("nhruOutBaseFileName", "nhruout_path");
 		decl_control_string ("nsubOutBaseFileName", "nsubout_path");
+		decl_control_string ("basinOutBaseFileName", "basinout_path");
 /*
 **	run start and end times
 */
@@ -402,6 +403,18 @@ void setup_cont (void) {
 		lval[0] = 1;
 		decl_control_int_array("nsubOut_freq", 1, lval);
 
+		/*
+		**	basin_summary
+		*/
+		lval = (long *)umalloc(sizeof(long));
+		lval[0] = 0;
+		decl_control_int_array("basinOutON_OFF", 1, lval);
+		lval = (long *)umalloc(sizeof(long));
+		lval[0] = 0;
+		decl_control_int_array("basinOutVars", 1, lval);
+		lval = (long *)umalloc(sizeof(long));
+		lval[0] = 1;
+		decl_control_int_array("basinOut_freq", 1, lval);
 /*
 **	graphics display
 */
