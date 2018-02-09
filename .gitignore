@@ -1,0 +1,70 @@
+
+# /
+/Debug
+/DebugDll
+/Release
+/ReleaseDll
+/WEBWIN_beta
+/WEBWIN_beta.7z
+/ipch
+/mmf_c.zip
+/web_win.ncb
+/web_win.sdf
+/web_win.suo
+/web_win2010.opensdf
+/web_win2010.sdf
+/web_win2010.suo
+/x64
+/.depend
+/Makefile.in
+/aclocal.m4
+/autom4te.cache
+/config
+/configure
+
+# /Distribution/projects/Andrews/
+/Distribution/projects/Andrews/And10mruFinal.xlsm
+
+# /Distribution/projects/Andrews/input/
+/Distribution/projects/Andrews/input/phreeqmms.pqi
+
+# /Distribution/projects/dr2/input/
+/Distribution/projects/dr2/input/dr2 - Copy (2).params
+/Distribution/projects/dr2/input/dr2 - Copy.params
+/Distribution/projects/dr2/input/dr2_14nov.dat
+/Distribution/projects/dr2/input/dr2_14nov.params
+/Distribution/projects/dr2/input/dr2_15nov12.dat
+/Distribution/projects/dr2/input/dr2_in_2012.xls
+/Distribution/projects/dr2/input/dr2_in_2012.xlsm
+/Distribution/projects/dr2/input/dr2_in_2012_trashed.xlsm
+/Distribution/projects/dr2/input/dr2_trashed.dat
+/Distribution/projects/dr2/input/dr2_works.dat
+/Distribution/projects/dr2/input/loch_s.dat.chemdat
+/Distribution/projects/dr2/input/loch_s.params
+/Distribution/projects/dr2/input/lowCgroundwater
+
+# /Tests/
+/Tests/Makefile.in
+
+# /Tests/Andrews/
+/Tests/Andrews/Makefile.in
+
+# /Tests/Andrews/input/
+/Tests/Andrews/input/phreeqmms.pqi
+
+# /lib/
+/lib/Makefile.in
+
+# /mmf_c/
+/mmf_c/Debug
+/mmf_c/Release
+/mmf_c/x64
+
+# /webmod.d/
+/webmod.d/Debug
+/webmod.d/Release
+/webmod.d/vc100.pdb
+/webmod.d/webmod_f.u2d
+/webmod.d/webmod_f.vfproj.rmwebb.user
+/webmod.d/x64
+/webmod.d/webmod_f.vfproj.rmwebb.user
