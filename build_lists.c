@@ -1,11 +1,32 @@
 /*+
  * United States Geological Survey
  *
- * PROJECT  : Modular Modeling System (MMS)
- * FUNCTION : build_lists
+ * PROJECT  : BMAT
+ * NAME     : build_lists.c
+ * AUTHOR   : Steve Markstrom (markstro)
+ * DATE     : Wed 04 Jan 1995
+ * FUNCTION :
  * COMMENT  :
+ * REF      :
+ * REVIEW   :
+ * PR NRS   :
  *
- * $Id$
+ * $Id: build_lists.c 3058 2007-01-25 22:25:59Z rsregan $
+ *
+   $Revision: 3058 $
+        $Log: build_lists.c,v $
+        Revision 1.4  1996/04/09 21:04:02  markstro
+        (1) Work on control files
+        (2) Runtime graphs
+
+ * Revision 1.3  1996/02/19  19:59:30  markstro
+ * Now lints pretty clean
+ *
+        Revision 1.2  1996/01/23 18:44:08  markstro
+        Fixes for HP compiler
+
+ * Revision 1.1  1996/01/23  16:49:35  markstro
+ * Initial version
  *
 -*/
 
@@ -21,6 +42,13 @@
 #define INPUT  1
 #define OUTPUT  2
 
+/**3************************ LOCAL TYPEDEFS ***************************/
+
+/**4***************** DECLARATION LOCAL FUNCTIONS *********************/
+
+/**5*********************** LOCAL data ***************************/
+
+/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : ALLOC_list
  | COMMENT      :
@@ -99,4 +127,8 @@ void ADD_to_list (LIST *list, void *itm) {
 
 	list->itm[list->count++] = itm;
 }
+
+/**7****************** LOCAL FUNCTION DEFINITIONS *********************/
+
+/**8************************** TEST DRIVER ****************************/
 

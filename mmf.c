@@ -2,12 +2,17 @@
  * United States Geological Survey
  *
  * PROJECT  : Modular Modeling System (MMS)
- * FUNCTION : xmms
- * COMMENT  : main driver for xmms
+ * NAME     : xmms.c
+ * AUTHOR   : CADSWES; reworked by Markstrom
+ * DATE     : 
+ * FUNCTION : xmms - main driver for xmms
+ * COMMENT  : Main driver for xmms system.
+ * REF      :
+ * REVIEW   :
+ * PR NRS   :
+ * $Id: mmf.c 4627 2008-10-01 16:48:11Z markstro $
  *
- * $Id$
- *
--*/
+ -*/
 
 /**1************************ INCLUDE FILES ****************************/
 #define MAIN
@@ -20,10 +25,17 @@
 #include "mms.h"
 
 
+/**2************************* LOCAL MACROS ****************************/
+
+/**3************************ LOCAL TYPEDEFS ***************************/
+
 /**4***************** DECLARATION LOCAL FUNCTIONS *********************/
 extern int call_modules(char *);
 extern int call_setdims(void);
 
+/**5*********************** LOCAL VARIABLES ***************************/
+
+/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
   | FUNCTION     : main
   | COMMENT		: Main source for xmms
@@ -50,21 +62,7 @@ int main (int argc, char *argv[]) {
    char   **fname;
    char pathname[MAXPATHLEN];
 
-
-    /*
-	**  Maximum buffer size for reading lines from files.
-	**  This used to be set as a C precompiler directive.
-	**  That is still the default, but now users are give.
-	**  the option to set this on the command line, otherwise
-	**  size still comes from the defs.h file.
-	*/
-    max_data_ln_len = MAXDATALNLEN;
-
-	/*
-	**  List of modules that are used by the model. This is
-	**  determined by calls to declmodule
-	*/
-	module_db = ALLOC_list ("Module Data Base", 0, 100);
+   declmodule("$Id: mmf.c 4627 2008-10-01 16:48:11Z markstro $");
 
   /*
   **	parse the command-line arguments
@@ -87,9 +85,6 @@ int main (int argc, char *argv[]) {
        (void)fprintf (stderr,"%s\n", err);
         exit (1);           
    }
-
-	fname =   control_svar ("param_file");
-    num_param_files = control_var_size ("param_file");
 
    for (i = 0; i < set_count; i++) {
       cp = control_addr (*(set_name + i));
@@ -126,40 +121,35 @@ int main (int argc, char *argv[]) {
       }
    }
 
-	fname =   control_svar ("param_file");
-    num_param_files = control_var_size ("param_file");
+/*
+   append_env (MAltEnvFile, MAltContFile);
+*/
 
     if (call_setdims()) {
-	  (void)fprintf(stderr, "\nERROR: Calling function 'call_setdims'\n");
-      exit (1);
+      (void)fprintf(stderr, "ERROR - mmf\n");
+      (void)fprintf(stderr, "Calling function 'call_setdims'\n");
     }
-
+    
     /*
     **	read dimension info from parameter file
     */
     if (stat (*control_svar("param_file"), &stbuf) != -1) {
        if (stbuf.st_size) {
       } else {
-	     (void)fprintf (stderr,buf, "Parameter File: %s is empty.",
+	     (void)fprintf (stderr,buf, "Parameter file: %s is empty.",
 		               *control_svar("param_file"));
-        exit (1);
-	   }
+      }
     }
     
     err = read_dims (*control_svar("param_file"));
     if (err) {
-//		(void)fprintf (stderr,"\nERROR: reading dimensions from Parameter File\n");
-		fprintf (stderr,"\n%s\n", err);
-        exit (1);
-	}
-
-	fname =   control_svar ("param_file");
-    num_param_files = control_var_size ("param_file");
+      (void)fprintf (stderr,"MMS - Warning: %s\n", err);
+    }
 
     if (call_modules("declare")) {
-		(void)fprintf(stderr, "\nERROR: in declare procedure, in function 'call_modules'\n");
-        exit (1);
-	}
+      (void)fprintf(stderr, "ERROR - mmf\n");
+      (void)fprintf(stderr, "Calling function 'call_modules'\n");
+    }
     
     /*
     **	read in parameter values from parameter file
@@ -167,42 +157,18 @@ int main (int argc, char *argv[]) {
 	fname =   control_svar ("param_file");
     num_param_files = control_var_size ("param_file");
 
-	/*
-	**  Look for, declare and read in mapping parameters before any of the "module" parameters
-	*/
 	for (i = 0; i < num_param_files; i++) {
 		if (stat (fname[i], &stbuf) != -1) {
 		   if (stbuf.st_size) {
 		  } else {
-			  (void)fprintf (stderr,buf, "ERROR: Parameter file: %s is empty.",
+			 (void)fprintf (stderr,buf, "Parameter file: %s is empty.",
 						   fname[i]);
-			  exit (1);
-		   }
+		  }
 		}
 	    
-		err = read_params (fname[i], i, 1);
+		err = read_params (fname[i], i);
 		if (err) {
-			(void)fprintf (stderr,"\n%s\n", err);
-		}
-	}
-
-	/*
-	**  Read in the parameters declared by the modules.
-	*/
-
-	for (i = 0; i < num_param_files; i++) {
-		if (stat (fname[i], &stbuf) != -1) {
-		   if (stbuf.st_size) {
-		  } else {
-			  (void)fprintf (stderr,buf, "ERROR: Parameter file: %s is empty.",
-						   fname[i]);
-			  exit (1);
-		   }
-		}
-	    
-		err = read_params (fname[i], i, 0);
-		if (err) {
-			(void)fprintf (stderr,"\n%s\n", err);
+		  (void)fprintf (stderr,"MMS - Warning: %s\n", err);
 		}
 	}
     
@@ -210,7 +176,7 @@ int main (int argc, char *argv[]) {
     **  get data info string into the global
     */
     err = READ_data_info ();
-    if (err) (void)fprintf (stderr,"\nMMS - Warning: %s", err);
+    if (err) (void)fprintf (stderr,"MMS - Warning: %s", err);
 
     /*
     **	get start and end time
@@ -223,12 +189,19 @@ int main (int argc, char *argv[]) {
       print_model_info();
 	  (void)sprintf (pathname, "%s.param", MAltContFile);
 	  save_params (pathname);
-
+/*
+    } else if (esp_mode) {
+      ESP_batch_run ();
+    } else if (rosenbrock_mode) {
+      ROSENBROCK_batch_run ();
+*/
     } else {
-
       BATCH_run ();
-      ;
     }
 
-    exit (0);
+    exit (1);
 }
+
+
+/**8************************** TEST DRIVER ****************************/
+

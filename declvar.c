@@ -1,17 +1,61 @@
-/*+
- * United States Geological Survey
+/**************************************************************************
+ * declvar.c: initializes a module variable entry in the memory database
  *
- * PROJECT  : Modular Modeling System (MMS)
- * FUNCTION : declvar() to be called from C
- *            declvar_() to be called from Fortran
- *            Returns 0 if successful, 1 otherwise.
- * COMMENT  : initializes a module variable entry in the memory database
+ * There are 2 functions: declvar() to be called from C
+ *                        declvar_() to be called from Fortran
  *
- * $Id$
- *
--*/
+ * Returns 0 if successful, 1 otherwise.
 
-/**1************************ INCLUDE FILES ****************************/
+ * $Id: declvar.c 4188 2008-05-12 23:26:13Z rsregan $
+ *
+   $Revision: 4188 $
+        $Log: declvar.c,v $
+        Revision 1.17  1999/10/22 17:14:35  markstro
+        Added private variables
+
+        Revision 1.16  1996/02/19 19:59:51  markstro
+        Now lints pretty clean
+
+        Revision 1.15  1995/11/25 02:42:12  markstro
+        Reading unit vs. daily data files.
+
+ * Revision 1.14  1994/11/23  20:12:46  markstro
+ * More malloc_dbg changes
+ *
+ * Revision 1.13  1994/11/22  17:19:26  markstro
+ * (1) Cleaned up dimensions and parameters.
+ * (2) Some changes due to use of malloc_dbg.
+ *
+ * Revision 1.12  1994/11/08  16:17:26  markstro
+ * (1) More proto type fine tuning
+ * (2) fixed up data file reading
+ *
+ * Revision 1.11  1994/10/24  14:18:20  markstro
+ * (1)  Integration of CADSWES's work on GIS.
+ * (2)  Prototypes were added to the files referenced in "mms_proto.h".
+ *
+ * Revision 1.10  1994/09/30  14:54:09  markstro
+ * Initial work on function prototypes.
+ *
+ * Revision 1.9  1994/06/21  20:20:24  markstro
+ * More work on taking the module name out of the DB keyword.
+ *
+ * Revision 1.8  1994/06/16  16:47:07  markstro
+ * Worked over runcontrol.c
+ *
+ * Revision 1.7  1994/02/01  21:17:13  markstro
+ * Unknown
+ *
+ * Revision 1.6  1994/02/01  17:41:26  markstro
+ * Made the declaration of parameters dynamic -- no more MAXPARAMS
+ *
+ * Revision 1.5  1994/02/01  17:14:07  markstro
+ * Made the declaration of variables dynamic -- no more MAXVARS
+ *
+ * Revision 1.4  1994/01/31  20:16:10  markstro
+ * Make sure that all source files have CVS log.
+ *
+ **************************************************************************/
 #define DECLVAR_C
 #include <stdio.h>
 #include <string.h>
@@ -75,6 +119,17 @@ long declvar_ (char *mname, char *vname, char *vdimen, ftnint *maxsizeptr,
 
   retval = declvar(module, name, dimen, maxsize, type, help, units, value);
 
+  /*
+   * free up allocated strings
+   */
+
+//ufree(module);
+//ufree(name);
+//ufree(dimen);
+//ufree(type);
+//ufree(help);
+//ufree(units);
+
   return(retval);
 
 }
@@ -112,6 +167,11 @@ long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
    */
 
   vkey = strdup (name);
+/*
+  vkey = (char *)umalloc (strlen(name));
+  (void)strcpy(vkey, module);
+  strcat(strcat(vkey, "."), name);
+*/
 
   if (var_addr(vkey) != NULL) {
 	  if (print_mode) {
@@ -126,11 +186,14 @@ long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
    * convert fortran types to C equivalents
    */
 
-  var_type = M_LONG;
-  if (!strcmp(type, "real") || !strcmp(type, "float"))
-    var_type = M_FLOAT;
-  else if (!strcmp(type, "double precision") || !strcmp(type, "double"))
-    var_type = M_DOUBLE;
+  if (!strcmp(type, "integer") || !strcmp(type, "long"))
+    var_type = M_LONG;
+  else
+    if (!strcmp(type, "real") || !strcmp(type, "float"))
+      var_type = M_FLOAT;
+    else
+      if (!strcmp(type, "double precision") || !strcmp(type, "double"))
+        var_type = M_DOUBLE;
 
   /*
    * check that type is possible
@@ -207,6 +270,8 @@ long declvar (char *module, char *name, char *dimen, long maxsize, char *type,
     token = strtok ((char *) NULL, ",");
     i++;
   }
+
+//ufree(tmpdimen);
 
   /*
    * get the size of the variable
@@ -306,6 +371,9 @@ long declpri_ (char *vname, ftnint *maxsizeptr,
    * free up allocated strings
    */
 
+//ufree(name);
+//ufree(type);
+
   return(retval);
 
 }
@@ -350,11 +418,14 @@ long declpri (char *name, long size, char *type, char *value) {
    * convert fortran types to C equivalents
    */
 
-  var_type = M_LONG;
-  if (!strcmp(type, "real") || !strcmp(type, "float"))
-    var_type = M_FLOAT;
-  else if (!strcmp(type, "double precision") || !strcmp(type, "double"))
-    var_type = M_DOUBLE;
+  if (!strcmp(type, "integer") || !strcmp(type, "long"))
+    var_type = M_LONG;
+  else
+    if (!strcmp(type, "real") || !strcmp(type, "float"))
+      var_type = M_FLOAT;
+    else
+      if (!strcmp(type, "double precision") || !strcmp(type, "double"))
+        var_type = M_DOUBLE;
 
   /*
    * check that type is possible

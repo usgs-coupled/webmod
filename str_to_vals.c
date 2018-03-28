@@ -1,25 +1,42 @@
-/*+
- * United States Geological Survey
+/**************************************************************************
+ * str_to_vals.c: decodes a string into values, and loads memory addresses
  *
- * PROJECT  : Modular Modeling System (MMS)
- * FUNCTION : str_to_vals
- * COMMENT  : decodes a string into values, and loads memory addresses
- *            Examples of legal strings for this routine:
+ * Examples of legal strings for this routine:
  *
- *            "1 2 3 4 5"
- *            "1.0, 2.2, 19e9"
- *            "1*23.5, 7*1 13 12*3"
+ *           "1 2 3 4 5"
+ *           "1.0, 2.2, 19e9"
+ *           "1*23.5, 7*1 13 12*3"
  *
  * Blanks, commas, tabs and newlines may delimit the values.
  * The repeat count is optional, but must be greater than 0 if included.
  * If the total number of entries is less than required, the sequence
  * is repeated.
  *
- * $Id$
+ * $Id: str_to_vals.c 3058 2007-01-25 22:25:59Z rsregan $
  *
--*/
+   $Revision: 3058 $
+        $Log: str_to_vals.c,v $
+        Revision 1.7  1996/02/19 20:01:17  markstro
+        Now lints pretty clean
 
-/**1************************ INCLUDE FILES ****************************/
+        Revision 1.6  1994/11/23 20:12:59  markstro
+        More malloc_dbg changes
+
+ * Revision 1.5  1994/11/22  17:20:37  markstro
+ * (1) Cleaned up dimensions and parameters.
+ * (2) Some changes due to use of malloc_dbg.
+ *
+ * Revision 1.4  1994/11/08  16:17:51  markstro
+ * (1) More proto type fine tuning
+ * (2) fixed up data file reading
+ *
+ * Revision 1.3  1994/09/30  14:55:25  markstro
+ * Initial work on function prototypes.
+ *
+ * Revision 1.2  1994/01/31  20:17:39  markstro
+ * Make sure that all source files have CVS log.
+ *
+ **************************************************************************/
 #define STR_TO_VALS_C
 #include <stdio.h>
 #include <string.h>
@@ -42,24 +59,14 @@ long str_to_vals (char *encoded_string, long size, long type, char *store_addr) 
   long i, isource;
   long ndecoded, repeat;
   char *scopy, *token, *valstr, *asterisk, *end_point;
-  static char *tcopy = NULL;
+  char tcopy[MAXTOKLEN];
   double dvalue, *dval;
   float fvalue, *fval;
-  int lvalue, *lval;
-  char *svalue, **sval;     // 2016-01-13 PAN: added string pointers
-
-  if (tcopy == NULL) {
-	  tcopy = (char *) umalloc(max_data_ln_len * sizeof(char));
-  }
+  long lvalue, *lval;
 
   /*
    * set up pointer for data type
    */
-
-  dval = NULL;
-  fval = NULL;
-  lval = NULL;
-  sval = NULL;  // 2016-01-13 PAN: added sval init
 
   switch (type) {
   case M_DOUBLE:
@@ -69,12 +76,7 @@ long str_to_vals (char *encoded_string, long size, long type, char *store_addr) 
     fval = (float *) store_addr;
     break;
   case M_LONG:
-    lval = (int *) store_addr;
-    break;
-
-  // 2016-01-13 PAN: added case for string values
-  case M_STRING:
-    sval = (char **) store_addr;
+    lval = (long *) store_addr;
     break;
   }
 
@@ -119,9 +121,6 @@ long str_to_vals (char *encoded_string, long size, long type, char *store_addr) 
 
     errno = 0;
 
-    dvalue = 0.0;
-    fvalue = 0.0;
-    lvalue = 0;
     switch (type) {
 
     case M_DOUBLE:
@@ -131,12 +130,7 @@ long str_to_vals (char *encoded_string, long size, long type, char *store_addr) 
       fvalue = (float) strtod(valstr, &end_point);
       break;
     case M_LONG:
-      lvalue = (int)strtol(valstr, &end_point, 10);
-      break;
-
-    // 2016-01-13 PAN: added case for string values
-    case M_STRING:
-      svalue = valstr;
+      lvalue = strtol(valstr, &end_point, 10);
       break;
     }
 
@@ -178,14 +172,6 @@ long str_to_vals (char *encoded_string, long size, long type, char *store_addr) 
       for (i = 0; i < repeat; i++) {
 	lval[ndecoded] = lvalue;
 	ndecoded++;
-      }
-      break;
-
-    // 2016-01-13 PAN: added case for string values
-    case M_STRING:
-      for (i = 0; i < repeat; i++) {
-        *(sval + i) = strdup(svalue);
-        ndecoded++;
       }
       break;
     }
@@ -230,21 +216,11 @@ long str_to_vals (char *encoded_string, long size, long type, char *store_addr) 
 	  isource = 0;
       }
       break;
-   
-    // 2016-01-13 PAN: added case for string values
-    case M_STRING:
-      for (i = ndecoded; i < size; i++) {
-        *(sval + i) = strdup(*(sval + isource));
-        isource++;
-
-        if (isource == ndecoded)
-          isource = 0;
-      }
-      break;
-
     }
 
   }
 
+//ufree(scopy);
   return S2V_SUCCESS;
+
 }

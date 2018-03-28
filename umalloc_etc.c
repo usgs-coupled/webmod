@@ -1,15 +1,13 @@
-/*+
- * United States Geological Survey
+/**********************************************************************
+ * umalloc_etc.c : memory allocation routines with error handling
  *
- * PROJECT  : Modular Modeling System (MMS)
- * FUNCTION : umalloc_etc
- * COMMENT  : memory allocation routines with error handling
+ * utility routine
  *
- * $Id$
+ * Mike Dixon CADSWES CU July 1990
  *
--*/
-
-/**1************************ INCLUDE FILES ****************************/
+ * $Id: umalloc_etc.c 4627 2008-10-01 16:48:11Z markstro $
+ *
+ **********************************************************************/
 #define UMALLOC_ETC_C
 #include <stdlib.h>
 #include <stdio.h>

@@ -1,15 +1,6 @@
-/*+
- * United States Geological Survey
- *
- * PROJECT  : Modular Modeling System (MMS)
- * FUNCTION : print_model_info
- * COMMENT  :
- *
- * $Id$
- *
--*/
-
-/**1************************ INCLUDE FILES ****************************/
+/*
+ * $Id: print_model_info.c 4098 2008-04-23 19:09:09Z markstro $
+ */
 #define PRINT_MODEL_INFO_C
 #include <string.h>
 #include <stdio.h>
@@ -17,6 +8,15 @@
 #include "mms.h"
 
 #define PRINTLEN 77
+
+//typedef struct node_type {
+//   char  *name;
+//   int   x, y;
+//   int   num_connectnions;
+//} NODE;
+
+//extern NODE nodes[];
+//extern int con_index[];
 
 /*--------------------------------------------------------------------*\
  | FUNCTION     : print_model_info
@@ -28,54 +28,77 @@
 int print_model_info (void) {
 
   char pathname[MAXPATHLEN];
-  FILE *model_info_file;
-  int i, j;
-  MODULE_DATA *module;
-  LIST *vlist, *plist;
+  FILE *param_file;
+  //NODE *np;
+  char *module_names, str[21], *ptr, *end;
+  int *xpos, *ypos, *con_index, *num_connectnions;
+  int num_modules;
+  long i, j, k;
+  CONTROL *cp;
 
-	(void)sprintf (pathname, "%s.mod_name", MAltContFile);
+  /*
+   * get param file path name, open file
+   */
 
-	if ((model_info_file = fopen (pathname, "w")) == NULL) {
-		(void)fprintf(stderr, "ERROR - print_model_info - creating file '%s'\n", pathname);
-		perror("");
-		return(1);
-	}
+
+  (void)sprintf (pathname, "%s.mod_name", MAltContFile);
+
+  if ((param_file = fopen (pathname, "w")) == NULL) {
+    (void)fprintf(stderr,
+	    "ERROR - print_model_info - creating file '%s'\n", pathname);
+    perror("");
+    return(1);
+  }
 
   /*
    * write header
    */
 
-	(void)fprintf(model_info_file, "PRMS Module Name File\n");
-	(void)fprintf(model_info_file, "%s\n", model_name);
-	(void)fprintf(model_info_file, "============\n\n");
+  (void)fprintf(param_file, "%s\n", model_name);
+  (void)fprintf(param_file, "============\n\n");
 
-	(void)fprintf(model_info_file, "Module versions used in the application, listed in computation order.\n\n");
+  (void)fprintf(param_file, "Printout of module call order, X, Y, and number of connections.\n\n");
 
-	for (i = 0; i < module_db->count; i++) {
-		// print module name
-		module = (MODULE_DATA *)(module_db->itm[i]);
-		fprintf(model_info_file, "%s,%s\n", module->name, module->version);
+  cp = control_addr ("module_names");
+  num_modules = cp->size;
+   module_names = (char *)(cp->start_ptr);
 
-		// print the variables
-		vlist = module->vars;
-		fprintf(model_info_file, "   ");
-		for (j = 0; j < vlist->count; j++) {
-			fprintf(model_info_file, "%s,", (char *)(vlist->itm[j]));
-		}
-		fprintf(model_info_file, "\n");
+   cp = control_addr ("module_x");
+   xpos = (int *)(cp->start_ptr);
 
-		// print the parameters
-		plist = module->params;
-		fprintf(model_info_file, "   ");
-		for (j = 0; j < plist->count; j++) {
-			fprintf(model_info_file, "%s,", (char *)(plist->itm[j]));
-		}
-		fprintf(model_info_file, "\n");
+   cp = control_addr ("module_y");
+   ypos = (int *)(cp->start_ptr);
 
+   cp = control_addr ("module_num_con");
+   num_connectnions = (int *)(cp->start_ptr);
+
+   cp = control_addr ("module_connections");
+   con_index = (int *)(cp->start_ptr);
+
+   ptr = module_names;
+   str[20] = '\0';
+   for (i = 0; i < num_modules; i++) {
+		strncpy (str, "                     ", 20);
+		strncpy (str, ptr, 20);
+		end = strchr(str, ' ');
+		if (end) *(end) = '\0';
+	   (void)fprintf(param_file, "%s, %d, %d, %d\n", str, xpos[i], ypos[i], num_connectnions[i]);
+	   ptr = ptr + 20;
+   }
+
+  (void)fprintf(param_file, "\n\nPrintout of connections.\n\n");
+
+  j = 0;
+   for (k = 0; k < num_modules; k++) {
+       for (i = 0; i < num_connectnions[k]; i++) {
+	      fprintf(param_file, "%d ", con_index[j++]);
+       }
 	}
-	//fprintf(model_info_file, "\n\n\n\n\n\n");
+	fprintf(param_file, "\n");
 
-  fclose(model_info_file);
+
+  fclose(param_file);
 
   return(0);
+
 }

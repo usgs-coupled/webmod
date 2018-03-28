@@ -2,14 +2,50 @@
  * United States Geological Survey
  *
  * PROJECT  : Modular Modeling System (MMS)
- * FUNCTION : getvar() to be called from C
- *            getvar_() to be called from Fortran
- *            Returns 0 if successful, 1 otherwise.
- * COMMENT  : gets the value associated with a module and name, and copies
- *            it into the variable provided by the calling routine.
+ * NAME     : getvar.c
+ * AUTHOR   : CADSWES
+ * DATE     : Mon 08 Apr 1996
+ * FUNCTION :
+ * COMMENT  :
+ * getvar.c: gets the value associated with a module and name, and copies
+ * it into the variable provided by the calling routine.
  *
- * $Id$
+ * There are 2 functions: getvar() to be called from C
+ *                        getvar_() to be called from Fortran
  *
+ * Returns 0 if successful, 1 otherwise.
+ *
+ * REF      :
+ * REVIEW   :
+ * PR NRS   :
+ *
+ * $Id: getvar.c 8264 2015-06-24 21:29:58Z dlpark $
+ *
+   $Revision: 8264 $
+        $Log: getvar.c,v $
+        Revision 1.8  1996/04/09 21:04:06  markstro
+        (1) Work on control files
+        (2) Runtime graphs
+
+ * Revision 1.7  1996/02/19  20:00:06  markstro
+ * Now lints pretty clean
+ *
+        Revision 1.6  1995/05/25 14:26:31  markstro
+        (1) Added batch mode
+        (2) Replaced "b" functions with "mem" versions
+
+ * Revision 1.5  1994/11/22  17:19:41  markstro
+ * (1) Cleaned up dimensions and parameters.
+ * (2) Some changes due to use of malloc_dbg.
+ *
+ * Revision 1.4  1994/09/30  14:54:25  markstro
+ * Initial work on function prototypes.
+ *
+ * Revision 1.3  1994/06/16  16:47:10  markstro
+ * Worked over runcontrol.c
+ *
+ * Revision 1.2  1994/01/31  20:16:33  markstro
+ * Make sure that all source files have CVS log.
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
@@ -18,6 +54,15 @@
 #include <stdlib.h>
 #include "mms.h"
 
+/**2************************* LOCAL MACROS ****************************/
+
+/**3************************ LOCAL TYPEDEFS ***************************/
+
+/**4***************** DECLARATION LOCAL FUNCTIONS *********************/
+
+/**5*********************** LOCAL VARIABLES ***************************/
+
+/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION		: getvar_
  | COMMENT		: called from Fortran, sorts out args and calls getvar()
@@ -86,11 +131,12 @@ long getvar (char *module, char *name, long maxsize, char *type, double *value) 
 * convert fortran types to C types
 */
 
-	var_type = M_LONG;
-	if (!strcmp(type, "real") || !strcmp(type, "float"))
-	  var_type = M_FLOAT;
+	if (!strcmp(type, "integer") || !strcmp(type, "long"))
+		var_type = M_LONG;
+	else if (!strcmp(type, "real") || !strcmp(type, "float"))
+		var_type = M_FLOAT;
 	else if (!strcmp(type, "double precision") || !strcmp(type, "double"))
-	  var_type = M_DOUBLE;
+		var_type = M_DOUBLE;
 
 /*
 * check that type is possible
@@ -133,7 +179,7 @@ long getvar (char *module, char *name, long maxsize, char *type, double *value) 
 				"ERROR - getvar - incorrect data type requested.\n");
 		(void)fprintf(stderr, "Key:   '%s'\n", vkey);
 		(void)fprintf(stderr, "Requested type: %s\n", type);
-		(void)fprintf(stderr, "Actual declared type: %s\n",
+		(void)fprintf(stderr, "Actual type in data base: %s\n",
 							Mtypes[var->type]);
 		return(1);
 	}
@@ -147,7 +193,7 @@ long getvar (char *module, char *name, long maxsize, char *type, double *value) 
 		switch (var->type) {
 			case M_LONG:
 				memcpy ((char *)value, (char *)var->value,
-							var->size * sizeof(long));
+							var->size * sizeof(int));
 				break;
       
 			case M_FLOAT:
@@ -176,7 +222,7 @@ long getvar (char *module, char *name, long maxsize, char *type, double *value) 
 
 			switch (var->type) {
 				case M_LONG:
-					memcpy ((char *)ptr2, (char *)ptr1, n1 * sizeof(long));
+					memcpy ((char *)ptr2, (char *)ptr1, n1 * sizeof(int));
 					ptr1 += n1 * sizeof(long);
 					ptr2 += n1 * sizeof(long);
 					break;
@@ -196,53 +242,11 @@ long getvar (char *module, char *name, long maxsize, char *type, double *value) 
 		}
 	}
 
+//      free (vkey);
 	return (0);
 }
 
-/*--------------------------------------------------------------------*\
- | FUNCTION		: getvartype_
- | COMMENT		: called from Fortran, sorts out args and returns the type()
- | PARAMETERS   :
- | RETURN VALUE : 
- | RESTRICTIONS :
-\*--------------------------------------------------------------------*/
-long getvartype_ (char *vname, ftnlen vnamelen) {
-	char vkey[128];
-	PUBVAR *var;
-  
-    strncpy (vkey, vname, 128);
-/*
-* get pointer to variable with key
-*/
-	if (!(var = var_addr (vkey))) {
-		(void)fprintf(stderr, "ERROR - getvartype - variable not found.\n");
-		(void)fprintf(stderr, "Key:   '%s'\n", vkey);
-		return(-1);
-	}
+/**8************************** TEST DRIVER ****************************/
 
-	return (var->type);
-}
+/**7****************** LOCAL FUNCTION DEFINITIONS *********************/
 
-/*--------------------------------------------------------------------*\
- | FUNCTION		: getvarsize_
- | COMMENT		: called from Fortran, sorts out args and returns the variable size()
- | PARAMETERS   :
- | RETURN VALUE : size of the array for input variable
- | RESTRICTIONS : variable must be declared
-\*--------------------------------------------------------------------*/
-long getvarsize_ (char *vname, ftnlen vnamelen) {
-	char vkey[128];
-	PUBVAR *var;
-  
-    strncpy (vkey, vname, 128);
-/*
-* get pointer to variable with key
-*/
-	if (!(var = var_addr (vkey))) {
-		(void)fprintf(stderr, "ERROR - getvartype - variable not found.\n");
-		(void)fprintf(stderr, "Key:   '%s'\n", vkey);
-		return(-1);
-	}
-
-	return (var->size);
-}

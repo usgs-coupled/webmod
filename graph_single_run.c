@@ -2,12 +2,18 @@
  * United States Geological Survey
  *
  * PROJECT  : Modular Modeling System (MMS)
+ * NAME     : graph_single_run.c
+ * AUTHOR   : New version by Markstrom
+ * DATE     : 
  * FUNCTION : graph_single_run
  * COMMENT  : graph routines for mms run
+ * REF      :
+ * REVIEW   :
+ * PR NRS   :
  *
- * $Id$
+ * $Id: graph_single_run.c 3641 2007-12-05 21:59:51Z rsregan $
  *
--*/
+ */
 
 /**1************************ INCLUDE FILES ****************************/
 #define GRAPH_SINGLE_RUN_C
@@ -17,6 +23,12 @@
 #include "mms.h"
 
 #define         MAXNUMBEROFGRAPHS               4
+
+/**2************************* LOCAL MACROS ****************************/
+
+/**3************************ LOCAL TYPEDEFS ***************************/
+
+/**4***************** DECLARATION LOCAL FUNCTIONS *********************/
 
 /**5*********************** LOCAL VARIABLES ***************************/
 long NdispGraphs;
@@ -38,7 +50,6 @@ int initializeRuntimeGraphs (void) {
    int i;
    //long datetime[6];
    DATETIME starttime_copy;
-   char *cptr, *cptr2;
 
    if (!runtime_graph_on) return (FALSE);
 
@@ -62,8 +73,7 @@ int initializeRuntimeGraphs (void) {
 /*
 ** Get the number of display vars
 */
-   cptr = strdup ("dispVar_names");
-   control = control_addr(cptr);
+   control = control_addr("dispVar_names");
    if (control) {
       numDispVars = control->size;
 
@@ -77,14 +87,8 @@ int initializeRuntimeGraphs (void) {
 /**
 ** Get address of each display variable for each graph
 **/
-         cptr = strdup ("dispVar_names");
-		 cptr2 = (char *)control_sarray(cptr, i);
-
-         disp_var[i] = var_addr (cptr2);
-
-         cptr = strdup ("dispVar_element");
-//         disp_ele[i] =  atoi (*control_sarray(cptr,i)) - 1;
-         disp_ele[i] =  atoi (control_sarray(cptr,i)) - 1;
+         disp_var[i] = var_addr (*(control_sarray("dispVar_names",i)));
+         disp_ele[i] =  atoi (*control_sarray("dispVar_element",i)) - 1;
       }
    } else {
 	   numDispVars = 0;
@@ -92,6 +96,7 @@ int initializeRuntimeGraphs (void) {
 	   disp_ele = NULL;
 	   runtime_graph_on = 0;
    }
+
    return (FALSE);
 }
 
@@ -129,7 +134,6 @@ int plotRuntimeGraphValue (void) {
    printf ("plotRuntimeGraphValue: xval = %f", xval);
 
    for (i = 0; i < numDispVars; i++) {
-      yval = 0.0;
       switch ((disp_var[i])->type) {
          case M_LONG :
             yval = (float)(*(((long *)((disp_var[i])->value)) + disp_ele[i]));
@@ -164,3 +168,8 @@ int closeRuntimeGraphs (void) {
    printf ("closeRuntimeGraph\n");
    return (FALSE);
 }
+
+/**7****************** LOCAL FUNCTION DEFINITIONS *********************/
+
+/**8************************** TEST DRIVER ****************************/
+

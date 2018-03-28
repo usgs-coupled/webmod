@@ -2,22 +2,50 @@
  * United States Geological Survey
  *
  * PROJECT  : Modular Modeling System (MMS)
+ * NAME     : load_param.c
+ * AUTHOR   :
+ * DATE     :
  * FUNCTION : load_param
  * COMMENT  : Stores the parameter value, minima and maxima at the
- *            required address.  Uses str_to_vals to decode the strings and
- *            store the values. This routine mainly handles the error conditions.
- *            Examples of legal strings for this routine are given in str_to_vals.c
+ *  required address.  Uses str_to_vals to decode the strings and
+ *  store the values. This routine mainly handles the error conditions.
+ *  Examples of legal strings for this routine are given in str_to_vals.c
+ * REF      :
+ * REVIEW   :
+ * PR NRS   :
  *
- * $Id$
+ * $Id: load_param.c 3058 2007-01-25 22:25:59Z rsregan $
  *
+   $Revision: 3058 $
+        $Log: load_param.c,v $
+        Revision 1.5  1996/02/19 20:00:15  markstro
+        Now lints pretty clean
+
+        Revision 1.4  1994/11/22 17:19:49  markstro
+        (1) Cleaned up dimensions and parameters.
+        (2) Some changes due to use of malloc_dbg.
+
+ * Revision 1.3  1994/09/30  14:54:33  markstro
+ * Initial work on function prototypes.
+ *
+ * Revision 1.2  1994/01/31  20:16:40  markstro
+ * Make sure that all source files have CVS log.
 -*/
 
 /**1************************ INCLUDE FILES ****************************/
 #define LOAD_PARAM_C
 #include <stdio.h>
-#include <string.h>
 #include "mms.h"
 
+/**2************************* LOCAL MACROS ****************************/
+
+/**3************************ LOCAL TYPEDEFS ***************************/
+
+/**4***************** DECLARATION LOCAL FUNCTIONS *********************/
+
+/**5*********************** LOCAL VARIABLES ***************************/
+
+/**6**************** EXPORTED FUNCTION DEFINITIONS ********************/
 /*--------------------------------------------------------------------*\
  | FUNCTION     : load_param
  | COMMENT		:
@@ -30,8 +58,7 @@ long load_param (PARAM *param) {
 	long i;
 	double *dval, *dmin, *dmax, *ddef;
 	float *fval, *fmin, *fmax, *fdef;
-	int *lval, *lmin, *lmax, *ldef;
-	char **sval, **sdef;    // 2016-01-13 PAN: added string pointers
+	long *lval, *lmin, *lmax, *ldef;
 
 	if (param->type == M_DOUBLE) {
 		param->value = (char *)umalloc (param->size * sizeof (double));
@@ -44,22 +71,17 @@ long load_param (PARAM *param) {
 		param->min = (char *)umalloc (param->size * sizeof (float));
 		param->max = (char *)umalloc (param->size * sizeof (float));
 	} else if (param->type == M_LONG) {
-		param->value = (char *)umalloc (param->size * sizeof (int));
-		param->def = (char *)umalloc (param->size * sizeof (int));
-		param->min = (char *)umalloc (param->size * sizeof (int));
-		param->max = (char *)umalloc (param->size * sizeof (int));
-	} else if (param->type == M_STRING) {
-		param->value = (char *)umalloc (param->size * sizeof (char *));
-		param->def = (char *)umalloc (param->size * sizeof (char *));
-		param->min = (char *)umalloc (param->size * sizeof (char *));
-		param->max = (char *)umalloc (param->size * sizeof (char *));
+		param->value = (char *)umalloc (param->size * sizeof (long));
+		param->def = (char *)umalloc (param->size * sizeof (long));
+		param->min = (char *)umalloc (param->size * sizeof (long));
+		param->max = (char *)umalloc (param->size * sizeof (long));
 	}
 
 /*
 * decode minima
 */
 	if (param->bound_status == M_BOUNDED) {
-		lmin = (int *)(param->min);	
+		lmin = (long *)(param->min);	
 		for (i = 0; i < param->size; i++)
 			*lmin++ = 0;
 	} else {
@@ -76,7 +98,7 @@ long load_param (PARAM *param) {
 * decode maxima
 */
 	if (param->bound_status == M_BOUNDED) {
-		lmax = (int *)(param->max);	
+		lmax = (long *)(param->max);	
 		for (i = 0; i < param->size; i++)
 			*lmax++ = (long)(param->bound_dimen->value);
 	} else {
@@ -116,19 +138,10 @@ long load_param (PARAM *param) {
 			break;
 
 		case M_LONG:
-			lval = (int *)param->value;
-			ldef = (int *)param->def;
+			lval = (long *)param->value;
+			ldef = (long *)param->def;
 			for (i = 0; i < param->size; i++)
 				*lval++ = *ldef++;
-			break;
-
-        // 2016-01-13 PAN: Added case for string parameters
-		case M_STRING:
-			sval = (char **) param->value;
-			sdef = (char **) param->def;
-			for (i = 0; i < param->size; i++) {
-                *(sval++) = strdup(*(sdef++));
-            }
 			break;
 	}
 
@@ -147,26 +160,27 @@ long load_param (PARAM *param) {
 
 			if (dmin[i] > dmax[i]) {
 				(void)fprintf(stderr,
-					"ERROR: minimum value exceeds maximum value.\n");
-				(void)fprintf(stderr, "Parameter is: '%s'\n", param->key);
+				    "ERROR - load_param - min value exceeds max value.\n");
+				(void)fprintf(stderr, "Key is: '%s'\n", param->key);
 				(void)fprintf(stderr,
-				    "Default minimum and maximum values are:\nMin: '%s'\nMax: '%s'\n",
+				    "Min and max strings are:\nMin: '%s'\nMax: '%s'\n",
 				    param->min_string, param->max_string);
-//				(void)fprintf(stderr, "The problem is with posn no %ld.\n", i+1);
+				(void)fprintf(stderr, "The problem is with posn no %ld.\n", i+1);
 				(void)fprintf(stderr,
-				    "Assigned minimum value = %lf, Specified maximum value = %lf\n", dmin[i], dmax[i]);
+				    "Min = %lf, max = %lf\n", dmin[i], dmax[i]);
 				return(1);
 			}
 
 			if (dval[i] < dmin[i] || dval[i] > dmax[i]) {
 				(void)fprintf(stderr,
-					"\nERROR: assigned value is out of range for Parameter: '%s'\n", param->key);
+				    "ERROR - load_param - default value out of range.\n");
+				(void)fprintf(stderr, "Key is: '%s'\n", param->key);
 				(void)fprintf(stderr,
-				    "       Default: '%s'\n       Minimum: '%s'\n       Maximum: '%s'\n",
+				    "Val, min and max strings are:\nVal: '%s'\nMin: '%s'\nMax: '%s'\n",
 				    param->value_string, param->min_string, param->max_string);
-				(void)fprintf(stderr, "       Assigned values are:\n");
+				(void)fprintf(stderr, "The problem is with posn no %ld.\n", i+1);
 				(void)fprintf(stderr,
-				    "       Value = %lf, Minimum = %lf, Maximum = %lf\n",
+				    "Val = %lf, min = %lf, max = %lf\n",
 				    dval[i], dmin[i], dmax[i]);
 				return(1);
 			}
@@ -185,26 +199,27 @@ long load_param (PARAM *param) {
 
 			if (fmin[i] > fmax[i]) {
 				(void)fprintf(stderr,
-					"ERROR: minimum value exceeds maximum value.\n");
-				(void)fprintf(stderr, "Parameter is: '%s'\n", param->key);
+				    "ERROR - load_param - min value exceeds max value.\n");
+				(void)fprintf(stderr, "Key is: '%s'\n", param->key);
 				(void)fprintf(stderr,
-				    "Default minimum and maximum values are:\nMin: '%s'\nMax: '%s'\n",
+				    "Min and max strings are:\nMin: '%s'\nMax: '%s'\n",
 				    param->min_string, param->max_string);
-//				(void)fprintf(stderr, "The problem is with posn no %ld.\n", i+1);
+				(void)fprintf(stderr, "The problem is with posn no %ld.\n", i+1);
 				(void)fprintf(stderr,
-				    "Assigned minimum = %f, maximum = %f\n", fmin[i], fmax[i]);
+				    "Min = %f, max = %f\n", fmin[i], fmax[i]);
 				return(1);
 			}
 
 			if (fval[i] < fmin[i] || fval[i] > fmax[i]) {
 				(void)fprintf(stderr,
-					"\nERROR: assigned value is out of range for Parameter: '%s'\n", param->key);
+				    "ERROR - load_param - default value out of range.\n");
+				(void)fprintf(stderr, "Key is: '%s'\n", param->key);
 				(void)fprintf(stderr,
-				    "       Default: '%s'\n       Minimum: '%s'\n       Maximum: '%s'\n",
+				    "Val, min and max strings are:\nVal: '%s'\nMin: '%s'\nMax: '%s'\n",
 				    param->value_string, param->min_string, param->max_string);
-				(void)fprintf(stderr, "       Assigned values are:\n");
+				(void)fprintf(stderr, "The problem is with posn no %ld.\n", i+1);
 				(void)fprintf(stderr,
-				    "       Value = %f, Minimum = %f, Maximum = %f\n",
+				    "Val = %f, min = %f, max = %f\n",
 				    fval[i], fmin[i], fmax[i]);
 				return(1);
 			}
@@ -215,44 +230,45 @@ long load_param (PARAM *param) {
 
 	case M_LONG:
 
-		lval = (int *) param->value;
-		lmin = (int *) param->min;
-		lmax = (int *) param->max;
+		lval = (long *) param->value;
+		lmin = (long *) param->min;
+		lmax = (long *) param->max;
 
 		for (i = 0; i < param->size; i++) {
 
 			if (lmin[i] > lmax[i]) {
 				(void)fprintf(stderr,
-					"ERROR: minimum value exceeds maximum value.\n");
-				(void)fprintf(stderr, "Parameter is: '%s'\n", param->key);
+				    "ERROR - load_param - min value exceeds max value.\n");
+				(void)fprintf(stderr, "Key is: '%s'\n", param->key);
 				(void)fprintf(stderr,
-				    "Default Minimum and maximum values are:\nMin: '%s'\nMax: '%s'\n",
+				    "Min and max strings are:\nMin: '%s'\nMax: '%s'\n",
 				    param->min_string, param->max_string);
-//				(void)fprintf(stderr, "The problem is with posn no %ld.\n", i+1);
+				(void)fprintf(stderr, "The problem is with posn no %ld.\n", i+1);
 				(void)fprintf(stderr,
-				    "Assigned minimum = %d, maximum = %d\n", lmin[i], lmax[i]);
+				    "Min = %ld, max = %ld\n", lmin[i], lmax[i]);
 				return(1);
 			}
 
 			if (lval[i] < lmin[i] || lval[i] > lmax[i]) {
 				(void)fprintf(stderr,
-					"\nERROR: assigned value is out of range for Parameter: '%s'\n", param->key);
+				    "ERROR - load_param - default value out of range.\n");
+				(void)fprintf(stderr, "Key is: '%s'\n", param->key);
 				(void)fprintf(stderr,
-				    "       Default: '%s'\n       Minimum: '%s'\n       Maximum: '%s'\n",
+				    "Val, min and max strings are:\nVal: '%s'\nMin: '%s'\nMax: '%s'\n",
 				    param->value_string, param->min_string, param->max_string);
-				(void)fprintf(stderr, "       Assigned values are:\n");
+				(void)fprintf(stderr, "The problem is with posn no %ld.\n", i+1);
 				(void)fprintf(stderr,
-				    "       Value = %d, Minimum = %d, Maximum = %d\n",
+				    "Val = %ld, min = %ld, max = %ld\n",
 				    lval[i], lmin[i], lmax[i]);
 				return(1);
 			}
 		}
 		break;
-
-	case M_STRING:
-// Nothing to check
-		break;
-
 	}
 	return(0);
 }
+
+/**7****************** LOCAL FUNCTION DEFINITIONS *********************/
+
+/**8************************** TEST DRIVER ****************************/
+
