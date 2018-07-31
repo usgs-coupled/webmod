@@ -1,0 +1,32 @@
+
+# /
+/*.suo
+/*.user
+/Debug
+/IPhreeqcMMS.ncb
+/IPhreeqcMMS.opt
+/IPhreeqcMMS.plg
+/Release
+/lib
+/libx64
+/x64
+/FLib.u2d
+
+# /test/
+/test/*.user
+/test/Debug
+/test/Release
+/test/phreeqc.err
+/test/phreeqc.log
+/test/phreeqc.out
+/test/sel1
+/test/sel2
+/test/selected.out
+/test/test.dep
+/test/test.mak
+/test/test.ncb
+/test/test.opt
+/test/test.plg
+/test/webb.exe
+/test/x64
+/test/test.u2d
