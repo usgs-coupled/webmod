@@ -1,0 +1,99 @@
+#
+# https://code.chs.usgs.gov/coupled/webmod
+#
+image: buildpack-deps:bionic-scm
+
+stages:
+  - sync
+
+before_script:
+  - eval $(ssh-agent -s)
+  - echo "${SSH_PRIVATE_KEY_ENC}" | base64 --decode | tr -d '\r' | ssh-add -
+  - mkdir -p ~/.ssh
+  - chmod 700 ~/.ssh
+  - ssh-keyscan ${CI_SERVER_HOST} >> ~/.ssh/known_hosts
+  - chmod 644 ~/.ssh/known_hosts
+  - git config --global user.email "darth@empire.com"
+  - git config --global user.name "Darth Vader"
+ 
+subtree-sync:
+  stage: sync
+
+  ##
+  ## Only run if on the master branch and the variable GROUP is set
+  ##
+  ## change this to
+  ## only:
+  ##  - master@$GROUP/webmod
+  ## and set GROUP to coupled before merge
+  only:
+    refs:
+      - master
+    variables:
+      - $GROUP
+  
+  script:
+    ##
+    ## Must re-clone in order for the subtree merge to work
+    ## tried re-setting the url for the origin but didn't work
+    ##
+    - cd ..
+    - rm -rf ${CI_PROJECT_NAME}
+    - git clone git@${CI_SERVER_HOST}:${CI_PROJECT_PATH}.git
+    - cd ${CI_PROJECT_NAME}
+    
+    ##
+    ## Sync subtrees
+    ##  
+    - |
+      #!/bin/bash -ex
+      #
+      # webmod/                   git@${CI_SERVER_HOST}:${GROUP}/webmod.git
+      # ├─IPhreeqcMMS/            ├─IPhreeqcMMS
+      # │ └─IPhreeqc/             │ └─git@${CI_SERVER_HOST}:${GROUP}/IPhreeqc.git                                                     IPhreeqcMMS/IPhreeqc
+      # │   ├─database/           │   ├─git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc3-database.git                                 IPhreeqcMMS/IPhreeqc/database
+      # │   ├─examples/           │   ├─examples
+      # │   │ ├─c/                │   │ ├─git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc-COMManuscript-CGfinal-examples-c.git        IPhreeqcMMS/IPhreeqc/examples/c
+      # │   │ ├─com/              │   │ ├─git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc-COMManuscript-CGfinal-examples-com.git      IPhreeqcMMS/IPhreeqc/examples/com
+      # │   │ └─fortran/          │   │ └─git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc-COMManuscript-CGfinal-examples-fortran.git  IPhreeqcMMS/IPhreeqc/examples/fortran
+      # │   ├─phreeqc3-doc/       │   ├─git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc3-doc.git                                      IPhreeqcMMS/IPhreeqc/phreeqc3-doc
+      # │   ├─phreeqc3-examples/  │   ├─git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc3-examples.git                                 IPhreeqcMMS/IPhreeqc/phreeqc3-examples
+      # │   └─src/                │   └─git@${CI_SERVER_HOST}:${GROUP}/subtrees/IPhreeqc-src.git                                      IPhreeqcMMS/IPhreeqc/src
+      # │     └─phreeqcpp/        │     └─git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc3-src.git                                    IPhreeqcMMS/IPhreeqc/src/phreeqcpp
+      # │       └─common/         │       └─git@${CI_SERVER_HOST}:${GROUP}/subtrees/phreeqc3-src-common.git                           IPhreeqcMMS/IPhreeqc/src/phreeqcpp/common
+      # └─mmf_c/                  └─mmf_c
+      #   └─src/                    └─git@${CI_SERVER_HOST}:${GROUP}/mmf.git                                                          mmf_c/src
+
+      git_subtree() {
+        git subtree "${1}" --prefix="${2}" "${4}" master 2>&1 | grep -v "^[[:digit:]].*/[[:digit:]].*"
+      }
+
+      declare -A urls=( \
+        ["IPhreeqc"]="git@${CI_SERVER_HOST}:${GROUP}/IPhreeqc.git" \
+        ["mmf"]="git@${CI_SERVER_HOST}:${GROUP}/mmf.git" \
+      )
+
+      declare -A prefixes=( \
+        ["IPhreeqc"]="IPhreeqcMMS/IPhreeqc" \
+        ["mmf"]="mmf_c/src" \
+      )
+
+      export GIT_EDITOR=true
+
+      for remote in "${!urls[@]}"; do
+        git_subtree "pull" "${prefixes[$remote]}" "$remote" "${urls[$remote]}"
+      done
+
+      for remote in "${!urls[@]}"; do
+        git_subtree "push" "${prefixes[$remote]}" "$remote" "${urls[$remote]}"
+      done
+
+      git push origin master
+      git status
+
+## Downstream Projects
+## none
+
+## Upstream Projects
+## iphreeqc https://code.chs.usgs.gov/coupled/iphreeqc
+## mmf      https://code.chs.usgs.gov/coupled/mmf
