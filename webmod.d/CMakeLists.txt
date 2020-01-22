@@ -112,7 +112,7 @@ endif()
 # executable
 add_executable(webmod ${webmod_SOURCES})
 set_target_properties(webmod PROPERTIES DEBUG_POSTFIX "d")
-set_target_properties(webmod PROPERTIES LINKER_LANGUAGE "CXX")
+###set_target_properties(webmod PROPERTIES LINKER_LANGUAGE "CXX")
 
 # library dependencies
 set(EXTRA_LIBS ${EXTRA_LIBS} IPhreeqcMMS)
