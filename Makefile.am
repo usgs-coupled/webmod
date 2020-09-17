@@ -347,6 +347,7 @@ webmod_SOURCES=\
 	IPhreeqcMMS/IPhreeqc/src/phreeqcpp/common/Parser.h\
 	IPhreeqcMMS/IPhreeqc/src/phreeqcpp/common/PHRQ_base.cxx\
 	IPhreeqcMMS/IPhreeqc/src/phreeqcpp/common/PHRQ_base.h\
+	IPhreeqcMMS/IPhreeqc/src/phreeqcpp/common/PHRQ_exports.h\
 	IPhreeqcMMS/IPhreeqc/src/phreeqcpp/common/PHRQ_io.cpp\
 	IPhreeqcMMS/IPhreeqc/src/phreeqcpp/common/PHRQ_io.h\
 	IPhreeqcMMS/IPhreeqc/src/phreeqcpp/common/phrqtype.h\
