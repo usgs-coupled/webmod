@@ -8,38 +8,298 @@ on:
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
   BUILD_TYPE: RelWithDebInfo
+  NAME: IPhreeqc
 
 jobs:
-  build:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+
+  init:
+    runs-on: ubuntu-latest
+    # Map step outputs to a job outputs
+    outputs:
+      VER: ${{ steps.vars.outputs.VER }}
+      REL: ${{ steps.vars.outputs.REL }}
+      DATE: ${{ steps.vars.outputs.DATE }}
+    steps:
+      - name: Setup vars
+        id: vars
+        run: |
+          VER=$(curl https://raw.githubusercontent.com/usgs-coupled/phreeqc-version/main/phreeqc-version.txt)
+          ver_major=$(echo "$VER" | awk -F. '{print $1}')
+          ver_minor=$(echo "$VER" | awk -F. '{print $2}') 
+          if [ -z "$ver_minor" ]; then
+            ver_minor=0
+            ver_patch=0
+          else
+            ver_patch=$(echo "$VER" | awk -F. '{print $3}')
+            if [ -z "$ver_patch" ]; then
+              ver_patch=0
+            else
+              ver_patch=$((ver_patch+1))
+            fi
+          fi
+          curl -L -O https://raw.githubusercontent.com/usgs-coupled/phreeqc-version/main/ver.py
+          echo ::set-output name=VER::${ver_major}.${ver_minor}.${ver_patch}
+          echo ::set-output name=REL::$(python ver.py)
+          echo ::set-output name=DATE::$(date "+%x")
+
+
+  chm:
     runs-on: windows-latest
 
-    # Check all combinations of BUILD_SHARED_LIBS and BUILD_CLR_LIBS
-    strategy:
-      matrix:
-        BUILD_SHARED_LIBS: [ON, OFF]
-        BUILD_CLR_LIBS: [ON, OFF]
-        exclude:
-          - BUILD_SHARED_LIBS: OFF
-            BUILD_CLR_LIBS: ON
-
     steps:
-    - uses: actions/checkout@v2
+      - name: Checkout phreeqc3-HTMLversion
+        uses: actions/checkout@v2
+        with:
+          repository: usgs-coupled-subtrees/phreeqc3-HTMLversion
+          ref: master
 
-    - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBUILD_SHARED_LIBS=${{matrix.BUILD_SHARED_LIBS}} -DBUILD_CLR_LIBS=${{matrix.BUILD_CLR_LIBS}}
+      - name: install htmlhelp
+        run: |
+          curl -L -O http://web.archive.org/web/20160201063255/http://download.microsoft.com/download/0/A/9/0A939EF6-E31C-430F-A3DF-DFAE7960D564/htmlhelp.exe
+          cmd /c start /wait .\htmlhelp.exe /q /c /t:$(Get-Location)\tmp
+          $file = "$(Get-Location)\tmp\htmlhelp.inf"
+          (Get-Content $file) | Foreach-Object { $_ `
+            -replace '^BeginPrompt',                                               ';;BeginPrompt' `
+            -replace '^EndPrompt',                                                 ';;EndPrompt' `
+            -replace '^49000=CustomLDID49000, 1',                                  '49000=CustomLDID49000, 5' `
+            -replace '^"hhupd.exe',                                                ';;hhupd.exe' `
+            -replace '^DefaultInstallDir="C:\\Program Files\\HTML Help Workshop"', 'DefaultInstallDir="%ProgramFiles%\\HTML Help Workshop"'
+          } | Set-Content $file
+          cmd /c start /wait .\tmp\setup.exe
+          Remove-Item -Recurse -Force .\tmp
+          Remove-Item -Recurse -Force .\htmlhelp.exe
+          # the next line doesn't seem to work (supposed to set the path)
+          # echo 'C:\Program Files (x86)\HTML Help Workshop' >> $GITHUB_PATH
 
-    - name: Build
-      # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      - name: compile chm
+        shell: bash
+        run: |
+          pushd HTML
+          bash fixup_html.bash
+          popd
+          # hhc returns 1 on success
+          set +e
+          'C:\Program Files (x86)\HTML Help Workshop\hhc' phreeqc3.hhp | tee hhc.out
+          status=${PIPESTATUS[0]}
+          set -e
+          if [ "$status" -eq 1 ]; then
+            echo "[OK]"
+            exit 0
+          else
+            echo "[FAILED]"
+            exit 1
+          fi
 
-    - name: Test
-      working-directory: ${{github.workspace}}/build
-      # Execute tests defined by the CMake configuration.  
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: ctest -C ${{env.BUILD_TYPE}}
+      - uses: actions/upload-artifact@v2
+        with:
+          name: chm
+          path: ${{github.workspace}}/phreeqc3.chm
+
+
+  # check:
+  #   needs: [init]
+  #   runs-on: windows-latest
+  #   steps:
+  #     - name: Display vars
+  #       run: |
+  #         echo VER=${{ needs.init.outputs.VER }}
+  #         echo REL=${{ needs.init.outputs.REL }}
+  #         echo DATE=${{ needs.init.outputs.DATE }}
+
+  r-build:
+    needs: [init]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: r-lib/actions/setup-r@v1
+        with:
+          use-public-rspm: true
+
+      - name: versioning
+        run: ./jenkins-dist.sh -v ${{ needs.init.outputs.VER }} -r ${{ needs.init.outputs.REL }} -d ${{ needs.init.outputs.DATE }}
+
+      - name: R
+        run: |
+          cd R
+          mkdir -p phreeqc/man
+          mkdir -p phreeqc/src/phreeqcpp
+          mkdir -p phreeqc/R
+          mkdir -p phreeqc/data
+          echo "# Generated by roxygen2: do not edit by hand" > phreeqc/NAMESPACE
+          make VERSION=${{ needs.init.outputs.VER }} RELEASE_DATE=${{ needs.init.outputs.DATE }} build
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: cran
+          path: ${{github.workspace}}/R/phreeqc_*.tar.gz
+
+  distcheck:
+    needs: [init, chm]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: chm
+
+      - name: mv chm
+        run: mv phreeqc3.chm doc/.
+
+      - name: versioning
+        run: ./jenkins-dist.sh -v ${{ needs.init.outputs.VER }} -r ${{ needs.init.outputs.REL }} -d ${{ needs.init.outputs.DATE }}
+
+      - name: doxygen
+        run: sudo apt-get install -y doxygen && cd doc && doxygen
+
+      - name: autoreconf
+        run: autoreconf -fvi
+
+      - name: mkdir
+        run: mkdir _build
+
+      - name: configure
+        working-directory: ${{github.workspace}}/_build
+        run: ../configure --prefix=$(pwd)/INSTALL
+
+      - name: make
+        working-directory: ${{github.workspace}}/_build
+        run: make -j2 distcheck
+
+      - name: convert
+        run: |
+          sudo apt install -y dos2unix
+          native="
+          doc/Makefile \
+          doc/examples/AccumulateLine.c \
+          doc/examples/CreateIPhreeqc.c \
+          doc/examples/F90ClearAccumulatedLines.f90 \
+          doc/examples/F90CreateIPhreeqc.f90 \
+          doc/examples/F90DestroyIPhreeqc.f90 \
+          doc/examples/F90GetComponent.f90 \
+          doc/examples/F90GetDumpStringLine.f90 \
+          doc/examples/F90GetSelectedOutputValue.f90 \
+          doc/examples/F90GetVersionString.f90 \
+          doc/examples/GetComponent.c \
+          doc/examples/GetDumpString.c \
+          doc/examples/GetSelectedOutputValue.c \
+          doc/examples/GetVersionString.c \
+          doc/examples/IPhreeqc.cpp \
+          doc/examples/Makefile \
+          doc/examples/phreeqc.dat \
+          src/CSelectedOutput.cpp \
+          src/CSelectedOutput.hxx \
+          src/CVar.hxx \
+          src/Debug.h \
+          src/ErrorReporter.hxx \
+          src/IPhreeqc.cpp \
+          src/IPhreeqc.f.inc \
+          src/IPhreeqc.f90.inc \
+          src/IPhreeqc.h \
+          src/IPhreeqc.hpp \
+          src/IPhreeqcCallbacks.h \
+          src/IPhreeqcF.f \
+          src/IPhreeqcLib.cpp \
+          src/IPhreeqc_interface.F90 \
+          src/IPhreeqc_interface_F.cpp \
+          src/IPhreeqc_interface_F.h \
+          src/Var.c \
+          src/Var.h \
+          src/Version.h \
+          src/fimpl.h \
+          src/fwrap.cpp \
+          src/fwrap.h \
+          src/fwrap1.cpp \
+          src/fwrap2.cpp \
+          src/fwrap3.cpp \
+          src/fwrap4.cpp \
+          src/fwrap5.cpp \
+          src/fwrap6.cpp \
+          src/fwrap7.cpp \
+          src/fwrap8.cpp \
+          src/pp_sys.cpp \
+          src/thread.h \
+          test/llnl.dat \
+          test/phreeqc.dat \
+          test2/Makefile \
+          test2/wateq4f.dat \
+          test5/Makefile \
+          test5/phreeqc.dat \
+          test5/test5.c \
+          tests/main_fortran.cxx \
+          tests/test_c.c \
+          tests/test_cxx.cxx \
+          tests/test_f90.F90 \
+          unit/TestCVar.cpp \
+          unit/TestCVar.h \
+          unit/TestInterface.cpp \
+          unit/TestInterface.h \
+          unit/TestSelectedOutput.cpp \
+          unit/TestSelectedOutput.h \
+          unit/TestVar.cpp \
+          unit/TestVar.h \
+          unit/llnl.dat.old \
+          unit/missing_e.dat \
+          unit/phreeqc.dat.old \
+          unit/unit.cpp"
+          for f in ${native}; do
+            unix2dos "${f}"
+          done
+
+      - name: dist-zip
+        working-directory: ${{github.workspace}}/_build
+        run: make dist-zip
+
+      - name: copy
+        run: cp doc/README IPhreeqc_ReadMe.txt
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: readme
+          path: ${{github.workspace}}/IPhreeqc_ReadMe.txt
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: tarball
+          path: ${{github.workspace}}/_build/*.tar.gz
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: zipball
+          path: ${{github.workspace}}/_build/*.zip
+
+  # build:
+  #   needs: [init]
+  #   # The CMake configure and build commands are platform agnostic and should work equally
+  #   # well on Windows or Mac.  You can convert this to a matrix build if you need
+  #   # cross-platform coverage.
+  #   # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+  #   runs-on: windows-latest
+
+  #   # Check all combinations of BUILD_SHARED_LIBS and BUILD_CLR_LIBS
+  #   strategy:
+  #     matrix:
+  #       BUILD_SHARED_LIBS: [ON, OFF]
+  #       BUILD_CLR_LIBS: [ON, OFF]
+  #       exclude:
+  #         - BUILD_SHARED_LIBS: OFF
+  #           BUILD_CLR_LIBS: ON
+
+  #   steps:
+  #   - uses: actions/checkout@v2
+
+  #   - name: Configure CMake
+  #     # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+  #     # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+  #     run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DBUILD_SHARED_LIBS=${{matrix.BUILD_SHARED_LIBS}} -DBUILD_CLR_LIBS=${{matrix.BUILD_CLR_LIBS}}
+
+  #   - name: Build
+  #     # Build your program with the given configuration
+  #     run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+  #   - name: Test
+  #     working-directory: ${{github.workspace}}/build
+  #     # Execute tests defined by the CMake configuration.  
+  #     # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+  #     run: ctest -C ${{env.BUILD_TYPE}}
