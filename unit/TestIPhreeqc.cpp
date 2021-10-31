@@ -1,3 +1,4 @@
+// -*- coding: windows-1252 -*-
 #include "TestIPhreeqc.h"
 
 #include <cmath>
@@ -2093,7 +2094,7 @@ void TestIPhreeqc::TestSetOutputFileName(void)
 
 	IPhreeqc obj;
 
-	CPPUNIT_ASSERT_EQUAL( 0,     obj.LoadDatabase("phreeqc.dat"));
+	CPPUNIT_ASSERT_EQUAL( 0,     obj.LoadDatabase("phreeqc.dat.old"));
 
 	// add solution block
 	CPPUNIT_ASSERT_EQUAL( VR_OK, ::SOLUTION(obj, 1.0, 1.0, 1.0) );
@@ -2170,7 +2171,7 @@ void TestIPhreeqc::TestSetOutputFileName(void)
 	CPPUNIT_ASSERT( ::strstr(lines[line++].c_str(), "----------------------------Distribution of species----------------------------")  != NULL );
 	CPPUNIT_ASSERT( ::strstr(lines[line++].c_str(), "")                                                                                 != NULL );
 	CPPUNIT_ASSERT( ::strstr(lines[line++].c_str(), "                                               Log       Log       Log    mole V") != NULL );
-	CPPUNIT_ASSERT( ::strstr(lines[line++].c_str(), "   Species          Molality    Activity  Molality  Activity     Gamma   cm³/mol") != NULL );
+	CPPUNIT_ASSERT( ::strstr(lines[line++].c_str(), "   Species          Molality    Activity  Molality  Activity     Gamma    cm³/mol")!= NULL );
 	CPPUNIT_ASSERT( ::strstr(lines[line++].c_str(), "")                                                                                 != NULL );
 	CPPUNIT_ASSERT( ::strstr(lines[line++].c_str(), "   OH- ")                                                                          != NULL );
 	CPPUNIT_ASSERT( ::strstr(lines[line++].c_str(), "   H+ ")                                                                           != NULL );
@@ -2305,7 +2306,7 @@ void TestIPhreeqc::TestGetOutputStringLineCount(void)
 	IPhreeqc obj;
 	CPPUNIT_ASSERT_EQUAL( 0,     obj.GetOutputStringLineCount() );
 
-	CPPUNIT_ASSERT_EQUAL( 0,     obj.LoadDatabase("phreeqc.dat"));
+	CPPUNIT_ASSERT_EQUAL( 0,     obj.LoadDatabase("phreeqc.dat.old"));
 
 	CPPUNIT_ASSERT_EQUAL( 0,     obj.GetOutputStringLineCount() );
 
@@ -2356,7 +2357,7 @@ void TestIPhreeqc::TestGetOutputStringLine(void)
 	IPhreeqc obj;
 	CPPUNIT_ASSERT_EQUAL( 0,     obj.GetOutputStringLineCount() );
 
-	CPPUNIT_ASSERT_EQUAL( 0,     obj.LoadDatabase("phreeqc.dat"));
+	CPPUNIT_ASSERT_EQUAL( 0,     obj.LoadDatabase("phreeqc.dat.old"));
 
 	CPPUNIT_ASSERT_EQUAL( 0,     obj.GetOutputStringLineCount() );
 

@@ -12,7 +12,7 @@
 ##' @aliases phreeqc-package phreeqc
 ##' @docType package
 ##' @author S.R. Charlton, D.L. Parkhurst, and C.A.J. Appelo, with contributions from D. Gillespie for Chipmunk BASIC (p2c) and S.D. Cohen, A.C. Hindmarsh, R. Serban, D. Shumaker, and A.G. Taylor for CVODE (SUNDIALS) \cr Maintainer: S.R. Charlton \email{charlton@@usgs.gov}
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}\cr \url{http://computation.llnl.gov/casc/sundials/main.html}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}\cr \url{https://computing.llnl.gov/projects/sundials}
 ##' @keywords package
 ##' @examples
 ##'
@@ -57,7 +57,7 @@ NULL
 ##' @param line the line(s) to add for input to phreeqc.
 ##' @return NULL
 ##' @family Accumulate
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # this example loads the phreeqc.dat database, accumulates input, and
@@ -79,6 +79,7 @@ NULL
 ##' phrAccumulateLine("        -si     anhydrite  gypsum")
 ##' phrAccumulateLine("END")
 ##' phrSetOutputFileOn(TRUE)
+##' phrSetOutputFileName(file.path(tempdir(), "ex2.output"))
 ##' if (is.null(phrRunAccumulated())) {
 ##'   cat(paste("see ", phrGetOutputFileName(), ".\n", sep = ""))
 ##' }
@@ -99,7 +100,7 @@ function(line) {
 ##' @useDynLib phreeqc, .registration = TRUE
 ##' @return NULL
 ##' @family Accumulate
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # This example loads some keyword input, clears the input, and displays
@@ -125,7 +126,7 @@ function() {
 ##' @useDynLib phreeqc, .registration = TRUE
 ##' @return A character vector containing the accumulated input.
 ##' @family Accumulate
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # This example loads some keyword input and displays the contents.
@@ -145,7 +146,7 @@ function() {
 ##' @export phrGetComponentList
 ##' @useDynLib phreeqc, .registration = TRUE
 ##' @return A list containing the names of the components defined in the current system.
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # This example runs the ex2 input file and echos the list of components.
@@ -172,11 +173,12 @@ function() {
 ##' @useDynLib phreeqc, .registration = TRUE
 ##' @return The name of the dump file as a string.
 ##' @family Dump
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' phrLoadDatabaseString(phreeqc.dat)
 ##' phrSetDumpFileOn(TRUE)
+##' phrSetDumpFileName(file.path(tempdir(), "dump.out"))
 ##' 
 ##' input <-              "SOLUTION 1 Pure water     \n"
 ##' input <- paste(input, "EQUILIBRIUM_PHASES 1      \n")
@@ -190,7 +192,7 @@ function() {
 ##' if (!is.null(phrRunString(input))) {
 ##'   cat(phrGetErrorStrings())
 ##' }
-##' cat(paste("see ", phrGetDumpFileName(), "."))
+##' cat(paste("see ", phrGetDumpFileName(), ".\n", sep = ""))
 ##' 
 ##' 
 phrGetDumpFileName <-
@@ -209,7 +211,7 @@ function() {
 ##' @useDynLib phreeqc, .registration = TRUE
 ##' @return The dump output as a character vector.
 ##' @family Dump
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' phrLoadDatabaseString(phreeqc.dat)
@@ -246,7 +248,7 @@ function() {
 ##' @useDynLib phreeqc, .registration = TRUE
 ##' @return The name of the error file as a string.
 ##' @family Error
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' 
 phrGetErrorFileName <-
 function() {
@@ -259,9 +261,9 @@ function() {
 ##' 
 ##' @export phrGetDumpFileOn
 ##' @useDynLib phreeqc, .registration = TRUE
-##' @return TRUE if errors are currently being written to file.
+##' @return TRUE if output as defined by the DUMP data block are currently being written to file.
 ##' @family Dump
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' 
 phrGetDumpFileOn <-
 function() {
@@ -274,9 +276,9 @@ function() {
 ##' 
 ##' @export phrGetDumpStringsOn
 ##' @useDynLib phreeqc, .registration = TRUE
-##' @return TRUE if errors are currently being written to file.
+##' @return TRUE if output as defined by the DUMP data block are currently being stored as a character vector.
 ##' @family Dump
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' 
 phrGetDumpStringsOn <-
 function() {
@@ -289,9 +291,9 @@ function() {
 ##' 
 ##' @export phrGetErrorFileOn
 ##' @useDynLib phreeqc, .registration = TRUE
-##' @return TRUE if errors are currently being written to file.
+##' @return TRUE if error messages are currently being written to file.
 ##' @family Error
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' 
 phrGetErrorFileOn <-
 function() {
@@ -304,9 +306,9 @@ function() {
 ##' 
 ##' @export phrGetErrorStringsOn
 ##' @useDynLib phreeqc, .registration = TRUE
-##' @return TRUE if errors are currently being written to file.
+##' @return TRUE if error messages are currently being stored as a character vector.
 ##' @family Error
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' 
 phrGetErrorStringsOn <-
 function() {
@@ -319,9 +321,9 @@ function() {
 ##' 
 ##' @export phrGetLogFileOn
 ##' @useDynLib phreeqc, .registration = TRUE
-##' @return TRUE if errors are currently being written to file.
+##' @return TRUE if log messages are currently being written to file.
 ##' @family Log
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' 
 phrGetLogFileOn <-
 function() {
@@ -334,7 +336,7 @@ function() {
 ##' 
 ##' @export phrGetLogStringsOn
 ##' @useDynLib phreeqc, .registration = TRUE
-##' @return TRUE if errors are currently being written to file.
+##' @return TRUE if log messages are currently being stored as a character vector.
 ##' @family Log
 ##' @references \url{http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc}
 ##' 
@@ -349,9 +351,9 @@ function() {
 ##' 
 ##' @export phrGetOutputFileOn
 ##' @useDynLib phreeqc, .registration = TRUE
-##' @return TRUE if errors are currently being written to file.
+##' @return TRUE if output messages are currently being written to file.
 ##' @family Output
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' 
 phrGetOutputFileOn <-
 function() {
@@ -364,9 +366,9 @@ function() {
 ##' 
 ##' @export phrGetOutputStringsOn
 ##' @useDynLib phreeqc, .registration = TRUE
-##' @return TRUE if errors are currently being written to file.
+##' @return TRUE if output messages are currently being stored as a character vector.
 ##' @family Output
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' 
 phrGetOutputStringsOn <-
 function() {
@@ -390,7 +392,7 @@ function() {
 ##' @useDynLib phreeqc, .registration = TRUE
 ##' @return The error messages as a character vector.
 ##' @family Error
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # loaddatabase should fail
@@ -413,7 +415,7 @@ function() {
 ##' @useDynLib phreeqc, .registration = TRUE
 ##' @return The name of the log file as a string.
 ##' @family Log
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##'
 ##' # This example checks to see if the log file is turned on
@@ -439,12 +441,12 @@ function() {
 ##' @useDynLib phreeqc, .registration = TRUE
 ##' @return A character vector containing phreeqc log output.
 ##' @family Log
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # This example equilibrates pure water with gypsum with the output file on.
 ##' phrLoadDatabaseString(phreeqc.dat)
-##' phrSetOutputFileOn(TRUE)
+##' phrSetLogStringsOn(TRUE)
 ##'
 ##' input <- vector(mode="character")
 ##' input <- c(input, "SOLUTION 1 Pure water ")
@@ -468,16 +470,17 @@ function() {
 ##' 
 ##' Retrieves the name of the output file. The default name is phreeqc.0.out.
 ##' 
-##' @export
+##' @export phrGetOutputFileName
 ##' @useDynLib phreeqc, .registration = TRUE
 ##' @return The name of the output file as a string.
 ##' @family Output
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # This example equilibrates pure water with gypsum with the output file on.
 ##' phrLoadDatabaseString(phreeqc.dat)
 ##' phrSetOutputFileOn(TRUE)
+##' phrSetOutputFileName(file.path(tempdir(), "gypsum.out"))
 ##'
 ##' input <- vector(mode="character")
 ##' input <- c(input, "SOLUTION 1 Pure water ")
@@ -506,7 +509,7 @@ function() {
 ##' @useDynLib phreeqc, .registration = TRUE
 ##' @return A character vector containing phreeqc output.
 ##' @family Output
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # This example equilibrates pure water with calcite and displays
@@ -546,7 +549,7 @@ function() {
 ##' @param allow_ used for compatibility with R prior to 1.9.0 (default is TRUE).
 ##' @return Returns a named list of data frames containing the selected_output from the previous run.
 ##' @family Selected Output
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # Load database and run ex2
@@ -587,7 +590,7 @@ function(allow_ = TRUE) {
 ##' @useDynLib phreeqc, .registration = TRUE
 ##' @return A character vector containing warning messages or NULL.
 ##' @family Warning
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # This example loads the phreeqc.dat database and attempts to use the
@@ -619,7 +622,7 @@ function() {
 ##' @param filename The name of the database file.
 ##' @return This function returns NULL.
 ##' @family Load Database
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##'
 ##' # create temporary database file
@@ -654,7 +657,7 @@ function(filename) {
 ##' @param input String containing data to be used as the phreeqc database.
 ##' @return This function returns NULL.
 ##' @family Load Database
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @keywords interface
 ##' @examples
 ##' 
@@ -662,6 +665,7 @@ function(filename) {
 ##' # output file and runs ex2 as a string
 ##' phrLoadDatabaseString(phreeqc.dat)
 ##' phrSetOutputFileOn(TRUE)
+##' phrSetOutputFileName(file.path(tempdir(), "ex2.load-database.out"))
 ##' if (is.null(phrRunString(ex2))) {
 ##'   cat(paste("see ", phrGetOutputFileName(), ".\n", sep = ""))
 ##' }
@@ -690,11 +694,12 @@ function(input) {
 ##' @return This function returns NULL on success.
 ##' @family Accumulate
 ##' @family Run
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # turn on the output file
 ##' phrSetOutputFileOn(TRUE)
+##' phrSetOutputFileName(file.path(tempdir(), "ex2.out"))
 ##' 
 ##' # load the phreeqc.dat database
 ##' phrLoadDatabaseString(phreeqc.dat)
@@ -736,7 +741,7 @@ function() {
 ##' @param filename The file name of the phreeqc input file.
 ##' @return This function returns NULL on success.
 ##' @family Run
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##'
 ##' # load the phreeqc.dat database
@@ -747,7 +752,7 @@ function() {
 ##' 
 ##' # run ex2
 ##' if (is.null(phrRunFile("ex2"))) {
-##'   cat("use phrGetSelectedOutput() to see results.")
+##'   cat("use phrGetSelectedOutput() to see results.\n")
 ##' }
 ##'
 ##' unlink("ex2")  # tidy up
@@ -773,7 +778,7 @@ function(filename) {
 ##' @param input character vector containing phreeqc input
 ##' @return This function returns NULL on success.
 ##' @family Run
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @keywords interface
 ##' @examples
 ##'
@@ -793,10 +798,11 @@ function(filename) {
 ##'
 ##' # turn on output
 ##' phrSetOutputFileOn(TRUE)
+##' phrSetOutputFileName(file.path(tempdir(), "pure_water.out"))
 ##'
 ##' # run input
 ##' phrRunString(input)
-##' cat(paste("see", phrGetOutputFileName(), "."))
+##' cat(paste("see ", phrGetOutputFileName(), ".\n", sep=""))
 ##' 
 phrRunString <-
 function(input) {
@@ -815,14 +821,14 @@ function(input) {
 ##' @param filename the name of the file.
 ##' @return NULL
 ##' @family Dump
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##'
 ##' # This example equilibrates pure water with calcite and writes the 
 ##' # dump results to file.
 ##' phrLoadDatabaseString(phreeqc.dat)
 ##' phrSetDumpFileOn(TRUE)
-##' phrSetDumpFileName("phreeqc.dump")
+##' phrSetDumpFileName(file.path(tempdir(), "phreeqc.dump"))
 ##' input <- c( 
 ##'   'SOLUTION 1 Pure water     ',
 ##'   'EQUILIBRIUM_PHASES 1      ',
@@ -835,7 +841,7 @@ function(input) {
 ##'   )
 ##' 
 ##' if (is.null(phrRunString(input))) {
-##'   cat("see", phrGetDumpFileName(), "\n")
+##'   cat(paste("see ", phrGetDumpFileName(), ".\n", sep = ""))
 ##' }
 ##' 
 phrSetDumpFileName <-
@@ -855,7 +861,7 @@ function(filename) {
 ##' @param value if TRUE, captures output normally sent to the dump file into a buffer.
 ##' @return NULL
 ##' @family Dump
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # This example equilibrates pure water with calcite and writes the 
@@ -874,7 +880,7 @@ function(filename) {
 ##'   )
 ##' 
 ##' if (is.null(phrRunString(input))) {
-##'   cat("see", phrGetDumpFileName(), "\n")
+##'   cat(paste("see ", phrGetDumpFileName(), ".\n", sep = ""))
 ##' }
 ##' 
 phrSetDumpFileOn <-
@@ -895,7 +901,7 @@ function(value) {
 ##' @param value if TRUE, captures output normally sent to the error file into a buffer.
 ##' @return NULL
 ##' @family Dump
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##'
 ##' # This example equilibrates pure water with calcite and echos the 
@@ -934,14 +940,13 @@ function(value) {
 ##' @param filename the name of the file.
 ##' @return NULL
 ##' @family Error
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##'
-##' # This example equilibrates pure water with calcite and displays
-##' # the log file name.
-##' phrLoadDatabaseString(phreeqc.dat)
-##' phrSetLogFileOn(TRUE)
-##' phrSetLogFileName("phreeqc.log")
+##' # This example attempts to run a input string, fails and writes
+##' # the error message to the error file (no database is loaded).
+##' phrSetErrorFileOn(TRUE)
+##' phrSetErrorFileName(file.path(tempdir(), "phreeqc.errors"))
 ##' input <- c( 
 ##'   'SOLUTION 1 Pure water ',
 ##'   'EQUILIBRIUM_PHASES 1  ',
@@ -949,7 +954,7 @@ function(value) {
 ##'   )
 ##' 
 ##' if (is.null(phrRunString(input))) {
-##'   cat("see", phrGetErrorFileName(), "\n")
+##'   cat(paste("see ", phrGetErrorFileName(), ".\n", sep = ""))
 ##' }
 ##' 
 phrSetErrorFileName <-
@@ -971,15 +976,15 @@ function(filename) {
 ##' @param value if TRUE, writes output to the the error file.
 ##' @return NULL
 ##' @family Error
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##'
 ##' # This example attempts to run ex1, fails, and writes the error
 ##' # message to the error file (no database is loaded).
 ##' phrSetErrorFileOn(TRUE)
-##' phrSetErrorFileName("phreeqc.errors")
+##' phrSetErrorFileName(file.path(tempdir(), "phreeqc.errors"))
 ##' if (!is.null(try(phrRunString(ex1), silent=TRUE))) {
-##'   cat("see", phrGetErrorFileName(), "\n")
+##'   cat(paste("see ", phrGetErrorFileName(), ".\n", sep = ""))
 ##' }
 ##' 
 phrSetErrorFileOn <-
@@ -1002,7 +1007,7 @@ function(value) {
 ##' @param value if TRUE, captures output normally sent to the error file into a buffer.
 ##' @return NULL
 ##' @family Error
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##'
 ##' # This example attempts to run ex1, fails, and displays the error message
@@ -1031,14 +1036,14 @@ function(value) {
 ##' @param filename the name of the file.
 ##' @return NULL
 ##' @family Log
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # This example equilibrates pure water with calcite and displays
 ##' # the log file name.
 ##' phrLoadDatabaseString(phreeqc.dat)
 ##' phrSetLogFileOn(TRUE)
-##' phrSetLogFileName("phreeqc.log")
+##' phrSetLogFileName(file.path(tempdir(), "phreeqc.log"))
 ##' input <- c( 
 ##'   'SOLUTION 1 Pure water ',
 ##'   'EQUILIBRIUM_PHASES 1  ',
@@ -1048,7 +1053,7 @@ function(value) {
 ##'   )
 ##' 
 ##' if (is.null(phrRunString(input))) {
-##'   cat("see", phrGetLogFileName(), "\n")
+##'   cat(paste("see ", phrGetLogFileName(), ".\n", sep = ""))
 ##' }
 ##' 
 phrSetLogFileName <-
@@ -1072,19 +1077,20 @@ function(filename) {
 ##' @param value if TRUE, writes output to the the log file.
 ##' @return NULL
 ##' @family Log
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # This example runs ex2 with the log file turned on.
 ##' phrLoadDatabaseString(phreeqc.dat)
-##' phrSetLogStringsOn(TRUE)
+##' phrSetLogFileOn(TRUE)
+##' phrSetLogFileName(file.path(tempdir(), "ex2.log"))
 ##'
 ##' # turn logging on
 ##' phrAccumulateLine("KNOBS; -logfile true")
 ##' phrRunAccumulated()
 ##' 
 ##' if (is.null(phrRunString(ex2))) {
-##'   cat("see", phrGetLogFileName(), "\n")
+##'   cat(paste("see ", phrGetLogFileName(), ".\n", sep = ""))
 ##' }
 ##' 
 phrSetLogFileOn <-
@@ -1105,7 +1111,7 @@ function(value) {
 ##' @param value if TRUE, captures output normally sent to the log file into a buffer.
 ##' @return NULL
 ##' @family Log
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # This example runs ex2 with log strings turned on.
@@ -1138,14 +1144,14 @@ function(value) {
 ##' @param filename the name of the file.
 ##' @return NULL
 ##' @family Output
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # This example equilibrates pure water with calcite and displays
 ##' # the resulting file name.
 ##' phrLoadDatabaseString(phreeqc.dat)
 ##' phrSetOutputFileOn(TRUE)
-##' phrSetOutputFileName("phreeqc.output")
+##' phrSetOutputFileName(file.path(tempdir(), "calcite.out"))
 ##' input <- c( 
 ##'   'SOLUTION 1 Pure water ',
 ##'   'EQUILIBRIUM_PHASES 1  ',
@@ -1153,7 +1159,7 @@ function(value) {
 ##'   )
 ##' 
 ##' if (is.null(phrRunString(input))) {
-##'   cat("see", phrGetOutputFileName(), "\n")
+##'   cat(paste("see ", phrGetOutputFileName(), ".\n", sep = ""))
 ##' }
 ##' 
 phrSetOutputFileName <-
@@ -1174,7 +1180,7 @@ function(filename) {
 ##' @param value if TRUE, writes output to the the output file.
 ##' @return NULL
 ##' @family Output
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # This example runs ex2 with the output file turned on.
@@ -1186,8 +1192,9 @@ function(filename) {
 ##' # load database and run input file
 ##' phrLoadDatabaseString(phreeqc.dat)
 ##' phrSetOutputFileOn(TRUE)
+##' phrSetOutputFileName(file.path(tempdir(), "ex2.out"))
 ##' if (is.null(phrRunFile(tf))) {
-##'   cat("see", phrGetOutputFileName(), "\n")
+##'   cat(paste("see ", phrGetOutputFileName(), ".\n", sep = ""))
 ##' }
 ##'
 ##' # delete temporary input file
@@ -1215,7 +1222,7 @@ function(value) {
 ##' @param value if TRUE, captures output normally sent to the output file into a buffer.
 ##' @return NULL
 ##' @family Output
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # This example equilibrates pure water with calcite and displays
@@ -1250,14 +1257,14 @@ function(value) {
 ##' @param nuser the user number specified in the SELECTED_OUTPUT block.
 ##' @return The name of the selected_output file as a string.
 ##' @family Selected Output
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # This example equilibrates pure water with calcite at various temperatures
 ##' # and displays the name of the selected_output file.
 ##' phrLoadDatabaseString(phreeqc.dat)
 ##' phrSetSelectedOutputFileOn(1, TRUE)
-##' phrSetSelectedOutputFileName(1, "ex2.sel")
+##' phrSetSelectedOutputFileName(1, file.path(tempdir(), "ex2.sel"))
 ##'
 ##' input <- c( 
 ##'   'SOLUTION 1 Pure water     ',
@@ -1272,7 +1279,7 @@ function(value) {
 ##' 
 ##' 
 ##' if (is.null(phrRunString(input))) {
-##'   cat("see", phrGetSelectedOutputFileName(1))
+##'   cat(paste("see ", phrGetSelectedOutputFileName(1), ".\n", sep = ""))
 ##' }
 ##' 
 phrGetSelectedOutputFileName <-
@@ -1294,14 +1301,14 @@ function(nuser) {
 ##' @param filename the name of the selected_output file.
 ##' @return NULL
 ##' @family Selected Output
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # This example equilibrates pure water with calcite at various temperatures
 ##' # and displays the name of the selected_output file.
 ##' phrLoadDatabaseString(phreeqc.dat)
 ##' phrSetSelectedOutputFileOn(1, TRUE)
-##' phrSetSelectedOutputFileName(1, "ex2.sel")
+##' phrSetSelectedOutputFileName(1, file.path(tempdir(), "ex2.sel"))
 ##'
 ##' input <- c( 
 ##'   'SOLUTION 1 Pure water     ',
@@ -1316,7 +1323,7 @@ function(nuser) {
 ##' 
 ##' 
 ##' if (is.null(phrRunString(input))) {
-##'   cat("see", phrGetSelectedOutputFileName(1))
+##'   cat(paste("see ", phrGetSelectedOutputFileName(1), ".\n", sep = ""))
 ##' }
 ##' 
 phrSetSelectedOutputFileName <-
@@ -1338,14 +1345,14 @@ function(nuser, filename) {
 ##' @param value if TRUE, writes output to the the selected_output file.
 ##' @return NULL
 ##' @family Selected Output
-##' @references \url{ftp://brrftp.cr.usgs.gov/pub/charlton/iphreeqc/IPhreeqc.pdf}
+##' @references \url{https://water.usgs.gov/water-resources/software/PHREEQC/IPhreeqc.pdf}
 ##' @examples
 ##' 
 ##' # This example equilibrates pure water with calcite at various temperatures
 ##' # and displays the name of the selected_output file.
 ##' phrLoadDatabaseString(phreeqc.dat)
 ##' phrSetSelectedOutputFileOn(1, TRUE)
-##' phrSetSelectedOutputFileName(1, "ex2.sel")
+##' phrSetSelectedOutputFileName(1, file.path(tempdir(), "ex2.sel"))
 ##'
 ##' input <- c( 
 ##'   'SOLUTION 1 Pure water     ',
@@ -1360,7 +1367,7 @@ function(nuser, filename) {
 ##' 
 ##' 
 ##' if (is.null(phrRunString(input))) {
-##'   cat("see", phrGetSelectedOutputFileName(1))
+##'   cat(paste("see ", phrGetSelectedOutputFileName(1), ".\n", sep = ""))
 ##' }
 ##' 
 phrSetSelectedOutputFileOn <-
@@ -1381,7 +1388,7 @@ function(nuser, value) {
 ##' @references \url{http://pubs.usgs.gov/tm/06/a43/pdf/tm6-A43.pdf}
 ##' @source \url{http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc}
 ##' @usage phreeqc.dat  # phrLoadDatabaseString(phreeqc.dat)
-##' @keywords dataset 
+##' @keywords dataset
 NULL
 
 
@@ -1396,7 +1403,7 @@ NULL
 ##' @references \url{http://pubs.usgs.gov/tm/06/a43/pdf/tm6-A43.pdf}
 ##' @source \url{http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc}
 ##' @usage ex15.dat  # phrLoadDatabaseString(ex15.dat)
-##' @keywords dataset 
+##' @keywords dataset
 NULL
 
 
@@ -1412,7 +1419,7 @@ NULL
 ##' @references \url{http://pubs.usgs.gov/tm/06/a43/pdf/tm6-A43.pdf}
 ##' @source \url{http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc}
 ##' @usage Amm.dat  # phrLoadDatabaseString(Amm.dat)
-##' @keywords dataset 
+##' @keywords dataset
 NULL
 
 
@@ -1427,7 +1434,52 @@ NULL
 ##' @family Databases
 ##' @source \url{http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc}
 ##' @usage ColdChem.dat  # phrLoadDatabaseString(ColdChem.dat)
-##' @keywords dataset 
+##' @keywords dataset
+NULL
+
+
+
+##' @name core10.dat
+##' @title The core10.dat database
+##' @description core10.dat is a database derived from phreeqc.dat and
+##' llnl.dat, with careful data checking, use of SUPCRT for temperature
+##' dependence, and addition of molar volumes for pressure dependence.
+##' Contributed by Marc Neveu. The database has been reformatted for use by
+##' \code{\link{phrLoadDatabaseString}}.
+##' @docType data
+##' @family Databases
+##' @references \doi{10.1016/j.gca.2017.06.023}
+##' @source \url{https://github.com/MarcNeveu/IcyDwarf/blob/master/IcyDwarf/PHREEQC-3.1.2/core10.dat}
+##' @usage core10.dat  # phrLoadDatabaseString(core10.dat)
+##' @keywords dataset
+NULL
+
+
+
+##' @name Tipping_Hurley.dat
+##' @title The Tipping_Hurley.dat database
+##' @description Tipping_Hurley.dat is a database for organic-ligand
+##' binding approximating WHAM by Tipping and Hurley.
+##' \code{\link{phrLoadDatabaseString}}.
+##' @docType data
+##' @family Databases
+##' @usage Tipping_Hurley.dat  # phrLoadDatabaseString(Tipping_Hurley.dat)
+##' @keywords dataset
+NULL
+
+
+
+##' @name frezchem.dat
+##' @title The frezchem.dat database
+##' @description frezchem.dat is a database from Jonathon Toner and the
+##' developers for the frezchem code (Toner and Sletten (2013), Marion
+##' and coworkers). Frezchem is a Pitzer model for temperatures of 0 C
+##' and below.
+##' \code{\link{phrLoadDatabaseString}}.
+##' @docType data
+##' @family Databases
+##' @usage frezchem.dat  # phrLoadDatabaseString(frezchem.dat)
+##' @keywords dataset
 NULL
 
 
@@ -1441,7 +1493,7 @@ NULL
 ##' @references \url{http://pubs.usgs.gov/tm/06/a43/pdf/tm6-A43.pdf}
 ##' @source \url{http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc}
 ##' @usage wateq4f.dat  # phrLoadDatabaseString(wateq4f.dat)
-##' @keywords dataset 
+##' @keywords dataset
 NULL
 
 
@@ -1456,7 +1508,7 @@ NULL
 ##' @family Databases
 ##' @references \url{http://pubs.usgs.gov/tm/06/a43/pdf/tm6-A43.pdf}
 ##' @usage llnl.dat  # phrLoadDatabaseString(llnl.dat)
-##' @keywords dataset 
+##' @keywords dataset
 NULL
 
 
@@ -1471,7 +1523,7 @@ NULL
 ##' @references \url{http://pubs.usgs.gov/tm/06/a43/pdf/tm6-A43.pdf}
 ##' @source \url{http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc}
 ##' @usage minteq.dat  # phrLoadDatabaseString(minteq.dat)
-##' @keywords dataset 
+##' @keywords dataset
 NULL
 
 
@@ -1486,7 +1538,7 @@ NULL
 ##' @references \url{http://pubs.usgs.gov/tm/06/a43/pdf/tm6-A43.pdf}
 ##' @source \url{http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc}
 ##' @usage minteq.v4.dat  # phrLoadDatabaseString(minteq.v4.dat)
-##' @keywords dataset 
+##' @keywords dataset
 NULL
 
 
@@ -1500,8 +1552,8 @@ NULL
 ##' @family Databases
 ##' @references \url{http://pubs.usgs.gov/tm/06/a43/pdf/tm6-A43.pdf}
 ##' @source \url{http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc}
-##' @usage pitzer  # phrLoadDatabaseString(pitzer.dat)
-##' @keywords dataset 
+##' @usage pitzer.dat  # phrLoadDatabaseString(pitzer.dat)
+##' @keywords dataset
 NULL
 
 
@@ -1517,7 +1569,7 @@ NULL
 ##' @references \url{http://pubs.usgs.gov/tm/06/a43/pdf/tm6-A43.pdf}
 ##' @source \url{http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc}
 ##' @usage sit.dat  # phrLoadDatabaseString(sit.dat)
-##' @keywords dataset 
+##' @keywords dataset
 NULL
 
 
@@ -1533,7 +1585,7 @@ NULL
 ##' @references \url{http://pubs.usgs.gov/tm/06/a43/pdf/tm6-A43.pdf}
 ##' @source \url{http://wwwbrr.cr.usgs.gov/projects/GWC_coupled/phreeqc}
 ##' @usage iso.dat  # phrLoadDatabaseString(iso.dat)
-##' @keywords dataset 
+##' @keywords dataset
 NULL
 
 
@@ -1756,6 +1808,8 @@ NULL
 ##' phrSetSelectedOutputFileOn(1, TRUE)
 ##' phrRunString(ex8)
 ##' phrGetOutputStrings()
+##' # cleanup
+##' unlink(c("ex8.sel", "Zn1e_7", "Zn1e_4"))
 ##' 
 NULL
 
