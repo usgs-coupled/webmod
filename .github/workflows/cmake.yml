@@ -7,7 +7,7 @@ on:
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: RelWithDebInfo
+  BUILD_TYPE: Release
   NAME: IPhreeqc
 
 jobs:
@@ -29,7 +29,7 @@ jobs:
 
 
   chm:
-    runs-on: windows-2019
+    runs-on: windows-latest
 
     steps:
       - name: Checkout phreeqc3-HTMLversion
@@ -107,19 +107,61 @@ jobs:
       - name: versioning
         run: ./jenkins-dist.sh -v ${{ needs.init.outputs.VER }} -r ${{ needs.init.outputs.REL }} -d ${{ needs.init.outputs.DATE }}
 
-      - name: make directories
-        run: mkdir -p R/phreeqc/R && mkdir -p R/phreeqc/src/phreeqcpp && mkdir -p R/phreeqc/data
+      - name: setup clang
+        run: |
+          mkdir -p ~/.R
+          echo CC=clang -Qunused-arguments > ~/.R/Makevars
+          echo CXX=clang++ -Qunused-arguments >> ~/.R/Makevars
 
       - name: check
-        run: cd R/phreeqc && Rscript -e 'devtools::check()'
-
-      - name: build
-        run: cd R/phreeqc && Rscript -e 'devtools::build()'
+        run: cd R && make VERSION=${{ needs.init.outputs.VER }} check_built
 
       - uses: actions/upload-artifact@v2
         with:
           name: cran
           path: ${{github.workspace}}/R/phreeqc_*.tar.gz
+
+  r-valgrind:
+    needs: [r-build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v3
+        with:
+          name: cran
+          path: R
+    
+      - name: Display structure of downloaded files
+        working-directory: R
+        run: ls -lR
+      
+      - uses: r-lib/actions/setup-r@v1
+        with:
+          use-public-rspm: true
+
+      - name: install devtools
+        run: Rscript -e 'install.packages("devtools")'
+
+      - name: install valgrind
+        run: apt-get install -y valgrind
+
+      - name: setup clang
+        run: |
+          mkdir -p ~/.R
+          echo CC=clang -Qunused-arguments > ~/.R/Makevars
+          echo CXX=clang++ -Qunused-arguments >> ~/.R/Makevars
+
+      - name: install
+        run: cd R && R CMD INSTALL --build phreeqc_*.tar.gz
+
+      - name: run
+        run: cd R && R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < valgrind.R 2>&1 | tee valgrind.full.out
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: valgrind
+          path: ${{github.workspace}}/R/valgrind.full.out
 
   distcheck:
     needs: [init, chm]
