@@ -19,13 +19,50 @@ jobs:
       VER: ${{ steps.vars.outputs.VER }}
       REL: ${{ steps.vars.outputs.REL }}
       DATE: ${{ steps.vars.outputs.DATE }}
+      DATE_RFC_3339: ${{ steps.vars.outputs.DATE_RFC_3339 }}
     steps:
       - name: Setup vars
         id: vars
         run: |
-          echo ::set-output name=VER::$(curl -sS https://raw.githubusercontent.com/usgs-coupled/phreeqc-version/main/next_ver.sh | sh)
-          echo ::set-output name=REL::$(curl -sS https://raw.githubusercontent.com/usgs-coupled/phreeqc-version/main/rel.py | python3)
-          echo ::set-output name=DATE::$(date "+%x")
+          echo VER=$(curl -sS https://raw.githubusercontent.com/usgs-coupled/phreeqc-version/main/next_ver.sh | sh) >> $GITHUB_OUTPUT
+          echo REL=$(curl -sS https://raw.githubusercontent.com/usgs-coupled/phreeqc-version/main/rel.py | python3) >> $GITHUB_OUTPUT
+          echo DATE=$(date "+%x")                                                                                   >> $GITHUB_OUTPUT
+          echo DATE_RFC_3339=$(date --rfc-3339=date)                                                                >> $GITHUB_OUTPUT
+
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install ninja valgrind (Linux)
+      if: runner.os == 'Linux'
+      run: sudo apt-get install -y ninja-build valgrind
+
+    - name: Install ninja (macOS)
+      if: runner.os == 'macOS'
+      run: brew install ninja
+
+    - name: Set up Visual Studio shell (Windows)
+      if: runner.os == 'Windows'
+      uses: egor-tensin/vs-shell@v2
+      with:
+        arch: x64
+
+    - name: CTest
+      run: ctest -S ctest.cmake -V --output-on-failure
+
+    - name: Upload results
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ matrix.os }}-test-results
+        path: ${{ github.workspace }}/_ctest/Testing/
 
 
   chm:
@@ -33,7 +70,7 @@ jobs:
 
     steps:
       - name: Checkout phreeqc3-HTMLversion
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: usgs-coupled-subtrees/phreeqc3-HTMLversion
           ref: master
@@ -75,101 +112,160 @@ jobs:
             exit 1
           fi
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: chm
           path: ${{github.workspace}}/phreeqc3.chm
 
 
-  # check:
-  #   needs: [init]
-  #   runs-on: windows-2019
-  #   steps:
-  #     - name: Display vars
-  #       run: |
-  #         echo VER=${{ needs.init.outputs.VER }}
-  #         echo REL=${{ needs.init.outputs.REL }}
-  #         echo DATE=${{ needs.init.outputs.DATE }}
-
-  r-build:
+  R-CMD-check:
     needs: [init]
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.config.os }}
+
+    name: ${{ matrix.config.os }} (${{ matrix.config.r }})
+
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {os: macos-latest,    r: 'release'}
+          - {os: windows-latest,  r: 'release'}
+          - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
+          - {os: ubuntu-latest,   r: 'release'}
+          - {os: ubuntu-latest,   r: 'oldrel-1'}
+
     steps:
-      - uses: actions/checkout@v2
-
-      - uses: r-lib/actions/setup-r@v1
-        with:
-          use-public-rspm: true
-
-      - name: install devtools
-        run: Rscript -e 'install.packages("devtools")'
+      - uses: actions/checkout@v3
 
       - name: versioning
         run: ./jenkins-dist.sh -v ${{ needs.init.outputs.VER }} -r ${{ needs.init.outputs.REL }} -d ${{ needs.init.outputs.DATE }}
 
-      - name: setup clang
-        run: |
-          mkdir -p ~/.R
-          echo CC=clang -Qunused-arguments > ~/.R/Makevars
-          echo CXX=clang++ -Qunused-arguments >> ~/.R/Makevars
-
-      - name: check
-        run: cd R && make VERSION=${{ needs.init.outputs.VER }} check_built
-
-      - uses: actions/upload-artifact@v2
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
         with:
-          name: cran
-          path: ${{github.workspace}}/R/phreeqc_*.tar.gz
-
-  r-valgrind:
-    needs: [r-build]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - uses: actions/download-artifact@v3
-        with:
-          name: cran
-          path: R
-    
-      - name: Display structure of downloaded files
-        working-directory: R
-        run: ls -lR
-      
-      - uses: r-lib/actions/setup-r@v1
-        with:
+          r-version: ${{ matrix.config.r }}
+          http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - name: install devtools
-        run: Rscript -e 'install.packages("devtools")'
+      - name: create source
+        working-directory: R
+        run: make VERSION=${{ needs.init.outputs.VER }} RELEASE_DATE=${{ needs.init.outputs.DATE_RFC_3339 }} source
 
-      - name: install valgrind
-        run: sudo apt-get install -y valgrind
-
-      - name: setup clang
-        run: |
-          mkdir -p ~/.R
-          echo CC=clang -Qunused-arguments > ~/.R/Makevars
-          echo CXX=clang++ -Qunused-arguments >> ~/.R/Makevars
-
-      - name: install
-        run: cd R && R CMD INSTALL --build phreeqc_*.tar.gz
-
-      - name: run
-        run: cd R && R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < valgrind.R 2>&1 | tee valgrind.full.out
-
-      - uses: actions/upload-artifact@v2
+      - name: Install dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          name: valgrind
-          path: ${{github.workspace}}/R/valgrind.full.out
+          extra-packages: any::roxygen2, any::pkgbuild, any::rcmdcheck
+          needs: roxygen2, pkgbuild, check
+          working-directory: R/phreeqc
+
+      - name: roxygen2::roxygenise()
+        run: roxygen2::roxygenise()
+        working-directory: R/phreeqc
+        shell: Rscript {0}
+
+      - name: Check
+        uses: r-lib/actions/check-r-package@v2
+        with:
+          working-directory: R/phreeqc
+
+      - name: List files
+        if: matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release'
+        run: |
+          pwd
+          ls -lR
+          find -name "*.tar.gz"
+
+      - uses: actions/upload-artifact@v3
+        if: matrix.config.os == 'ubuntu-latest' && matrix.config.r == 'release'
+        with:
+          name: cran
+          path: ${{ github.workspace }}/R/phreeqc/check/phreeqc_*.tar.gz
+
+  # r-build:
+  #   needs: [init]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     - uses: r-lib/actions/setup-r@v2
+  #       with:
+  #         use-public-rspm: true
+
+  #     - name: install devtools
+  #       run: Rscript -e 'install.packages("devtools")'
+
+  #     - name: install curl
+  #       run: Rscript -e 'install.packages("curl")'
+
+  #     - name: versioning
+  #       run: ./jenkins-dist.sh -v ${{ needs.init.outputs.VER }} -r ${{ needs.init.outputs.REL }} -d ${{ needs.init.outputs.DATE }}
+
+  #     - name: setup clang
+  #       run: |
+  #         mkdir -p ~/.R
+  #         echo CC=clang -Qunused-arguments > ~/.R/Makevars
+  #         echo CXX=clang++ -Qunused-arguments >> ~/.R/Makevars
+
+  #     - name: check
+  #       run: cd R && make VERSION=${{ needs.init.outputs.VER }} check_built
+
+  #     - uses: actions/upload-artifact@v3
+  #       with:
+  #         name: cran
+  #         path: ${{github.workspace}}/R/phreeqc_*.tar.gz
+
+  # r-valgrind:
+  #   needs: [r-build]
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     - uses: actions/download-artifact@v3
+  #       with:
+  #         name: cran
+  #         path: R
+    
+  #     - name: Display structure of downloaded files
+  #       working-directory: R
+  #       run: ls -lR
+      
+  #     - uses: r-lib/actions/setup-r@v2
+  #       with:
+  #         use-public-rspm: true
+
+  #     - name: install devtools
+  #       run: Rscript -e 'install.packages("devtools")'
+
+  #     - name: install curl
+  #       run: Rscript -e 'install.packages("curl")'
+
+  #     - name: install valgrind
+  #       run: sudo apt-get install -y valgrind
+
+  #     - name: setup clang
+  #       run: |
+  #         mkdir -p ~/.R
+  #         echo CC=clang -Qunused-arguments > ~/.R/Makevars
+  #         echo CXX=clang++ -Qunused-arguments >> ~/.R/Makevars
+
+  #     - name: install
+  #       run: cd R && R CMD INSTALL --build phreeqc_*.tar.gz
+
+  #     - name: run
+  #       run: cd R && R -d "valgrind --tool=memcheck --leak-check=full" --vanilla < valgrind.R 2>&1 | tee valgrind.full.out
+
+  #     - uses: actions/upload-artifact@v3
+  #       with:
+  #         name: valgrind
+  #         path: ${{github.workspace}}/R/valgrind.full.out
 
   distcheck:
     needs: [init, chm]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v3
         with:
           name: chm
 
@@ -283,17 +379,17 @@ jobs:
       - name: copy
         run: cp doc/README IPhreeqc_ReadMe.txt
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: readme
           path: ${{github.workspace}}/IPhreeqc_ReadMe.txt
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: tarball
           path: ${{github.workspace}}/_build/*.tar.gz
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: zipball
           path: ${{github.workspace}}/_build/*.zip
@@ -316,7 +412,7 @@ jobs:
   #           BUILD_CLR_LIBS: ON
 
   #   steps:
-  #   - uses: actions/checkout@v2
+  #   - uses: actions/checkout@v3
 
   #   - name: Configure CMake
   #     # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
