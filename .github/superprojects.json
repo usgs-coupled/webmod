@@ -1,0 +1,7 @@
+{
+  "usgs-coupled-subtrees/mmf": {
+    "superprojects": [
+      "usgs-coupled-subtrees/webmod"
+    ]
+  }
+}
