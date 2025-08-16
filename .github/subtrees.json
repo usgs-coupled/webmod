@@ -1,0 +1,10 @@
+[
+  {
+    "prefix": "IPhreeqcMMS/IPhreeqc",
+    "repo": "usgs-coupled-subtrees/iphreeqc"
+  },
+  {
+    "prefix": "mmf_c/src",
+    "repo": "usgs-coupled-subtrees/mmf"
+  }
+]
